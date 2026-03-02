@@ -41,13 +41,13 @@ def processar_xls(self, caminho_arquivo):
         print("Buscando da API...")
 
         profiles = requests.get(
-            "http://localhost:8000/api/users/user-profile/",
+            "http://backend:8000/api/users/user-profile/",
             headers=headers,
             timeout=10
         ).json()
 
         users = requests.get(
-            "http://localhost:8000/api/users/user/",
+            "http://backend:8000/api/users/user/",
             headers=headers,
             timeout=10
         ).json()

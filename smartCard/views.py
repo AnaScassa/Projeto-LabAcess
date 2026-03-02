@@ -70,8 +70,6 @@ def carregar_acesso(request):
 
     caminho = salvar_arquivo_temporario(arquivo)
 
-    task = processar_xls.delay(caminho)
-
     task_uuid = str(uuid.uuid4())
 
     with transaction.atomic():
@@ -85,17 +83,16 @@ def carregar_acesso(request):
         args=[caminho],
         task_id=task_uuid
     )
-    
+
     return Response(
         {
             "message": "Arquivo enviado para processamento.",
-            "task_id": task.id,
+            "task_id": task_uuid,
             "status": "PENDING",
-            "user" : request.user.id
+            "user": request.user.id
         },
         status=status.HTTP_202_ACCEPTED
     )
-
 def agora_por_fila():
     return {
         "fila_rapida": TaskResult.objects.filter(
