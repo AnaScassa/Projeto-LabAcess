@@ -198,3 +198,5 @@ CACHES = {
     }
 }
 
+SECRET_API_KEY = os.environ.get("SECRET_API_KEY")
+SECRET_AUTHORIZATION = os.environ.get("SECRET_AUTHORIZATION")
