@@ -1,0 +1,71 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./smartcard
+    container_name: smartcard_backend
+    ports:
+      - "8000:8000"
+    restart: always
+    volumes:
+      - media_volume:/smartcard/media
+    develop:
+      watch:
+        - action: sync
+          path: ./smartcard
+          target: /app
+          ignore:
+            - ./node_modules/
+            - ./.venv/
+            - ./docker/
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend_react
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /app
+          ignore:
+            - ./node_modules/
+            - ./.venv/
+            - ./docker/
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  celery:
+    command: celery -A core worker --loglevel=info --concurrency=1
+    build:
+      context: ./smartcard   
+    container_name: smartcard_celery
+    depends_on:
+      - backend
+      - redis
+    restart: always
+    volumes:
+      - media_volume:/smartcard/media
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: smartcard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+      
+volumes:
+  media_volume:
