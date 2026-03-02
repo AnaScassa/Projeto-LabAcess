@@ -82,7 +82,7 @@ export default function Upload() {
       <h2>Upload de planilha Excel</h2>
 
       <form onSubmit={handleUpload}>
-        <input type="file" id="file-input" accept=".xls,.xlsx" />
+      <input type="file" id="fileInput" accept=".xls,.xlsx" />
         <br /><br />
         <button type="submit" disabled={loading}>
           {loading ? "Enviando..." : "Enviar"}
