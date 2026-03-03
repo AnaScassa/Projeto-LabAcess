@@ -31,8 +31,8 @@ def processar_xls(self, caminho_arquivo):
     df = pd.read_excel(caminho_arquivo)
 
     headers = {
-        "X-Api-Key": settings.SECRET_API_KEY,
-        "Authorization": f"Api-Key {settings.SECRET_AUTHORIZATION}"
+        "X-Api-Key": "pbkdf2_sha256$1200000$aonByYw2GbwuyDvrGd1z9w4x5BO477iAMn69G1gs3W1C3n1ZmLwxHpBZoKFIIQV0=",
+        "Authorization": "Api-Key xb8vL1sU.wnTtzS31MbyyKeRICGTxTfvHKuxTSBt0",
     }
 
     profiles = cache.get("profiles")

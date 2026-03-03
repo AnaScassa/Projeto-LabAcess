@@ -19,6 +19,12 @@ services:
             - ./node_modules/
             - ./.venv/
             - ./docker/
+    command: > 
+            sh -c "python manage.py migrate &&
+            python manage.py init_users &&
+            python manage.py runserver 0.0.0.0:8000 "
+    depends_on:
+      - postgres
 
   frontend:
     build:
@@ -47,7 +53,7 @@ services:
     restart: always
 
   celery:
-    command: celery -A core worker --loglevel=info --concurrency=1
+    command: celery -A core worker --loglevel=info --concurrency=1 -Q fila_rapida,fila_media,fila_pesada
     build:
       context: ./smartcard   
     container_name: smartcard_celery
@@ -64,8 +70,8 @@ services:
       POSTGRES_DB: smartcard
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
+    #ports:
+      #- "5432:5432"
       
 volumes:
   media_volume:
