@@ -1,8 +1,11 @@
-from django.urls import include, path
-from rest_framework import routers
 from smartcard.views import UserViewSetApi, carregar_acesso, lista_usuarios
 from smartcard.api import AcessoViewSet, GroupViewSet, ListTasksApiView, UsuarioViewSet
+
+from django.urls import include, path
+
+from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 
 router = routers.DefaultRouter()
 router.register(r"userAuth", UserViewSetApi)

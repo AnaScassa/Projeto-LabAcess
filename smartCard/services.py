@@ -1,7 +1,8 @@
-from fuzzywuzzy import fuzz
+from django.conf import settings
+
 import os
 import uuid
-from django.conf import settings
+
 
 def vincular_por_matricula(usuario, profiles):
     matricula = str(usuario.matricula).strip()

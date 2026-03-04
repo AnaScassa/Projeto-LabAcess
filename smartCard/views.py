@@ -3,20 +3,18 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework_api_key.permissions import HasAPIKey
+
 from .tasks import processar_xls
 from .services import salvar_arquivo_temporario
-from django.urls import reverse
-from django_celery_results.models import TaskResult
-
-from smartcard.models import Acesso, Usuario
-from users.models import User
 from .serializers import UserApiSerializer
-from rest_framework_api_key.permissions import HasAPIKey
-from .models import Usuario, Processamento
-import uuid
+from .models import Usuario, Acesso, Processamento
+from users.models import User
+from django_celery_results.models import TaskResult
 from django.db import transaction
+
+import uuid
+
 
 class UserViewSetApi(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by("-date_joined")

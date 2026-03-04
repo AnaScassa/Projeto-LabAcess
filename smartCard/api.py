@@ -1,20 +1,21 @@
-from django.contrib.auth.models import Group
+from smartcard.serializers import (
+    GroupSerializer,
+    UserSerializer,
+    AcessoSerializer,
+    UsuarioSerializer,
+)
+
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework.authentication import SessionAuthentication
+
 from smartcard.models import User, Acesso, Usuario
+from django.contrib.auth.models import Group
 from celery import current_app
 from rest_framework.viewsets import ViewSet
-from smartcard.serializers import (
-    GroupSerializer,
-    UserSerializer,
-    AcessoSerializer,
-    UsuarioSerializer,
-    TaskSerializer,
-)
 from smartcard.views import agora_por_fila
 
 

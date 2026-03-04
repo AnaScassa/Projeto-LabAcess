@@ -1,27 +1,18 @@
-from linecache import cache
-from signal import signal
-from celery import shared_task
-import pandas as pd
-import requests
-from django.utils import timezone
-from celery.signals import after_task_publish 
-from celery import current_app
-
-from .models import Usuario, Acesso, Processamento
-from fuzzywuzzy import fuzz
-from .services import vincular_por_matricula
-
 from django.core.cache import cache
-
-from celery import shared_task
-import pandas as pd
-import requests
 from django.utils import timezone
-from django.core.cache import cache
 from django.conf import settings
 
-from .models import Usuario, Acesso
+from celery import shared_task, shared_task
+from celery import vincular_por_matricula
 from celery import chain
+
+from .models import Usuario, Acesso
+from linecache import cache
+from fuzzywuzzy import fuzz
+
+import pandas as pd
+import requests
+
 
 @shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={"max_retries": 3},)
 def processar_xls(self, caminho_arquivo):
@@ -31,8 +22,8 @@ def processar_xls(self, caminho_arquivo):
     df = pd.read_excel(caminho_arquivo)
 
     headers = {
-        "X-Api-Key": "pbkdf2_sha256$1200000$aonByYw2GbwuyDvrGd1z9w4x5BO477iAMn69G1gs3W1C3n1ZmLwxHpBZoKFIIQV0=",
-        "Authorization": "Api-Key xb8vL1sU.wnTtzS31MbyyKeRICGTxTfvHKuxTSBt0",
+        "X-Api-Key": settings.SECRET_API_KEY,
+        "Authorization": f"Api-Key {settings.SECRET_AUTHORIZATION}"
     }
 
     profiles = cache.get("profiles")

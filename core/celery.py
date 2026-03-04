@@ -1,6 +1,8 @@
-import os
 from celery import Celery
 from kombu import Queue
+
+import os
+
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 

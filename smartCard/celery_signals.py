@@ -7,6 +7,7 @@ from celery.signals import (
 from .models import Processamento
 from django.db import transaction
 
+
 #start transaction
 @task_prerun.connect(weak=False)
 def task_iniciada(sender=None, task_id=None, task=None, **kwargs):

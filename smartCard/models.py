@@ -1,11 +1,5 @@
 from django.db import models
-import requests
-from thefuzz import fuzz
-from django.db import models
-from thefuzz import fuzz
-from users.models import User, UserProfile
 
-from django.db import models
 
 class Usuario(models.Model):
     matricula = models.CharField(max_length=20, unique=True)
@@ -55,6 +49,8 @@ class Processamento(models.Model):
     user = models.CharField(max_length=100,  null=True, unique=False)
     task_id_parent = models.CharField(max_length=255, null=True, unique=False)
 
+    class Meta:
+        unique_together = ('id', 'task_id', 'status')
 
     def __str__(self):
         return f"{self.task_id} - {self.status}"
