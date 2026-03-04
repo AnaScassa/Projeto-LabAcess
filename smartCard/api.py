@@ -3,6 +3,7 @@ from smartcard.serializers import (
     UserSerializer,
     AcessoSerializer,
     UsuarioSerializer,
+    ProcessamentoSerializer
 )
 
 from rest_framework.response import Response
@@ -11,12 +12,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.decorators import action
 
-from smartcard.models import User, Acesso, Usuario
+from smartcard.models import Acesso, Usuario, Processamento
+from users.models import User
 from django.contrib.auth.models import Group
-from celery import current_app
-from rest_framework.viewsets import ViewSet
-from smartcard.views import agora_por_fila
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -46,34 +46,14 @@ class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return super().get_queryset()
 
+class TaskCompleted(viewsets.ModelViewSet):
+    queryset = Processamento.objects.all()
+    serializer_class = ProcessamentoSerializer
 
-class ListTasksApiView(ViewSet):
-
-    def list(self, request):
-        i = current_app.control.inspect()
-        stats = i.stats() or {}
-
-        total_por_fila = {
-            "fila_rapida": 0,
-            "fila_media": 0,
-            "fila_pesada": 0,
-        }
-
-        for worker, info in stats.items():
-            total = info.get("total", {})
-
-            for task_name, count in total.items():
-                if "tentar_vincular_user_auth" in task_name:
-                    total_por_fila["fila_rapida"] += count
-                elif "tentar_vincular_por_nome" in task_name:
-                    total_por_fila["fila_media"] += count
-                elif "processar_xls" in task_name:
-                    total_por_fila["fila_pesada"] += count
+    @action(detail=False, methods=['get'])
+    def status(self, request):
+        tem_tasks = Processamento.objects.exists()
 
         return Response({
-            "workers_online": len(stats),
-            "workers": list(stats.keys()),
-            "total_por_fila": total_por_fila,
-            "em_execucao_agora": agora_por_fila(),
+            "tem_tasks": tem_tasks
         })
-    

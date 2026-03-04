@@ -1,5 +1,5 @@
 from smartcard.views import UserViewSetApi, carregar_acesso, lista_usuarios
-from smartcard.api import AcessoViewSet, GroupViewSet, ListTasksApiView, UsuarioViewSet
+from smartcard.api import AcessoViewSet, GroupViewSet, UsuarioViewSet, TaskCompleted
 
 from django.urls import include, path
 
@@ -12,7 +12,7 @@ router.register(r"userAuth", UserViewSetApi)
 router.register(r"groups", GroupViewSet)
 router.register(r"acessos", AcessoViewSet)
 router.register(r"usuarios", UsuarioViewSet)
-router.register(r"tasks", ListTasksApiView, basename="tasks")
+router.register(r"processamento", TaskCompleted)
 
 urlpatterns = [
     path('', include(router.urls)),

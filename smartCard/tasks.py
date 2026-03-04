@@ -3,9 +3,9 @@ from django.utils import timezone
 from django.conf import settings
 
 from celery import shared_task, shared_task
-from celery import vincular_por_matricula
 from celery import chain
 
+from .services import vincular_por_matricula
 from .models import Usuario, Acesso
 from linecache import cache
 from fuzzywuzzy import fuzz

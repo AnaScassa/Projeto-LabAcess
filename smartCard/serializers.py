@@ -1,4 +1,5 @@
-from smartcard.models import User, UserProfile, Acesso, Usuario
+from smartcard.models import Acesso, Usuario, Processamento
+from users.models import User, UserProfile
 from rest_framework import serializers
 from django.contrib.auth.models import Group
 
@@ -16,11 +17,16 @@ class UserApiSerializer(serializers.ModelSerializer):
             "date_joined"
         ]
 
+class ProcessamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Processamento
+        fields = '__all__'
+
 class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
     acessos = serializers.SerializerMethodField()
     user_auth_id = serializers.SerializerMethodField() 
     class Meta:
-        model = Usuario
+        model = Usuario 
         fields = [
             'url',
             'id',

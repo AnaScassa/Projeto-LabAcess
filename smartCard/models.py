@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class Usuario(models.Model):
     matricula = models.CharField(max_length=20, unique=True)
     nome_usuario = models.CharField(max_length=100)

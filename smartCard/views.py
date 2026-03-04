@@ -110,14 +110,24 @@ def agora_por_fila():
     }
 
 @api_view(['GET'])
-def status_task(request, task_id):
-    processamento = Processamento.objects.filter(task_id=task_id).first()
+def verificar_tasks_user(request, user_id):
 
-    if not processamento:
-        return Response({"erro": "Task não encontrada"}, status=404)
+    processamentos = Processamento.objects.filter(user_id=user_id)
+
+    if not processamentos.exists():
+        return Response({"erro": "Usuário não possui tasks"}, status=404)
+
+    if processamentos.exclude(status="SUCESS").exists():
+        return Response({
+            "user_id": user_id,
+            "status": "Ainda há tasks pendentes"
+        })
+
+    processamentos.delete()
 
     return Response({
-        "task_id": processamento.task_id,
-        "status": processamento.status
+        "user_id": user_id,
+        "status": "Todas SUCESS - Tasks deletadas"
     })
- 
+
+# se tem tasks no processo, qual arquivo esta processando
