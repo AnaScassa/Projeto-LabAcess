@@ -8,9 +8,9 @@ from .models import Processamento
 from django.db import transaction
 
 
-#start transaction
 @task_prerun.connect(weak=False)
 def task_iniciada(sender=None, task_id=None, task=None, **kwargs):
+    usuario = None
     processo = Processamento.objects.filter(user__isnull=False).first()
     if processo:
         usuario = processo.user
@@ -36,13 +36,6 @@ def task_enviada(sender=None, headers=None, **kwargs):
                 "status": "PENDING"
             }
         )
-   
-@task_prerun.connect(weak=False)
-def task_iniciada(sender=None, task_id=None, **kwargs):
-
-    Processamento.objects.filter(
-        task_id=task_id
-    ).update(status="PROCESSANDO")
 
 
 @task_success.connect(weak=False)
@@ -50,10 +43,21 @@ def task_finalizada(sender=None, result=None, **kwargs):
 
     task_id = sender.request.id
 
-    Processamento.objects.filter(
-        task_id=task_id
-    ).update(status="SUCCESS")
+    processo = Processamento.objects.filter(task_id=task_id).first()
 
+    if not processo:
+        return
+
+    processo.status = "SUCCESS"
+    processo.save()
+
+    user = processo.user
+
+    total = Processamento.objects.filter(user=user).count()
+    success = Processamento.objects.filter(user=user, status="SUCCESS").count()
+
+    if total == success and total > 0:
+        Processamento.objects.filter(user=user).delete()
 
 @task_failure.connect(weak=False)
 def task_erro(sender=None, task_id=None, exception=None, **kwargs):

@@ -109,25 +109,11 @@ def agora_por_fila():
         ).count(),
     }
 
-@api_view(['GET'])
-def verificar_tasks_user(request, user_id):
+def verificar_tasks_user(user, user_id):
 
-    processamentos = Processamento.objects.filter(user_id=user_id)
+    total = Processamento.objects.filter(user=user, user_id=user_id).count()
+    success = Processamento.objects.filter(user=user, status="SUCCESS", user_id=user_id).count()
 
-    if not processamentos.exists():
-        return Response({"erro": "Usuário não possui tasks"}, status=404)
-
-    if processamentos.exclude(status="SUCESS").exists():
-        return Response({
-            "user_id": user_id,
-            "status": "Ainda há tasks pendentes"
-        })
-
-    processamentos.delete()
-
-    return Response({
-        "user_id": user_id,
-        "status": "Todas SUCESS - Tasks deletadas"
-    })
-
-# se tem tasks no processo, qual arquivo esta processando
+    if total == success:
+        Processamento.objects.filter(user=user).delete()
+        
