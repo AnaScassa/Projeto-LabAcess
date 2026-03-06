@@ -7,6 +7,7 @@ export default function Upload() {
   const [mensagem, setMensagem] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
 
   useEffect(() => {
 
@@ -31,9 +32,12 @@ export default function Upload() {
         const data = await res.json();
 
         if (data && Object.keys(data).length > 0) {
+          setEstaBloqueado(true);
           setLoading(true);
         } else {
+          setEstaBloqueado(false);
           setLoading(false);
+          setMensagem("Página pronta para novo upload");
         }
 
       } catch (error) {
@@ -44,12 +48,12 @@ export default function Upload() {
     verificarProcessamento(); 
 
     const interval = setInterval(verificarProcessamento, 3000);
-
     return () => clearInterval(interval);
 
   }, []);
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+    setEstaBloqueado(true);
     e.preventDefault();
 
     if (!token) {
@@ -84,13 +88,18 @@ export default function Upload() {
       );
 
       if (!response.ok) {
-        throw new Error("Erro ao enviar arquivo");
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem("access");
+          window.location.replace("/login");
+          return;
+        }
+        throw new Error("Deslogado");
       }
 
-      setMensagem("Arquivo enviado, processamento sendo feito");
+      setMensagem("processamento sendo feito");
 
       setLoading(true);
-
+      setEstaBloqueado(false);
     } catch (error) {
       setMensagem("Erro no upload.");
     }
@@ -103,21 +112,21 @@ export default function Upload() {
       <form onSubmit={handleUpload}>
         <input type="file" id="fileInput" accept=".xls,.xlsx" />
         <br /><br />
-        <button type="submit">
-          Enviar
+        <button type="submit" id="btnEnviar" disabled={estaBloqueado}>
+          {estaBloqueado ? "Enviando..." : "Enviar"}
         </button>
       </form>
       <center>
       {loading && (
-        <div style={{ marginTop: "20px" }}>
-          <TailSpin
-            height="50"
-            width="50"
-            color="#ffffff"
-            ariaLabel="loading-spinner"
-          />
-        </div>
-      )}
+      <div style={{ marginTop: "20px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <TailSpin
+          height="50"
+          width="50"
+          color="#ffffff"
+          ariaLabel="loading-spinner"
+        />
+      </div>
+    )}
       </center>
 
       <p>{mensagem}</p>
