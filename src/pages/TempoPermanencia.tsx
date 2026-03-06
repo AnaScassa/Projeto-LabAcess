@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CalculadorTempo from "../components/CalculadorTempo";
 import FiltroPortasCheckbox from "../components/FiltroPortasCheckbox";
+import Filtrotempo from "../components/FiltroTempo";
 import { authFetch } from "../services/auth";
 
 type Usuario = {
@@ -16,7 +17,9 @@ export default function TempoPermanencia() {
   const [usuarioAtual, setUsuarioAtual] = useState<Usuario | null>(null);  
   const [usuarioSelecionado, setUsuarioSelecionado] = useState("");
   const [portasSelecionadas, setPortasSelecionadas] = useState<string[]>([]);  
-  console.log("TOKEN:", localStorage.getItem("access"));
+  const [tempoInicio, setTempoInicio] = useState<Date | null>(null);
+  const [tempoFim, setTempoFim] = useState<Date | null>(null);
+
   useEffect(() => {
     async function carregarUsuarios() {
       try {
@@ -89,10 +92,18 @@ export default function TempoPermanencia() {
         onChange={setPortasSelecionadas}
       />
 
+      <Filtrotempo
+        onChange={(inicio, fim) => {
+          setTempoInicio(inicio);
+          setTempoFim(fim);
+        }}
+      />
       <CalculadorTempo
         usuario={usuarioAtual}
         usuarios={usuarios}
         portasSelecionadas={portasSelecionadas}
+        tempoInicio={tempoInicio}
+        tempoFim={tempoFim}
       />
     </div>
   );

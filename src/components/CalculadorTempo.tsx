@@ -10,6 +10,8 @@ interface CalculadorTempoProps {
   usuario: any;
   usuarios?: any[];
   portasSelecionadas: string[];
+  tempoInicio: Date | null;
+  tempoFim: Date | null;
 }
 
 interface Resultado {
@@ -23,8 +25,10 @@ interface Resultado {
 export default function CalculadorTempo({
   usuario,
   usuarios = [],
-  portasSelecionadas
-}: CalculadorTempoProps) {
+  portasSelecionadas,
+  tempoInicio,
+  tempoFim
+}: CalculadorTempoProps){
 
   const [resultados, setResultados] = useState<Resultado[]>([]);
 
@@ -46,7 +50,7 @@ export default function CalculadorTempo({
       return;
     }
     calcularPermanencia(usuario, portasSelecionadas);
-  }, [usuario, portasSelecionadas, usuarios]);
+  }, [usuario, portasSelecionadas, usuarios, tempoInicio, tempoFim]);
 
   function getNomeUsuario(matricula: string) {
     const u = usuarios.find((x) => x.matricula === matricula);
@@ -65,6 +69,17 @@ export default function CalculadorTempo({
     }
 
     let acessos = [...(user.acessos || [])];
+
+    if (tempoInicio || tempoFim) {
+      acessos = acessos.filter((a: any) => {
+        const data = new Date(a.data_acesso);
+
+        if (tempoInicio && data < tempoInicio) return false;
+        if (tempoFim && data > tempoFim) return false;
+
+        return true;
+      });
+    }
 
     if (portas.length > 0 && !portas.includes("todas")) {
       acessos = acessos.filter((a: any) => portas.includes(a.desc_area));

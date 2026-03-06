@@ -82,7 +82,6 @@ export default function Usuarios() {
             <th>ID</th>
             <th>Matrícula</th>
             <th>Nome</th>
-            <th>Áreas Acessadas</th>
           </tr>
         </thead>
         <tbody>
@@ -91,17 +90,6 @@ export default function Usuarios() {
               <td>{u.id}</td>
               <td>{u.matricula}</td>
               <td>{u.nome_usuario}</td>
-              <td>
-                {u.acessos && u.acessos.length > 0 ? (
-                  u.acessos.map((a, index) => (
-                    <div key={index}>
-                      {a[0]} - {a[1]} ({a[2]})
-                    </div>
-                  ))
-                ) : (
-                  "Sem acessos"
-                )}
-              </td>
             </tr>
           ))}
         </tbody>

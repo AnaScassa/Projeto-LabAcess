@@ -66,7 +66,7 @@ export default function Listagem() {
             <th>Área</th>
             <th>Leitor</th>
             <th>Entrada/Saída</th>
-            <th>Usuário</th> {/* corrigido */}
+            <th>Usuário</th> 
           </tr>
         </thead>
         <tbody>
