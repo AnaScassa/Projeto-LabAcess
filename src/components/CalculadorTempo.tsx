@@ -31,7 +31,6 @@ export default function CalculadorTempo({
 }: CalculadorTempoProps){
 
   const [resultados, setResultados] = useState<Resultado[]>([]);
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -130,11 +129,13 @@ export default function CalculadorTempo({
           const minutos = calcularMinutos(stack, dataHoraObj);
 
           if (minutos <= 600) {
+            const horas = Math.floor(minutos / 60);
+            const mins = minutos % 60;
             out.push({
               usuario: getNomeUsuario(user.matricula),
               entrada: stack.toLocaleString(),
               saida: dataHoraStr,
-              permanencia: minutos + " min",
+              permanencia: `${horas}h ${mins}min`,
               porta: area
             });
           } else {
