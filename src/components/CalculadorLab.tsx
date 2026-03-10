@@ -4,6 +4,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
+import TablePagination from "@mui/material/TablePagination";
 
 interface CalculadorLabProps {
   usuarios: any[];
@@ -25,6 +26,14 @@ export default function CalculadorLab({
   const [relatorio, setRelatorio] = useState<Relatorio[]>([]);
   const [totalSistema, setTotalSistema] = useState(0);
   const [contagemUsuario, setContagemUsuario] = useState(0); 
+  const [mediaTempo, setMediaTempo] = useState("0h 0min");
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(0);
+
+  const paginaVisivel = relatorio.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   const PORTA_LAB = "CCS_LAB";
 
@@ -113,6 +122,15 @@ export default function CalculadorLab({
         });
       }
 
+      const mediaMinutos = contadorUsuarios > 0 
+      ? Math.floor(totalGeral / contadorUsuarios)
+      : 0;
+
+      const mediaHoras = Math.floor(mediaMinutos / 60);
+      const mediaMin = mediaMinutos % 60;
+
+      setMediaTempo(`${mediaHoras}h ${mediaMin}min`);
+
     });
 
     setRelatorio(resultado);
@@ -142,7 +160,7 @@ export default function CalculadorLab({
             </TableRow>
           ) : (
 
-            relatorio.map((r, i) => (
+            paginaVisivel.map((r, i) => (
               <TableRow key={i} style={{ backgroundColor: "#bdbdbd" }}>
                 <TableCell>{r.usuario}</TableCell>
                 <TableCell>{r.tempoTotal}</TableCell>
@@ -150,14 +168,31 @@ export default function CalculadorLab({
             ))
 
           )}
-
         </TableBody>
       </Table>
+
+        <TablePagination
+          style={{color: "#f5f5f5"}}
+          component="div"
+          count={relatorio.length}
+          labelDisplayedRows = {({ from, to, count, page }) => `Página: ${page} ${from}-${to} de ${count}`}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 20, 50]}
+          onPageChange={(_, newPage) => setPage(newPage)}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+          showFirstButton = {true}
+        />
 
       <div style={{ marginTop: 20, fontSize: 18 }}>
         <strong>Total geral de permanência:</strong> {totalSistema} horas
         <br /> 
         <strong>Total de usuários:</strong> {contagemUsuario}
+        <br />
+        <strong>Média de permanência:</strong> {mediaTempo}
       </div>
 
     </div>

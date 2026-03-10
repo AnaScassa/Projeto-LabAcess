@@ -33,6 +33,10 @@ export default function CalculadorTempo({
   const [resultados, setResultados] = useState<Resultado[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalAcessos, setTotalAcessos] = useState(0);
+  const [totalAcessosErro, setTotalAcessosErro] = useState(0);
+  const [mediaTempo, setMediaTempo] = useState("0h 0min");
+  const [totalSistema, setTotalSistema] = useState(0);
 
   const paginaVisivel = resultados.slice(
     page * rowsPerPage,
@@ -62,6 +66,11 @@ export default function CalculadorTempo({
   }
 
   function calcularPermanencia(user: any, portas: string[] = []) {
+
+    let contagemAcessos = 0;
+    let contagemErro = 0;
+    let totalGeral = 0;
+
     if (!user) {
       setResultados([]);
       return;
@@ -112,6 +121,7 @@ export default function CalculadorTempo({
 
       if (tipo === "ENTRADA") {
         if (stack) {
+          contagemErro++;
           out.push({
             usuario: getNomeUsuario(user.matricula),
             entrada: stack.toLocaleString(),
@@ -131,6 +141,8 @@ export default function CalculadorTempo({
           if (minutos <= 600) {
             const horas = Math.floor(minutos / 60);
             const mins = minutos % 60;
+            contagemAcessos++ ;
+            totalGeral += minutos;
             out.push({
               usuario: getNomeUsuario(user.matricula),
               entrada: stack.toLocaleString(),
@@ -139,6 +151,7 @@ export default function CalculadorTempo({
               porta: area
             });
           } else {
+            contagemErro++;
             out.push({
               usuario: getNomeUsuario(user.matricula),
               entrada: stack.toLocaleString(),
@@ -156,6 +169,7 @@ export default function CalculadorTempo({
           }
           stacks[area] = null;
         } else {
+          contagemErro++;
           out.push({
             usuario: getNomeUsuario(user.matricula),
             entrada: "Saída sem entrada",
@@ -170,6 +184,7 @@ export default function CalculadorTempo({
     Object.keys(stacks).forEach((area) => {
       const st = stacks[area];
       if (st) {
+        contagemErro++;
         out.push({
           usuario: getNomeUsuario(user.matricula),
           entrada: st.toLocaleString(),
@@ -180,7 +195,18 @@ export default function CalculadorTempo({
       }
     });
 
+    const mediaMinutos = contagemAcessos > 0 ? Math.floor(totalGeral / contagemAcessos) : 0;
+
+      const mediaHoras = Math.floor(mediaMinutos / 60);
+      const mediaMin = mediaMinutos % 60;
+
+      setMediaTempo(`${mediaHoras}h ${mediaMin}min`);
+
     setResultados(out);
+    setTotalAcessos(contagemAcessos);
+    setTotalAcessosErro(contagemErro);
+    setTotalSistema(Number((totalGeral / 60).toFixed(2)));
+
   }
 
   return (
@@ -229,8 +255,17 @@ export default function CalculadorTempo({
           setPage(0);
         }}
       showFirstButton = {true}
-    
       />
+
+      <div>
+        <strong>Total de acessos com entrada e saída:</strong> {totalAcessos}
+        <br />
+        <strong>Total de acessos com erro:</strong> {totalAcessosErro}
+        <br />
+        <strong>Total de Tempo Permanência:</strong> {totalSistema}
+        <br />
+        <strong>Média de Tempo Permanência:</strong> {mediaTempo}
+      </div>
     </div>
   );
 }
