@@ -136,6 +136,8 @@ export default function Upload() {
 
       <Link to="/RelatorioTempo"><button>Relatório tempo</button></Link>
       <br /> <br />
+      <Link to="/naoAcessantes"><button>Relatório Não Acessantes</button></Link>
+      <br /><br />
       <Link to="/tempoPermanencia"><button>Tempo Permanência</button></Link>
     </center>
   );

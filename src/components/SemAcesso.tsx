@@ -5,25 +5,23 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 
-interface CalculadorLabProps {
+interface SemAcessoProps {
   usuarios: any[];
   tempoInicio: Date | null;
   tempoFim: Date | null;
 }
 
-interface Relatorio {
+interface UsuarioSemAcesso {
   usuario: string;
-  tempoTotal: string;
 }
 
-export default function CalculadorLab({
+export default function SemAcesso({
   usuarios = [],
   tempoInicio,
   tempoFim
-}: CalculadorLabProps) {
+}: SemAcessoProps) {
 
-  const [relatorio, setRelatorio] = useState<Relatorio[]>([]);
-  const [totalSistema, setTotalSistema] = useState(0);
+  const [semAcesso, setSemAcesso] = useState<UsuarioSemAcesso[]>([]);
   const [contagemUsuario, setContagemUsuario] = useState(0); 
 
   const PORTA_LAB = "CCS_LAB";
@@ -40,9 +38,8 @@ export default function CalculadorLab({
 
   useEffect(() => {
 
-    const resultado: Relatorio[] = [];
+    const semAcessoLista: UsuarioSemAcesso[] = [];
     let contadorUsuarios = 0;
-    let totalGeral = 0;
 
     usuarios.forEach((user) => {
 
@@ -93,7 +90,6 @@ export default function CalculadorLab({
 
             if (minutos <= 600) {
               totalUsuario += minutos;
-              totalGeral += minutos;
             }
 
             stacks[area] = null;
@@ -102,21 +98,16 @@ export default function CalculadorLab({
 
       });
 
-      const horas = Math.floor(totalUsuario / 60);
-      const minutos = totalUsuario % 60;
-
-      if (totalUsuario > 0) {
+      if (totalUsuario === 0) {
         contadorUsuarios++;        
-        resultado.push({
-          usuario: getNomeUsuario(user.matricula),
-          tempoTotal: `${horas}h ${minutos}min`
+        semAcessoLista.push({
+          usuario: getNomeUsuario(user.matricula)
         });
       }
 
     });
 
-    setRelatorio(resultado);
-    setTotalSistema(Number((totalGeral / 60).toFixed(2)));
+    setSemAcesso(semAcessoLista);
     setContagemUsuario(contadorUsuarios);
 
   }, [usuarios, tempoInicio, tempoFim]);
@@ -128,24 +119,22 @@ export default function CalculadorLab({
         <TableHead>
           <TableRow style={{ backgroundColor: "#f5f5f5" }}>
             <TableCell>Usuário</TableCell>
-            <TableCell>Tempo total</TableCell>
           </TableRow>
         </TableHead>
 
         <TableBody>
 
-          {relatorio.length === 0 ? (
+          {semAcesso.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={2}>
-                Nenhum resultado encontrado.
+              <TableCell>
+                Todos os usuários acessaram o laboratório.
               </TableCell>
             </TableRow>
           ) : (
 
-            relatorio.map((r, i) => (
+            semAcesso.map((u, i) => (
               <TableRow key={i} style={{ backgroundColor: "#bdbdbd" }}>
-                <TableCell>{r.usuario}</TableCell>
-                <TableCell>{r.tempoTotal}</TableCell>
+                <TableCell>{u.usuario}</TableCell>
               </TableRow>
             ))
 
@@ -154,11 +143,10 @@ export default function CalculadorLab({
         </TableBody>
       </Table>
 
-      <div style={{ marginTop: 20, fontSize: 18 }}>
-        <strong>Total geral de permanência:</strong> {totalSistema} horas
-        <br /> 
-        <strong>Total de usuários:</strong> {contagemUsuario}
-      </div>
+        <div style={{ marginTop: 20, fontSize: 18 }}>
+            <br /> 
+            <strong>Total de usuários:</strong> {contagemUsuario}
+        </div>
 
     </div>
   );
