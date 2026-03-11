@@ -134,9 +134,11 @@ export default function Upload() {
       <br />
       <p>Rotas para páginas:</p>
 
-      <Link to="/RelatorioTempo"><button>Relatório tempo</button></Link>
+      <Link to="/RelatorioTempo"><button hx-post="/clicked" hx-swap="outerHTML">Relatório tempo</button></Link>
       <br /> <br />
       <Link to="/naoAcessantes"><button>Relatório Não Acessantes</button></Link>
+      <br /><br />
+      <Link to="/relatorioRecente"><button>Relatório do último mês</button></Link>
       <br /><br />
       <Link to="/tempoPermanencia"><button>Tempo Permanência</button></Link>
     </center>
