@@ -5,6 +5,10 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TablePagination from "@mui/material/TablePagination";
+import { calcularTempoUsuario } from "../../utils/calcularTempoUsuario";
+import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
+import { minutosParaHoras } from "../../utils/horasMinutos";
+import { getNomeUsuario } from "../../utils/getNomeUsuario";
 
 interface CalculadorLabProps {
   usuarios: any[];
@@ -15,129 +19,49 @@ interface Relatorio {
   tempoTotal: string;
 }
 
-export default function CalculadorLab({
-  usuarios = []
-}: CalculadorLabProps) {
-
+export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
   const [relatorio, setRelatorio] = useState<Relatorio[]>([]);
-    const [totalSistema, setTotalSistema] = useState("0h 0min");
+  const [totalSistema, setTotalSistema] = useState("0h 0min");
   const [contagemUsuario, setContagemUsuario] = useState(0);
   const [mediaTempo, setMediaTempo] = useState("0h 0min");
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
 
-  const paginaVisivel = relatorio.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const paginaVisivel = relatorio.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const PORTA_LAB = "CCS_LAB";
 
-  function calcularMinutos(entrada: Date, saida: Date) {
-    return Math.floor((saida.getTime() - entrada.getTime()) / 60000);
-  }
-
-  function getNomeUsuario(matricula: string) {
-    const u = usuarios.find((x) => x.matricula === matricula);
-    if (!u) return matricula;
-    return u.nome_usuario || u.nome || u.nomeUsuario || "Usuário desconhecido";
-  }
-
   useEffect(() => {
-
     const resultado: Relatorio[] = [];
     let contadorUsuarios = 0;
     let totalGeral = 0;
 
-    const hoje = new Date();
-    const ultimoMes = new Date();
-    ultimoMes.setMonth(hoje.getMonth() - 1);
-
     usuarios.forEach((user) => {
-
-      let acessos = [...(user.acessos || [])];
-
-      // filtra apenas CCS_LAB
-      acessos = acessos.filter((a: any) => a.desc_area === PORTA_LAB);
-
-      // filtra apenas último mês
-      acessos = acessos.filter((a: any) => {
-        const data = new Date(a.data_acesso);
-        return data >= ultimoMes && data <= hoje;
-      });
-
-      const ordenado = [...acessos].sort(
-        (a: any, b: any) =>
-          new Date(a.data_acesso).getTime() -
-          new Date(b.data_acesso).getTime()
-      );
-
-      const stacks: Record<string, Date | null> = {};
-      let totalUsuario = 0;
-
-      ordenado.forEach((acesso: any) => {
-
-        const tipo = acesso.ent_sai === "1" ? "ENTRADA" : "SAIDA";
-        const dataHora = new Date(acesso.data_acesso);
-        const area = acesso.desc_area;
-
-        if (!(area in stacks)) stacks[area] = null;
-
-        const stack = stacks[area];
-
-        if (tipo === "ENTRADA") {
-          stacks[area] = dataHora;
-        }
-
-        if (tipo === "SAIDA") {
-          if (stack) {
-
-            const minutos = calcularMinutos(stack, dataHora);
-
-            if (minutos <= 600) {
-              totalUsuario += minutos;
-              totalGeral += minutos;
-            }
-
-            stacks[area] = null;
-          }
-        }
-
-      });
-
-      const horas = Math.floor(totalUsuario / 60);
-      const minutos = totalUsuario % 60;
+      const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, null, null);
 
       if (totalUsuario > 0) {
         contadorUsuarios++;
+        totalGeral += totalUsuario;
+        const { horas, minutos } = minutosParaHoras(totalUsuario);
         resultado.push({
-          usuario: getNomeUsuario(user.matricula),
+          usuario: getNomeUsuario(user.matricula, usuarios),
           tempoTotal: `${horas}h ${minutos}min`
         });
       }
-
     });
 
-    const mediaMinutos = contadorUsuarios > 0
-      ? Math.floor(totalGeral / contadorUsuarios)
-      : 0;
+    const media = mediaHorasMinutos(totalGeral, contadorUsuarios);
+    const total = minutosParaHoras(totalGeral);
 
-    const mediaHoras = Math.floor(mediaMinutos / 60);
-    const mediaMin = mediaMinutos % 60;
-
-    const mediaHoras2 = Math.floor(totalGeral / 60);
-    const mediaMin2 = mediaHoras2 % 60;
-
-    setMediaTempo(`${mediaHoras}h ${mediaMin}min`);
+    setMediaTempo(`${media.horas}h ${media.minutos}min`);
     setRelatorio(resultado);
-    setTotalSistema(`${mediaHoras2}h ${mediaMin2}min`);
+    setTotalSistema(`${total.horas}h ${total.minutos}min`);
     setContagemUsuario(contadorUsuarios);
 
   }, [usuarios]);
 
   return (
     <div style={{ padding: 20 }}>
-
       <Table>
         <TableHead>
           <TableRow style={{ backgroundColor: "#f5f5f5" }}>
@@ -145,9 +69,7 @@ export default function CalculadorLab({
             <TableCell>Tempo total</TableCell>
           </TableRow>
         </TableHead>
-
         <TableBody>
-
           {relatorio.length === 0 ? (
             <TableRow>
               <TableCell colSpan={2}>
@@ -155,18 +77,16 @@ export default function CalculadorLab({
               </TableCell>
             </TableRow>
           ) : (
-
             paginaVisivel.map((r, i) => (
               <TableRow key={i} style={{ backgroundColor: "#bdbdbd" }}>
                 <TableCell>{r.usuario}</TableCell>
                 <TableCell>{r.tempoTotal}</TableCell>
               </TableRow>
             ))
-
           )}
+
         </TableBody>
       </Table>
-
       <TablePagination
         style={{ color: "#f5f5f5" }}
         component="div"
@@ -184,15 +104,13 @@ export default function CalculadorLab({
         }}
         showFirstButton={true}
       />
-
       <div style={{ marginTop: 20, fontSize: 18 }}>
         <strong>Total de usuários:</strong> {contagemUsuario}
         <br />
-        <strong>Total geral de permanência:</strong> {totalSistema} horas
+        <strong>Total geral de permanência:</strong> {totalSistema}
         <br />
         <strong>Média de permanência:</strong> {mediaTempo}
       </div>
-
     </div>
   );
 }

@@ -1,49 +1,18 @@
-import { useEffect, useState } from "react";
-import CalculadorTempo from "../components/CalculadorTempo";
-import FiltroPortasCheckbox from "../components/FiltroPortasCheckbox";
-import Filtrotempo from "../components/FiltroTempo";
-import { authFetch } from "../services/auth";
-
-type Usuario = {
-  matricula: string;
-  nome_usuario: string;
-  acessos?: {
-    desc_area: string;
-  }[];
-};
+import { useState } from "react";
+import { useUsuarios } from "../hooks/useUsuarios";
+import type { Usuario } from "../types/Usuario";
+import CalculadorTempo from "../components/logicas/CalculadorTempo";
+import FiltroPortasCheckbox from "../components/logicas/FiltroPortasCheckbox";
+import Filtrotempo from "../components/logicas/FiltroTempo";
+import BotaoVoltar from "../components/style/BotaoVoltar";
 
 export default function TempoPermanencia() {
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);  
   const [usuarioAtual, setUsuarioAtual] = useState<Usuario | null>(null);  
   const [usuarioSelecionado, setUsuarioSelecionado] = useState("");
   const [portasSelecionadas, setPortasSelecionadas] = useState<string[]>([]);  
   const [tempoInicio, setTempoInicio] = useState<Date | null>(null);
   const [tempoFim, setTempoFim] = useState<Date | null>(null);
-
-  useEffect(() => {
-    async function carregarUsuarios() {
-      try {
-        const res = await authFetch(
-          "http://localhost:8000/api/acesso/usuarios/"
-        );
-
-        if (!res) return;
-
-        if (!res.ok) {
-          throw new Error("Não autorizado");
-        }
-
-        const data = await res.json();
-        setUsuarios(data);
-      } catch (error) {
-        console.error("Erro ao carregar usuários:", error);
-        console.error(error);
-      }
-    }
-    
-
-    carregarUsuarios();
-  }, []);
+  const { usuarios } = useUsuarios();
 
   const portas = Array.from(
     new Set(
@@ -69,9 +38,7 @@ export default function TempoPermanencia() {
   return (
     <div>
       <h1>Tempo de Permanência</h1>
-      <a href="/upload">
-      <button style={{ margin: "0 20px 20px 0" }}>Voltar</button>
-      </a>
+      <BotaoVoltar/>
       <label>Usuário: </label>
       <select
         value={usuarioSelecionado}

@@ -5,6 +5,11 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TablePagination from "@mui/material/TablePagination";
+import { calcularMinutos } from "../../utils/tempo";
+import { getNomeUsuario } from "../../utils/getNomeUsuario";
+import { filtrarPorData } from "../../utils/filtroData";
+import { minutosParaHoras } from "../../utils/horasMinutos";
+import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
 
 interface CalculadorTempoProps {
   usuario: any;
@@ -38,10 +43,7 @@ export default function CalculadorTempo({
   const [mediaTempo, setMediaTempo] = useState("0h 0min");
   const [totalSistema, setTotalSistema] = useState(0);
 
-  const paginaVisivel = resultados.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const paginaVisivel = resultados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   useEffect(() => {
     setPage(0);
@@ -55,127 +57,77 @@ export default function CalculadorTempo({
     calcularPermanencia(usuario, portasSelecionadas);
   }, [usuario, portasSelecionadas, usuarios, tempoInicio, tempoFim]);
 
-  function getNomeUsuario(matricula: string) {
-    const u = usuarios.find((x) => x.matricula === matricula);
-    if (!u) return matricula;
-    return u.nome_usuario || u.nome || u.nomeUsuario || "Usuário desconhecido";
-  }
-
-  function calcularMinutos(entrada: Date, saida: Date) {
-    return Math.floor((saida.getTime() - entrada.getTime()) / 60000);
-  }
-
   function calcularPermanencia(user: any, portas: string[] = []) {
-
     let contagemAcessos = 0;
     let contagemErro = 0;
     let totalGeral = 0;
-
-    if (!user) {
-      setResultados([]);
-      return;
-    }
-
     let acessos = [...(user.acessos || [])];
 
-    if (tempoInicio || tempoFim) {
-      acessos = acessos.filter((a: any) => {
-        const data = new Date(a.data_acesso);
-
-        if (tempoInicio && data < tempoInicio) return false;
-        if (tempoFim && data > tempoFim) return false;
-
-        return true;
-      });
-    }
+    acessos = filtrarPorData(acessos, tempoInicio, tempoFim);
 
     if (portas.length > 0 && !portas.includes("todas")) {
       acessos = acessos.filter((a: any) => portas.includes(a.desc_area));
     }
 
-    const ordenado = [...acessos].sort(
-      (a: any, b: any) =>
-        new Date(a.data_acesso).getTime() -
-        new Date(b.data_acesso).getTime()
-    );
-
-    const data = ordenado.filter(
-      (item: any, index: number, array: any[]) => {
-        if (index === 0) return true;
-        if (item.desc_area !== array[index - 1].desc_area) return true;
-        return item.data_acesso !== array[index - 1].data_acesso;
-      }
-    );
-
+    const ordenado = [...acessos].sort((a: any, b: any) => new Date(a.data_acesso).getTime() - new Date(b.data_acesso).getTime());
     const stacks: Record<string, Date | null> = {};
     const out: Resultado[] = [];
 
-    data.forEach((acesso: any) => {
+    ordenado.forEach((acesso: any) => {
       const tipo = acesso.ent_sai === "1" ? "ENTRADA" : "SAIDA";
-      const dataHoraObj = new Date(acesso.data_acesso);
-      const dataHoraStr = dataHoraObj.toLocaleString();
+      const dataHora = new Date(acesso.data_acesso);
+      const dataHoraStr = dataHora.toLocaleString();
       const area = acesso.desc_area;
 
       if (!(area in stacks)) stacks[area] = null;
+
       const stack = stacks[area];
 
       if (tipo === "ENTRADA") {
-        if (stack) {
-          contagemErro++;
-          out.push({
-            usuario: getNomeUsuario(user.matricula),
-            entrada: stack.toLocaleString(),
-            saida: "Entrada sem saída",
-            permanencia: "Indisponível",
-            porta: area
-          });
-        }
-        stacks[area] = dataHoraObj;
+        stacks[area] = dataHora;
         return;
       }
 
       if (tipo === "SAIDA") {
         if (stack) {
-          const minutos = calcularMinutos(stack, dataHoraObj);
+          const totalMinutos = calcularMinutos(stack, dataHora);
+          if (totalMinutos <= 600) {
+            const { horas, minutos } = minutosParaHoras(totalMinutos);
+            contagemAcessos++;
+            totalGeral += totalMinutos;
 
-          if (minutos <= 600) {
-            const horas = Math.floor(minutos / 60);
-            const mins = minutos % 60;
-            contagemAcessos++ ;
-            totalGeral += minutos;
             out.push({
-              usuario: getNomeUsuario(user.matricula),
+              usuario: getNomeUsuario(user.matricula, usuarios),
               entrada: stack.toLocaleString(),
               saida: dataHoraStr,
-              permanencia: `${horas}h ${mins}min`,
+              permanencia: `${horas}h ${minutos}min`,
               porta: area
             });
+
           } else {
+            
             contagemErro++;
             out.push({
-              usuario: getNomeUsuario(user.matricula),
+              usuario: getNomeUsuario(user.matricula, usuarios),
               entrada: stack.toLocaleString(),
               saida: "Entrada sem saída",
               permanencia: "Indisponível",
               porta: area
             });
-            out.push({
-              usuario: getNomeUsuario(user.matricula),
-              entrada: "Saída sem entrada",
-              saida: dataHoraStr,
-              permanencia: "Indisponível",
-              porta: area
-            });
           }
+
           stacks[area] = null;
+
         } else {
+
           contagemErro++;
           out.push({
-            usuario: getNomeUsuario(user.matricula),
+            usuario: getNomeUsuario(user.matricula, usuarios),
             entrada: "Saída sem entrada",
             saida: dataHoraStr,
             permanencia: "Indisponível",
             porta: area
+
           });
         }
       }
@@ -183,10 +135,12 @@ export default function CalculadorTempo({
 
     Object.keys(stacks).forEach((area) => {
       const st = stacks[area];
+
       if (st) {
         contagemErro++;
+
         out.push({
-          usuario: getNomeUsuario(user.matricula),
+          usuario: getNomeUsuario(user.matricula, usuarios),
           entrada: st.toLocaleString(),
           saida: "Entrada sem saída",
           permanencia: "Indisponível",
@@ -195,18 +149,13 @@ export default function CalculadorTempo({
       }
     });
 
-    const mediaMinutos = contagemAcessos > 0 ? Math.floor(totalGeral / contagemAcessos) : 0;
+    const { horas, minutos } = mediaHorasMinutos(totalGeral, contagemAcessos);
 
-      const mediaHoras = Math.floor(mediaMinutos / 60);
-      const mediaMin = mediaMinutos % 60;
-
-      setMediaTempo(`${mediaHoras}h ${mediaMin}min`);
-
+    setMediaTempo(`${horas}h ${minutos}min`);
     setResultados(out);
     setTotalAcessos(contagemAcessos);
     setTotalAcessosErro(contagemErro);
     setTotalSistema(Number((totalGeral / 60).toFixed(2)));
-
   }
 
   return (
@@ -221,11 +170,12 @@ export default function CalculadorTempo({
             <TableCell>Tempo Permanência</TableCell>
           </TableRow>
         </TableHead>
-
         <TableBody>
           {paginaVisivel.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5}>Nenhum resultado encontrado.</TableCell>
+              <TableCell colSpan={5}>
+                Nenhum resultado encontrado.
+              </TableCell>
             </TableRow>
           ) : (
             paginaVisivel.map((r, i) => (
@@ -240,29 +190,29 @@ export default function CalculadorTempo({
           )}
         </TableBody>
       </Table>
-
       <TablePagination
         style={{color: "#f5f5f5"}}
         component="div"
         count={resultados.length}
-        labelDisplayedRows = {({ from, to, count, page }) => `Página: ${page} ${from}-${to} de ${count}`}
+        labelDisplayedRows={({ from, to, count, page }) =>
+          `Página: ${page} ${from}-${to} de ${count}`
+        }
         page={page}
         rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 20, 50]}
+        rowsPerPageOptions={[5,10,20,50]}
         onPageChange={(_, newPage) => setPage(newPage)}
         onRowsPerPageChange={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 10));
+          setRowsPerPage(parseInt(e.target.value,10));
           setPage(0);
         }}
-      showFirstButton = {true}
+        showFirstButton={true}
       />
-
       <div>
         <strong>Total de acessos com entrada e saída:</strong> {totalAcessos}
         <br />
         <strong>Total de acessos com erro:</strong> {totalAcessosErro}
         <br />
-        <strong>Total de Tempo Permanência:</strong> {totalSistema}
+        <strong>Total de Tempo Permanência:</strong> {totalSistema} horas
         <br />
         <strong>Média de Tempo Permanência:</strong> {mediaTempo}
       </div>
