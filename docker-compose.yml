@@ -19,7 +19,7 @@ services:
             - ./node_modules/
             - ./.venv/
             - ./docker/
-    command: > 
+    command: >
             sh -c "python manage.py migrate &&
             python manage.py init_users &&
             python manage.py runserver 0.0.0.0:8000 "
@@ -71,7 +71,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     #ports:
-      #- "5432:5432"
+    #  - "5432:5432"
+    volumes:
+      - postgres_smartcard:/var/lib/postgresql/data
       
 volumes:
   media_volume:
+  postgres_smartcard:

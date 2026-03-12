@@ -1,6 +1,18 @@
 from rest_framework import serializers
-from .models import UserProfile, DegreeArea, User
+from .models import UserProfile, DegreeArea, User, SafetyTraining
 
+
+class SafetyTrainingSerializer(serializers.ModelSerializer):
+    class Meta:
+        user_id = serializers.PrimaryKeyRelatedField(
+            many=True,
+            queryset=DegreeArea.objects.all()
+        )
+        model = SafetyTraining
+        fields = [
+            "user_id",
+            "expiration_date"
+        ]
 
 class UserProfileSerializer(serializers.ModelSerializer):
     degree_area = serializers.PrimaryKeyRelatedField(

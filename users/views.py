@@ -3,8 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_api_key.permissions import HasAPIKey
 
 from django.contrib.auth import get_user_model
-from .serializers import UserProfileSerializer, UserSerializer
-from .models import UserProfile
+from .serializers import UserProfileSerializer, UserSerializer, SafetyTrainingSerializer
+from .models import UserProfile, SafetyTraining
 
 
 class UserProfileViewSet(ModelViewSet):
@@ -19,13 +19,15 @@ class UserProfileViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-
-
 User = get_user_model()
-
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated | HasAPIKey]
     #authentication_classes = [JWTAuthentication]
+
+class UsersSafetyTraining(ModelViewSet):
+    queryset = SafetyTraining.objects.all()
+    serializer_class = SafetyTrainingSerializer
+    permission_classes = [IsAuthenticated | HasAPIKey]

@@ -22,7 +22,7 @@ def processar_xls(self, caminho_arquivo):
 
     headers = {
         "X-Api-Key": "pbkdf2_sha256$1200000$aonByYw2GbwuyDvrGd1z9w4x5BO477iAMn69G1gs3W1C3n1ZmLwxHpBZoKFIIQV0=",
-        "Authorization": "Api-Key Nzug8orJ.sGi4AuTNuHvlv54B0NQDisV7TnWzBRXW"
+        "Authorization": "Api-Key z6jH34jy.CiOHi1UNqepxQtl67sezuHp9qhHSOjIW"
     }
 
     profiles = cache.get("profiles")
@@ -45,9 +45,6 @@ def processar_xls(self, caminho_arquivo):
 
         cache.set("profiles", profiles, timeout=600)
         cache.set("users", users, timeout=600)
-
-    print("Profiles carregados:", len(profiles))
-    print("Users carregados:", len(users))
 
     for _, row in df.iterrows():
         matricula = str(row.get("MATRICULA", "")).strip()
