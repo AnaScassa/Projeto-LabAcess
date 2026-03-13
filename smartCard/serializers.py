@@ -2,7 +2,7 @@ from smartcard.models import Acesso, Usuario, Processamento
 from users.models import User, UserProfile
 from rest_framework import serializers
 from django.contrib.auth.models import Group
-
+from django.utils.timezone import localtime
 
 class UserApiSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,6 +25,7 @@ class ProcessamentoSerializer(serializers.ModelSerializer):
 class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
     acessos = serializers.SerializerMethodField()
     user_auth_id = serializers.SerializerMethodField() 
+
     class Meta:
         model = Usuario 
         fields = [
@@ -37,13 +38,16 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
     def get_acessos(self, obj):
-        return list(
-            obj.acessos.values(
-                'data_acesso',
-                'desc_area',
-                'ent_sai'
-            )
-        )
+        acessos = obj.acessos.all()
+
+        return [
+            {
+                "data_acesso": localtime(acesso.data_acesso),
+                "desc_area": acesso.desc_area,
+                "ent_sai": acesso.ent_sai,
+            }
+            for acesso in acessos
+        ]
 
     def get_user_auth_id(self, obj):
         return obj.user_auth if obj.user_auth is not None else None
