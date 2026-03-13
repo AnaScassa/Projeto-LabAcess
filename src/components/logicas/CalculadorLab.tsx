@@ -8,6 +8,7 @@ import TablePagination from "@mui/material/TablePagination";
 import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
 import { processarResultadoUsuario } from "../../utils/processarResultadoUsuario";
 import { calcularTempoUsuario } from "../../utils/calcularTempoUsuario";
+import type { Relatorio } from "../../types/Relatorio";
 
 interface CalculadorLabProps {
   usuarios: any[];
@@ -15,45 +16,40 @@ interface CalculadorLabProps {
   tempoFim: Date | null;
 }
 
-interface Relatorio {
-  usuario: string;
-  tempoTotal: string;
-}
-
 export default function CalculadorLab({
   usuarios = [],
   tempoInicio,
   tempoFim
 }: CalculadorLabProps) {
-  const [relatorio, setRelatorio] = useState<Relatorio[]>([]);
-  const [totalSistema, setTotalSistema] = useState(0);
-  const [contagemUsuario, setContagemUsuario] = useState(0);
-  const [mediaTempo, setMediaTempo] = useState("0h 0min");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [page, setPage] = useState(0);
+    const [relatorio, setRelatorio] = useState<Relatorio[]>([]);
+    const [totalSistema, setTotalSistema] = useState(0);
+    const [contagemUsuario, setContagemUsuario] = useState(0);
+    const [mediaTempo, setMediaTempo] = useState("0h 0min");
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [page, setPage] = useState(0);
 
-  const paginaVisivel = relatorio.slice( page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  const PORTA_LAB = "CCS_LAB";
+    const paginaVisivel = relatorio.slice( page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    const PORTA_LAB = "CCS_LAB";
 
-  useEffect(() => {
-    const resultado: Relatorio[] = [];
-    let contadorUsuarios = 0;
-    let totalGeral = 0;
+    useEffect(() => {
+      const resultado: Relatorio[] = [];
+      let contadorUsuarios = 0;
+      let totalGeral = 0;
 
-    usuarios.forEach((user) => {
-      const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, tempoInicio, tempoFim);
-      if (totalUsuario > 0) {
-        totalGeral += totalUsuario;
-      }
-      contadorUsuarios = processarResultadoUsuario(totalUsuario, user, usuarios, resultado, contadorUsuarios);
-    });
+      usuarios.forEach((user) => {
+        const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, tempoInicio, tempoFim);
+        if (totalUsuario > 0) {
+          totalGeral += totalUsuario;
+        }
+        contadorUsuarios = processarResultadoUsuario(totalUsuario, user, usuarios, resultado, contadorUsuarios);
+      });
 
-    const { horas, minutos } = mediaHorasMinutos(totalGeral, contadorUsuarios);
+      const { horas, minutos } = mediaHorasMinutos(totalGeral, contadorUsuarios);
 
-    setMediaTempo(`${horas}h ${minutos}min`);
-    setRelatorio(resultado);
-    setTotalSistema(Number((totalGeral / 60).toFixed(2)));
-    setContagemUsuario(contadorUsuarios);
+      setMediaTempo(`${horas}h ${minutos}min`);
+      setRelatorio(resultado);
+      setTotalSistema(Number((totalGeral / 60).toFixed(2)));
+      setContagemUsuario(contadorUsuarios);
 
   }, [usuarios, tempoInicio, tempoFim]);
 

@@ -9,14 +9,10 @@ import { calcularTempoUsuario } from "../../utils/calcularTempoUsuario";
 import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
 import { minutosParaHoras } from "../../utils/horasMinutos";
 import { getNomeUsuario } from "../../utils/getNomeUsuario";
+import type { Relatorio } from "../../types/Relatorio";
 
 interface CalculadorLabProps {
   usuarios: any[];
-}
-
-interface Relatorio {
-  usuario: string;
-  tempoTotal: string;
 }
 
 export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {

@@ -3,8 +3,9 @@ import Upload from "./pages/Upload";
 import TempoPermanencia from "./pages/TempoPermanencia";
 import NaoAcessantes from "./pages/NaoAcessantes";
 import RelatorioTempo from "./pages/RelatorioTempo";
-import Login from "./pages/Login";
 import RelatorioRecente from "./pages/RelatorioRecente";
+import RelatorioTreinamento from "./pages/RelatorioTreinamento";
+import Login from "./pages/Login";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       <Route path="/tempoPermanencia" element={<TempoPermanencia />} />
       <Route path="/naoAcessantes" element={<NaoAcessantes/>}/>
       <Route path="/relatorioRecente" element={<RelatorioRecente/>}/>
+      <Route path="/relatorioTreinamento" element={<RelatorioTreinamento/>}/>
       <Route path="/login" element={<Login />} />
     </Routes>
   );

@@ -140,6 +140,8 @@ export default function Upload() {
       <br /><br />
       <Link to="/relatorioRecente"><button>Relatório do último mês</button></Link>
       <br /><br />
+      <Link to="/relatorioTreinamento"><button>Relatório de Treinamento</button></Link>
+      <br /><br />
       <Link to="/tempoPermanencia"><button>Tempo Permanência</button></Link>
     </center>
   );
