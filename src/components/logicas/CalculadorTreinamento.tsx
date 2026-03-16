@@ -21,6 +21,7 @@ export default function CalculadorTreinamento({
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+ 
 
   const paginaVisivel = treinamentos.slice(
     page * rowsPerPage,
@@ -46,8 +47,11 @@ export default function CalculadorTreinamento({
             </TableRow>
           ) : (
             paginaVisivel.map((t, index) => {
+              console.log("user_id do treinamento:", t.user_id);
+              console.log("usuarios:", usuarios);
+
               const usuario = usuarios.find(
-                u => String(u.matricula) === String(t.user_id)
+                u => String(u.user_auth_id) === String(t.user_id)
               );
 
               return (

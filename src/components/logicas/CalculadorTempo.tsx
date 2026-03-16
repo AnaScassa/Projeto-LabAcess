@@ -41,7 +41,7 @@ export default function CalculadorTempo({
   const [totalAcessos, setTotalAcessos] = useState(0);
   const [totalAcessosErro, setTotalAcessosErro] = useState(0);
   const [mediaTempo, setMediaTempo] = useState("0h 0min");
-  const [totalSistema, setTotalSistema] = useState(0);
+  const [totalSistema, setTotalSistema] = useState("0h 0min");
 
   const paginaVisivel = resultados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
@@ -150,12 +150,13 @@ export default function CalculadorTempo({
     });
 
     const { horas, minutos } = mediaHorasMinutos(totalGeral, contagemAcessos);
+    const { horas: horas2, minutos: minutos2 } = minutosParaHoras(totalGeral)
 
     setMediaTempo(`${horas}h ${minutos}min`);
     setResultados(out);
     setTotalAcessos(contagemAcessos);
     setTotalAcessosErro(contagemErro);
-    setTotalSistema(Number((totalGeral / 60).toFixed(2)));
+    setTotalSistema(`${horas2}h ${minutos2}min`);
   }
 
   return (
@@ -212,7 +213,7 @@ export default function CalculadorTempo({
         <br />
         <strong>Total de acessos com erro:</strong> {totalAcessosErro}
         <br />
-        <strong>Total de Tempo Permanência:</strong> {totalSistema} horas
+        <strong>Total de Tempo Permanência:</strong> {totalSistema} 
         <br />
         <strong>Média de Tempo Permanência:</strong> {mediaTempo}
       </div>
