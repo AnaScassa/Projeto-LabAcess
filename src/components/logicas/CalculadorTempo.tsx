@@ -10,6 +10,8 @@ import { getNomeUsuario } from "../../utils/getNomeUsuario";
 import { filtrarPorData } from "../../utils/filtroData";
 import { minutosParaHoras } from "../../utils/horasMinutos";
 import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
+import { entradaSemSaida } from "../../utils/entradaSemSaida";
+import { mesmoDia } from "../../utils/mesmoDia";
 
 interface CalculadorTempoProps {
   usuario: any;
@@ -84,14 +86,26 @@ export default function CalculadorTempo({
       const stack = stacks[area];
 
       if (tipo === "ENTRADA") {
+        if (stack !== null) {
+          contagemErro++;
+          out.push(
+            entradaSemSaida({
+              user,
+              usuarios,
+              stack,
+              area,
+              getNomeUsuario
+            })
+          );
+        }
         stacks[area] = dataHora;
         return;
       }
 
       if (tipo === "SAIDA") {
         if (stack) {
-          const totalMinutos = calcularMinutos(stack, dataHora);
-          if (totalMinutos <= 600) {
+          if (mesmoDia(stack, dataHora)) {
+            const totalMinutos = calcularMinutos(stack, dataHora);
             const { horas, minutos } = minutosParaHoras(totalMinutos);
             contagemAcessos++;
             totalGeral += totalMinutos;
@@ -105,21 +119,21 @@ export default function CalculadorTempo({
             });
 
           } else {
-            
             contagemErro++;
-            out.push({
-              usuario: getNomeUsuario(user.matricula, usuarios),
-              entrada: stack.toLocaleString(),
-              saida: "Entrada sem saída",
-              permanencia: "Indisponível",
-              porta: area
-            });
+            out.push(
+              entradaSemSaida({
+                user,
+                usuarios,
+                stack,
+                area,
+                getNomeUsuario
+              })
+            );
           }
 
           stacks[area] = null;
 
         } else {
-
           contagemErro++;
           out.push({
             usuario: getNomeUsuario(user.matricula, usuarios),
@@ -127,7 +141,6 @@ export default function CalculadorTempo({
             saida: dataHoraStr,
             permanencia: "Indisponível",
             porta: area
-
           });
         }
       }
@@ -138,19 +151,20 @@ export default function CalculadorTempo({
 
       if (st) {
         contagemErro++;
-
-        out.push({
-          usuario: getNomeUsuario(user.matricula, usuarios),
-          entrada: st.toLocaleString(),
-          saida: "Entrada sem saída",
-          permanencia: "Indisponível",
-          porta: area
-        });
+        out.push(
+          entradaSemSaida({
+            user,
+            usuarios,
+            stack: st,
+            area,
+            getNomeUsuario
+          })
+        );
       }
     });
 
     const { horas, minutos } = mediaHorasMinutos(totalGeral, contagemAcessos);
-    const { horas: horas2, minutos: minutos2 } = minutosParaHoras(totalGeral)
+    const { horas: horas2, minutos: minutos2 } = minutosParaHoras(totalGeral);
 
     setMediaTempo(`${horas}h ${minutos}min`);
     setResultados(out);
@@ -213,7 +227,7 @@ export default function CalculadorTempo({
         <br />
         <strong>Total de acessos com erro:</strong> {totalAcessosErro}
         <br />
-        <strong>Total de Tempo Permanência:</strong> {totalSistema} 
+        <strong>Total de Tempo Permanência:</strong> {totalSistema}
         <br />
         <strong>Média de Tempo Permanência:</strong> {mediaTempo}
       </div>
