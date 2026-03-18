@@ -1,4 +1,4 @@
 export type Treinamento = {
     user_id: string;
-    expiration_date: Date;
+    expiration_date: string;
 }
