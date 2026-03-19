@@ -14,17 +14,19 @@ interface Props {
   users: Users[];
   usuarios: Usuario[];
   treinamentos: Treinamento[];
+  portasSelecionadas: string[];
 }
 
 export default function RelatorioTreinamento({
   users,
   usuarios,
-  treinamentos
+  treinamentos,
+  portasSelecionadas
 }: Props) {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  
   const getNome = (u: Users) => {
     if (u.full_name?.trim()) return u.full_name;
 
@@ -39,19 +41,21 @@ export default function RelatorioTreinamento({
   }, [users]);
 
   const usuariosMap = useMemo(() => {
-    return Object.fromEntries(
-      usuarios.map(u => [Number(u.user_auth_id), u])
-    );
+    return Object.fromEntries(usuarios.map(u => [Number(u.user_auth_id), u]));
   }, [usuarios]);
 
-  const contarAcessos = (usuario: Usuario, dataExp: string) => {
+  const contarAcessos = (usuario: Usuario, dataExp: string, portasSelecionadas: string[]) => {
     if (!usuario?.acessos) return 0;
 
     const dataExpiracao = new Date(dataExp);
 
-    return usuario.acessos.filter(a =>
-      new Date(a.data_acesso) > dataExpiracao
-    ).length;
+    let acessos = usuario.acessos.filter(a =>new Date(a.data_acesso) > dataExpiracao && a.ent_sai === "1" );
+
+    if (portasSelecionadas.length > 0 && !portasSelecionadas.includes("todas")) {
+      acessos = acessos.filter(a =>portasSelecionadas.includes(a.desc_area));
+    }
+
+    return acessos.length;
   };
 
   const dadosTabela = useMemo(() => {
@@ -61,20 +65,13 @@ export default function RelatorioTreinamento({
 
       return {
         nome: user ? getNome(user) : "Usuário não encontrado",
-        dataExp: t.expiration_date
-          ? new Date(t.expiration_date).toLocaleDateString("pt-BR")
-          : "Sem data",
-        acessos: usuarioAcesso
-          ? contarAcessos(usuarioAcesso, t.expiration_date)
-          : 0
+        dataExp: t.expiration_date ? new Date(t.expiration_date).toLocaleDateString("pt-BR"): "Sem data",
+        acessos: usuarioAcesso? contarAcessos(usuarioAcesso, t.expiration_date, portasSelecionadas) : 0
       };
     });
-  }, [treinamentos, usersMap, usuariosMap]);
+  }, [treinamentos, usersMap, usuariosMap, portasSelecionadas]);
 
-  const paginaVisivel = dadosTabela.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const paginaVisivel = dadosTabela.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div>
