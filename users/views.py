@@ -34,8 +34,4 @@ class UsersSafetyTraining(ModelViewSet):
     serializer_class = SafetyTrainingSerializer
     permission_classes = [IsAuthenticated | HasAPIKey]
     authentication_classes = [JWTAuthentication, SessionAuthentication]
-
-    def get_queryset(self):
-        return SafetyTraining.objects.filter(
-            expiration_date__lt=date.today()
-        )
+    queryset = SafetyTraining.objects.all()

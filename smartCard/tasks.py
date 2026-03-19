@@ -146,7 +146,7 @@ def tentar_vincular_por_nome(self, usuario_id):
             score_max = score
             melhor = user
 
-    if melhor and score_max >= 80:
+    if melhor and score_max >= 70:
         usuario.user_auth = melhor.get("id")
         usuario.save(update_fields=["user_auth"])
         return True
