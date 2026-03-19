@@ -37,7 +37,7 @@ export default function RelatorioTreinamento() {
         portas={portas}
         selecionadas={portasSelecionadas}
         onChange={setPortasSelecionadas}
-      />
+      /> <br /> <br />
 
       <CalculadorTreinamento
         users={users}

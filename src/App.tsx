@@ -5,6 +5,7 @@ import NaoAcessantes from "./pages/NaoAcessantes";
 import RelatorioTempo from "./pages/RelatorioTempo";
 import RelatorioRecente from "./pages/RelatorioRecente";
 import RelatorioTreinamento from "./pages/RelatorioTreinamento";
+import RelatorioNaoExpirados from "./pages/RelatorioNaoExpirados";
 import Login from "./pages/Login";
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
       <Route path="/naoAcessantes" element={<NaoAcessantes/>}/>
       <Route path="/relatorioRecente" element={<RelatorioRecente/>}/>
       <Route path="/relatorioTreinamento" element={<RelatorioTreinamento/>}/>
+      <Route path="/relatorioNaoExpirados" element={<RelatorioNaoExpirados/>}/>
       <Route path="/login" element={<Login />} />
     </Routes>
   );

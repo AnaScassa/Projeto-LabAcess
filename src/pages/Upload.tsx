@@ -142,6 +142,8 @@ export default function Upload() {
       <br /><br />
       <Link to="/relatorioTreinamento"><button>Relatório de Treinamento expirados</button></Link>
       <br /><br />
+      <Link to="/relatorioNaoExpirados"><button>Relatório de Treinamento não expirados</button></Link>
+      <br /><br />
       <Link to="/tempoPermanencia"><button>Tempo Permanência</button></Link>
     </center>
   );
