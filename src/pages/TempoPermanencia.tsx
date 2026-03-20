@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useUsuarios } from "../hooks/useUsuarios";
 import type { Usuario } from "../types/Usuario";
-import CalculadorTempo from "../components/logicas/CalculadorTempo";
-import FiltroPortasCheckbox from "../components/logicas/FiltroPortasCheckbox";
-import Filtrotempo from "../components/logicas/FiltroTempo";
+import CalculadorTempo from "../components/relatorios/UsuarioIndividual";
+import FiltroPortasCheckbox from "../components/filtros/Checkbox";
+import Filtrotempo from "../components/filtros/FiltroTempo";
 import BotaoVoltar from "../components/style/BotaoVoltar";
+import Menu from "../components/style/Menu";
+
 
 export default function TempoPermanencia() {
   const [usuarioAtual, setUsuarioAtual] = useState<Usuario | null>(null);  
@@ -36,7 +38,8 @@ export default function TempoPermanencia() {
   }
 
   return (
-    <div>
+    <div className="wrapper">
+      <Menu/>
       <h1>Tempo de Permanência</h1>
       <BotaoVoltar/>
       <label>Usuário: </label>

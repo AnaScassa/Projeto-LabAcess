@@ -1,7 +1,9 @@
-import { Link } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
 import { useState, useEffect } from "react";
 import { authFetch } from "../services/auth";
+import GraficoAcessos from "../components/graficos/Acessos";
+import GraficosUsuariosAtivos from "../components/graficos/UsuariosAtivos";
+import Menu from "../components/style/Menu";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
@@ -10,7 +12,6 @@ export default function Upload() {
   const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
 
   useEffect(() => {
-
     const storedToken = localStorage.getItem("access");
 
     if (!storedToken) {
@@ -22,7 +23,6 @@ export default function Upload() {
 
     const verificarProcessamento = async () => {
       try {
-
         const res = await authFetch(
           "http://localhost:8000/api/acesso/processamento/"
         );
@@ -39,17 +39,14 @@ export default function Upload() {
           setLoading(false);
           setMensagem("Página pronta para novo upload");
         }
-
       } catch (error) {
         console.error(error);
       }
     };
 
-    verificarProcessamento(); 
-
+    verificarProcessamento();
     const interval = setInterval(verificarProcessamento, 3000);
     return () => clearInterval(interval);
-
   }, []);
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -75,7 +72,6 @@ export default function Upload() {
     formData.append("file", file);
 
     try {
-
       const response = await fetch(
         "http://localhost:8000/api/acesso/upload-xls/",
         {
@@ -93,11 +89,10 @@ export default function Upload() {
           window.location.replace("/login");
           return;
         }
-        throw new Error("Deslogado");
+        throw new Error("Erro");
       }
 
-      setMensagem("processamento sendo feito");
-
+      setMensagem("Processamento sendo feito...");
       setLoading(true);
       setEstaBloqueado(false);
     } catch (error) {
@@ -106,45 +101,70 @@ export default function Upload() {
   };
 
   return (
-    <center>
-      <h2>Upload de planilha Excel</h2>
+    <div className="wrapper">
+      <Menu/>
 
-      <form onSubmit={handleUpload}>
-        <input type="file" id="fileInput" accept=".xls,.xlsx" />
-        <br /><br />
-        <button type="submit" id="btnEnviar" disabled={estaBloqueado}>
-          {estaBloqueado ? "Enviando..." : "Enviar"}
-        </button>
-      </form>
-      <center>
-      {loading && (
-      <div style={{ marginTop: "20px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <TailSpin
-          height="50"
-          width="50"
-          color="#ffffff"
-          ariaLabel="loading-spinner"
-        />
+      <div className="content-wrapper">
+        <section className="content p-4">
+
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">Upload de Planilha Excel</h3>
+            </div>
+
+            <div className="card-body text-center">
+
+              <form onSubmit={handleUpload}>
+                <input type="file" id="fileInput" accept=".xls,.xlsx" />
+                <br /><br />
+                <button className="btn btn-primary" type="submit" disabled={estaBloqueado}>
+                  {estaBloqueado ? "Enviando..." : "Enviar"}
+                </button>
+              </form>
+                {loading && (
+                  <div style={{ marginTop: "20px", display: "flex", alignItems: "center", justifyContent: "center", height: "100px" }}>
+                    <TailSpin height="50" width="50" color="#007bff" />
+                  </div>
+                )}
+                <p className="mt-3">{mensagem}</p>
+            </div>
+          </div>
+
+        </section>
+
+        <section className="content">
+          <div className="container-fluid">
+            <div className="row">
+
+              <div className="col-md-6">
+                <div className="card card-primary">
+                  <div className="card-header">
+                    <h3 className="card-title">Acessos por Mês</h3>
+                  </div>
+
+                  <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <GraficoAcessos />
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="card card-success">
+                  <div className="card-header">
+                    <h3 className="card-title">Usuários que mais acessam o lab</h3>
+                  </div>
+
+                  <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <GraficosUsuariosAtivos />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
       </div>
-    )}
-      </center>
-
-      <p>{mensagem}</p>
-
-      <br />
-      <p>Rotas para páginas:</p>
-
-      <Link to="/RelatorioTempo"><button hx-post="/clicked" hx-swap="outerHTML">Relatório tempo</button></Link>
-      <br /> <br />
-      <Link to="/naoAcessantes"><button>Relatório Não Acessantes</button></Link>
-      <br /><br />
-      <Link to="/relatorioRecente"><button>Relatório do último mês</button></Link>
-      <br /><br />
-      <Link to="/relatorioTreinamento"><button>Relatório de Treinamento expirados</button></Link>
-      <br /><br />
-      <Link to="/relatorioNaoExpirados"><button>Relatório de Treinamento não expirados</button></Link>
-      <br /><br />
-      <Link to="/tempoPermanencia"><button>Tempo Permanência</button></Link>
-    </center>
+    </div>
   );
 }

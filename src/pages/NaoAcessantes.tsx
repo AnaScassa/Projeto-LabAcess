@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useUsuarios } from "../hooks/useUsuarios";
-import Filtrotempo from "../components/logicas/FiltroTempo";
-import SemAcesso from "../components/logicas/SemAcesso";
+import Filtrotempo from "../components/filtros/FiltroTempo";
+import SemAcesso from "../components/relatorios/SemAcesso";
 import BotaoVoltar from "../components/style/BotaoVoltar";
+import Menu from "../components/style/Menu";
+
 
 export default function NaoAcessantes(){    
     const [tempoInicio, setTempoInicio] = useState<Date | null>(null);
@@ -10,7 +12,9 @@ export default function NaoAcessantes(){
     const { usuarios } = useUsuarios();
 
     return(
-        <div>
+        <div className="wrapper">
+            <Menu/>
+            
             <h1>Usuários que não acessaram o lab</h1>
             <BotaoVoltar/>
             

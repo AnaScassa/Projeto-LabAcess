@@ -2,9 +2,11 @@ import { useState, useMemo } from "react";
 import { useUsers } from "../hooks/useUsers";
 import { useTreinamento } from "../hooks/useTreinamento";
 import { useUsuarios } from "../hooks/useUsuarios";
-import CalculadorNaoExpirados from "../components/logicas/CalculadorNaoExpirados";
+import CalculadorNaoExpirados from "../components/relatorios/Treinamento";
 import BotaoVoltar from "../components/style/BotaoVoltar";
-import FiltroPortasCheckbox from "../components/logicas/FiltroPortasCheckbox";
+import FiltroPortasCheckbox from "../components/filtros/Checkbox";
+import Menu from "../components/style/Menu";
+
 
 export default function RelatorioNaoExpirados() {
   const { users } = useUsers();
@@ -24,7 +26,8 @@ export default function RelatorioNaoExpirados() {
   }, [usuarios]);
 
   return (
-    <div>
+    <div className="wrapper">
+      <Menu/>
       <h1>Treinamentos não expirados</h1>
 
       <BotaoVoltar />

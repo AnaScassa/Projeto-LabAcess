@@ -1,10 +1,11 @@
 import { useUsers } from "../hooks/useUsers";
 import { useTreinamento } from "../hooks/useTreinamento";
 import { useUsuarios } from "../hooks/useUsuarios"; 
-import CalculadorTreinamento from "../components/logicas/CalculadorTreinamento.tsx";
+import CalculadorTreinamento from "../components/relatorios/TreinamentoExpirado.tsx";
 import BotaoVoltar from "../components/style/BotaoVoltar.tsx";
-import FiltroPortasCheckbox from "../components/logicas/FiltroPortasCheckbox";
+import FiltroPortasCheckbox from "../components/filtros/Checkbox.tsx";
 import { useState, useMemo } from "react";
+import Menu from "../components/style/Menu";
 
 
 export default function RelatorioTreinamento() {
@@ -28,7 +29,8 @@ export default function RelatorioTreinamento() {
   }, [usuarios]);
 
   return (
-    <div>
+    <div className="wrapper">
+      <Menu/>
       <h1>Treinamentos expirados</h1>
 
       <BotaoVoltar />
