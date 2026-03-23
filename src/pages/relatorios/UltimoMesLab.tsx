@@ -1,7 +1,7 @@
-import { useUsuarios } from "../hooks/useUsuarios";
-import FiltroRecente from "../components/relatorios/UltimoMes";
-import BotaoVoltar from "../components/style/BotaoVoltar";
-import Menu from "../components/style/Menu";
+import { useUsuarios } from "../../hooks/useUsuarios";
+import FiltroRecente from "../../components/relatorios/UltimoMes";
+import BotaoVoltar from "../../components/style/BotaoVoltar";
+import Menu from "../../components/style/Menu";
 
 
 export default function RelatorioRecente(){
@@ -18,7 +18,7 @@ export default function RelatorioRecente(){
                 <div className="tituloUltimoMes">
                   <h3 className="card-title">Relatório do último mês lab</h3>
                 </div>
-              <FiltroRecente usuarios={usuarios}/>
+                <FiltroRecente usuarios={usuarios}/>
               </div>
             </div>
           </div>

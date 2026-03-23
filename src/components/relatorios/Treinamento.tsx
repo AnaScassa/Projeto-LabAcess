@@ -1,10 +1,4 @@
-import { useState, useMemo } from "react";
-import Table from "@mui/material/Table";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
-import TablePagination from "@mui/material/TablePagination";
+import { useState, useMemo, useEffect } from "react";
 
 import type { Users } from "../../types/Users";
 import type { Usuario } from "../../types/Usuario";
@@ -24,7 +18,7 @@ export default function CalculadorNaoExpirados({
   portasSelecionadas,
 }: Props) {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const rowsPerPage = 15;
 
   const getNome = (u: Users) => {
     if (u.full_name?.trim()) return u.full_name;
@@ -138,51 +132,128 @@ export default function CalculadorNaoExpirados({
     page * rowsPerPage + rowsPerPage
   );
 
+  const totalPaginas = Math.ceil(dadosTabela.length / rowsPerPage);
+
+  const getVisiblePages = (current: number, total: number) => {
+    if (total <= 6) return Array.from({ length: total }, (_, i) => i);
+    const pages: (number | string)[] = [];
+    pages.push(0);
+    if (current > 3) pages.push('...');
+    const start = Math.max(1, current - 1);
+    const end = Math.min(total - 2, current + 1);
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    if (current < total - 4) pages.push('...');
+    pages.push(total - 1); 
+    return pages;
+  };
+
+  const visiblePages = getVisiblePages(page, totalPaginas);
+
+  useEffect(() => {
+    setPage(0);
+  }, [dadosTabela]);
+
   return (
-    <div>
-      <Table style={{ padding: 20 }}>
-        <TableHead>
-          <TableRow style={{ backgroundColor: "#f5f5f5" }}>
-            <TableCell>Usuário</TableCell>
-            <TableCell>Data de Expiração</TableCell>
-            <TableCell>Último acesso</TableCell>
-            <TableCell>Tempo sem entrar</TableCell>
-            <TableCell>Acessos antes da expiração</TableCell>
-          </TableRow>
-        </TableHead>
+    <div className="card-body">
+      <div className="dataTables_wrapper dt-bootstrap4">
 
-        <TableBody>
-          {paginaVisivel.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={5}>Nenhum resultado encontrado.</TableCell>
-            </TableRow>
-          ) : (
-            paginaVisivel.map((item, i) => (
-              <TableRow key={i} style={{ backgroundColor: "#bdbdbd" }}>
-                <TableCell>{item.nome}</TableCell>
-                <TableCell>{item.dataExp}</TableCell>
-                <TableCell>{item.ultimoAcesso}</TableCell>
-                <TableCell>{item.tempoSemEntrar}</TableCell>
-                <TableCell>{item.acessos}</TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+        <div className="row">
+          <div className="col-sm-12">
+            <table className="table table-bordered table-hover dataTable text-left">
+              <thead>
+                <tr>
+                  <th>Usuário</th>
+                  <th>Data de Expiração</th>
+                  <th>Último acesso</th>
+                  <th>Tempo sem entrar</th>
+                  <th>Acessos antes da expiração</th>
+                </tr>
+              </thead>
 
-      <TablePagination
-        style={{ color: "#f5f5f5" }}
-        component="div"
-        count={dadosTabela.length}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 20]}
-        onPageChange={(_, newPage) => setPage(newPage)}
-        onRowsPerPageChange={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 10));
-          setPage(0);
-        }}
-      />
+              <tbody>
+                {dadosTabela.length === 0 ? (
+                  <tr>
+                    <td colSpan={5}>Nenhum resultado encontrado.</td>
+                  </tr>
+                ) : (
+                  paginaVisivel.map((item, i) => (
+                    <tr key={i}>
+                      <td>{item.nome}</td>
+                      <td>{item.dataExp}</td>
+                      <td>{item.ultimoAcesso}</td>
+                      <td>{item.tempoSemEntrar}</td>
+                      <td>{item.acessos}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-sm-12 col-md-5">
+            <div className="dataTables_info text-left">
+              Mostrando {dadosTabela.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
+              {Math.min((page + 1) * rowsPerPage, dadosTabela.length)} de{" "}
+              {dadosTabela.length} registros
+            </div>
+          </div>
+
+          <div className="col-sm-12 col-md-7">
+            <div className="dataTables_paginate paging_simple_numbers float-right">
+              <ul className="pagination">
+
+                <li className={`paginate_button page-item ${page === 0 && "disabled"}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => setPage(page - 1)}
+                  >
+                    Anterior
+                  </button>
+                </li>
+
+                {visiblePages.map((item, idx) => {
+                  if (item === '...') {
+                    return (
+                      <li key={idx} className="paginate_button page-item disabled">
+                        <span className="page-link">...</span>
+                      </li>
+                    );
+                  }
+                  const pageNum = item as number;
+                  return (
+                    <li
+                      key={idx}
+                      className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}
+                    >
+                      <button className="page-link" onClick={() => setPage(pageNum)}>
+                        {pageNum + 1}
+                      </button>
+                    </li>
+                  );
+                })}
+
+                <li
+                  className={`paginate_button page-item ${
+                    page === totalPaginas - 1 && "disabled"
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => setPage(page + 1)}
+                  >
+                    Próximo
+                  </button>
+                </li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

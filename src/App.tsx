@@ -1,11 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 import Upload from "./pages/Upload";
-import TempoPermanencia from "./pages/TempoPermanencia";
-import NaoAcessantes from "./pages/NaoAcessantes";
-import RelatorioTempo from "./pages/RelatorioTempo";
-import RelatorioRecente from "./pages/RelatorioRecente";
-import RelatorioTreinamento from "./pages/RelatorioTreinamento";
-import RelatorioNaoExpirados from "./pages/RelatorioNaoExpirados";
+import TempoPermanencia from "./pages/relatorios/TempoPermanencia";
+import NaoAcessantes from "./pages/relatorios/NaoAcessantesLab";
+import RelatorioTempo from "./pages/relatorios/PermanenciaTotalLab";
+import RelatorioRecente from "./pages/relatorios/UltimoMesLab";
+import RelatorioTreinamento from "./pages/relatorios/TreinamentosExpirados";
+import RelatorioNaoExpirados from "./pages/relatorios/TreinamentosNaoExpirados";
 import Login from "./pages/Login";
 
 export default function App() {

@@ -1,10 +1,4 @@
 import { useEffect, useState } from "react";
-import Table from "@mui/material/Table";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
-import TablePagination from "@mui/material/TablePagination";
 import { calcularTempoUsuario } from "../../utils/calcularTempoUsuario";
 import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
 import { minutosParaHoras } from "../../utils/horasMinutos";
@@ -20,10 +14,8 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
   const [totalSistema, setTotalSistema] = useState("0h 0min");
   const [contagemUsuario, setContagemUsuario] = useState(0);
   const [mediaTempo, setMediaTempo] = useState("0h 0min");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
-
-  const paginaVisivel = relatorio.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const rowsPerPage = 15;
 
   const PORTA_LAB = "CCS_LAB";
 
@@ -38,10 +30,11 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
       if (totalUsuario > 0) {
         contadorUsuarios++;
         totalGeral += totalUsuario;
-        const { horas, minutos } = minutosParaHoras(totalUsuario);
+        const { horas2, minutos2 } = minutosParaHoras(totalUsuario);
+
         resultado.push({
           usuario: getNomeUsuario(user.matricula, usuarios),
-          tempoTotal: `${horas}h ${minutos}min`
+          tempoTotal: `${horas2}h ${minutos2}min`,
         });
       }
     });
@@ -49,63 +42,131 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
     const media = mediaHorasMinutos(totalGeral, contadorUsuarios);
     const total = minutosParaHoras(totalGeral);
 
-    setMediaTempo(`${media.horas}h ${media.minutos}min`);
     setRelatorio(resultado);
-    setTotalSistema(`${total.horas}h ${total.minutos}min`);
+    setTotalSistema(`${total.horas2}h ${total.minutos2}min`);
     setContagemUsuario(contadorUsuarios);
-
+    setMediaTempo(`${media.horas}h ${media.minutos}min`);
   }, [usuarios]);
 
-  return (
-    <div style={{ padding: 20 }}>
-      <Table>
-        <TableHead>
-          <TableRow style={{ backgroundColor: "#f5f5f5" }}>
-            <TableCell>Usuário</TableCell>
-            <TableCell>Tempo total</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {relatorio.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={2}>
-                Nenhum resultado encontrado.
-              </TableCell>
-            </TableRow>
-          ) : (
-            paginaVisivel.map((r, i) => (
-              <TableRow key={i} style={{ backgroundColor: "#bdbdbd" }}>
-                <TableCell>{r.usuario}</TableCell>
-                <TableCell>{r.tempoTotal}</TableCell>
-              </TableRow>
-            ))
-          )}
+  useEffect(() => {
+    setPage(0);
+  }, [relatorio]);
 
-        </TableBody>
-      </Table>
-      <TablePagination
-        style={{ color: "#f5f5f5" }}
-        component="div"
-        count={relatorio.length}
-        labelDisplayedRows={({ from, to, count, page }) =>
-          `Página: ${page} ${from}-${to} de ${count}`
-        }
-        page={page}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 20, 50]}
-        onPageChange={(_, newPage) => setPage(newPage)}
-        onRowsPerPageChange={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 10));
-          setPage(0);
-        }}
-        showFirstButton={true}
-      />
-      <div style={{ marginTop: 20, fontSize: 18 }}>
-        <strong>Total de usuários:</strong> {contagemUsuario}
-        <br />
-        <strong>Total geral de permanência:</strong> {totalSistema}
-        <br />
-        <strong>Média de permanência:</strong> {mediaTempo}
+  const paginaVisivel = relatorio.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  const totalPaginas = Math.ceil(relatorio.length / rowsPerPage);
+
+  const getVisiblePages = (current: number, total: number) => {
+    if (total <= 6) return Array.from({ length: total }, (_, i) => i);
+    const pages: (number | string)[] = [];
+    pages.push(0); 
+    if (current > 3) pages.push('...');
+    const start = Math.max(1, current - 1);
+    const end = Math.min(total - 2, current + 1);
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    if (current < total - 4) pages.push('...');
+    pages.push(total - 1); 
+    return pages;
+  };
+
+  const visiblePages = getVisiblePages(page, totalPaginas);
+
+  return (
+    <div className="card-body">
+      <div className="dataTables_wrapper dt-bootstrap4">
+
+        <div className="row">
+          <div className="col-sm-12">
+            <table className="table table-bordered table-hover dataTable text-left">
+              <thead>
+                <tr>
+                  <th>Usuário</th>
+                  <th>Tempo total</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {relatorio.length === 0 ? (
+                  <tr>
+                    <td colSpan={2}>Nenhum resultado encontrado.</td>
+                  </tr>
+                ) : (
+                  paginaVisivel.map((r, i) => (
+                    <tr key={i}>
+                      <td>{r.usuario}</td>
+                      <td>{r.tempoTotal}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-sm-12 col-md-5">
+            <div className="dataTables_info text-left">
+              Mostrando {relatorio.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
+              {Math.min((page + 1) * rowsPerPage, relatorio.length)} de{" "}
+              {relatorio.length} registros
+            </div>
+          </div>
+
+          <div className="col-sm-12 col-md-7">
+            <div className="dataTables_paginate paging_simple_numbers float-right">
+              <ul className="pagination">
+
+                <li className={`paginate_button page-item ${page === 0 && "disabled"}`}>
+                  <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
+                </li>
+
+                {visiblePages.map((item, idx) => {
+                  if (item === '...') {
+                    return (
+                      <li key={idx} className="paginate_button page-item disabled">
+                        <span className="page-link">...</span>
+                      </li>
+                    );
+                  }
+                  const pageNum = item as number;
+                  return (
+                    <li
+                      key={idx}
+                      className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}
+                    >
+                      <button className="page-link" onClick={() => setPage(pageNum)}>
+                        {pageNum + 1}
+                      </button>
+                    </li>
+                  );
+                })}
+
+                <li className={`paginate_button page-item ${page === totalPaginas - 1 && "disabled"}`}>
+                  <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
+                </li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 text-left">
+          <p className="mb-1">
+            <strong>Total de usuários:</strong> {contagemUsuario}
+          </p>
+          <p className="mb-1">
+            <strong>Total geral de permanência:</strong> {totalSistema}
+          </p>
+          <p className="mb-0">
+            <strong>Média de permanência:</strong> {mediaTempo}
+          </p>
+        </div>
+
       </div>
     </div>
   );

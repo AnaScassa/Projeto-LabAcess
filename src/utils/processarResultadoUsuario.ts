@@ -10,11 +10,11 @@ export function processarResultadoUsuario(
 ) {
   if (totalUsuario > 0) {
     contadorUsuarios++;
-    const { horas, minutos } = minutosParaHoras(totalUsuario);
+    const { horas2, minutos2 } = minutosParaHoras(totalUsuario);
 
     resultado.push({
       usuario: getNomeUsuario(user.matricula, usuarios),
-      tempoTotal: `${horas}h ${minutos}min`
+      tempoTotal: `${horas2}h ${minutos2}min`
     });
   }
   return contadorUsuarios;
