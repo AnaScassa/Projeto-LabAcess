@@ -25,7 +25,8 @@ class Acesso(models.Model):
     desc_area = models.CharField(max_length=100) 
     desc_leitor = models.CharField(max_length=100) 
     ent_sai = models.CharField(max_length=10) 
-
+    apontamento = models.IntegerField(default=0)    
+    
     class Meta: 
         unique_together = ('usuario', 'data_acesso', 'desc_evento', 'desc_area', 'ent_sai') 
 

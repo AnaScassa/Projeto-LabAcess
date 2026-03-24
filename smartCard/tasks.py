@@ -22,7 +22,7 @@ def processar_xls(self, caminho_arquivo):
 
     headers = {
         "X-Api-Key": "pbkdf2_sha256$1200000$aonByYw2GbwuyDvrGd1z9w4x5BO477iAMn69G1gs3W1C3n1ZmLwxHpBZoKFIIQV0=",
-        "Authorization": "Api-Key z6jH34jy.CiOHi1UNqepxQtl67sezuHp9qhHSOjIW"
+        "Authorization": "Api-Key ma2MH9Gg.Jp1PAbb5reRQu8DWEVHgScQLTh9Zmdzm"
     }
 
     profiles = cache.get("profiles")

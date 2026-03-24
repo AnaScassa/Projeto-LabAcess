@@ -110,10 +110,20 @@ def agora_por_fila():
     }
 
 def verificar_tasks_user(user, user_id):
-
     total = Processamento.objects.filter(user=user, user_id=user_id).count()
     success = Processamento.objects.filter(user=user, status="SUCCESS", user_id=user_id).count()
 
     if total == success:
         Processamento.objects.filter(user=user).delete()
         
+def identificar_apontamento(request):
+    acesso = Acesso.objects.first() 
+    
+    if acesso:
+        if acesso.desc_evento != "Apontamento Normal":
+            acesso.apontamento = 1
+        else: 
+            acesso.apontamento = 0
+        acesso.save()
+        
+
