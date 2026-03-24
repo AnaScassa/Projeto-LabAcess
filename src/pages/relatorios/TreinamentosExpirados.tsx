@@ -2,7 +2,6 @@ import { useUsers } from "../../hooks/useUsers.ts";
 import { useTreinamento } from "../../hooks/useTreinamento.ts";
 import { useUsuarios } from "../../hooks/useUsuarios.ts"; 
 import CalculadorTreinamento from "../../components/relatorios/TreinamentoExpirado.tsx";
-import BotaoVoltar from "../../components/style/BotaoVoltar.tsx";
 import FiltroPortasCheckbox from "../../components/filtros/Checkbox.tsx";
 import { useState, useMemo } from "react";
 import Menu from "../../components/style/Menu.tsx";
@@ -33,7 +32,6 @@ export default function RelatorioTreinamento() {
       <Menu/>
       <div className="content-wrapper">
         <div className="content p-4">
-          <BotaoVoltar />
           <div className="card">
             <div className="card-header text-center">
               <div className="tituloUltimoMes">

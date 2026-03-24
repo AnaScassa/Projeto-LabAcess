@@ -22,7 +22,7 @@ export default function BotaoVoltar() {
             <nav className="mt-2">
                 <ul className="nav nav-pills nav-sidebar flex-column">
                     <li className="nav-item">
-                        <Link to="/Upload" className="nav-link">
+                        <Link to="/" className="nav-link">
                         <i className="fas fa-upload"></i>
                         <p>Upload de Planilha</p>
                         </Link>

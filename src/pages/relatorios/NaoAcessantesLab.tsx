@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useUsuarios } from "../../hooks/useUsuarios";
 import Filtrotempo from "../../components/filtros/FiltroTempo";
 import SemAcesso from "../../components/relatorios/SemAcesso";
-import BotaoVoltar from "../../components/style/BotaoVoltar";
 import Menu from "../../components/style/Menu";
 
 
@@ -16,7 +15,6 @@ export default function NaoAcessantes(){
             <Menu/>
             <div className="content-wrapper">
                 <div className="content p-4">
-                    <BotaoVoltar/>
                     <div className="card">
                         <div className="card-header text-center">
                             <div className="tituloUltimoMes">

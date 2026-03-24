@@ -13,7 +13,7 @@ import PrivateRoute from "../src/routes/PrivateRoute"
 export default function App() {
   return (
     <Routes>
-      <Route path="/upload" element={<PrivateRoute><Upload /></PrivateRoute>} />
+      <Route path="/" element={<PrivateRoute><Upload /></PrivateRoute>} />
       <Route path="/relatorioTempo" element={<PrivateRoute><RelatorioTempo /></PrivateRoute>} />
       <Route path="/tempoPermanencia" element={<PrivateRoute><TempoPermanencia /></PrivateRoute>} />
       <Route path="/naoAcessantes" element={<PrivateRoute><NaoAcessantes/></PrivateRoute>}/>

@@ -4,7 +4,6 @@ import type { Usuario } from "../../types/Usuario";
 import CalculadorTempo from "../../components/relatorios/UsuarioIndividual";
 import FiltroPortasCheckbox from "../../components/filtros/Checkbox";
 import Filtrotempo from "../../components/filtros/FiltroTempo";
-import BotaoVoltar from "../../components/style/BotaoVoltar";
 import Menu from "../../components/style/Menu";
 
 
@@ -42,7 +41,6 @@ export default function TempoPermanencia() {
       <Menu/>
       <div className="content-wrapper">
         <div className="content p-4">
-          <BotaoVoltar/>
           <div className="card">
             <div className="card-header text-center">
               <div className="tituloUltimoMes">

@@ -3,7 +3,6 @@ import { useUsers } from "../../hooks/useUsers";
 import { useTreinamento } from "../../hooks/useTreinamento";
 import { useUsuarios } from "../../hooks/useUsuarios";
 import CalculadorNaoExpirados from "../../components/relatorios/Treinamento";
-import BotaoVoltar from "../../components/style/BotaoVoltar";
 import FiltroPortasCheckbox from "../../components/filtros/Checkbox";
 import Menu from "../../components/style/Menu";
 
@@ -30,7 +29,6 @@ export default function RelatorioNaoExpirados() {
       <Menu/>
       <div className="content-wrapper">
         <div className="content p-4">
-          <BotaoVoltar />
           <div className="card">
             <div className="card-header text-center">
               <div className="tituloUltimoMes">
