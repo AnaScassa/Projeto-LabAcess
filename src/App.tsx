@@ -7,17 +7,19 @@ import RelatorioRecente from "./pages/relatorios/UltimoMesLab";
 import RelatorioTreinamento from "./pages/relatorios/TreinamentosExpirados";
 import RelatorioNaoExpirados from "./pages/relatorios/TreinamentosNaoExpirados";
 import Login from "./pages/Login";
+import PrivateRoute from "../src/routes/PrivateRoute"
+
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/upload" element={<Upload />} />
-      <Route path="/relatorioTempo" element={<RelatorioTempo />} />
-      <Route path="/tempoPermanencia" element={<TempoPermanencia />} />
-      <Route path="/naoAcessantes" element={<NaoAcessantes/>}/>
-      <Route path="/relatorioRecente" element={<RelatorioRecente/>}/>
-      <Route path="/relatorioTreinamento" element={<RelatorioTreinamento/>}/>
-      <Route path="/relatorioNaoExpirados" element={<RelatorioNaoExpirados/>}/>
+      <Route path="/upload" element={<PrivateRoute><Upload /></PrivateRoute>} />
+      <Route path="/relatorioTempo" element={<PrivateRoute><RelatorioTempo /></PrivateRoute>} />
+      <Route path="/tempoPermanencia" element={<PrivateRoute><TempoPermanencia /></PrivateRoute>} />
+      <Route path="/naoAcessantes" element={<PrivateRoute><NaoAcessantes/></PrivateRoute>}/>
+      <Route path="/relatorioRecente" element={<PrivateRoute><RelatorioRecente/></PrivateRoute>}/>
+      <Route path="/relatorioTreinamento" element={<PrivateRoute><RelatorioTreinamento/></PrivateRoute>}/>
+      <Route path="/relatorioNaoExpirados" element={<PrivateRoute><RelatorioNaoExpirados/></PrivateRoute>}/>
       <Route path="/login" element={<Login />} />
     </Routes>
   );

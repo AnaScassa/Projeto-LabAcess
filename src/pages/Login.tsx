@@ -45,24 +45,68 @@ export default function Login() {
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <input
-        type="text"
-        placeholder="Usuário"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
+    <div className="login-page" style={{ minHeight: "100vh" }}>
+      <div className="login-box">
 
-      <input
-        type="password"
-        placeholder="Senha"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+        <div className="card card-outline card-primary">
+          <div className="card-header text-center">
+            <h3><b>Controle</b>Lab</h3>
+          </div>
 
-      <button type="submit">Entrar</button>
+          <div className="card-body">
+            <p className="login-box-msg">Faça login para continuar</p>
 
-      {mensagem && <p>{mensagem}</p>}
-    </form>
+            <form onSubmit={handleLogin}>
+
+              <div className="input-group mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Usuário"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+                <div className="input-group-append">
+                  <div className="input-group-text">
+                    <span className="fas fa-user"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="input-group mb-3">
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="Senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <div className="input-group-append">
+                  <div className="input-group-text">
+                    <span className="fas fa-lock"></span>
+                  </div>
+                </div>
+              </div>
+
+              {mensagem && (
+                <div className="alert alert-danger text-center p-2">
+                  {mensagem}
+                </div>
+              )}
+
+              <div className="row">
+                <div className="col-12">
+                  <button type="submit" className="btn btn-primary btn-block">
+                    Entrar
+                  </button>
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
   );
 }
