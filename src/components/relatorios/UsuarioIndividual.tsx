@@ -191,36 +191,38 @@ export default function CalculadorTempo({
 
         <div className="row">
           <div className="col-sm-12">
-            <table className="table table-bordered table-hover dataTable text-left">
-              <thead>
-                <tr>
-                  <th>Usuário</th>
-                  <th>Entrada</th>
-                  <th>Saída</th>
-                  <th>Porta</th>
-                  <th>Tempo Permanência</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginaVisivel.length === 0 ? (
+            <div className="table-responsive">
+              <table className="table table-bordered table-hover dataTable text-left">
+                <thead>
                   <tr>
-                    <td colSpan={5}>
-                      Nenhum resultado encontrado.
-                    </td>
+                    <th>Usuário</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                    <th>Porta</th>
+                    <th>Tempo Permanência</th>
                   </tr>
-                ) : (
-                  paginaVisivel.map((r, i) => (
-                    <tr key={i}>
-                      <td>{r.usuario}</td>
-                      <td>{r.entrada}</td>
-                      <td>{r.saida}</td>
-                      <td>{r.porta}</td>
-                      <td>{r.permanencia}</td>
+                </thead>
+                <tbody>
+                  {paginaVisivel.length === 0 ? (
+                    <tr>
+                      <td colSpan={5}>
+                        Nenhum resultado encontrado.
+                      </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    paginaVisivel.map((r, i) => (
+                      <tr key={i}>
+                        <td>{r.usuario}</td>
+                        <td>{r.entrada}</td>
+                        <td>{r.saida}</td>
+                        <td>{r.porta}</td>
+                        <td>{r.permanencia}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -233,35 +235,42 @@ export default function CalculadorTempo({
             </div>
           </div>
 
-          <div className="col-sm-12 col-md-7">
-            <div className="dataTables_paginate paging_simple_numbers float-right">
-              <ul className="pagination">
+          <div className="col-sm-12 col-md-7 d-flex justify-content-md-end justify-content-start">
+            <div style={{ maxWidth: "90%", overflowX: "auto" }}>
+              <div className="dataTables_paginate paging_simple_numbers">
+                <ul className="pagination flex-wrap">
 
-                <li className={`paginate_button page-item ${page === 0 && "disabled"}`}>
-                  <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
-                </li>
+                  <li className={`paginate_button page-item ${page === 0 && "disabled"}`}>
+                    <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
+                  </li>
 
-                {visiblePages.map((item, idx) => {
-                  if (item === '...') {
+                  {visiblePages.map((item, idx) => {
+                    if (item === '...') {
+                      return (
+                        <li key={idx} className="paginate_button page-item disabled">
+                          <span className="page-link">...</span>
+                        </li>
+                      );
+                    }
+                    const pageNum = item as number;
                     return (
-                      <li key={idx} className="paginate_button page-item disabled">
-                        <span className="page-link">...</span>
+                      <li
+                        key={idx}
+                        className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}
+                      >
+                        <button className="page-link" onClick={() => setPage(pageNum)}>
+                          {pageNum + 1}
+                        </button>
                       </li>
                     );
-                  }
-                  const pageNum = item as number;
-                  return (
-                    <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
-                      <button className="page-link" onClick={() => setPage(pageNum)}>{pageNum + 1}</button>
-                    </li>
-                  );
-                })}
+                  })}
 
-                <li className={`paginate_button page-item ${page === totalPaginas - 1 && "disabled"}`}>
-                  <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
-                </li>
+                  <li className={`paginate_button page-item ${page === totalPaginas - 1 && "disabled"}`}>
+                    <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
+                  </li>
 
-              </ul>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

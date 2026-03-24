@@ -103,6 +103,7 @@ export default function GraficoAcessos() {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top" as const,

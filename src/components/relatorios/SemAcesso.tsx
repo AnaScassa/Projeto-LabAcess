@@ -70,29 +70,32 @@ export default function SemAcesso({
   return (
     <div className="card-body">
       <div className="dataTables_wrapper dt-bootstrap4">
+
         <div className="row">
           <div className="col-sm-12">
-            <table className="table table-bordered table-hover dataTable text-left">
-              <thead>
-                <tr>
-                  <th>Usuário</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {semAcesso.length === 0 ? (
+            <div className="table-responsive">
+              <table className="table table-bordered table-hover dataTable text-left">
+                <thead>
                   <tr>
-                    <td colSpan={1}>Todos os usuários acessaram o laboratório.</td>
+                    <th>Usuário</th>
                   </tr>
-                ) : (
-                  paginaVisivel.map((u, i) => (
-                    <tr key={i}>
-                      <td>{u.usuario}</td>
+                </thead>
+
+                <tbody>
+                  {semAcesso.length === 0 ? (
+                    <tr>
+                      <td colSpan={1}>Todos os usuários acessaram o laboratório.</td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    paginaVisivel.map((u, i) => (
+                      <tr key={i}>
+                        <td>{u.usuario}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -105,40 +108,42 @@ export default function SemAcesso({
             </div>
           </div>
 
-          <div className="col-sm-12 col-md-7">
-            <div className="dataTables_paginate paging_simple_numbers float-right">
-              <ul className="pagination">
+          <div className="col-sm-12 col-md-7 d-flex justify-content-md-end justify-content-start">
+            <div style={{ maxWidth: "90%", overflowX: "auto" }}>
+              <div className="dataTables_paginate paging_simple_numbers">
+                <ul className="pagination flex-wrap">
 
-                <li className={`paginate_button page-item ${page === 0 && "disabled"}`}>
-                  <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
-                </li>
+                  <li className={`paginate_button page-item ${page === 0 && "disabled"}`}>
+                    <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
+                  </li>
 
-                {visiblePages.map((item, idx) => {
-                  if (item === '...') {
+                  {visiblePages.map((item, idx) => {
+                    if (item === '...') {
+                      return (
+                        <li key={idx} className="paginate_button page-item disabled">
+                          <span className="page-link">...</span>
+                        </li>
+                      );
+                    }
+                    const pageNum = item as number;
                     return (
-                      <li key={idx} className="paginate_button page-item disabled">
-                        <span className="page-link">...</span>
+                      <li
+                        key={idx}
+                        className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}
+                      >
+                        <button className="page-link" onClick={() => setPage(pageNum)}>
+                          {pageNum + 1}
+                        </button>
                       </li>
                     );
-                  }
-                  const pageNum = item as number;
-                  return (
-                    <li
-                      key={idx}
-                      className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}
-                    >
-                      <button className="page-link" onClick={() => setPage(pageNum)}>
-                        {pageNum + 1}
-                      </button>
-                    </li>
-                  );
-                })}
+                  })}
 
-                <li className={`paginate_button page-item ${page === totalPaginas - 1 && "disabled"}`}>
-                  <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
-                </li>
+                  <li className={`paginate_button page-item ${page === totalPaginas - 1 && "disabled"}`}>
+                    <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
+                  </li>
 
-              </ul>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

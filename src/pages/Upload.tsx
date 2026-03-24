@@ -117,7 +117,7 @@ export default function Upload() {
               <form onSubmit={handleUpload}>
                 <input type="file" id="fileInput" accept=".xls,.xlsx" />
                 <br /><br />
-                <button className="btn btn-primary" type="submit" disabled={estaBloqueado}>
+                <button className="btn btn-primary" type="submit" disabled={estaBloqueado} style={{minWidth: "130px"}}>
                   {estaBloqueado ? "Enviando..." : "Enviar"}
                 </button>
               </form>

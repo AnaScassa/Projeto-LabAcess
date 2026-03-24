@@ -6,17 +6,16 @@ export default function BotaoVoltar() {
     <nav className="main-header navbar navbar-expand navbar-white navbar-light">
         <ul className="navbar-nav">
           <li className="nav-item">
-            <a className="nav-link" data-widget="pushmenu" href="#">
-              ☰
-            </a>
+            <a className="nav-link" data-widget="pushmenu" href="#">☰</a>
           </li>
         </ul>
         <span className="ml-3 font-weight-bold">Controle do Laboratório</span>
     </nav>
 
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
-        <a href="#" className="brand-link">
+        <a href="#" className="brand-link d-flex align-items-center">
             <span className="brand-text font-weight-light tituloMenu">Relatórios</span>
+            <button className="btn btn-link p-0 text-white ml-auto d-lg-none" data-widget="pushmenu" style={{ fontSize: "18px", margin: "5px 10px 0 0" }}>✕</button>
         </a>
 
         <div className="sidebar">
