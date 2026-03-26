@@ -115,3 +115,13 @@ class TaskSerializer(serializers.Serializer):
     scheduled = serializers.DictField()
     reserved = serializers.DictField()
     
+class ApontamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Acesso
+        fields = [
+            'id',
+            'data_acesso',
+            'desc_evento',
+            'usuario_id',
+            'apontamento'
+        ]

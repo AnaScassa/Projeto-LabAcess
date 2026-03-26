@@ -47,6 +47,20 @@ def lista_usuarios(request):
     )
     return Response(list(usuarios), status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([HasAPIKey])
+def acessos_erro(request):
+    acessos = Acesso.objects.filter(apontamento=1).values(
+        'id',
+        'data_acesso',
+        'desc_evento',
+        'usuario_id',
+        'apontamento',
+    )
+
+    return Response(list(acessos), status=status.HTTP_200_OK)
+
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated | HasAPIKey])

@@ -3,7 +3,8 @@ from smartcard.serializers import (
     UserSerializer,
     AcessoSerializer,
     UsuarioSerializer,
-    ProcessamentoSerializer
+    ProcessamentoSerializer,
+    ApontamentoSerializer
 )
 
 from rest_framework.response import Response
@@ -13,6 +14,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import action
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from smartcard.models import Acesso, Usuario, Processamento
 from users.models import User
@@ -57,3 +59,9 @@ class TaskCompleted(viewsets.ModelViewSet):
         return Response({
             "tem_tasks": tem_tasks
         })
+    
+class ApontamentoViewSet(ReadOnlyModelViewSet):
+    serializer_class = ApontamentoSerializer
+
+    def get_queryset(self):
+        return Acesso.objects.filter(apontamento=1)
