@@ -68,17 +68,24 @@ def processar_xls(self, caminho_arquivo):
         )
 
         data = timezone.make_aware(pd.to_datetime(row.get("DATA")))
+        desc_evento = row.get("DESC_EVENTO", "")
+        apontamento = 0 if desc_evento == "Apontamento Normal" else 1
 
-        Acesso.objects.get_or_create(
+        obj, created = Acesso.objects.get_or_create(
             usuario=usuario,
             data_acesso=data,
             desc_evento=row.get("DESC_EVENTO", ""),
             desc_area=row.get("DESC_AREA", ""),
             ent_sai=row.get("ENT_SAI", ""),
             defaults={
-                "desc_leitor": row.get("DESC_LEITOR", "")
+                "desc_leitor": row.get("DESC_LEITOR", ""),
+                "apontamento": apontamento
             }
         )
+
+        if not created:
+            obj.apontamento = apontamento
+            obj.save()
 
         if usuario.user_auth is None:
             chain(
