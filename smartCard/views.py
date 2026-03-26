@@ -61,6 +61,21 @@ def acessos_erro(request):
 
     return Response(list(acessos), status=status.HTTP_200_OK)
 
+@api_view(['PATCH'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated | HasAPIKey])
+def mudar_apontamento(request, id):
+
+    try:
+        ap = Acesso.objects.get(id=id)
+        ap.apontamento = 0
+        ap.save()
+        return Response({"msg": "Apontamento desativado com sucesso"})
+    
+    except Acesso.DoesNotExist:
+        return Response({"erro": "Não encontrado"}, status=404)
+
+
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated | HasAPIKey])

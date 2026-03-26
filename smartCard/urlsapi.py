@@ -1,4 +1,4 @@
-from smartcard.views import UserViewSetApi, carregar_acesso, lista_usuarios
+from smartcard.views import UserViewSetApi, carregar_acesso, lista_usuarios, mudar_apontamento
 from smartcard.api import AcessoViewSet, GroupViewSet, UsuarioViewSet, TaskCompleted, ApontamentoViewSet
 
 from django.urls import include, path
@@ -21,4 +21,5 @@ urlpatterns = [
     path("login/", TokenObtainPairView.as_view(), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("lista-usuarios/", lista_usuarios, name="lista_usuarios"),
-]
+    path("desativar-apontamento/<int:id>/", mudar_apontamento),
+    ]
