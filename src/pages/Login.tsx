@@ -36,7 +36,7 @@ export default function Login() {
       console.log("LS ACCESS:", localStorage.getItem("access"));
       console.log("LS REFRESH:", localStorage.getItem("refresh"));
 
-      window.location.replace("/upload");
+      window.location.replace("/");
     } catch (error) {
       console.error(error);
       setMensagem("Erro ao conectar com o servidor");

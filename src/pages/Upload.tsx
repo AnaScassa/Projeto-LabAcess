@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { authFetch } from "../services/auth";
 import GraficoAcessos from "../components/graficos/Acessos";
 import GraficosUsuariosAtivos from "../components/graficos/UsuariosAtivos";
+import UsoIndevidoCartao from "../components/relatorios/UsoIndevidoCartao";
 import Menu from "../components/style/Menu";
 
 export default function Upload() {
@@ -106,30 +107,41 @@ export default function Upload() {
 
       <div className="content-wrapper">
         <section className="content p-4">
+          <div className="row">
 
-          <div className="card">
-            <div className="card-header">
-              <h3 className="card-title">Upload de Planilha Excel</h3>
+            <div className="col-md-6">
+              <div className="card" style={{ height: "400px" }}>
+                <div className="card-header">
+                  <h3 className="card-title">Upload de Planilha Excel</h3>
+                </div>
+
+                <div className="card-body d-flex flex-column justify-content-center align-items-center" style={{ height: "100%", gap: "20px" }}>
+                  <form onSubmit={handleUpload}>
+                    <div className="d-flex flex-column" style={{ gap: "30px" }}>
+                      <input type="file" id="fileInput" accept=".xls,.xlsx" />
+
+                      <div className="d-flex flex-column align-items-center" style={{ width: "100%" }}>
+                        <button className="btn btn-primary" type="submit" disabled={estaBloqueado} style={{ minWidth: "130px" }}>
+                          {estaBloqueado ? "Enviando..." : "Enviar"}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+
+                  {loading && (
+                    <div className="mt-3">
+                      <TailSpin height="50" width="50" color="#007bff" />
+                    </div>
+                  )}
+                  
+                  {mensagem && <p className="mt-3 mb-0">{mensagem}</p>}
+                </div>
+              </div>
             </div>
 
-            <div className="card-body text-center">
+            <UsoIndevidoCartao/>
 
-              <form onSubmit={handleUpload}>
-                <input type="file" id="fileInput" accept=".xls,.xlsx" />
-                <br /><br />
-                <button className="btn btn-primary" type="submit" disabled={estaBloqueado} style={{minWidth: "130px"}}>
-                  {estaBloqueado ? "Enviando..." : "Enviar"}
-                </button>
-              </form>
-                {loading && (
-                  <div style={{ marginTop: "20px", display: "flex", alignItems: "center", justifyContent: "center", height: "100px" }}>
-                    <TailSpin height="50" width="50" color="#007bff" />
-                  </div>
-                )}
-                <p className="mt-3">{mensagem}</p>
-            </div>
           </div>
-
         </section>
 
         <section className="content">
