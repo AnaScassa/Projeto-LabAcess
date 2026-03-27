@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { calcularMinutos } from "../../utils/tempo";
 import { getNomeUsuario } from "../../utils/getNomeUsuario";
+import { juntarUsuariosPorMatricula } from "../../utils/juntarUsuariosPorMatricula";
 import { filtrarPorData } from "../../utils/filtroData";
 import { minutosParaHoras } from "../../utils/horasMinutos";
 import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
@@ -68,7 +69,8 @@ export default function CalculadorTempo({
       setResultados([]);
       return;
     }
-    calcularPermanencia(usuario, portasSelecionadas);
+    const usuarioUnificado = juntarUsuariosPorMatricula(usuario, usuarios);
+    calcularPermanencia(usuarioUnificado, portasSelecionadas);
   }, [usuario, portasSelecionadas, usuarios, tempoInicio, tempoFim]);
 
   function calcularPermanencia(user: any, portas: string[] = []) {

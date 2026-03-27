@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useUsuarios } from "../../hooks/useUsuarios";
+import { removerUsuariosDuplicados } from "../../utils/removerUsuariosDuplicados";
 import type { Usuario } from "../../types/Usuario";
 import CalculadorTempo from "../../components/relatorios/UsuarioIndividual";
 import FiltroPortasCheckbox from "../../components/filtros/Checkbox";
@@ -14,6 +15,7 @@ export default function TempoPermanencia() {
   const [tempoInicio, setTempoInicio] = useState<Date | null>(null);
   const [tempoFim, setTempoFim] = useState<Date | null>(null);
   const { usuarios } = useUsuarios();
+  const usuariosUnicos = removerUsuariosDuplicados(usuarios);
 
   const portas = Array.from(
     new Set(
@@ -28,7 +30,7 @@ export default function TempoPermanencia() {
   function filtrarUsuario(matricula: string) {
     setUsuarioSelecionado(matricula);
 
-    const usuario = usuarios.find(
+    const usuario = usuariosUnicos.find(
       (u) => u.matricula === matricula
     );
 
@@ -66,13 +68,9 @@ export default function TempoPermanencia() {
                     <div className="form-group">
                       <label>Usuário:</label>
                       <div className="input-group">
-                        <select
-                          className="form-control"
-                          value={usuarioSelecionado}
-                          onChange={(e) => filtrarUsuario(e.target.value)}
-                        >
+                        <select className="form-control" value={usuarioSelecionado} onChange={(e) => filtrarUsuario(e.target.value)}>
                           <option value="">-- Selecione --</option>
-                          {usuarios.map((u) => (
+                          {usuariosUnicos.map((u) => (
                             <option key={u.matricula} value={u.matricula}>
                               {u.nome_usuario}
                             </option>
@@ -106,3 +104,4 @@ export default function TempoPermanencia() {
     </div>
   );
 }
+

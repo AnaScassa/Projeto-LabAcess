@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { calcularTempoUsuario } from "../../utils/calcularTempoUsuario";
-import { getNomeUsuario } from "../../utils/getNomeUsuario";
+import { getMatriculaBase } from "../../utils/getMatriculaBase";
 
 interface SemAcessoProps {
   usuarios: any[];
@@ -22,23 +22,28 @@ export default function SemAcesso({
   const [contagemUsuario, setContagemUsuario] = useState(0);
   const [page, setPage] = useState(0);
   const rowsPerPage = 15;
-
-  const paginaVisivel = semAcesso.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const PORTA_LAB = "CCS_LAB";
+  const paginaVisivel = semAcesso.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const totalPaginas = Math.ceil(semAcesso.length / rowsPerPage);
 
   const getVisiblePages = (current: number, total: number) => {
     if (total <= 6) return Array.from({ length: total }, (_, i) => i);
+
     const pages: (number | string)[] = [];
-    pages.push(0); 
+    pages.push(0);
+
     if (current > 3) pages.push('...');
+
     const start = Math.max(1, current - 1);
     const end = Math.min(total - 2, current + 1);
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
+
     if (current < total - 4) pages.push('...');
-    pages.push(total - 1); 
+
+    pages.push(total - 1);
     return pages;
   };
 
@@ -48,13 +53,30 @@ export default function SemAcesso({
     const semAcessoLista: UsuarioSemAcesso[] = [];
     let contadorUsuarios = 0;
 
-    usuarios.forEach((user) => {
-      const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, tempoInicio, tempoFim);
+    const usuariosMap: Record<string, any> = {};
+
+    usuarios.forEach((u) => {
+      const base = getMatriculaBase(u.matricula);
+
+      if (!usuariosMap[base]) {
+        usuariosMap[base] = u;
+      }
+    });
+
+    const usuariosUnicos = Object.values(usuariosMap);
+
+    usuariosUnicos.forEach((user: any) => {
+      const totalUsuario = calcularTempoUsuario(
+        user,
+        PORTA_LAB,
+        tempoInicio,
+        tempoFim
+      );
 
       if (totalUsuario === 0) {
         contadorUsuarios++;
         semAcessoLista.push({
-          usuario: getNomeUsuario(user.matricula, usuarios)
+          usuario: user.nome_usuario
         });
       }
     });
