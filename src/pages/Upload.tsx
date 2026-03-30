@@ -1,31 +1,35 @@
 import { TailSpin } from "react-loader-spinner";
 import { useState, useEffect } from "react";
+import { useTreinamento } from "../hooks/useTreinamento";
 import { authFetch } from "../services/auth";
 import GraficoAcessos from "../components/graficos/Acessos";
 import GraficosUsuariosAtivos from "../components/graficos/UsuariosAtivos";
 import UsoIndevidoCartao from "../components/relatorios/UsoIndevidoCartao";
+import ContagemTreinamento from "../components/style/ContagemTreinamento";
 import Menu from "../components/style/Menu";
+import { API_HOST } from "../utils/static";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
-
+  const { treinamentos } = useTreinamento();
+  
   useEffect(() => {
     const storedToken = localStorage.getItem("access");
-
+    
     if (!storedToken) {
       window.location.replace("/login");
       return;
     }
-
+    
     setToken(storedToken);
-
+    
     const verificarProcessamento = async () => {
       try {
         const res = await authFetch(
-          "http://localhost:8000/api/acesso/processamento/"
+          `http://${API_HOST}:8000/api/acesso/processamento/`
         );
 
         if (!res) return;
@@ -74,7 +78,7 @@ export default function Upload() {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/acesso/upload-xls/",
+        "http://${API_HOST}:8000/api/acesso/upload-xls/",
         {
           method: "POST",
           headers: {
@@ -144,7 +148,12 @@ export default function Upload() {
           </div>
         </section>
 
-        <section className="content">
+        <section className="content px-4">
+          <ContagemTreinamento treinamentos={treinamentos} />
+        </section>
+
+
+        <section className="content p-4">
           <div className="container-fluid">
             <div className="row">
 

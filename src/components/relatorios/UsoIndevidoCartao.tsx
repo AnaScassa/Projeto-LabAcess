@@ -2,6 +2,7 @@ import { useApontamento } from "../../hooks/useApontamento";
 import { useUsuarios } from "../../hooks/useUsuarios";
 import type { Apontamento } from "../../types/Apontamento";
 import type { Usuario } from "../../types/Usuario";
+import { API_HOST } from "../../utils/static";
 
 export default function UsoIndevidoCartao() {
   const { usuarios } = useUsuarios();   
@@ -12,7 +13,7 @@ export default function UsoIndevidoCartao() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/acesso/desativar-apontamento/${id}/`,
+        `http://${API_HOST}:8000/api/acesso/desativar-apontamento/${id}/`,
         {
           method: "PATCH",
           headers: {

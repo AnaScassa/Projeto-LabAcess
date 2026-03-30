@@ -10,7 +10,7 @@ export default function Login() {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/acesso/login/",
+        "http://143.106.5.41:8000/api/acesso/login/",
         {
           method: "POST",
           headers: {

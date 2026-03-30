@@ -1,3 +1,5 @@
+import { API_HOST } from "../utils/static";
+
 export async function authFetch(
   url: string,
   options: RequestInit = {}
@@ -24,7 +26,7 @@ export async function authFetch(
     }
 
     const refreshResponse = await fetch(
-      "http://localhost:8000/api/acesso/token/refresh/",
+      `http://${API_HOST}:8000/api/acesso/token/refresh/`,
       {
         method: "POST",
         headers: {

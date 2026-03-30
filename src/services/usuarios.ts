@@ -1,9 +1,10 @@
 import { authFetch } from "./auth";
 import type { Usuario } from "../types/Usuario";
+import { API_HOST } from "../utils/static";
 
 export async function carregarUsuarios(): Promise<Usuario[]> {
   try {
-    const res = await authFetch("http://localhost:8000/api/acesso/usuarios/");
+    const res = await authFetch(`http://${API_HOST}:8000/api/acesso/usuarios/`);
 
     if (!res) return [];
 
