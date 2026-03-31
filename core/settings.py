@@ -37,6 +37,7 @@ CORS_ALLOWED_ORIGINS = [
             "http://localhost:5173", # For development
             "http://143.106.5.41:5173",
             "http://localhost:3000",
+            "http://ana.ccs.unicamp.br:3000",
             # Add any other allowed origins
         ]
 

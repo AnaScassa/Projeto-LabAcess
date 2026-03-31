@@ -12,8 +12,10 @@ from fuzzywuzzy import fuzz
 import pandas as pd
 import requests
 
+from django.db import transaction
 
-@shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={"max_retries": 3},)
+
+@shared_task(bind=True)
 def processar_xls(self, caminho_arquivo):
 
     print("PROCESSANDO:", caminho_arquivo)
@@ -21,8 +23,8 @@ def processar_xls(self, caminho_arquivo):
     df = pd.read_excel(caminho_arquivo)
 
     headers = {
-        "X-Api-Key": "pbkdf2_sha256$1200000$aonByYw2GbwuyDvrGd1z9w4x5BO477iAMn69G1gs3W1C3n1ZmLwxHpBZoKFIIQV0=",
-        "Authorization": "Api-Key ma2MH9Gg.Jp1PAbb5reRQu8DWEVHgScQLTh9Zmdzm"
+        "X-Api-Key": settings.SECRET_API_KEY,
+        "Authorization": f"Api-Key {settings.SECRET_AUTHORIZATION}"
     }
 
     profiles = cache.get("profiles")
@@ -42,6 +44,16 @@ def processar_xls(self, caminho_arquivo):
             headers=headers,
             timeout=10
         ).json()
+
+        if isinstance(profiles, dict) and "results" in profiles:
+            profiles = profiles.get("results") or []
+        if not isinstance(profiles, list):
+            profiles = []
+
+        if isinstance(users, dict) and "results" in users:
+            users = users.get("results") or []
+        if not isinstance(users, list):
+            users = []
 
         cache.set("profiles", profiles, timeout=600)
         cache.set("users", users, timeout=600)
@@ -74,7 +86,7 @@ def processar_xls(self, caminho_arquivo):
         obj, created = Acesso.objects.get_or_create(
             usuario=usuario,
             data_acesso=data,
-            desc_evento=row.get("DESC_EVENTO", ""),
+            desc_evento=desc_evento,
             desc_area=row.get("DESC_AREA", ""),
             ent_sai=row.get("ENT_SAI", ""),
             defaults={
@@ -92,6 +104,10 @@ def processar_xls(self, caminho_arquivo):
                 tentar_vincular_user_auth.s(usuario.id)
             ).apply_async()
             print("PROCESSAMENTO FINALIZADO")
+
+    if Acesso.objects.filter(apontamento=0):
+        corrigir_entradas_saida_inconsistentes()
+    print("CORREÇÃO AUTOMÁTICA DE APONTAMENTO CONCLUÍDA")
 
 
 @shared_task(bind=True)
@@ -159,3 +175,43 @@ def tentar_vincular_por_nome(self, usuario_id):
         return True
 
     return False
+
+def marcar_apontamento2(acesso):
+    if acesso.desc_evento == "Apontamento Normal":
+        acesso.apontamento = 2
+        acesso.save(update_fields=["apontamento"])
+
+
+def corrigir_entradas_saida_inconsistentes():
+    for usuario in Usuario.objects.all():
+        for area in Acesso.objects.filter(usuario=usuario).values_list('desc_area', flat=True).distinct():
+            acessos = Acesso.objects.filter(usuario=usuario, desc_area=area).order_by('data_acesso')
+            stack = None
+            for acesso in acessos:
+                if acesso.ent_sai == '1':  
+                    if stack is not None:
+                        marcar_apontamento2(acesso)
+                    stack = acesso
+                else:  
+                    if stack is None:  
+                        marcar_apontamento2(acesso)
+                    else:
+                        if not mesmoDia(stack.data_acesso, acesso.data_acesso):
+                            marcar_apontamento2(stack)
+                        stack = None
+            if stack:
+                marcar_apontamento2(stack)
+
+
+def mesmoDia(data1, data2):
+    if not data1 or not data2:
+        return False
+
+    data1_local = timezone.localtime(data1)
+    data2_local = timezone.localtime(data2)
+
+    return (
+        data1_local.year == data2_local.year and
+        data1_local.month == data2_local.month and
+        data1_local.day == data2_local.day
+    )

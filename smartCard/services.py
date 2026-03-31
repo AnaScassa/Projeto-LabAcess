@@ -12,6 +12,9 @@ def vincular_por_matricula(usuario, profiles):
     matricula_id = matricula[3:]
 
     for profile in profiles:
+        if not isinstance(profile, dict):
+            continue
+
         academic_id = profile.get("academic_id")
         academic_id_norm = ''.join(filter(str.isdigit, str(academic_id)))
 

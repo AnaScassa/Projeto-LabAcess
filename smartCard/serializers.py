@@ -42,9 +42,11 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
 
         return [
             {
+                "id": acesso.id,
                 "data_acesso": localtime(acesso.data_acesso),
                 "desc_area": acesso.desc_area,
                 "ent_sai": acesso.ent_sai,
+                "apontamento": acesso.apontamento
             }
             for acesso in acessos
         ]
