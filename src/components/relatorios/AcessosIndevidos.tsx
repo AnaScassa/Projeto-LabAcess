@@ -4,7 +4,7 @@ import type { Apontamento } from "../../types/Apontamento";
 import type { Usuario } from "../../types/Usuario";
 import { API_HOST } from "../../utils/static";
 
-export default function UsoIndevidoCartao() {
+export default function AcessoIndevidos() {
   const { usuarios } = useUsuarios();   
   const { apontamento } = useApontamento();  
 
@@ -39,7 +39,7 @@ export default function UsoIndevidoCartao() {
       <div className="card" style={{ height: "400px" }}>
         
         <div className="card-header">
-          <h3 className="card-title">Uso indevido do cartão</h3>
+          <h3 className="card-title">Uso inconsistente do cartão</h3>
         </div>
 
         <div className="card-body p-0" style={{ maxHeight: "340px", overflowY: "auto" }}>
@@ -55,7 +55,7 @@ export default function UsoIndevidoCartao() {
             </thead>
 
             <tbody>
-              {apontamento.filter((ap: Apontamento) => String(ap.apontamento) === '1' || Number(ap.apontamento) === 1).map((ap: Apontamento) => {
+              {apontamento.filter((ap: Apontamento) => String(ap.apontamento) === '2' || Number(ap.apontamento) === 2).map((ap: Apontamento) => {
 
                 const usuario = usuarios.find(
                   (u: Usuario) => u.matricula === ap.usuario_id
@@ -69,7 +69,7 @@ export default function UsoIndevidoCartao() {
                     <td>
                       {new Date(ap.data_acesso).toLocaleString()}
                     </td>
-                    <td>{ap.desc_evento}</td>
+                    <td>{ap.ent_sai === '1' ? 'Usuário entrou e não saiu' : 'Usuário saiu e não entrou'}</td>
                     <td>
                       <button onClick={() => handleApontamento(ap.id)} className="btn btn-danger d-flex justify-content-center align-items-center"
                         style={{ width: "55px", height: "35px", padding: 0 }}>

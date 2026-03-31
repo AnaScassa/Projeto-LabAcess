@@ -8,6 +8,7 @@ import UsoIndevidoCartao from "../components/relatorios/UsoIndevidoCartao";
 import ContagemTreinamento from "../components/style/ContagemTreinamento";
 import Menu from "../components/style/Menu";
 import { API_HOST } from "../utils/static";
+import AcessoIndevidos from "../components/relatorios/AcessosIndevidos";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
@@ -78,7 +79,7 @@ export default function Upload() {
 
     try {
       const response = await fetch(
-        "http://${API_HOST}:8000/api/acesso/upload-xls/",
+        `http://${API_HOST}:8000/api/acesso/upload-xls/`,
         {
           method: "POST",
           headers: {
@@ -110,7 +111,10 @@ export default function Upload() {
       <Menu/>
 
       <div className="content-wrapper">
-        <section className="content p-4">
+
+        <h2 className="px-4 pt-2">Dashboard Controle do Laboratório</h2>
+
+        <section className="content px-4 pt-4">
           <div className="row">
 
             <div className="col-md-6">
@@ -149,11 +153,27 @@ export default function Upload() {
         </section>
 
         <section className="content px-4">
+          <div className="row">
+
+            <div className="col-md-6">
+              <div className="card" style={{ height: "400px" }}>
+                <div className="card-header">
+                  <h3 className="card-title">Últimos Acessos (24 horas)</h3>
+                </div>
+              </div>
+            </div>
+
+            <AcessoIndevidos/>
+
+          </div>
+        </section>
+
+        <section className="content px-4">
           <ContagemTreinamento treinamentos={treinamentos} />
         </section>
 
 
-        <section className="content p-4">
+        <section className="content px-4">
           <div className="container-fluid">
             <div className="row">
 

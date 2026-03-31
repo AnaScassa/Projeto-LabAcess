@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_HOST } from "../utils/static";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -10,7 +11,7 @@ export default function Login() {
 
     try {
       const response = await fetch(
-        "http://143.106.5.41:8000/api/acesso/login/",
+        `${API_HOST}/api/acesso/login/`,
         {
           method: "POST",
           headers: {

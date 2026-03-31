@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function BotaoVoltar() {
+    const { username } = useAuth();
+
     return (
     <div>
     <nav className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -9,12 +12,13 @@ export default function BotaoVoltar() {
             <a className="nav-link" data-widget="pushmenu" href="#">☰</a>
           </li>
         </ul>
-        <span className="ml-3 font-weight-bold">Controle do Laboratório</span>
+        <span className="ml-3 nav-link">{username ? `Olá, ${username}` : "ControleLab"}</span>
     </nav>
 
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
-        <a href="#" className="brand-link d-flex align-items-center">
-            <span className="brand-text font-weight-light tituloMenu">Relatórios</span>
+        <a href="#" className="brand-link d-flex align-items-center align-content-center" style={{gap: "5px"}}>
+            <i className="fas fa-flask brand-image pl-1"></i>
+            <span className="brand-text font-weight-light tituloMenu">ContoleLab</span>
             <button className="btn btn-link p-0 text-white ml-auto d-lg-none" data-widget="pushmenu" style={{ fontSize: "18px", margin: "5px 10px 0 0" }}>✕</button>
         </a>
 
