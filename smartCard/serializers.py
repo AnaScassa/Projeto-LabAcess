@@ -124,6 +124,7 @@ class ApontamentoSerializer(serializers.ModelSerializer):
             'id',
             'data_acesso',
             'desc_evento',
+            'ent_sai',
             'usuario_id',
             'apontamento'
         ]

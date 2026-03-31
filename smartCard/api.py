@@ -64,4 +64,4 @@ class ApontamentoViewSet(ReadOnlyModelViewSet):
     serializer_class = ApontamentoSerializer
 
     def get_queryset(self):
-        return Acesso.objects.filter(apontamento=1)
+        return Acesso.objects.filter(apontamento__in=[1, 2])

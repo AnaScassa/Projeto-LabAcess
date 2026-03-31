@@ -51,13 +51,18 @@ def lista_usuarios(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([HasAPIKey])
 def acessos_erro(request):
-    acessos = Acesso.objects.filter(apontamento=1).values(
+    acessos = Acesso.objects.filter(apontamento__in=[1, 2]).values(
         'id',
         'data_acesso',
         'desc_evento',
         'usuario_id',
         'apontamento',
     )
+    
+    # 0 = acessos sem erro
+    # 1 = acessos com desc_evento inconsistente
+    # 2 = acessos com ent_sai inconsistente
+    # 3 = acessos com apontamento 1 e 2 já vizualizados pelo usuário
 
     return Response(list(acessos), status=status.HTTP_200_OK)
 
@@ -68,7 +73,7 @@ def mudar_apontamento(request, id):
 
     try:
         ap = Acesso.objects.get(id=id)
-        ap.apontamento = 0
+        ap.apontamento = 3
         ap.save()
         return Response({"msg": "Apontamento desativado com sucesso"})
     
