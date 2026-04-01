@@ -115,6 +115,10 @@ export default function Upload() {
         <h2 className="px-4 pt-2">Dashboard Controle do Laboratório</h2>
 
         <section className="content px-4 pt-4">
+          <ContagemTreinamento treinamentos={treinamentos} />
+        </section>
+
+        <section className="content px-4">
           <div className="row">
 
             <div className="col-md-6">
@@ -169,18 +173,12 @@ export default function Upload() {
         </section>
 
         <section className="content px-4">
-          <ContagemTreinamento treinamentos={treinamentos} />
-        </section>
-
-
-        <section className="content px-4">
-          <div className="container-fluid">
             <div className="row">
 
               <div className="col-md-6">
-                <div className="card card-primary">
-                  <div className="card-header">
-                    <h3 className="card-title">Acessos por Mês</h3>
+                <div className="card" >
+                  <div className="card-header" style={{ backgroundColor: '#007bff' }}>
+                    <h3 className="card-title" style={{ color: '#ffffff' }}>Acessos por Mês</h3>
                   </div>
 
                   <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -202,7 +200,6 @@ export default function Upload() {
               </div>
 
             </div>
-          </div>
         </section>
 
       </div>

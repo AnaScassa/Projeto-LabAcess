@@ -65,7 +65,7 @@ export default function GraficosUsuariosAtivos() {
     "#007bff",
     "#dc3545",
     "#fd7e14",
-    "#20c997",
+    "#28a745",
     "#6c757d",
     "#17a2b8",
   ];
