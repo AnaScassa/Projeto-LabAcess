@@ -8,6 +8,13 @@ export default function AcessoIndevidos() {
   const { usuarios } = useUsuarios();   
   const { apontamento } = useApontamento();  
 
+  const isLastMonth = (data: string): boolean => {
+    const dataAcesso = new Date(data);
+    const dataAtual = new Date();
+    const umMesAtras = new Date(dataAtual.getFullYear(), dataAtual.getMonth() - 1, dataAtual.getDate());
+    return dataAcesso >= umMesAtras;
+  };
+
   const handleApontamento = async (id: number) => {
     const storedToken = localStorage.getItem("access");
 
@@ -39,7 +46,7 @@ export default function AcessoIndevidos() {
       <div className="card" style={{ height: "400px" }}>
         
         <div className="card-header">
-          <h3 className="card-title">Uso inconsistente do cartão</h3>
+          <h3 className="card-title">Uso inconsistente do cartão (último mês)</h3>
         </div>
 
         <div className="card-body p-0" style={{ maxHeight: "340px", overflowY: "auto" }}>
@@ -55,7 +62,7 @@ export default function AcessoIndevidos() {
             </thead>
 
             <tbody>
-              {apontamento.filter((ap: Apontamento) => String(ap.apontamento) === '2' || Number(ap.apontamento) === 2).map((ap: Apontamento) => {
+              {apontamento.filter((ap: Apontamento) => (String(ap.apontamento) === '2' || Number(ap.apontamento) === 2) && isLastMonth(ap.data_acesso)).map((ap: Apontamento) => {
 
                 const usuario = usuarios.find(
                   (u: Usuario) => u.matricula === ap.usuario_id

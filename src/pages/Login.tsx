@@ -11,7 +11,7 @@ export default function Login() {
 
     try {
       const response = await fetch(
-        `${API_HOST}/api/acesso/login/`,
+        `http://${API_HOST}:8000/api/acesso/login/`,
         {
           method: "POST",
           headers: {
@@ -33,9 +33,11 @@ export default function Login() {
 
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
+      localStorage.setItem("username", username);
 
       console.log("LS ACCESS:", localStorage.getItem("access"));
       console.log("LS REFRESH:", localStorage.getItem("refresh"));
+      console.log("LS USERNAME:", localStorage.getItem("username"));
 
       window.location.replace("/");
     } catch (error) {
