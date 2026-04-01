@@ -9,6 +9,7 @@ import ContagemTreinamento from "../components/style/ContagemTreinamento";
 import Menu from "../components/style/Menu";
 import { API_HOST } from "../utils/static";
 import AcessoIndevidos from "../components/relatorios/AcessosIndevidos";
+import UltimosAcessos from "../components/relatorios/UltimosAcessos";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
@@ -164,6 +165,7 @@ export default function Upload() {
                 <div className="card-header">
                   <h3 className="card-title">Últimos Acessos (24 horas)</h3>
                 </div>
+                  <UltimosAcessos />
               </div>
             </div>
 
