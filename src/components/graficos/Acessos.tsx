@@ -47,7 +47,7 @@ export default function GraficoAcessos() {
         usuarios.forEach((user: Usuario) => {
           const acessosLab = (user.acessos ?? [])
             .filter((acesso) => acesso.desc_area === PORTA_LAB)
-            .map((acesso) => ({ ...acesso, dataHora: new Date(acesso.data_acesso) }))
+            .map((acesso) => ({ ...acesso, dataHora: new Date(acesso.data_acesso), }))
             .filter((acesso) => !Number.isNaN(acesso.dataHora.getTime()))
             .sort((a, b) => a.dataHora.getTime() - b.dataHora.getTime());
 
@@ -62,18 +62,27 @@ export default function GraficoAcessos() {
                 if (minutos > 0 && minutos <= 600) {
                   const monthKey = `${entrada.getFullYear()}-${String(entrada.getMonth() + 1).padStart(2, "0")}`;
                   const horas = minutos / 60;
-                  monthHours.set(monthKey, (monthHours.get(monthKey) ?? 0) + horas);
+                  monthHours.set(monthKey,(monthHours.get(monthKey) ?? 0) + horas);
                 }
+
                 entrada = null;
               }
             }
           });
         });
 
-        const sortedMonthKeys = Array.from(monthHours.keys()).sort();
+        const anoAtual = new Date().getFullYear();
+        const anoDesejado = anoAtual - 1;
+        const filteredMonthKeys = Array.from(monthHours.keys())
+          .filter((key) => {
+            const [year] = key.split("-").map(Number);
+            return year === anoDesejado;
+          })
+          .sort();
 
-        setLabels(sortedMonthKeys.map(formatMonthLabel));
-        setValues(sortedMonthKeys.map((key) => Number((monthHours.get(key) ?? 0).toFixed(2))));
+        setLabels(filteredMonthKeys.map(formatMonthLabel));
+        setValues(filteredMonthKeys.map((key) => Number((monthHours.get(key) ?? 0).toFixed(2)))
+        );
       } catch (err) {
         console.error(err);
         setError("Falha ao carregar dados de acessos.");
@@ -85,7 +94,7 @@ export default function GraficoAcessos() {
     loadChart();
   }, []);
 
-  if (loading) return <div>Carregando gráfico de acessos por mês...</div>;
+  if (loading) return <div>Carregando gráfico dos acessos do último ano</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
 
   const data = {

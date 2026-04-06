@@ -180,7 +180,7 @@ export default function Upload() {
               <div className="col-md-6">
                 <div className="card" >
                   <div className="card-header" style={{ backgroundColor: '#007bff' }}>
-                    <h3 className="card-title" style={{ color: '#ffffff' }}>Acessos por Mês</h3>
+                    <h3 className="card-title" style={{ color: '#ffffff' }}>Acessos do último ano</h3>
                   </div>
 
                   <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
