@@ -20,6 +20,14 @@ lib64/
 parts/
 sdist/
 var/
+fixtures/
+01_default_user_group.json
+02_degreearea.json
+03_position.json
+04_userdata.json
+05_userprofile.json
+06_account.json
+07_safetytraining.json
 wheels/
 *.egg-info/
 .installed.cfg
