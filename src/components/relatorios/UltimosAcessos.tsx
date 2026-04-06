@@ -4,8 +4,8 @@ import type { Usuario } from "../../types/Usuario";
 export default function UltimosAcessos() {
     const { usuarios } = useUsuarios();
     const dataAtual = Date.now();
-
-    const acessosRecentes = usuarios.flatMap((usuario: Usuario) => {
+    
+    const acessos24Horas = usuarios.flatMap((usuario: Usuario) => {
         return (usuario.acessos || [])
             .filter((acesso) => {
                 const dataAcesso = new Date(acesso.data_acesso).getTime();
@@ -19,7 +19,7 @@ export default function UltimosAcessos() {
             }));
     });
 
-    const acessosOrdenados = acessosRecentes.sort((a, b) => {
+    const acessosOrdenados = acessos24Horas.sort((a, b) => {
         return new Date(b.data_acesso).getTime() - new Date(a.data_acesso).getTime();
     });
 

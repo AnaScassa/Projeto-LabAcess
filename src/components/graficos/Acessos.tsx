@@ -3,6 +3,7 @@ import { Bar } from "react-chartjs-2";
 import {Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,} from "chart.js";
 import { carregarUsuarios } from "../../services/usuarios";
 import type { Usuario } from "../../types/Usuario";
+import { minutosParaHoras } from "../../utils/horasMinutos";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -41,7 +42,7 @@ export default function GraficoAcessos() {
       try {
         const usuarios = await carregarUsuarios();
 
-        const monthHours = new Map<string, number>();
+        const monthMinutes = new Map<string, number>();
         const PORTA_LAB = "CCS_LAB";
 
         usuarios.forEach((user: Usuario) => {
@@ -61,8 +62,7 @@ export default function GraficoAcessos() {
                 const minutos = Math.floor((acesso.dataHora.getTime() - entrada.getTime()) / 60000);
                 if (minutos > 0 && minutos <= 600) {
                   const monthKey = `${entrada.getFullYear()}-${String(entrada.getMonth() + 1).padStart(2, "0")}`;
-                  const horas = minutos / 60;
-                  monthHours.set(monthKey,(monthHours.get(monthKey) ?? 0) + horas);
+                  monthMinutes.set(monthKey,(monthMinutes.get(monthKey) ?? 0) + minutos);
                 }
 
                 entrada = null;
@@ -73,7 +73,7 @@ export default function GraficoAcessos() {
 
         const anoAtual = new Date().getFullYear();
         const anoDesejado = anoAtual - 1;
-        const filteredMonthKeys = Array.from(monthHours.keys())
+        const filteredMonthKeys = Array.from(monthMinutes.keys())
           .filter((key) => {
             const [year] = key.split("-").map(Number);
             return year === anoDesejado;
@@ -81,8 +81,8 @@ export default function GraficoAcessos() {
           .sort();
 
         setLabels(filteredMonthKeys.map(formatMonthLabel));
-        setValues(filteredMonthKeys.map((key) => Number((monthHours.get(key) ?? 0).toFixed(2)))
-        );
+        setValues(filteredMonthKeys.map((key) =>(monthMinutes.get(key) ?? 0) / 60));
+
       } catch (err) {
         console.error(err);
         setError("Falha ao carregar dados de acessos.");
@@ -114,6 +114,15 @@ export default function GraficoAcessos() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context: any) {
+            const minutosTotais = Math.round(context.raw * 60);
+            const { horas2, minutos2 } = minutosParaHoras(minutosTotais);
+            return `${horas2}h ${minutos2}min`;
+          },
+        },
+      },
       legend: {
         position: "top" as const,
       },

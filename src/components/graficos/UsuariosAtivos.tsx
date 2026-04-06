@@ -1,19 +1,15 @@
 import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  Title,
-} from "chart.js";
+import {Chart as ChartJS, ArcElement, Tooltip, Legend, Title,} from "chart.js";
 import { carregarUsuarios } from "../../services/usuarios";
 import { calcularTempoUsuario } from "../../utils/calcularTempoUsuario";
+import { minutosParaHoras } from "../../utils/horasMinutos";
 import type { Usuario } from "../../types/Usuario";
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
-function primeiroUltimoNome(nome: string): string {  if (!nome) return "Sem nome";
+function primeiroUltimoNome(nome: string): string {
+  if (!nome) return "Sem nome";
   const fatias = nome.trim().split(" ").filter(Boolean);
   if (fatias.length === 0) return "Sem nome";
   if (fatias.length === 1) return fatias[0];
@@ -36,17 +32,13 @@ export default function GraficosUsuariosAtivos() {
 
         const ranking = usuarios
           .map((u: Usuario) => {
-            const nome = primeiroUltimoNome(u.nome_usuario || u.matricula || "Sem nome");
+            const nome = primeiroUltimoNome( u.nome_usuario || u.matricula || "Sem nome");
             const minutos = calcularTempoUsuario(u, "CCS_LAB", null, null);
-            const horas = Number((minutos / 60).toFixed(2));
-
-            return { usuario: nome, horas };
-          })
-          .sort((a, b) => b.horas - a.horas)
-          .slice(0, 6);
+            return { usuario: nome, minutos };
+          }).sort((a, b) => b.minutos - a.minutos).slice(0, 6);
 
         setLabels(ranking.map((item) => item.usuario));
-        setValues(ranking.map((item) => item.horas));
+        setValues(ranking.map((item) => item.minutos / 60));
       } catch (err) {
         console.error(err);
         setError("Falha ao carregar ranking de usuários ativos.");
@@ -74,7 +66,7 @@ export default function GraficosUsuariosAtivos() {
     labels,
     datasets: [
       {
-        label: "Horas em CCS_LAB",
+        label: "Tempo no CCS_LAB",
         data: values,
         backgroundColor: colors.slice(0, values.length),
         borderColor: "#ffffff",
@@ -99,14 +91,17 @@ export default function GraficosUsuariosAtivos() {
       },
       title: {
         display: true,
-        text: "Usuários mais ativos (horas no CCS_LAB)",
+        text: "Usuários mais ativos (tempo no CCS_LAB)",
       },
       tooltip: {
         callbacks: {
           label: (context: any) => {
             const label = context.label || "";
-            const value = context.raw || 0;
-            return `${label}: ${value}h`;
+
+            const minutosTotais = Math.round(context.raw * 60);
+            const { horas2, minutos2 } = minutosParaHoras(minutosTotais);
+
+            return `${label}: ${horas2}h ${minutos2}min`;
           },
         },
       },
