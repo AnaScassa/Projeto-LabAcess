@@ -179,8 +179,8 @@ export default function Upload() {
 
               <div className="col-md-6">
                 <div className="card" >
-                  <div className="card-header" style={{ backgroundColor: '#007bff' }}>
-                    <h3 className="card-title" style={{ color: '#ffffff' }}>Acessos do último ano</h3>
+                  <div className="card-header" style={{ backgroundColor: '#17a2b8' }}>
+                    <h3 className="card-title" >Acessos do último ano</h3>
                   </div>
 
                   <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -190,8 +190,8 @@ export default function Upload() {
               </div>
 
               <div className="col-md-6">
-                <div className="card card-success">
-                  <div className="card-header">
+                <div className="card">
+                  <div className="card-header" style={{ backgroundColor: "#ffc107"}}>
                     <h3 className="card-title">Usuários que mais acessam o lab</h3>
                   </div>
 

@@ -35,3 +35,21 @@ i{
   font-weight: 500 !important;
   padding: 20px 0px !important;
 }
+
+.card-icon {
+  transform: translateY(-50%);
+  transition: transform 0.5s ease;
+}
+
+.card:hover .card-icon {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.info-link {
+  background-color: rgba(0, 0, 0, .1);
+  transition: background-color 0.3s ease;
+}
+
+.info-link:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}

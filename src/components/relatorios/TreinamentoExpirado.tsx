@@ -40,7 +40,7 @@ export default function RelatorioTreinamento({
   const contarAcessos = (usuario: Usuario, dataExp: string, portasSelecionadas: string[]) => {
     if (!usuario?.acessos) return 0;
 
-  const dataExpiracao = new Date(dataExp);
+    const dataExpiracao = new Date(dataExp);
 
     let acessos = usuario.acessos.filter(a => new Date(a.data_acesso) > dataExpiracao && a.ent_sai === "1");
 
@@ -52,26 +52,35 @@ export default function RelatorioTreinamento({
 };
 
   const dadosTabela = useMemo(() => {
-    const hoje = new Date();
+  const hoje = new Date();
 
-    return treinamentos
-      .filter(t => {
-        if (!t.expiration_date) return false;
+  return treinamentos
+    .filter(t => {
+      if (!t.expiration_date) return false;
 
-        const dataExp = new Date(t.expiration_date);
-        return dataExp < hoje;
-      })
-      .map(t => {
-        const user = usersMap[Number(t.user_id)];
-        const usuarioAcesso = usuariosMap[Number(t.user_id)];
+      const dataExp = new Date(t.expiration_date);
+      return dataExp < hoje;
+    })
+    .map(t => {
+      const user = usersMap[Number(t.user_id)];
+      const usuarioAcesso = usuariosMap[Number(t.user_id)];
 
-        return {
-          nome: user ? getNome(user) : "Usuário não encontrado",
-          dataExp: new Date(t.expiration_date).toLocaleDateString("pt-BR"),
-          acessos: usuarioAcesso ? contarAcessos(usuarioAcesso, t.expiration_date, portasSelecionadas) : 0
-        };
-      });
-  }, [treinamentos, usersMap, usuariosMap, portasSelecionadas]);
+      if (!usuarioAcesso?.acessos || usuarioAcesso.acessos.length === 0) {
+        return null;
+      }
+
+      return {
+        nome: user ? getNome(user) : "Usuário não encontrado",
+        dataExp: new Date(t.expiration_date).toLocaleDateString("pt-BR"),
+        acessos: contarAcessos(usuarioAcesso, t.expiration_date, portasSelecionadas)
+      };
+    })
+    .filter((item): item is {
+      nome: string;
+      dataExp: string;
+      acessos: number;
+    } => item !== null);
+}, [treinamentos, usersMap, usuariosMap, portasSelecionadas]);
 
   const paginaVisivel = dadosTabela.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const totalPaginas = Math.ceil(dadosTabela.length / rowsPerPage);
@@ -161,13 +170,8 @@ export default function RelatorioTreinamento({
                     }
                     const pageNum = item as number;
                     return (
-                      <li
-                        key={idx}
-                        className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}
-                      >
-                        <button className="page-link" onClick={() => setPage(pageNum)}>
-                          {pageNum + 1}
-                        </button>
+                      <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
+                        <button className="page-link" onClick={() => setPage(pageNum)}>{pageNum + 1}</button>
                       </li>
                     );
                   })}

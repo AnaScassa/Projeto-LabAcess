@@ -103,7 +103,7 @@ export default function GraficoAcessos() {
       {
         label: "Acessos (horas)",
         data: values,
-        backgroundColor: "#007bff",
+        backgroundColor: "#17a2b8",
         borderColor: "#17a2b8",
         borderWidth: 1,
       },
