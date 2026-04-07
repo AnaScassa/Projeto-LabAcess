@@ -45,7 +45,7 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
             </i>
           </div>
 
-          <Link to="/treinamentos" className="small-box-footer d-flex justify-content-center py-1 align-items-center info-link"
+          <Link to="/relatorioTreinamentoPendente" className="small-box-footer d-flex justify-content-center py-1 align-items-center info-link"
             style={{ color: "#000", textDecoration: 'none' }}>
             Mais informações <i className="fas fa-arrow-circle-right pl-1"></i>
           </Link>

@@ -67,6 +67,12 @@ export default function BotaoVoltar() {
                         <p>Treinamentos Ativos</p>
                         </Link>
                     </li>
+                    <li className="nav-item">
+                        <Link to="/relatorioTreinamentoPendente" className="nav-link">
+                        <i className="fas fa-clock"></i>
+                        <p>Treinamentos Pendentes</p>
+                        </Link>
+                    </li>
                 </ul>
             </nav>
         </div>
