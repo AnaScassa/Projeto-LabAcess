@@ -36,27 +36,6 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
           <div className="card-body position-relative" style={{ minHeight: "120px" }}>
             
             <div className="text-start w-100 h-100 d-flex flex-column justify-content-start">
-              <h2 style={{ fontWeight: "900" }}>{datasSemData}</h2>
-              <h5>Treinamentos Pendentes</h5>
-            </div>
-
-            <i className="fas fa-solid fa-clock position-absolute card-icon"
-              style={{ right: "15px", top: "50%", fontSize: "3.5rem", color: "rgba(0, 0, 0, 0.3)", gap: "8px" }}>
-            </i>
-          </div>
-
-          <Link to="/relatorioTreinamentoPendente" className="small-box-footer d-flex justify-content-center py-1 align-items-center info-link"
-            style={{ color: "#000", textDecoration: 'none' }}>
-            Mais informações <i className="fas fa-arrow-circle-right pl-1"></i>
-          </Link>
-        </div>
-      </div>
-
-      <div className="col-md-4">
-        <div className="card" style={{ backgroundColor: "#ffc107", cursor: "pointer" }}>
-          <div className="card-body position-relative" style={{ minHeight: "120px" }}>
-            
-            <div className="text-start w-100 h-100 d-flex flex-column justify-content-start">
               <div className="d-flex w-100 justify-content-start align-items-center" style={{ gap: "10px" }}>
                 <h2 style={{ fontWeight: "900", marginBottom: "0" }}>{datasExpiradas}</h2>
               </div>
@@ -72,6 +51,27 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
             Mais informações <i className="fas fa-arrow-circle-right pl-1"></i>
           </Link>
           
+        </div>
+      </div>
+
+      <div className="col-md-4">
+        <div className="card" style={{ backgroundColor: "#ffc107", cursor: "pointer" }}>
+          <div className="card-body position-relative" style={{ minHeight: "120px" }}>
+            
+            <div className="text-start w-100 h-100 d-flex flex-column justify-content-start">
+              <h2 style={{ fontWeight: "900" }}>{datasSemData}</h2>
+              <h5>Treinamentos Pendentes</h5>
+            </div>
+
+            <i className="fas fa-solid fa-clock position-absolute card-icon"
+              style={{ right: "15px", top: "50%", fontSize: "3.5rem", color: "rgba(0, 0, 0, 0.3)", gap: "8px" }}>
+            </i>
+          </div>
+
+          <Link to="/relatorioTreinamentoPendente" className="small-box-footer d-flex justify-content-center py-1 align-items-center info-link"
+            style={{ color: "#000", textDecoration: 'none' }}>
+            Mais informações <i className="fas fa-arrow-circle-right pl-1"></i>
+          </Link>
         </div>
       </div>
 

@@ -34,11 +34,13 @@ export default function RelatorioNaoExpirados() {
               <div className="tituloUltimoMes">
                 <h3 className="card-title">Treinamentos não expirados</h3>
               </div>
+              <div className="py-4">
                 <FiltroPortasCheckbox
                   portas={portas}
                   selecionadas={portasSelecionadas}
                   onChange={setPortasSelecionadas}
                 />
+                </div>
                 <CalculadorNaoExpirados
                   users={users}
                   usuarios={usuarios}
