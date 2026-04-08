@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { calcularMinutos } from "../../utils/tempo";
 import { getNomeUsuario } from "../../utils/getNomeUsuario";
 import { juntarUsuariosPorMatricula } from "../../utils/juntarUsuariosPorMatricula";
@@ -22,7 +22,11 @@ interface Resultado {
   saida: string;
   permanencia: string;
   porta: string;
+  entradaTimestamp: number;
+  saidaTimestamp: number;
 }
+
+type SortField = "usuario" | "entrada" | "saida" | "porta" | "permanencia";
 
 export default function CalculadorTempo({
   usuario,
@@ -39,9 +43,64 @@ export default function CalculadorTempo({
   const [totalAcessosErro, setTotalAcessosErro] = useState(0);
   const [mediaTempo, setMediaTempo] = useState("0h 0min");
   const [totalSistema, setTotalSistema] = useState("0h 0min");
+  const [sortField, setSortField] = useState<SortField>("usuario");
+  const [sortAsc, setSortAsc] = useState(true);
 
-  const paginaVisivel = resultados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  const totalPaginas = Math.ceil(resultados.length / rowsPerPage);
+  const resultadosOrdenados = useMemo(() => {
+    return [...resultados].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortField) {
+        case "usuario":
+          aValue = a.usuario;
+          bValue = b.usuario;
+          return sortAsc
+            ? aValue.localeCompare(bValue, "pt", { sensitivity: "base" })
+            : bValue.localeCompare(aValue, "pt", { sensitivity: "base" });
+
+        case "porta":
+          aValue = a.porta;
+          bValue = b.porta;
+          return sortAsc
+            ? aValue.localeCompare(bValue, "pt", { sensitivity: "base" })
+            : bValue.localeCompare(aValue, "pt", { sensitivity: "base" });
+
+        case "entrada":
+          aValue = a.entradaTimestamp;
+          bValue = b.entradaTimestamp;
+          return sortAsc ? aValue - bValue : bValue - aValue;
+
+        case "saida":
+          aValue = a.saidaTimestamp;
+          bValue = b.saidaTimestamp;
+          return sortAsc ? aValue - bValue : bValue - aValue;
+
+        case "permanencia":
+          const parseTempo = (tempo: string) => {
+            if (tempo === "Indisponível") return 0;
+            const match = tempo.match(/(\d+)h (\d+)min/);
+            if (match) {
+              return parseInt(match[1]) * 60 + parseInt(match[2]);
+            }
+            return 0;
+          };
+          aValue = parseTempo(a.permanencia);
+          bValue = parseTempo(b.permanencia);
+          return sortAsc ? aValue - bValue : bValue - aValue;
+
+        default:
+          return 0;
+      }
+    });
+  }, [resultados, sortField, sortAsc]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [resultadosOrdenados]);
+
+  const paginaVisivel = resultadosOrdenados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const totalPaginas = Math.ceil(resultadosOrdenados.length / rowsPerPage);
 
   const getVisiblePages = (current: number, total: number) => {
     if (total <= 6) return Array.from({ length: total }, (_, i) => i);
@@ -129,7 +188,9 @@ export default function CalculadorTempo({
               entrada: stack.toLocaleString(),
               saida: dataHoraStr,
               permanencia: `${horas2}h ${minutos2}min`,
-              porta: area
+              porta: area,
+              entradaTimestamp: stack.getTime(),
+              saidaTimestamp: dataHora.getTime()
             });
 
           } else {
@@ -154,7 +215,9 @@ export default function CalculadorTempo({
             entrada: "Saída sem entrada",
             saida: dataHoraStr,
             permanencia: "Indisponível",
-            porta: area
+            porta: area,
+            entradaTimestamp: 0,
+            saidaTimestamp: dataHora.getTime()
           });
         }
       }
@@ -197,11 +260,66 @@ export default function CalculadorTempo({
               <table className="table table-bordered table-hover dataTable text-left">
                 <thead>
                   <tr>
-                    <th>Usuário</th>
-                    <th>Entrada</th>
-                    <th>Saída</th>
-                    <th>Porta</th>
-                    <th>Tempo Permanência</th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (sortField === "usuario") {
+                          setSortAsc((prev) => !prev);
+                        } else {
+                          setSortField("usuario");
+                          setSortAsc(true);
+                        }
+                        setPage(0);
+                      }}>Usuário {sortField === "usuario" ? (sortAsc ? "▲" : "▼") : ""}
+                    </th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (sortField === "entrada") {
+                          setSortAsc((prev) => !prev);
+                        } else {
+                          setSortField("entrada");
+                          setSortAsc(true);
+                        }
+                        setPage(0);
+                      }}>Entrada {sortField === "entrada" ? (sortAsc ? "▲" : "▼") : ""}
+                    </th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (sortField === "saida") {
+                          setSortAsc((prev) => !prev);
+                        } else {
+                          setSortField("saida");
+                          setSortAsc(true);
+                        }
+                        setPage(0);
+                      }}>Saída {sortField === "saida" ? (sortAsc ? "▲" : "▼") : ""}
+                    </th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (sortField === "porta") {
+                          setSortAsc((prev) => !prev);
+                        } else {
+                          setSortField("porta");
+                          setSortAsc(true);
+                        }
+                        setPage(0);
+                      }}>Porta {sortField === "porta" ? (sortAsc ? "▲" : "▼") : ""}
+                    </th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (sortField === "permanencia") {
+                          setSortAsc((prev) => !prev);
+                        } else {
+                          setSortField("permanencia");
+                          setSortAsc(true);
+                        }
+                        setPage(0);
+                      }}>Tempo Permanência {sortField === "permanencia" ? (sortAsc ? "▲" : "▼") : ""}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -231,9 +349,9 @@ export default function CalculadorTempo({
         <div className="row">
           <div className="col-sm-12 col-md-5">
             <div className="dataTables_info text-left">
-              Mostrando {resultados.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
-              {Math.min((page + 1) * rowsPerPage, resultados.length)} de{" "}
-              {resultados.length} registros
+              Mostrando {resultadosOrdenados.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
+              {Math.min((page + 1) * rowsPerPage, resultadosOrdenados.length)} de{" "}
+              {resultadosOrdenados.length} registros
             </div>
           </div>
 

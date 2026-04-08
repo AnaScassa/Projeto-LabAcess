@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { calcularTempoUsuario } from "../../utils/calcularTempoUsuario";
 import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
 import { minutosParaHoras } from "../../utils/horasMinutos";
 import { getNomeUsuario } from "../../utils/getNomeUsuario";
 import type { Relatorio } from "../../types/Relatorio";
+
+type SortFieldPouco = "nome" | "tempoTotal";
 
 interface CalculadorLabProps {
   usuarios: any[];
@@ -16,6 +18,8 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
   const [mediaTempo, setMediaTempo] = useState("0h 0min");
   const [page, setPage] = useState(0);
   const rowsPerPage = 15;
+  const [sortFieldPoucoTempo, setSortFieldPoucoTempo] = useState<SortFieldPouco>("nome");
+  const [sortAscPouco, setSortAscPouco] = useState(true);
 
   const PORTA_LAB = "CCS_LAB";
 
@@ -35,6 +39,7 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
         resultado.push({
           usuario: getNomeUsuario(user.matricula, usuarios),
           tempoTotal: `${horas2}h ${minutos2}min`,
+          tempoTotalMinutos: totalUsuario,
         });
       }
     });
@@ -48,16 +53,29 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
     setMediaTempo(`${media.horas}h ${media.minutos}min`);
   }, [usuarios]);
 
+  const relatorioOrdenado = useMemo(() => {
+    return [...relatorio].sort((a, b) => {
+      if (sortFieldPoucoTempo === "nome") {
+        return sortAscPouco
+          ? a.usuario.localeCompare(b.usuario, "pt", { sensitivity: "base" })
+          : b.usuario.localeCompare(a.usuario, "pt", { sensitivity: "base" });
+      }
+      return sortAscPouco
+        ? (a.tempoTotalMinutos || 0) - (b.tempoTotalMinutos || 0)
+        : (b.tempoTotalMinutos || 0) - (a.tempoTotalMinutos || 0);
+    });
+  }, [relatorio, sortFieldPoucoTempo, sortAscPouco]);
+
   useEffect(() => {
     setPage(0);
-  }, [relatorio]);
+  }, [relatorioOrdenado]);
 
-  const paginaVisivel = relatorio.slice(
+  const paginaVisivel = relatorioOrdenado.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
-  const totalPaginas = Math.ceil(relatorio.length / rowsPerPage);
+  const totalPaginas = Math.ceil(relatorioOrdenado.length / rowsPerPage);
 
   const getVisiblePages = (current: number, total: number) => {
     if (total <= 6) return Array.from({ length: total }, (_, i) => i);
@@ -86,8 +104,34 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
               <table className="table table-bordered table-hover dataTable text-left">
                 <thead>
                   <tr>
-                    <th>Usuário</th>
-                    <th>Tempo total</th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (sortFieldPoucoTempo === "nome") {
+                          setSortAscPouco((prev) => !prev);
+                        } else {
+                          setSortFieldPoucoTempo("nome");
+                          setSortAscPouco(true);
+                        }
+                        setPage(0);
+                      }}
+                    >
+                      Usuário {sortFieldPoucoTempo === "nome" ? (sortAscPouco ? "▲" : "▼") : ""}
+                    </th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (sortFieldPoucoTempo === "tempoTotal") {
+                          setSortAscPouco((prev) => !prev);
+                        } else {
+                          setSortFieldPoucoTempo("tempoTotal");
+                          setSortAscPouco(false);
+                        }
+                        setPage(0);
+                      }}
+                    >
+                      Tempo total {sortFieldPoucoTempo === "tempoTotal" ? (sortAscPouco ? "▲" : "▼") : ""}
+                    </th>
                   </tr>
                 </thead>
 
@@ -113,9 +157,9 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
         <div className="row">
           <div className="col-sm-12 col-md-5">
             <div className="dataTables_info text-left">
-              Mostrando {relatorio.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
-              {Math.min((page + 1) * rowsPerPage, relatorio.length)} de{" "}
-              {relatorio.length} registros
+              Mostrando {relatorioOrdenado.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
+              {Math.min((page + 1) * rowsPerPage, relatorioOrdenado.length)} de{" "}
+              {relatorioOrdenado.length} registros
             </div>
           </div>
 

@@ -1,7 +1,16 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Users } from "../../types/Users";
 import type { Usuario } from "../../types/Usuario";
 import type { Treinamento } from "../../types/Treinamento";
+
+import { getUserFullName } from "../../utils/getUserFullName";
+
+type TreinamentoExpiradoRow = {
+  nome: string;
+  dataExp: string;
+  dataExpRaw: Date;
+  acessos: number;
+};
 
 interface Props {
   users: Users[];
@@ -18,16 +27,9 @@ export default function RelatorioTreinamento({
 }: Props) {
 
   const [page, setPage] = useState(0);
+  const [sortField, setSortField] = useState<"nome" | "dataExp" | "acessos">("nome");
+  const [sortAsc, setSortAsc] = useState(true);
   const rowsPerPage = 15;
-
-  const getNome = (u: Users) => {
-    if (u.full_name?.trim()) return u.full_name;
-
-    const nomeCompleto = `${u.first_name} ${u.last_name}`.trim();
-    if (nomeCompleto) return nomeCompleto;
-
-    return u.username;
-  };
 
   const usersMap = useMemo(() => {
     return Object.fromEntries(users.map(u => [u.id, u]));
@@ -51,7 +53,7 @@ export default function RelatorioTreinamento({
 
 };
 
-  const dadosTabela = useMemo(() => {
+  const dadosTabela = useMemo<TreinamentoExpiradoRow[]>(() => {
   const hoje = new Date();
 
   return treinamentos
@@ -69,18 +71,31 @@ export default function RelatorioTreinamento({
         return null;
       }
 
+      const dataExpRaw = new Date(t.expiration_date);
       return {
-        nome: user ? getNome(user) : "Usuário não encontrado",
-        dataExp: new Date(t.expiration_date).toLocaleDateString("pt-BR"),
+        nome: user ? getUserFullName(user) : "Usuário não encontrado",
+        dataExp: dataExpRaw.toLocaleDateString("pt-BR"),
+        dataExpRaw,
         acessos: contarAcessos(usuarioAcesso, t.expiration_date, portasSelecionadas)
       };
     })
-    .filter((item): item is {
-      nome: string;
-      dataExp: string;
-      acessos: number;
-    } => item !== null);
-}, [treinamentos, usersMap, usuariosMap, portasSelecionadas]);
+    .filter((item): item is TreinamentoExpiradoRow => item !== null)
+    .sort((a, b) => {
+      if (sortField === "nome") {
+        return sortAsc
+          ? a.nome.localeCompare(b.nome, "pt", { sensitivity: "base" })
+          : b.nome.localeCompare(a.nome, "pt", { sensitivity: "base" });
+      }
+
+      if (sortField === "dataExp") {
+        return sortAsc
+          ? a.dataExpRaw.getTime() - b.dataExpRaw.getTime()
+          : b.dataExpRaw.getTime() - a.dataExpRaw.getTime();
+      }
+
+      return sortAsc ? a.acessos - b.acessos : b.acessos - a.acessos;
+    });
+}, [treinamentos, usersMap, usuariosMap, portasSelecionadas, sortAsc, sortField]);
 
   const paginaVisivel = dadosTabela.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const totalPaginas = Math.ceil(dadosTabela.length / rowsPerPage);
@@ -102,7 +117,7 @@ export default function RelatorioTreinamento({
 
   const visiblePages = getVisiblePages(page, totalPaginas);
 
-  useMemo(() => {
+  useEffect(() => {
     setPage(0);
   }, [dadosTabela]);
 
@@ -116,9 +131,48 @@ export default function RelatorioTreinamento({
               <table className="table table-bordered table-hover dataTable text-left">
                 <thead>
                   <tr>
-                    <th>Usuário</th>
-                    <th>Data de Expiração</th>
-                    <th>Acessos após expiração</th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (sortField === "nome") {
+                          setSortAsc((prev) => !prev);
+                        } else {
+                          setSortField("nome");
+                          setSortAsc(true);
+                        }
+                        setPage(0);
+                      }}
+                    >
+                      Usuário {sortField === "nome" ? (sortAsc ? "▲" : "▼") : ""}
+                    </th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (sortField === "dataExp") {
+                          setSortAsc((prev) => !prev);
+                        } else {
+                          setSortField("dataExp");
+                          setSortAsc(false);
+                        }
+                        setPage(0);
+                      }}
+                    >
+                      Data de Expiração {sortField === "dataExp" ? (sortAsc ? "▲" : "▼") : ""}
+                    </th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (sortField === "acessos") {
+                          setSortAsc((prev) => !prev);
+                        } else {
+                          setSortField("acessos");
+                          setSortAsc(false);
+                        }
+                        setPage(0);
+                      }}
+                    >
+                      Acessos após expiração {sortField === "acessos" ? (sortAsc ? "▲" : "▼") : ""}
+                    </th>
                   </tr>
                 </thead>
 

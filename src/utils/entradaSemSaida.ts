@@ -18,6 +18,8 @@ export function entradaSemSaida({
     entrada: stack.toLocaleString(),
     saida: "Entrada sem saída",
     permanencia: "Indisponível",
-    porta: area
+    porta: area,
+    entradaTimestamp: stack.getTime(),
+    saidaTimestamp: 0
   };
 }

@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 
+import { getUserFullName } from "../../utils/getUserFullName";
 import type { Users } from "../../types/Users";
 import type { Treinamento } from "../../types/Treinamento";
 
@@ -13,16 +14,8 @@ export default function CalculadorTreinamentoPendente({
   treinamentos,
 }: Props) {
   const [page, setPage] = useState(0);
+  const [sortAsc, setSortAsc] = useState(true);
   const rowsPerPage = 15;
-
-  const getNome = (u: Users) => {
-    if (u.full_name?.trim()) return u.full_name;
-
-    const nomeCompleto = `${u.first_name} ${u.last_name}`.trim();
-    if (nomeCompleto) return nomeCompleto;
-
-    return u.username;
-  };
 
   const usersMap = useMemo(() => {
     return Object.fromEntries(users.map((u) => [u.id, u]));
@@ -30,15 +23,20 @@ export default function CalculadorTreinamentoPendente({
 
   const treinamentosPendentes = useMemo(() => {
     const nomes = treinamentos
-      .filter((t) => !t.expiration_date) 
+      .filter((t) => !t.expiration_date)
       .map((t) => {
         const user = usersMap[t.user_id];
-        return user ? getNome(user) : null;
+        return user ? getUserFullName(user) : null;
       })
-      .filter(Boolean);
+      .filter(Boolean) as string[];
 
-    return [...new Set(nomes)]; 
-  }, [treinamentos, usersMap]);
+    const nomesUnicos = [...new Set(nomes)];
+    return nomesUnicos.sort((a, b) =>
+      sortAsc
+        ? a.localeCompare(b, "pt", { sensitivity: "base" })
+        : b.localeCompare(a, "pt", { sensitivity: "base" })
+    );
+  }, [treinamentos, usersMap, sortAsc]);
 
   const paginaVisivel = treinamentosPendentes.slice(
     page * rowsPerPage,
@@ -78,7 +76,11 @@ export default function CalculadorTreinamentoPendente({
               <table className="table table-bordered table-hover dataTable text-left">
                 <thead>
                   <tr>
-                    <th>Usuário</th>
+                    <th style={{ cursor: "pointer" }} onClick={() => {
+                        setSortAsc((prev) => !prev);
+                        setPage(0);
+                      }}>Usuário {sortAsc ? "▲" : "▼"}
+                    </th>
                   </tr>
                 </thead>
 

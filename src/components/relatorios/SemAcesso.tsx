@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { calcularTempoUsuario } from "../../utils/calcularTempoUsuario";
 import { getMatriculaBase } from "../../utils/getMatriculaBase";
 
@@ -23,8 +23,22 @@ export default function SemAcesso({
   const [page, setPage] = useState(0);
   const rowsPerPage = 15;
   const PORTA_LAB = "CCS_LAB";
-  const paginaVisivel = semAcesso.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  const totalPaginas = Math.ceil(semAcesso.length / rowsPerPage);
+  const [sortAsc, setSortAsc] = useState(true);
+
+  const semAcessoOrdenado = useMemo(() => {
+    return [...semAcesso].sort((a, b) => {
+      return sortAsc
+        ? a.usuario.localeCompare(b.usuario, "pt", { sensitivity: "base" })
+        : b.usuario.localeCompare(a.usuario, "pt", { sensitivity: "base" });
+    });
+  }, [semAcesso, sortAsc]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [semAcessoOrdenado]);
+
+  const paginaVisivel = semAcessoOrdenado.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const totalPaginas = Math.ceil(semAcessoOrdenado.length / rowsPerPage);
 
   const getVisiblePages = (current: number, total: number) => {
     if (total <= 6) return Array.from({ length: total }, (_, i) => i);
@@ -99,7 +113,15 @@ export default function SemAcesso({
               <table className="table table-bordered table-hover dataTable text-left">
                 <thead>
                   <tr>
-                    <th>Usuário</th>
+                    <th
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setSortAsc((prev) => !prev);
+                        setPage(0);
+                      }}
+                    >
+                      Usuário {sortAsc ? "▲" : "▼"}
+                    </th>
                   </tr>
                 </thead>
 
@@ -124,9 +146,9 @@ export default function SemAcesso({
         <div className="row">
           <div className="col-sm-12 col-md-5">
             <div className="dataTables_info text-left">
-              Mostrando {semAcesso.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
-              {Math.min((page + 1) * rowsPerPage, semAcesso.length)} de{" "}
-              {semAcesso.length} registros
+              Mostrando {semAcessoOrdenado.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
+              {Math.min((page + 1) * rowsPerPage, semAcessoOrdenado.length)} de{" "}
+              {semAcessoOrdenado.length} registros
             </div>
           </div>
 
