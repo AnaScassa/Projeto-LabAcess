@@ -7,7 +7,7 @@ from smartcard.factories import SmartcardUsuarioFactory, AcessoFactory
 # COMANDOS PARA POPULAR O BANCO DE DADOS COM DADOS FICTÍCIOS
 # docker exec -it smartcard_backend python manage.py shell
 # from smartcard.populate import popular_banco
-# popular_banco()
+#  popular_banco()
 
 def criar_acessos(usuario, quantidade_dias=10):
     for _ in range(quantidade_dias):

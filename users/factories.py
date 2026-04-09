@@ -15,21 +15,24 @@ from .models import (
 
 fake = Faker("pt_BR")
 
+
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
-    username = factory.LazyAttribute(lambda _: fake.user_name())
+    username = factory.Sequence(lambda n: f"user_{n}")    
     email = factory.LazyAttribute(lambda _: fake.email())
     first_name = factory.LazyAttribute(lambda _: fake.first_name())
     last_name = factory.LazyAttribute(lambda _: fake.last_name())
     password = factory.PostGenerationMethodCall('set_password', '123456')
+
 
 class DegreeAreaFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DegreeArea
 
     area = factory.LazyAttribute(lambda _: fake.job())
+
 
 class PositionFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -46,15 +49,19 @@ class PositionFactory(factory.django.DjangoModelFactory):
         "Other"
     ])
 
+
 class UserProfileFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = UserProfile
+        django_get_or_create = ("user",)  
 
     user = factory.SubFactory(UserFactory)
+
     academic_id = factory.LazyAttribute(lambda _: str(fake.random_number(digits=8)))
-    phone = factory.LazyAttribute(lambda _: fake.phone_number())
     emergency_contact = factory.LazyAttribute(lambda _: fake.name())
-    emergency_phone = factory.LazyAttribute(lambda _: fake.phone_number())
+
+    phone = factory.LazyFunction(lambda: str(random.randint(10000000000, 99999999999)))
+    emergency_phone = factory.LazyFunction(lambda: str(random.randint(10000000000, 99999999999)))
 
     @factory.post_generation
     def degree_area(self, create, extracted, **kwargs):
@@ -69,9 +76,11 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
             for area in areas:
                 self.degree_area.add(area)
 
+
 class SafetyTrainingFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = SafetyTraining
+        django_get_or_create = ("user",) 
 
     user = factory.SubFactory(UserFactory)
 
@@ -84,6 +93,7 @@ class SafetyTrainingFactory(factory.django.DjangoModelFactory):
     )
 
     notes = factory.LazyAttribute(lambda _: fake.text(max_nb_chars=100))
+
 
 class SafetyTrainingGroupFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -107,22 +117,3 @@ class SafetyTrainingGroupFactory(factory.django.DjangoModelFactory):
             users = UserFactory.create_batch(random.randint(1, 5))
             for user in users:
                 self.users.add(user)
-
-
-def seed_database():
-    print("Populando banco...")
-
-    areas = DegreeAreaFactory.create_batch(5)
-
-    users = []
-    for _ in range(20):
-        user = UserFactory()
-        UserProfileFactory(user=user, degree_area=areas)
-        SafetyTrainingFactory(user=user)
-        users.append(user)
-
-    for _ in range(10):
-        group = SafetyTrainingGroupFactory()
-        group.users.add(*random.sample(users, random.randint(1, 5)))
-
-    print("Banco populado com sucesso!")
