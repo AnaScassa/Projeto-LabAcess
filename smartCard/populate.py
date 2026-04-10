@@ -1,6 +1,7 @@
 import random
 from datetime import timedelta
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
 from smartcard.factories import SmartcardUsuarioFactory, AcessoFactory
 
@@ -8,6 +9,8 @@ from smartcard.factories import SmartcardUsuarioFactory, AcessoFactory
 # docker exec -it smartcard_backend python manage.py shell
 # from smartcard.populate import popular_banco
 #  popular_banco()
+
+User = get_user_model()
 
 def criar_acessos(usuario, quantidade_dias=10):
     for _ in range(quantidade_dias):
@@ -34,7 +37,13 @@ def criar_acessos(usuario, quantidade_dias=10):
             )
 
 def popular_banco():
-    print("Criando usuários...")
+    print("Verificando usuários base...")
+
+    if User.objects.count() == 0:
+        print("Nenhum User encontrado! Rode o loaddata primeiro.")
+        return
+
+    print("Criando usuários smartcard...")
 
     usuarios = SmartcardUsuarioFactory.create_batch(10)
 
