@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import UserProfile, DegreeArea, User, SafetyTraining
 
-
 class SafetyTrainingSerializer(serializers.ModelSerializer):
     class Meta:
         user_id = serializers.PrimaryKeyRelatedField(
@@ -59,5 +58,3 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return request.build_absolute_uri(
             f"/api/users/user-profile/{obj.id}/"
         )
-
-

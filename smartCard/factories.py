@@ -37,7 +37,7 @@ class AcessoFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Acesso
 
-    usuario = None  
+    usuario = None
     data_acesso = None
     ent_sai = None
 
