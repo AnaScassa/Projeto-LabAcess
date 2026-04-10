@@ -163,7 +163,7 @@ export default function Upload() {
             <div className="col-md-6">
               <div className="card" style={{ height: "400px" }}>
                 <div className="card-header">
-                  <h3 className="card-title">Últimos Acessos (24 horas)</h3>
+                  <h3 className="card-title" style={{ color: "rgba(0, 0, 0, .5)" }}>Últimos Acessos (24 horas)</h3>
                 </div>
                   <UltimosAcessos />
               </div>

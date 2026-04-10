@@ -12,7 +12,7 @@ export default function BotaoVoltar() {
             <a className="nav-link" data-widget="pushmenu" href="#">☰</a>
           </li>
         </ul>
-        <span className="ml-3 nav-link">{username ? `Olá, ${username}` : "ControleLab"}</span>
+        <span className="ml-3 nav-link" style={{color: "rgba(0, 0, 0, .5)"}}>{username ? `Olá, ${username}` : "ControleLab"}</span>
     </nav>
 
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
