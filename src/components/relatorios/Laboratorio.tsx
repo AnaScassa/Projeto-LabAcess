@@ -112,9 +112,7 @@ export default function CalculadorLab({
               <table className="table table-bordered table-hover dataTable text-left">
                 <thead>
                   <tr>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
+                    <th style={{ cursor: "pointer" }} onClick={() => {
                         if (sortField === "usuario") {
                           setSortAsc((prev) => !prev);
                         } else {
@@ -122,13 +120,10 @@ export default function CalculadorLab({
                           setSortAsc(true);
                         }
                         setPage(0);
-                      }}
-                    >
+                      }}>
                       Usuário {sortField === "usuario" ? (sortAsc ? "▲" : "▼") : ""}
                     </th>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
+                    <th style={{ cursor: "pointer" }} onClick={() => {
                         if (sortField === "tempoTotal") {
                           setSortAsc((prev) => !prev);
                         } else {
@@ -136,8 +131,7 @@ export default function CalculadorLab({
                           setSortAsc(false);
                         }
                         setPage(0);
-                      }}
-                    >
+                      }}>
                       Tempo total {sortField === "tempoTotal" ? (sortAsc ? "▲" : "▼") : ""}
                     </th>
                   </tr>

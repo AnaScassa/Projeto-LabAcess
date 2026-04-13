@@ -125,7 +125,7 @@ export default function Upload() {
             <div className="col-md-6">
               <div className="card" style={{ height: "400px" }}>
                 <div className="card-header">
-                  <h3 className="card-title">Upload de Planilha Excel</h3>
+                  <h3 className="card-title" style={{ fontWeight: 500 }}>Upload de Planilha Excel</h3>
                 </div>
 
                 <div className="card-body d-flex flex-column justify-content-center align-items-center" style={{ height: "100%", gap: "20px" }}>
@@ -163,7 +163,7 @@ export default function Upload() {
             <div className="col-md-6">
               <div className="card" style={{ height: "400px" }}>
                 <div className="card-header">
-                  <h3 className="card-title" style={{ color: "rgba(0, 0, 0, .5)" }}>Últimos Acessos (24 horas)</h3>
+                  <h3 className="card-title" style={{ fontWeight: 500 }}>Últimos Acessos (24 horas)</h3>
                 </div>
                   <UltimosAcessos />
               </div>
@@ -180,7 +180,7 @@ export default function Upload() {
               <div className="col-md-6">
                 <div className="card" >
                   <div className="card-header" style={{ backgroundColor: '#17a2b8' }}>
-                    <h3 className="card-title" >Acessos do último ano</h3>
+                    <h3 className="card-title" style={{ fontWeight: 500 }}>Acessos do último ano</h3>
                   </div>
 
                   <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -192,7 +192,7 @@ export default function Upload() {
               <div className="col-md-6">
                 <div className="card">
                   <div className="card-header" style={{ backgroundColor: "#ffc107"}}>
-                    <h3 className="card-title">Usuários que mais acessam o lab</h3>
+                    <h3 className="card-title" style={{ fontWeight: 500 }}>Usuários que mais acessam o lab</h3>
                   </div>
 
                   <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>

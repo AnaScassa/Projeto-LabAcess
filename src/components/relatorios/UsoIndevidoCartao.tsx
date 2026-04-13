@@ -1,48 +1,26 @@
 import { useApontamento } from "../../hooks/useApontamento";
 import { useUsuarios } from "../../hooks/useUsuarios";
+import { useApontamentoActions } from "../../hooks/useDesativamento";
 import type { Apontamento } from "../../types/Apontamento";
 import type { Usuario } from "../../types/Usuario";
-import { API_HOST } from "../../utils/static";
 
 export default function UsoIndevidoCartao() {
   const { usuarios } = useUsuarios();   
   const { apontamento } = useApontamento();  
-
-  const handleApontamento = async (id: number) => {
-    const storedToken = localStorage.getItem("access");
-
-    try {
-      const response = await fetch(
-        `http://${API_HOST}:8000/api/acesso/desativar-apontamento/${id}/`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${storedToken}`,
-          }
-        }
-      );
-
-      if (response.ok) {
-        window.location.reload();
-        alert("Registro apagado!");
-      } else {
-        console.log("Erro na resposta:", response.status);
-      }
-    } catch (error) {
-      console.log("Erro na api excluir apontamento", error);
-    }
-  };
+  const { handleApontamento } = useApontamentoActions();
 
   return (
     <div className="col-md-6">
       <div className="card" style={{ height: "400px" }}>
         
         <div className="card-header">
-          <h3 className="card-title">Uso indevido do cartão</h3>
+          <h3 className="card-title" style={{ fontWeight: 500 }}>Uso indevido do cartão</h3>
         </div>
 
-        <div className="card-body p-0" style={{ maxHeight: "340px", overflowY: "auto" }}>
+        <div
+          className="card-body p-0"
+          style={{ maxHeight: "340px", overflowY: "auto" }}
+        >
           <table className="table table-striped mb-0">
             
             <thead className="table-light" style={{ position: "sticky", top: 0 }}>
@@ -55,35 +33,33 @@ export default function UsoIndevidoCartao() {
             </thead>
 
             <tbody>
-              {apontamento.filter((ap: Apontamento) => String(ap.apontamento) === '1' || Number(ap.apontamento) === 1).map((ap: Apontamento) => {
+              {apontamento.filter((ap: Apontamento) => String(ap.apontamento) === "1" || Number(ap.apontamento) === 1)
+                .map((ap: Apontamento) => {
+                  const usuario = usuarios.find((u: Usuario) => u.matricula === ap.usuario_id);
 
-                const usuario = usuarios.find(
-                  (u: Usuario) => u.matricula === ap.usuario_id
-                );
-
-                return (
-                  <tr key={ap.id}>
-                    <td>
-                      {usuario ? usuario.nome_usuario : "Não encontrado"}
-                    </td>
-                    <td>
-                      {new Date(ap.data_acesso).toLocaleString()}
-                    </td>
-                    <td>{ap.desc_evento}</td>
-                    <td>
-                      <button onClick={() => handleApontamento(ap.id)} className="btn btn-danger d-flex justify-content-center align-items-center"
-                        style={{ width: "55px", height: "35px", padding: 0 }}>
-                        <i className="fas fa-trash m-0"></i>
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                  return (
+                    <tr key={ap.id}>
+                      <td>
+                        {usuario ? usuario.nome_usuario : "Não encontrado"}
+                      </td>
+                      <td>
+                        {new Date(ap.data_acesso).toLocaleString()}
+                      </td>
+                      <td>{ap.desc_evento}</td>
+                      <td>
+                        <button
+                          onClick={() => handleApontamento(ap.id)}
+                          className="btn btn-danger d-flex justify-content-center align-items-center"
+                          style={{ width: "55px", height: "35px", padding: 0 }}>
+                          <i className="fas fa-trash m-0"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
-
           </table>
         </div>
-
       </div>
     </div>
   );
