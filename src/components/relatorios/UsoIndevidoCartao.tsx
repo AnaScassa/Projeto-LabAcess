@@ -14,13 +14,12 @@ export default function UsoIndevidoCartao() {
       <div className="card" style={{ height: "400px" }}>
         
         <div className="card-header">
-          <h3 className="card-title" style={{ fontWeight: 500 }}>Uso indevido do cartão</h3>
+          <h3 className="card-title" style={{ fontWeight: 500 }}>Uso indevido do cartão (último mês)</h3>
         </div>
 
         <div
           className="card-body p-0"
-          style={{ maxHeight: "340px", overflowY: "auto" }}
-        >
+          style={{ maxHeight: "340px", overflowY: "auto" }}>
           <table className="table table-striped mb-0">
             
             <thead className="table-light" style={{ position: "sticky", top: 0 }}>
@@ -33,8 +32,19 @@ export default function UsoIndevidoCartao() {
             </thead>
 
             <tbody>
-              {apontamento.filter((ap: Apontamento) => String(ap.apontamento) === "1" || Number(ap.apontamento) === 1)
-                .map((ap: Apontamento) => {
+              {apontamento
+                .filter((ap: Apontamento) => {
+                  const isApontamento = String(ap.apontamento) === "1" || Number(ap.apontamento) === 1;
+
+                  const dataAcesso = new Date(ap.data_acesso);
+                  const hoje = new Date();
+                  const trintaDiasAtras = new Date();
+                  trintaDiasAtras.setDate(hoje.getDate() - 30);
+
+                  const dentroDos30Dias = dataAcesso >= trintaDiasAtras;
+
+                  return isApontamento && dentroDos30Dias;
+                }).map((ap: Apontamento) => {
                   const usuario = usuarios.find((u: Usuario) => u.matricula === ap.usuario_id);
 
                   return (
