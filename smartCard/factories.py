@@ -8,46 +8,48 @@ fake = Faker("pt_BR")
 User = get_user_model()
 
 
+fake = Faker("pt_BR")
+User = get_user_model()
+
+
 class SmartcardUsuarioFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Usuario
+        exclude = ("_user_match",)  
 
     categoriaUsuario = factory.Iterator([
         "Aluno", "Professor", "Pesquisador", "Visitante"
     ])
 
-    @factory.lazy_attribute
-    def matricula(self):
-        categoria_map = {
-            "Aluno": "101",
-            "Professor": "102",
-            "Pesquisador": "103",
-            "Visitante": "104"
-        }
-        prefix = categoria_map[self.categoriaUsuario]
-        suffix = "".join([str(random.randint(0, 9)) for _ in range(6)])
-        return f"{prefix}{suffix}"
+    @factory.sequence
+    def matricula(n):
+        prefixos = ["101", "102", "103", "104"]
+        prefix = random.choice(prefixos)
+        return f"{prefix}{n:06d}"
 
     @factory.lazy_attribute
-    def user_auth(self):
+    def _user_match(self):
         users = list(User.objects.all())
 
-        if not users or random.random() >= 0.8:
-            return None
+        if users and random.random() < 0.8:
+            return random.choice(users)
 
-        user = random.choice(users)
-        return user.id
+        return None
 
     @factory.lazy_attribute
     def nome_usuario(self):
-        users = list(User.objects.all())
+        if self._user_match:
+            return f"{self._user_match.first_name} {self._user_match.last_name}"
 
-        if not users:
-            return fake.name()
+        return fake.name()
 
-        user = random.choice(users)
-        return f"{user.first_name} {user.last_name}"
+    @factory.lazy_attribute
+    def user_auth(self):
+        if self._user_match:
+            return self._user_match.id
 
+        return None
+    
 class AcessoFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Acesso
@@ -97,3 +99,5 @@ class AcessoFactory(factory.django.DjangoModelFactory):
 
 #ainda precisa fazer com q o factory daqui pegue o id do usuario e coloque no user_auth
 #alémd de caso n tenha user_auth criar um nome fake para o nome_usuario
+
+#mudar depois para último mes na parte de apontamento
