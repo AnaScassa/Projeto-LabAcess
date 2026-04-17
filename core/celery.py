@@ -24,7 +24,7 @@ app.conf.task_default_exchange = "default"
 app.conf.task_default_routing_key = "rapida.default"
 
 # Rotas
-app.conf.task_routes = { 
+app.conf.task_routes = {
     "smartcard.tasks.processar_xls": {"queue": "fila_pesada"},
     "smartcard.tasks.tentar_vincular_user_auth": {"queue": "fila_rapida"},
     "smartcard.tasks.tentar_vincular_por_nome": {"queue": "fila_media"},
