@@ -1,0 +1,12 @@
+﻿{
+  "Name": "Chrome Lab Control Acess",
+  "Type": "App",
+  "Id": "X5oKovTXd02dt7feyYsyxg",
+  "Reference": "t9RfXLrKvUuqXIJfQoWe8A/X5oKovTXd02dt7feyYsyxg",
+  "Created": "2026-04-22T15:14:48.8175813Z",
+  "Updated": "2026-04-22T15:14:48.8175813Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=25.10.30.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=25.12.1.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}
