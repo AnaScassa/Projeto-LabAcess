@@ -80,19 +80,19 @@
       <AssemblyReference>System.ComponentModel.Primitives</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Main Sequence" sap:VirtualizedContainerService.HintSize="1281,954" sap2010:WorkflowViewState.IdRef="Sequence_2">
+  <Sequence DisplayName="Main Sequence" sap:VirtualizedContainerService.HintSize="1281,1148" sap2010:WorkflowViewState.IdRef="Sequence_2">
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <uix:NApplicationCard AttachMode="ByInstance" DisplayName="Chrome Lab Control Acess" HealingAgentBehavior="Job" sap:VirtualizedContainerService.HintSize="452,931" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" InteractionMode="DebuggerApi" ScopeGuid="cd90721c-927e-49a9-b4f3-f24b2f9c326e" Version="V2">
+    <uix:NApplicationCard AttachMode="ByInstance" DisplayName="Chrome Lab Control Acess" HealingAgentBehavior="Job" sap:VirtualizedContainerService.HintSize="452,1125" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" InteractionMode="DebuggerApi" ScopeGuid="cd90721c-927e-49a9-b4f3-f24b2f9c326e" Version="V2">
       <uix:NApplicationCard.Body>
         <ActivityAction x:TypeArguments="x:Object">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
           </ActivityAction.Argument>
-          <Sequence DisplayName="Fazer" sap:VirtualizedContainerService.HintSize="450,737" sap2010:WorkflowViewState.IdRef="Sequence_1">
+          <Sequence DisplayName="Fazer" sap:VirtualizedContainerService.HintSize="450,931" sap2010:WorkflowViewState.IdRef="Sequence_1">
             <sap:WorkflowViewStateService.ViewState>
               <scg:Dictionary x:TypeArguments="x:String, x:Object">
                 <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -129,9 +129,14 @@
                 </uix:VerifyExecutionTypeIntoOptions>
               </uix:NTypeInto.VerifyOptions>
             </uix:NTypeInto>
-            <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Click 'Entrar'" HealingAgentBehavior="SameAsCard" sap:VirtualizedContainerService.HintSize="416,185" sap2010:WorkflowViewState.IdRef="NClick_1" InteractionMode="SameAsCard" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="cd90721c-927e-49a9-b4f3-f24b2f9c326e" Version="V5">
+            <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Click 'Entrar'" HealingAgentBehavior="SameAsCard" sap:VirtualizedContainerService.HintSize="416,194" sap2010:WorkflowViewState.IdRef="NClick_1" InteractionMode="SameAsCard" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="cd90721c-927e-49a9-b4f3-f24b2f9c326e" Version="V5">
               <uix:NClick.Target>
                 <uix:TargetAnchorable BrowserURL="127.0.0.1/login" ContentHash="0Vc3CHGfBkuMHbc_Wf2kbA" DesignTimeRectangle="808, 680, 320, 38" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl tag='BUTTON' /&gt;" Guid="974c8822-7c07-474c-b018-d2e4d5006e68" InformativeScreenshot="3ca1abdb5ea710e85a3f375f36ae53f4.jpg" Reference="t9RfXLrKvUuqXIJfQoWe8A/r1UptNtjI0Ok667kkVu_rA" ScopeSelectorArgument="&lt;html app='chrome.exe' title='Lab Control Acess' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+              </uix:NClick.Target>
+            </uix:NClick>
+            <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Click 'INPUT fileInput'" HealingAgentBehavior="SameAsCard" sap:VirtualizedContainerService.HintSize="416,185" sap2010:WorkflowViewState.IdRef="NClick_2" InteractionMode="SameAsCard" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="cd90721c-927e-49a9-b4f3-f24b2f9c326e" Version="V5">
+              <uix:NClick.Target>
+                <uix:TargetAnchorable BrowserURL="localhost" ContentHash="jAElcgVNcE2jrF-Dka5jwQ" DesignTimeRectangle="313, 589, 327, 30" ElementType="InputBox" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='fileInput' tag='INPUT' /&gt;" Guid="d5f2031c-8562-45aa-b5a9-e6de12df1d22" InformativeScreenshot="902b936c694fd35d1adfe9cbcb664d6b.jpg" Reference="t9RfXLrKvUuqXIJfQoWe8A/Un3LgF2XnkGIdZ4P_kn3Hg" ScopeSelectorArgument="&lt;html app='chrome.exe' title='Lab Control Acess' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
               </uix:NClick.Target>
             </uix:NClick>
           </Sequence>

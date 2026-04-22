@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3CpqqbwniXI=",
+  "dgSpecHash": "MHa/+I2Z0fk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\anacha\\Documents\\UiPath\\rpa lab acess\\.local\\",
+  "projectFilePath": "C:\\Users\\anacha\\Documents\\projetoLabAcess\\smartCard\\rpa-uipath\\rpa lab acess\\.local\\",
   "expectedPackageFiles": [
     "C:\\Users\\anacha\\.nuget\\packages\\csvhelper\\33.0.1\\csvhelper.33.0.1.nupkg.sha512",
     "C:\\Users\\anacha\\.nuget\\packages\\dynamicexpresso.core\\2.12.0\\dynamicexpresso.core.2.12.0.nupkg.sha512",

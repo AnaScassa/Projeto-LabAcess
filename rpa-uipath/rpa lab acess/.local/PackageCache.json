@@ -136,9 +136,9 @@
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.activities.runtimegovernance\\1.1.7\\lib/net6.0-windows7.0/UiPath.Activities.RuntimeGovernance.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.appsignatures\\25.10.178.58789\\lib/net6.0-windows7.0/AppSignatures.Locator.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.codedworkflows\\24.10.1\\lib/net6.0-windows7.0/UiPath.CodedWorkflows.dll",
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib/net6.0/Emgu.CV.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib/net6.0/concrt140.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib/net6.0/cvextern.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib/net6.0/Emgu.CV.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib/net6.0/libusb-1.0.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib/net6.0/msvcp140.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib/net6.0/msvcp140_1.dll",
@@ -162,21 +162,21 @@
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities\\25.10.30\\lib/net6.0-windows7.0/UiPath.Wizards.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.CV.Activities.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.CV.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UiAutomation.Activities.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UIAutomationCore.dll",
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UIAutomationNext.API.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UIAutomationNext.Activities.Contracts.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UIAutomationNext.Activities.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UIAutomationNext.API.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UIAutomationNext.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UIAutomationNext.ExternalIntegrations.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UIAutomationNext.Migration.dll",
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UIAutomationNext.dll",
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib/net6.0-windows7.0/UiPath.UiAutomation.Activities.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime.design\\25.10.30\\lib/net6.0-windows7.0/UiPath.UIAutomation.Activities.Runtime.Design.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.design.recoverypanel\\25.10.30\\lib/net6.0/UiPath.UIAutomation.Design.RecoveryPanel.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib/net6.0-windows7.0/UiPath.Vision.AzureComputerVision.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib/net6.0-windows7.0/UiPath.Vision.Core.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib/net6.0-windows7.0/UiPath.Vision.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib/net6.0-windows7.0/UiPath.Vision.GoogleCloud.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib/net6.0-windows7.0/UiPath.Vision.Tesseract.dll"
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib/net6.0-windows7.0/UiPath.Vision.Tesseract.dll",
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib/net6.0-windows7.0/UiPath.Vision.dll"
       ],
       "Path": "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities\\25.10.30"
     }
@@ -6716,9 +6716,9 @@
         "Version": "1.4.0"
       },
       "Assemblies": [
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib\\net6.0\\Emgu.CV.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib\\net6.0\\concrt140.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib\\net6.0\\cvextern.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib\\net6.0\\Emgu.CV.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib\\net6.0\\libusb-1.0.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib\\net6.0\\msvcp140.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.emgucvbundle\\1.4.0\\lib\\net6.0\\msvcp140_1.dll",
@@ -6858,14 +6858,14 @@
       "Assemblies": [
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.CV.Activities.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.CV.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UiAutomation.Activities.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UIAutomationCore.dll",
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UIAutomationNext.API.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UIAutomationNext.Activities.Contracts.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UIAutomationNext.Activities.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UIAutomationNext.API.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UIAutomationNext.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UIAutomationNext.ExternalIntegrations.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UIAutomationNext.Migration.dll"
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UIAutomationNext.Migration.dll",
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UIAutomationNext.dll",
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30\\lib\\net6.0-windows7.0\\UiPath.UiAutomation.Activities.dll"
       ],
       "Path": "C:\\Users\\anacha\\.nuget\\packages\\uipath.uiautomation.activities.runtime\\25.10.30"
     },
@@ -6897,9 +6897,9 @@
       "Assemblies": [
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib\\net6.0-windows7.0\\UiPath.Vision.AzureComputerVision.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib\\net6.0-windows7.0\\UiPath.Vision.Core.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib\\net6.0-windows7.0\\UiPath.Vision.dll",
         "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib\\net6.0-windows7.0\\UiPath.Vision.GoogleCloud.dll",
-        "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib\\net6.0-windows7.0\\UiPath.Vision.Tesseract.dll"
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib\\net6.0-windows7.0\\UiPath.Vision.Tesseract.dll",
+        "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0\\lib\\net6.0-windows7.0\\UiPath.Vision.dll"
       ],
       "Path": "C:\\Users\\anacha\\.nuget\\packages\\uipath.vision\\3.16.0"
     }

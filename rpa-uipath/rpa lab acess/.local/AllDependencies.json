@@ -19378,9 +19378,9 @@
     "restore": {
       "projectUniqueName": "rpa lab acess",
       "projectName": "rpa lab acess",
-      "projectPath": "C:\\Users\\anacha\\Documents\\UiPath\\rpa lab acess\\.local",
+      "projectPath": "C:\\Users\\anacha\\Documents\\projetoLabAcess\\smartCard\\rpa-uipath\\rpa lab acess\\.local",
       "packagesPath": "C:\\Users\\anacha\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\anacha\\Documents\\UiPath\\rpa lab acess\\.local",
+      "outputPath": "C:\\Users\\anacha\\Documents\\projetoLabAcess\\smartCard\\rpa-uipath\\rpa lab acess\\.local",
       "UsingMicrosoftNETSdk": false,
       "restoreAuditProperties": {
         "enableAudit": "False"
