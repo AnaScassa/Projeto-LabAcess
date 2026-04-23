@@ -1,0 +1,13 @@
+﻿{
+  "Name": "TEdit",
+  "Type": "Element",
+  "Id": "Hzl9TEaZhkKZIfixOe7a8w",
+  "Reference": "t9RfXLrKvUuqXIJfQoWe8A/Hzl9TEaZhkKZIfixOe7a8w",
+  "ParentRef": "t9RfXLrKvUuqXIJfQoWe8A/3vAPbwAbyEGtObcZOn6lzQ",
+  "Created": "2026-04-23T11:58:09.1240796Z",
+  "Updated": "2026-04-23T11:58:09.1240796Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=25.10.30.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=25.12.1.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

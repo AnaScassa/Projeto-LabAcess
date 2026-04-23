@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="BqJeHT4TUUCsJy0NMCsWEA" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="465, 152, 177, 21" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;wnd cls='TEdit' idx='2' /&gt;" Guid="dcd3e5ee-1d66-4bdc-8c58-bbab8b683139" ScopeSelectorArgument="&lt;wnd app='ses_client.exe' cls='TfrmLogin' title='Login do Sistema' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="dc1ca3ba7cbeef1db23fcbc753f9acb9.jpg" xmlns="">0WwloIlCvyUiUFFkti9Rsxw</imageRef>
+    </TargetAnchorable>
+    <x:String x:Key="ActivityType">TypeInto</x:String>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

@@ -1,0 +1,14 @@
+﻿{
+  "Name": "funcionario_23042026_11…",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "sI8DhqMY40aMHLFWdGcZ6g",
+  "Reference": "t9RfXLrKvUuqXIJfQoWe8A/sI8DhqMY40aMHLFWdGcZ6g",
+  "ParentRef": "t9RfXLrKvUuqXIJfQoWe8A/_l-yWMMya0uvjwHCxOp9rQ",
+  "Created": "2026-04-23T14:06:44.2562546Z",
+  "Updated": "2026-04-23T14:06:44.2562546Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=25.10.30.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=25.12.1.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

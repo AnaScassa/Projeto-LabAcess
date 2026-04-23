@@ -1,0 +1,1 @@
+{"Target":{"Guid":"69461ec4-9611-4fd9-a7e1-900edbca84ec","Ancestry":[{"IsSelected":true,"Selector":"<wnd app=\"ses_client.exe\" cls=\"#32768\" idx=\"*\"/>","ValidAttributes":{"app":"ses_client.exe","cls":"#32768","aastate":"focalizável"}},{"IsSelected":true,"Selector":"<ctrl automationid=\"184\"/>","ValidAttributes":{"automationid":"184","role":"menu item"}}]}}

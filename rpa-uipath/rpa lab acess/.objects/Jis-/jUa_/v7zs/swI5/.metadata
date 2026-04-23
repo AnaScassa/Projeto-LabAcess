@@ -1,0 +1,13 @@
+﻿{
+  "Name": "CSV HTML Word Excel Exp…(1)",
+  "Type": "Element",
+  "Id": "swI5hiTAw0y1YhieG4xoGw",
+  "Reference": "t9RfXLrKvUuqXIJfQoWe8A/swI5hiTAw0y1YhieG4xoGw",
+  "ParentRef": "t9RfXLrKvUuqXIJfQoWe8A/v7zsOw9YlkWE6_8S7lVkcw",
+  "Created": "2026-04-23T12:57:04.1968147Z",
+  "Updated": "2026-04-23T12:57:04.1968147Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=25.10.30.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=25.12.1.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

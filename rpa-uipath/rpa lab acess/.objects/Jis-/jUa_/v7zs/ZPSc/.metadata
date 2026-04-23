@@ -1,0 +1,13 @@
+﻿{
+  "Name": "Ordenar por",
+  "Type": "Element",
+  "Id": "ZPScdQLtLke7oQCSibcnbw",
+  "Reference": "t9RfXLrKvUuqXIJfQoWe8A/ZPScdQLtLke7oQCSibcnbw",
+  "ParentRef": "t9RfXLrKvUuqXIJfQoWe8A/v7zsOw9YlkWE6_8S7lVkcw",
+  "Created": "2026-04-23T12:59:41.7102951Z",
+  "Updated": "2026-04-23T12:59:41.7102951Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=25.10.30.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=25.12.1.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

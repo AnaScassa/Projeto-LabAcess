@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Sa&lvar",
+  "Type": "Element",
+  "TaxonomyType": "Button",
+  "Id": "pkRqqu7WxEOOojLZJKZAfg",
+  "Reference": "t9RfXLrKvUuqXIJfQoWe8A/pkRqqu7WxEOOojLZJKZAfg",
+  "ParentRef": "t9RfXLrKvUuqXIJfQoWe8A/v7zsOw9YlkWE6_8S7lVkcw",
+  "Created": "2026-04-23T13:39:42.8963058Z",
+  "Updated": "2026-04-23T13:39:42.8963058Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=25.10.30.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=25.12.1.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

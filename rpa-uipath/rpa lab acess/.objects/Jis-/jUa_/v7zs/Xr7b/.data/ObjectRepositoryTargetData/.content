@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="wEjfyps7Vk2ZG0wUxxo1Dw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="3, 3, 388, 27" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;ctrl automationid='184' /&gt;" Guid="69461ec4-9611-4fd9-a7e1-900edbca84ec" ScopeSelectorArgument="&lt;wnd app='ses_client.exe' cls='#32768' idx='*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <imageRef attrName="InformativeScreenshot" originalValue="0f95c54d79f8bc0959efac8562d2a1a8.jpg" xmlns="">0CYsZ4KzC3U2koyePM06Sew</imageRef>
+    </TargetAnchorable>
+    <x:String x:Key="ActivityType">Click</x:String>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

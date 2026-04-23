@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryScreenData ContentHash="mg1-8tSrlk2Qvuq4I11Gfg" Reference="t9RfXLrKvUuqXIJfQoWe8A/v7zsOw9YlkWE6_8S7lVkcw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:p="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryScreenData.Data>
+    <TargetApp x:Key="TargetApp" Area="-8, -8, 1936, 1056" ContentHash="KGnJzUqm30KEsVNyPovErA" FilePath="C:\Sualtech\SESClient\ses_client.exe" IconBase64="iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEFSURBVFhHrY9RCsMwFMN6/0tniBDWdbY3pxXooyZP0ONPxqaPMMZ4e/0+q94SuMNHcEWv29K9J7TDV2wF1Y7phmCLjakd0w3BFhtTO6Ybgi02pnZMNwRbbEztmG4IttiY2jHdEGyxMbVjuiHYYmNqx3RDsMXG1I7phmCLjakd0w3BlnX4lDXyb3akNZMdMrYjrZnskLEdac1kh4ztSGsmO9bhU9bYv1E7phuCLTamdkw3BFtsTO2Ybgi22JjaMd0QbLExtWO6IdhiY2rHdEOwxcbUjumGYIuNqR3TDcEWG1M7phuCLTamdkw3BHeQseu2dO8J3eEreP4+q94SeIIVa/3BcbwAUiPabKqL/L0AAAAASUVORK5CYII=" Reference="t9RfXLrKvUuqXIJfQoWe8A/v7zsOw9YlkWE6_8S7lVkcw" Selector="&lt;wnd app='ses_client.exe' cls='TfrmMain' title='SES - SualTech Escola Segura - Módulo Cliente - Postgree Versão *' /&gt;" Version="V2">
+      <TargetApp.Arguments>
+        <p:InArgument x:TypeArguments="x:String" />
+      </TargetApp.Arguments>
+      <TargetApp.WorkingDirectory>
+        <p:InArgument x:TypeArguments="x:String" />
+      </TargetApp.WorkingDirectory>
+      <imageRef attrName="InformativeScreenshot" originalValue="6f305bbc871dd42da00a519e9a3fb746.jpg" xmlns="">0rbjp_leLqEakFy4R6ZB8lA</imageRef>
+    </TargetApp>
+  </ObjectRepositoryScreenData.Data>
+</ObjectRepositoryScreenData>
