@@ -1,0 +1,18 @@
+{"time": "2026-04-24 11:24:06", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-04-24 11:24:09", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-04-24 11:24:09", "level": "ERROR", "message": "Erro inesperado no login: "}
+{"time": "2026-04-24 11:24:13", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-04-24 11:24:16", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-04-24 11:24:16", "level": "ERROR", "message": "Erro inesperado no login: "}
+{"time": "2026-04-24 11:25:03", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-04-24 11:25:06", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-04-24 11:25:06", "level": "ERROR", "message": "Erro inesperado no login: "}
+{"time": "2026-04-24 11:25:19", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-04-24 11:25:22", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-04-24 11:25:25", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-04-24 11:25:43", "level": "INFO", "message": "Consulta realizada: funcionarios_"}
+{"time": "2026-04-24 11:25:49", "level": "INFO", "message": "Arquivo salvo: funcionarios_1125.xls"}
+{"time": "2026-04-24 11:26:02", "level": "INFO", "message": "Consulta realizada: alunos_"}
+{"time": "2026-04-24 11:26:08", "level": "INFO", "message": "Arquivo salvo: alunos_1125.xls"}
+{"time": "2026-04-24 11:26:22", "level": "INFO", "message": "Consulta realizada: prestadores_"}
+{"time": "2026-04-24 11:26:27", "level": "INFO", "message": "Arquivo salvo: prestadores_1125.xls"}
