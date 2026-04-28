@@ -1,1 +1,1 @@
-export const API_HOST = "ana.ccs.unicamp.br";
+export const API_HOST = "localhost";
