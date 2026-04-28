@@ -73,7 +73,7 @@ def entrarSes():
             logger.error("Não encontrou campo de usuário na tela")
             
     except Exception as e:
-        logger.error(f"Erro inesperado no login: {e}")
+        logger.error(f"Erro inesperado no login: {e.__traceback__}")
 
 def pegar_arquivo():
     hora_calculada = datetime.now() - timedelta(minutes=5)

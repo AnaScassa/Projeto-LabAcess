@@ -16,3 +16,12 @@
 {"time": "2026-04-24 11:26:08", "level": "INFO", "message": "Arquivo salvo: alunos_1125.xls"}
 {"time": "2026-04-24 11:26:22", "level": "INFO", "message": "Consulta realizada: prestadores_"}
 {"time": "2026-04-24 11:26:27", "level": "INFO", "message": "Arquivo salvo: prestadores_1125.xls"}
+{"time": "2026-04-24 11:37:48", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-04-24 11:37:51", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-04-24 11:37:51", "level": "ERROR", "message": "Erro inesperado no login: "}
+{"time": "2026-04-24 11:39:27", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-04-24 11:39:30", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-04-24 11:39:30", "level": "ERROR", "message": "Erro inesperado no login: "}
+{"time": "2026-04-24 11:41:40", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-04-24 11:41:44", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-04-24 11:41:44", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x000001523A687300>"}
