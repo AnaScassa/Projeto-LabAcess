@@ -1,6 +1,5 @@
 from smartcard.serializers import (
     GroupSerializer,
-    UserSerializer,
     AcessoSerializer,
     UsuarioSerializer,
     ProcessamentoSerializer,
@@ -17,15 +16,8 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from smartcard.models import Acesso, Usuario, Processamento
-from users.models import User
 from django.contrib.auth.models import Group
 
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().order_by("-date_joined")
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated | HasAPIKey]
-    authentication_classes = [JWTAuthentication, SessionAuthentication]
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all().order_by("name")

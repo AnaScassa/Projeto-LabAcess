@@ -1,4 +1,4 @@
-from smartcard.views import UserViewSetApi, carregar_acesso, lista_usuarios, mudar_apontamento
+from smartcard.views import carregar_acesso, lista_usuarios, mudar_apontamento
 from smartcard.api import AcessoViewSet, GroupViewSet, UsuarioViewSet, TaskCompleted, ApontamentoViewSet
 
 from django.urls import include, path
@@ -8,7 +8,6 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 router = routers.DefaultRouter()
-router.register(r"userAuth", UserViewSetApi)
 router.register(r"groups", GroupViewSet)
 router.register(r"acessos", AcessoViewSet)
 router.register(r"usuarios", UsuarioViewSet)

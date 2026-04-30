@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-16"?>
-<ObjectRepositoryTargetData ContentHash="-BN8zD3cc0qjLW540QskAQ" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <ObjectRepositoryTargetData.Data>
-    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="507, 31, 66, 19" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;ctrl automationid='MenuBar' name='Aplicativo' role='menu bar' /&gt;&lt;ctrl idx='7' role='menu item' /&gt;" Guid="cfd9c633-0d4e-40a7-a6ed-d023a91b3f99" ScopeSelectorArgument="&lt;wnd app='ses_client.exe' cls='TfrmMain' title='SES - SualTech Escola Segura - Módulo Cliente - Postgree Versão *' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
-      <imageRef attrName="InformativeScreenshot" originalValue="a4622e9a0b2e5459cd7781991ada1848.jpg" xmlns="">0stnNGrXh3UK8sbz9ZtxfQQ</imageRef>
-    </TargetAnchorable>
-    <x:String x:Key="ActivityType">Click</x:String>
-  </ObjectRepositoryTargetData.Data>
-</ObjectRepositoryTargetData>

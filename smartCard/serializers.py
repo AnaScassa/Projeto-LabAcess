@@ -1,21 +1,8 @@
 from smartcard.models import Acesso, Usuario, Processamento
-from users.models import User, UserProfile
 from rest_framework import serializers
 from django.contrib.auth.models import Group
 from django.utils.timezone import localtime
 
-class UserApiSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "full_name",
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "date_joined"
-        ]
 
 class ProcessamentoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -81,16 +68,6 @@ class AcessoSerializer(serializers.HyperlinkedModelSerializer):
             'email_auth',
         ]
 
-    def _get_perfil(self, matricula):
-        if matricula not in self._perfil_cache:
-            self._perfil_cache[matricula] = (
-                UserProfile.objects
-                .filter(academic_id=matricula)
-                .select_related('user')
-                .first()
-            )
-        return self._perfil_cache[matricula]
-
     def get_username_auth(self, obj):
         perfil = self._get_perfil(obj.usuario.matricula)
         return perfil.user.username if perfil else None
@@ -101,11 +78,6 @@ class AcessoSerializer(serializers.HyperlinkedModelSerializer):
 
 class UploadAcessoSerializer(serializers.Serializer):
     arquivo = serializers.FileField()
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ["url", "username", "email", "groups"]
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

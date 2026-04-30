@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-16"?>
-<ObjectRepositoryTargetData ContentHash="ONZdm-ZTaEWrRkI4wuZsgw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <ObjectRepositoryTargetData.Data>
-    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="8, 8, 0, 0" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;wnd cls='TPanel' /&gt;&lt;ctrl name='Fechar' role='push button' /&gt;" Guid="516c647f-ab35-4932-b060-9f955f373ced" ScopeSelectorArgument="&lt;wnd app='ses_client.exe' cls='TfrmMain' title='SES - SualTech Escola Segura - Módulo Cliente - Postgree Versão *' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
-    <x:String x:Key="ActivityType">Click</x:String>
-  </ObjectRepositoryTargetData.Data>
-</ObjectRepositoryTargetData>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-16"?>
-<ObjectRepositoryTargetData ContentHash="CXmDtJhNEECJCzJyp_4Cyg" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <ObjectRepositoryTargetData.Data>
-    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="0, 0, 3360, 1080" ElementType="List" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;wnd aaname='Desktop' cls='SysListView32' title='FolderView' /&gt;" Guid="433ae907-be4b-491f-ad07-901af4c1d865" ScopeSelectorArgument="&lt;wnd app='explorer.exe' cls='Progman' title='Program Manager' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
-      <imageRef attrName="InformativeScreenshot" originalValue="ead5a2ecd796fa24e7b2ef90b9b52886.jpg" xmlns="">03uaQNRoofUeX55SUE-ggpg</imageRef>
-    </TargetAnchorable>
-    <x:String x:Key="ActivityType">TypeInto</x:String>
-  </ObjectRepositoryTargetData.Data>
-</ObjectRepositoryTargetData>

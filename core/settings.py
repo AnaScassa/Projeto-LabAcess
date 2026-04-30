@@ -31,7 +31,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-AUTH_USER_MODEL = 'users.User'
 CORS_ALLOWED_ORIGINS = [
           
             "http://localhost:5173", # For development
@@ -64,7 +63,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
  #   'allauth.socialaccount.providers.google',
 
-    'users',
     'smartcard.apps.SmartCardConfig',
 ]
 

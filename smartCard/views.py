@@ -7,20 +7,12 @@ from rest_framework_api_key.permissions import HasAPIKey
 
 from .tasks import processar_xls
 from .services import salvar_arquivo_temporario
-from .serializers import UserApiSerializer
 from .models import Usuario, Acesso, Processamento
-from users.models import User
 from django_celery_results.models import TaskResult
 from django.db import transaction
 
 import uuid
 
-
-class UserViewSetApi(viewsets.ModelViewSet):
-    queryset = User.objects.all().order_by("-date_joined")
-    serializer_class = UserApiSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])

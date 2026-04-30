@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-16"?>
-<ObjectRepositoryTargetData ContentHash="PNeD6DPU3ESxUTXCQXayKQ" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <ObjectRepositoryTargetData.Data>
-    <TargetAnchorable x:Key="TargetAnchorable" BrowserURL="localhost" DesignTimeRectangle="204, 212, 236, 22" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;wnd aaname='Painel do Explorer' cls='DirectUIHWND' /&gt;&lt;wnd ctrlid='1121' title='ShellView' /&gt;&lt;wnd aaname='Modo de Exibição de Itens' cls='DirectUIHWND' /&gt;&lt;ctrl name='Modo de Exibição de Itens' role='list' /&gt;&lt;ctrl automationid='4' /&gt;&lt;ctrl automationid='System.ItemNameDisplay' /&gt;" Guid="ff3404e0-ca66-4036-9a93-c87211e814a2" ScopeSelectorArgument="&lt;wnd app='chrome.exe' cls='#32770' title='Abrir' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
-      <imageRef attrName="InformativeScreenshot" originalValue="5b5c4b875e37986a06cc3ada8057f593.jpg" xmlns="">0ZBg2L5MWDk2obOx9anYyaQ</imageRef>
-    </TargetAnchorable>
-    <x:String x:Key="ActivityType">Click</x:String>
-  </ObjectRepositoryTargetData.Data>
-</ObjectRepositoryTargetData>

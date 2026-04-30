@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-16"?>
-<ObjectRepositoryTargetData ContentHash="T9vZwH9OoEWdoOk8wemE4w" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <ObjectRepositoryTargetData.Data>
-    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="586, 904, 40, 21" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;wnd cls='TMaskEdit' idx='2' /&gt;" Guid="33c7f614-9fe2-4787-aa28-b7a4fde0fd89" ScopeSelectorArgument="&lt;wnd app='ses_client.exe' cls='TfrmMain' title='SES - SualTech Escola Segura - Módulo Cliente - Postgree Versão *' /&gt;&lt;wnd cls='TfrmDBConsultaAluno' title='Consulta Apontamentos de Alunos' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
-      <imageRef attrName="InformativeScreenshot" originalValue="14843a24c7e5e3b5a49a4bc4b90379b5.jpg" xmlns="">0BWpniERso0CfME-coE629w</imageRef>
-    </TargetAnchorable>
-    <x:String x:Key="ActivityType">TypeInto</x:String>
-  </ObjectRepositoryTargetData.Data>
-</ObjectRepositoryTargetData>
