@@ -34,13 +34,13 @@ def processar_xls(self, caminho_arquivo):
         print("Buscando da API...")
 
         profiles = requests.get(
-            "http://backend:8000/api/users/user-profile/",
+            "http://backend:8001/api/users/user-profile/",
             headers=headers,
             timeout=10
         ).json()
 
         users = requests.get(
-            "http://backend:8000/api/users/user/",
+            "http://backend:8001/api/users/user/",
             headers=headers,
             timeout=10
         ).json()
@@ -57,7 +57,7 @@ def processar_xls(self, caminho_arquivo):
 
         cache.set("profiles", profiles, timeout=600)
         cache.set("users", users, timeout=600)
-
+  
     for _, row in df.iterrows():
         matricula = str(row.get("MATRICULA", "")).strip()
 

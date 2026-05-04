@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     "rest_framework_api_key",
+    "rest_framework_sso",
     "django_extensions",
     'django_celery_beat' , 
     'django_celery_results',
@@ -58,7 +59,6 @@ INSTALLED_APPS = [
     
     # OBRIGATÓRIO para o allauth
     'django.contrib.sites',
-    'allauth',
     'allauth.account',
     'allauth.socialaccount',
  #   'allauth.socialaccount.providers.google',
@@ -78,8 +78,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-] 
+]
 
 ROOT_URLCONF = 'core.urls'
 
@@ -157,24 +156,32 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'AUTH_HEADER_TYPES': ('Bearer',),
-}
-
 #API_KEY_CUSTOM_HEADER = "HTTP_X_API_KEY"
 
-""" REST_FRAMEWORK = {
+REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
- """
+
+REST_FRAMEWORK_SSO = {
+    'IDENTITY': 'smartcard-service',
+
+    'ACCEPTED_ISSUERS': ['users-service'],
+
+    'AUTHORIZATION_AUDIENCE': ['smartcard-service'],
+
+    'SESSION_AUDIENCE': ['users-service'],
+    
+    'KEY_STORE_ROOT': os.path.join(BASE_DIR, 'keys'),
+
+    'PUBLIC_KEYS': {
+        'users-service': ['users-service.pem'],
+    },
+}
 
 # Configuração do Celery 
 CELERY_BROKER_URL = 'redis://redis:6379/0'

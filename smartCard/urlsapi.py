@@ -20,5 +20,5 @@ urlpatterns = [
     path("login/", TokenObtainPairView.as_view(), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("lista-usuarios/", lista_usuarios, name="lista_usuarios"),
-    path("desativar-apontamento/<int:id>/", mudar_apontamento),
+    path("desativar-apontamento/<int:id>/", mudar_apontamento, name="desativar_apontamento"),
     ]

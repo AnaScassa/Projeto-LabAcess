@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_api_key.permissions import HasAPIKey
@@ -12,7 +12,6 @@ from django_celery_results.models import TaskResult
 from django.db import transaction
 
 import uuid
-
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])

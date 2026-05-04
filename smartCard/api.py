@@ -1,3 +1,5 @@
+from urllib3 import request
+
 from smartcard.serializers import (
     GroupSerializer,
     AcessoSerializer,
@@ -11,12 +13,20 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_api_key.permissions import HasAPIKey
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, get_user_model
 from rest_framework.decorators import action
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework_sso import claims
 
 from smartcard.models import Acesso, Usuario, Processamento
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User, User
+
+from rest_framework import serializers, viewsets, exceptions
+from rest_framework_sso.views import ObtainAuthorizationTokenView
+from rest_framework_sso import claims
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from django.utils.translation import gettext as _
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -57,3 +67,56 @@ class ApontamentoViewSet(ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return Acesso.objects.filter(apontamento__in=[1, 2])
+    
+class AuthorizationTokenSerializer(serializers.Serializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        required=True,
+    )
+
+    class Meta:
+        fields = ['user']
+        
+class CustomObtainAuthorizationTokenView(ObtainAuthorizationTokenView):
+    """
+    Retorna um JWT de autorização (SSO)
+    """
+    serializer_class = AuthorizationTokenSerializer
+
+def create_authorization_payload(session_token, user, user_obj, **kwargs):
+    return {
+        claims.TOKEN: claims.TOKEN_AUTHORIZATION,
+        claims.SESSION_ID: session_token.pk,
+        claims.USER_ID: user.pk,
+        claims.EMAIL: user.email,
+        "user_id": user_obj.pk,
+    }
+    
+def authenticate_payload(payload):
+    user_model = get_user_model()
+
+    user, created = user_model.objects.get_or_create(
+        username=payload.get(claims.USER_ID),
+        defaults={
+            "email": payload.get(claims.EMAIL, "")
+        }
+    )
+
+    if not user.is_active:
+        raise exceptions.AuthenticationFailed(
+            _("User inactive or deleted.")
+        )
+
+    return user
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = serializers.ModelSerializer  
+    queryset = User.objects.none()
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated or not self.request.auth:
+            return User.objects.none()
+
+        return User.objects.filter(
+            id=self.request.auth.get(claims.USER_ID)
+        )
