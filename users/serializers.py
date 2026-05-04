@@ -71,8 +71,3 @@ class UserApiSerializer(serializers.ModelSerializer):
             "last_name",
             "date_joined"
         ]
-        
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ["url", "username", "email", "groups"]
