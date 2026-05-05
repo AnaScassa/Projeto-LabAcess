@@ -62,6 +62,8 @@ def task_finalizada(sender=None, result=None, **kwargs):
 @task_failure.connect(weak=False)
 def task_erro(sender=None, task_id=None, exception=None, **kwargs):
 
+    print(f"Task {task_id} falhou com exceção: {exception}")
+    
     Processamento.objects.filter(
         task_id=task_id
     ).update(status="ERRO")

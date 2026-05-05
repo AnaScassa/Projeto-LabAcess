@@ -1,7 +1,5 @@
 # este docker compose é para ilustrar a estrutura do projeto, não é o docker compose final, pode conter erros e não ser otimizado para produção
 # para rodar é necessário colocar esse arquivo na raiz do projeto, onde estão as pastas smartcard, users-service, frontend e docker
-version: "3.9"
-
 services:
 
   backend:
@@ -30,6 +28,7 @@ services:
       - postgres
       - redis
       - users_service
+      - rabbitmq
 
   users_service:
     build:
@@ -39,7 +38,7 @@ services:
     container_name: users_service
 
     ports:
-      - "8001:8001"
+      - "8001:8000"
 
     restart: always
 
@@ -48,13 +47,31 @@ services:
 
     command: >
       sh -c "
-      python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8001
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000
       "
 
     depends_on:
       - postgres
-      - redis
+      - rabbitmq
+
+  users_consumer:
+    build:
+      context: ./users_service
+      dockerfile: docker/users.Dockerfile
+
+    container_name: users_consumer
+
+    restart: always
+
+    volumes:
+      - ./users_service:/app
+
+    command: python users/rabbitmq/consumer.py
+
+    depends_on:
+      - rabbitmq
+      - users_service
 
   celery:
     build:
@@ -107,18 +124,35 @@ services:
 
   postgres:
     image: postgres:15
+
     container_name: postgres
+
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+
     ports:
       - "5432:5432"
+
     restart: always
+
     volumes:
-      - postgres_smartcard:/var/lib/postgresql/data   
+      - postgres_smartcard:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+
+    container_name: rabbitmq
+
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+    restart: always
 
 volumes:
   media_volume:
   postgres_smartcard:
+

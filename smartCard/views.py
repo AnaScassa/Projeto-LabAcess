@@ -10,6 +10,7 @@ from .services import salvar_arquivo_temporario
 from .models import Usuario, Acesso, Processamento
 from django_celery_results.models import TaskResult
 from django.db import transaction
+from smartcard.rabbitmq.publisher import enviar_mensagem
 
 import uuid
 
@@ -76,7 +77,15 @@ def mudar_apontamento(request, id):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated | HasAPIKey])
 def carregar_acesso(request):
-
+    
+    enviar_mensagem(
+        "usuarios_processados",
+        {
+            "task_id": task_uuid,
+            "arquivo": caminho
+        }
+    )
+        
     arquivo = request.FILES.get("file")
 
     if not arquivo:
