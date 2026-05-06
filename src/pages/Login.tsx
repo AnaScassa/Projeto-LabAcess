@@ -11,7 +11,7 @@ export default function Login() {
 
     try {
       const response = await fetch(
-        `http://${API_HOST}:8000/api/acesso/login/`,
+        `http://${API_HOST}:8001/api/users/api/token/`,
         {
           method: "POST",
           headers: {

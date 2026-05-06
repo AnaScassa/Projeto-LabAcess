@@ -26,7 +26,7 @@ export async function authFetch(
     }
 
     const refreshResponse = await fetch(
-      `http://${API_HOST}:8000/api/acesso/token/refresh/`,
+      `http://${API_HOST}:8001/api/users/api/token/refresh/`,
       {
         method: "POST",
         headers: {
