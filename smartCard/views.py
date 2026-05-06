@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication, JWTStatelessUserAuthentication
 from rest_framework_api_key.permissions import HasAPIKey
 
 from .tasks import processar_xls
@@ -15,8 +15,6 @@ from smartcard.rabbitmq.publisher import enviar_mensagem
 import uuid
 
 @api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
 def lista_acessos(request):
     acessos = Acesso.objects.values(
         'id',
@@ -30,8 +28,6 @@ def lista_acessos(request):
     return Response(list(acessos), status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([HasAPIKey])
 def lista_usuarios(request):
     usuarios = Usuario.objects.values(
         'id',
@@ -40,8 +36,6 @@ def lista_usuarios(request):
     return Response(list(usuarios), status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([HasAPIKey])
 def acessos_erro(request):
     acessos = Acesso.objects.filter(apontamento__in=[1, 2]).values(
         'id',
@@ -59,8 +53,6 @@ def acessos_erro(request):
     return Response(list(acessos), status=status.HTTP_200_OK)
 
 @api_view(['PATCH'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated | HasAPIKey])
 def mudar_apontamento(request, id):
 
     try:
@@ -74,18 +66,8 @@ def mudar_apontamento(request, id):
 
 
 @api_view(['POST'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated | HasAPIKey])
 def carregar_acesso(request):
-    
-    enviar_mensagem(
-        "usuarios_processados",
-        {
-            "task_id": task_uuid,
-            "arquivo": caminho
-        }
-    )
-        
+
     arquivo = request.FILES.get("file")
 
     if not arquivo:
@@ -97,12 +79,20 @@ def carregar_acesso(request):
     if not arquivo.name.endswith(".xls"):
         return Response(
             {"erro": "Apenas arquivos .xls são permitidos."},
-            status=status.HTTP_400_BAD_REQUEST 
+            status=status.HTTP_400_BAD_REQUEST
         )
 
     caminho = salvar_arquivo_temporario(arquivo)
 
     task_uuid = str(uuid.uuid4())
+
+    enviar_mensagem(
+        "usuarios_processados",
+        {
+            "task_id": task_uuid,
+            "arquivo": caminho
+        }
+    )
 
     with transaction.atomic():
         Processamento.objects.create(
@@ -112,7 +102,7 @@ def carregar_acesso(request):
         )
 
     processar_xls.apply_async(
-        args=[caminho],
+        args=[caminho, task_uuid],
         task_id=task_uuid
     )
 
@@ -125,6 +115,7 @@ def carregar_acesso(request):
         },
         status=status.HTTP_202_ACCEPTED
     )
+    
 def agora_por_fila():
     return {
         "fila_rapida": TaskResult.objects.filter(

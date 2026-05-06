@@ -4,7 +4,7 @@ from smartcard.api import AcessoViewSet, GroupViewSet, UsuarioViewSet, TaskCompl
 from django.urls import include, path
 
 from rest_framework import routers
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 
 router = routers.DefaultRouter()
@@ -17,8 +17,6 @@ router.register(r"apontamento", ApontamentoViewSet, basename="apontamento")
 urlpatterns = [
     path('', include(router.urls)),
     path("upload-xls/", carregar_acesso, name="upload_xls"),
-    path("login/", TokenObtainPairView.as_view(), name="login"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("lista-usuarios/", lista_usuarios, name="lista_usuarios"),
     path("desativar-apontamento/<int:id>/", mudar_apontamento, name="desativar_apontamento"),
-    ]
+]

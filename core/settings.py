@@ -159,10 +159,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #API_KEY_CUSTOM_HEADER = "HTTP_X_API_KEY"
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication",
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
@@ -205,5 +204,6 @@ CACHES = {
     }
 }
 
+SECRET_KEY = 'chave'
 SECRET_API_KEY = os.environ.get("SECRET_API_KEY")
 SECRET_AUTHORIZATION = os.environ.get("SECRET_AUTHORIZATION")

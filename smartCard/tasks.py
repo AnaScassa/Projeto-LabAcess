@@ -10,104 +10,52 @@ from .models import Usuario, Acesso
 from fuzzywuzzy import fuzz
 
 import pandas as pd
-import requests
-
-from django.db import transaction
+import time
+from smartcard.rabbitmq.publisher import enviar_mensagem
 
 
 @shared_task(bind=True)
-def processar_xls(self, caminho_arquivo):
+def processar_xls(self, caminho_arquivo, task_id):
+    
+    enviar_mensagem("usuarios_processados", {"task_id": task_id})
 
-    print("PROCESSANDO:", caminho_arquivo)
+    profiles = cache.get(f"profiles_{task_id}")
+    users = cache.get(f"users_{task_id}")
+
+    print(profiles)
+    print(users)
+
+    print("Mensagem enviada para users_service")
+
+    timeout = 30
+    inicio = time.time()
+
+    profiles = None
+    users = None
+
+    while time.time() - inicio < timeout:
+
+        profiles = cache.get(f"profiles_{task_id}")
+        users = cache.get(f"users_{task_id}")
+
+        if profiles and users:
+            break
+
+        print("Aguardando dados do users_service...")
+        time.sleep(2)
+
+    if not profiles or not users:
+        raise Exception("Timeout esperando users_service")
+
+    print("Dados recebidos!")
 
     df = pd.read_excel(caminho_arquivo)
 
-    headers = {
-        "X-Api-Key": settings.SECRET_API_KEY,
-        "Authorization": f"Api-Key {settings.SECRET_AUTHORIZATION}"
-    }
-
-    profiles = cache.get("profiles")
-    users = cache.get("users")
-
-    if not profiles or not users:
-        print("Buscando da API...")
-
-        profiles = requests.get(
-            "http://backend:8001/api/users/user-profile/",
-            headers=headers,
-            timeout=10
-        ).json()
-
-        users = requests.get(
-            "http://backend:8001/api/users/user/",
-            headers=headers,
-            timeout=10
-        ).json()
-
-        if isinstance(profiles, dict) and "results" in profiles:
-            profiles = profiles.get("results") or []
-        if not isinstance(profiles, list):
-            profiles = []
-
-        if isinstance(users, dict) and "results" in users:
-            users = users.get("results") or []
-        if not isinstance(users, list):
-            users = []
-
-        cache.set("profiles", profiles, timeout=600)
-        cache.set("users", users, timeout=600)
-  
     for _, row in df.iterrows():
+
         matricula = str(row.get("MATRICULA", "")).strip()
 
-        if "NOME_ALUNO" in df.columns:
-            nome_usuario = row.get("NOME_ALUNO", "")
-            categoria = matricula[:3]
-        elif "NOME_FUNCIONARIO" in df.columns:
-            nome_usuario = row.get("NOME_FUNCIONARIO", "")
-            categoria = "FUNCIONARIO"
-        else:
-            nome_usuario = "Desconhecido"
-            categoria = "OUTRO"
-
-        usuario, _ = Usuario.objects.get_or_create(
-            matricula=matricula,
-            defaults={
-                "nome_usuario": nome_usuario,
-                "categoriaUsuario": categoria,
-            }
-        )
-
-        data = timezone.make_aware(pd.to_datetime(row.get("DATA")))
-        desc_evento = row.get("DESC_EVENTO", "")
-        apontamento = 0 if desc_evento == "Apontamento Normal" else 1
-
-        obj, created = Acesso.objects.get_or_create(
-            usuario=usuario,
-            data_acesso=data,
-            desc_evento=desc_evento,
-            desc_area=row.get("DESC_AREA", ""),
-            ent_sai=row.get("ENT_SAI", ""),
-            defaults={
-                "desc_leitor": row.get("DESC_LEITOR", ""),
-                "apontamento": apontamento
-            }
-        )
-
-        if not created:
-            obj.apontamento = apontamento
-            obj.save()
-
-        if usuario.user_auth is None:
-            chain(
-                tentar_vincular_user_auth.s(usuario.id)
-            ).apply_async()
-            print("PROCESSAMENTO FINALIZADO")
-
-    if Acesso.objects.filter(apontamento=0):
-        corrigir_entradas_saida_inconsistentes()
-    print("CORREÇÃO AUTOMÁTICA DE APONTAMENTO CONCLUÍDA")
+        print(matricula)
 
 
 @shared_task(bind=True)

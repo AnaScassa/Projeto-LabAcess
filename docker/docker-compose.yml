@@ -1,4 +1,4 @@
-# este docker compose é para ilustrar a estrutura do projeto, não é o docker compose final, pode conter erros e não ser otimizado para produção
+# este docker compose é para ilustrar a estrutura do projeto, não é o docker compose final
 # para rodar é necessário colocar esse arquivo na raiz do projeto, onde estão as pastas smartcard, users-service, frontend e docker
 services:
 

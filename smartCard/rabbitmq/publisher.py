@@ -3,7 +3,7 @@
 import pika
 import json
 
-def enviar_mensagem(mensagem):
+def enviar_mensagem(usuarios_processados, mensagem):
 
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(host='rabbitmq')
@@ -11,14 +11,14 @@ def enviar_mensagem(mensagem):
 
     channel = connection.channel()
 
-    channel.queue_declare(queue='usuarios')
+    channel.queue_declare(queue=usuarios_processados)
 
     channel.basic_publish(
         exchange='',
-        routing_key='usuarios',
+        routing_key=usuarios_processados,
         body=json.dumps(mensagem)
     )
 
-    print("Mensagem enviada:", mensagem)
+    print("Mensagem enviada!")
 
     connection.close()
