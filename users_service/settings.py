@@ -12,6 +12,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+USE_X_FORWARDED_HOST = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://users_service:8000",
+]
+
 # USER MODEL
 AUTH_USER_MODEL = 'users.User'
 
@@ -151,8 +157,8 @@ SIMPLE_JWT = {
 # REST FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        "rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',

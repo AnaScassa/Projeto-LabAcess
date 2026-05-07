@@ -6,6 +6,8 @@ import time
 import sys
 import os
 
+from django.conf import settings
+
 sys.path.append('/app')
 
 os.environ.setdefault(
@@ -13,7 +15,6 @@ os.environ.setdefault(
     'users_service.settings'
 )
 
-import django
 django.setup()
 
 from django.core.cache import cache
@@ -46,31 +47,56 @@ def callback(ch, method, properties, body):
         print("Recebido task_id:", task_id)
 
         headers = {
-            "X-Api-Key": "pbkdf2_sha256$1000000$EaYqRbLmLW9yWEEFxzLD7G$3OxMES/nb5+z6zqCtA9UmDKRGWvLL0Fp46KMdR5CEJY=",
-            "Authorization": f"Api-Key Nq5UAGLV.YuZjPXxyvJ1kclWNprTeIxPTAZcqnhza"
+            "X-Internal-Key": settings.SECRET_API_KEY
         }
-        
+
         print(headers)
 
-        profiles = requests.get(
-            "http://users_service:8001/api/users/user-profile/",
-            headers=headers,
+        profiles_response = requests.get(
+            "http://users_service:8000/api/users/internal/profiles/",
+            headers={
+                **headers,
+                "Host": "localhost"
+            },
             timeout=10
-        ).json()
+        )
 
-        users = requests.get(
-            "http://users_service:8001/api/users/user/",
-            headers=headers,
+        print("PROFILE STATUS:", profiles_response.status_code)
+        print("PROFILE BODY:")
+        print(profiles_response.text[:5000])
+
+        if profiles_response.status_code != 200:
+            print("Erro buscando profiles")
+            return
+
+        
+        users_response = requests.get(
+            "http://users_service:8000/api/users/internal/users/",
+            headers={
+                **headers,
+                "Host": "localhost"
+            },
             timeout=10
-        ).json()
+        )
 
-        cache.set(f"profiles_{task_id}", profiles, timeout=600)
-        cache.set(f"users_{task_id}", users, timeout=600)
+        print("USER STATUS:", users_response.status_code)
+        print("USER BODY:")
+        print(users_response.text[:5000])
+
+        if users_response.status_code != 200:
+            print("Erro buscando users")
+            return
+
+        profiles = profiles_response.json()
+        users = users_response.json()
+        
+        cache.set(f"profiles_{task_id}", profiles, timeout=300)
+        cache.set(f"users_{task_id}", users, timeout=300)
 
         print("Dados salvos no cache!")
 
     except Exception as e:
-        print("ERRO NO CONSUMER:", e)
+        print("ERRO NO CONSUMER:", str(e))
 
 channel.basic_consume(
     queue='usuarios_processados',

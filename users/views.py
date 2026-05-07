@@ -1,3 +1,6 @@
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_api_key.permissions import HasAPIKey
@@ -6,6 +9,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import viewsets
 
 from django.contrib.auth import get_user_model
+
+from django.conf import settings
 from .serializers import UserApiSerializer, UserProfileSerializer, UserSerializer, SafetyTrainingSerializer
 from .models import UserProfile, SafetyTraining, User
 
@@ -47,3 +52,36 @@ class UserViewSetApi(viewsets.ModelViewSet):
     serializer_class = UserApiSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    
+def validar_chave_interna(request):
+    return request.headers.get("X-Internal-Key") == settings.SECRET_API_KEY
+
+
+@api_view(["GET"])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def internal_users(request):
+
+    internal_key = request.headers.get("X-Internal-Key")
+
+    if internal_key != settings.SECRET_API_KEY:
+        return Response({"error": "Não autorizado"}, status=401)
+
+    users = list(User.objects.values())
+
+    return Response(users)
+
+
+@api_view(["GET"])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def internal_profiles(request):
+
+    internal_key = request.headers.get("X-Internal-Key")
+
+    if internal_key != settings.SECRET_API_KEY:
+        return Response({"error": "Não autorizado"}, status=401)
+
+    profiles = list(UserProfile.objects.values())
+
+    return Response(profiles)
