@@ -68,6 +68,8 @@ def mudar_apontamento(request, id):
 @api_view(['POST'])
 def carregar_acesso(request):
 
+    print(request.FILES)
+    print(request.data)
     arquivo = request.FILES.get("file")
 
     if not arquivo:

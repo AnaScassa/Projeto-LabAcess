@@ -16,14 +16,8 @@ from smartcard.rabbitmq.publisher import enviar_mensagem
 
 @shared_task(bind=True)
 def processar_xls(self, caminho_arquivo, task_id):
-    
+
     enviar_mensagem("usuarios_processados", {"task_id": task_id})
-
-    profiles = cache.get(f"profiles_{task_id}")
-    users = cache.get(f"users_{task_id}")
-
-    print(profiles)
-    print(users)
 
     print("Mensagem enviada para users_service")
 
@@ -38,13 +32,16 @@ def processar_xls(self, caminho_arquivo, task_id):
         profiles = cache.get(f"profiles_{task_id}")
         users = cache.get(f"users_{task_id}")
 
-        if profiles and users:
+        print(profiles)
+        print(users)
+
+        if profiles is not None and users is not None:
             break
 
         print("Aguardando dados do users_service...")
         time.sleep(2)
 
-    if not profiles or not users:
+    if profiles is None or users is None:
         raise Exception("Timeout esperando users_service")
 
     print("Dados recebidos!")
@@ -52,10 +49,24 @@ def processar_xls(self, caminho_arquivo, task_id):
     df = pd.read_excel(caminho_arquivo)
 
     for _, row in df.iterrows():
+        try:
+            matricula = str(row.get("MATRICULA", "")).strip()
 
-        matricula = str(row.get("MATRICULA", "")).strip()
+            usuario, _ = Usuario.objects.get_or_create(
+                matricula=matricula
+            )
 
-        print(matricula)
+            Acesso.objects.create(
+                usuario=usuario,
+                desc_area=str(row.get("DESC_AREA", "")).strip(),
+                desc_evento=str(row.get("DESC_EVENTO", "")).strip(),
+                ent_sai=str(row.get("ENT_SAI", "")).strip(),
+            )
+
+            print("SALVO:", matricula)
+
+        except Exception as e:
+            print("ERRO:", e)
 
 
 @shared_task(bind=True)
