@@ -10,9 +10,8 @@ from smartcard.serializers import (
 
 from rest_framework.response import Response
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework.authentication import SessionAuthentication, get_user_model
 from rest_framework.decorators import action
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -32,20 +31,20 @@ from django.utils.translation import gettext as _
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all().order_by("name")
     serializer_class = GroupSerializer
-    permission_classes = [IsAuthenticated | HasAPIKey]
-    authentication_classes = [JWTAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    #authentication_classes = [JWTAuthentication, SessionAuthentication]
 
 class AcessoViewSet(viewsets.ModelViewSet):
     queryset = Acesso.objects.all() 
     serializer_class = AcessoSerializer
-    permission_classes = [IsAuthenticated | HasAPIKey]
-    authentication_classes = [JWTAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    #authentication_classes = [JWTAuthentication, SessionAuthentication]
 
 class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Usuario.objects.all().order_by("nome_usuario")
     serializer_class = UsuarioSerializer 
-    permission_classes = [IsAuthenticated | HasAPIKey]
-    authentication_classes = [JWTAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    #authentication_classes = [JWTAuthentication, SessionAuthentication]
 
     def get_queryset(self):
         return super().get_queryset()
@@ -53,6 +52,8 @@ class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
 class TaskCompleted(viewsets.ModelViewSet):
     queryset = Processamento.objects.all()
     serializer_class = ProcessamentoSerializer
+    permission_classes = [AllowAny]
+    #authentication_classes = []
 
     @action(detail=False, methods=['get'])
     def status(self, request):
@@ -64,6 +65,8 @@ class TaskCompleted(viewsets.ModelViewSet):
     
 class ApontamentoViewSet(ReadOnlyModelViewSet):
     serializer_class = ApontamentoSerializer
+    permission_classes = [IsAuthenticated]
+    #authentication_classes = [JWTAuthentication, SessionAuthentication]
 
     def get_queryset(self):
         return Acesso.objects.filter(apontamento__in=[1, 2])

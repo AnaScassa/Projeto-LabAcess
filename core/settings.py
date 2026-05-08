@@ -64,6 +64,7 @@ INSTALLED_APPS = [
  #   'allauth.socialaccount.providers.google',
 
     'smartcard.apps.SmartCardConfig',
+    'rest_framework_simplejwt',
 ]
 
 SITE_ID = 1
@@ -162,25 +163,15 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication",
     ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
 }
 
-REST_FRAMEWORK_SSO = {
-    'IDENTITY': 'smartcard-service',
-
-    'ACCEPTED_ISSUERS': ['users-service'],
-
-    'AUTHORIZATION_AUDIENCE': ['smartcard-service'],
-
-    'SESSION_AUDIENCE': ['users-service'],
-    
-    'KEY_STORE_ROOT': os.path.join(BASE_DIR, 'keys'),
-
-    'PUBLIC_KEYS': {
-        'users-service': ['users-service.pem'],
-    },
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
 # Configuração do Celery 
@@ -204,6 +195,5 @@ CACHES = {
     }
 }
 
-SECRET_KEY = 'chave'
 SECRET_API_KEY = os.environ.get("SECRET_API_KEY")
 SECRET_AUTHORIZATION = os.environ.get("SECRET_AUTHORIZATION")

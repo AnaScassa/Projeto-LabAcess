@@ -2,7 +2,6 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication, JWTStatelessUserAuthentication
 from rest_framework_api_key.permissions import HasAPIKey
 
 from .tasks import processar_xls
@@ -15,6 +14,7 @@ from smartcard.rabbitmq.publisher import enviar_mensagem
 import uuid
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def lista_acessos(request):
     acessos = Acesso.objects.values(
         'id',
@@ -36,6 +36,7 @@ def lista_usuarios(request):
     return Response(list(usuarios), status=status.HTTP_200_OK)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def acessos_erro(request):
     acessos = Acesso.objects.filter(apontamento__in=[1, 2]).values(
         'id',
@@ -53,6 +54,7 @@ def acessos_erro(request):
     return Response(list(acessos), status=status.HTTP_200_OK)
 
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def mudar_apontamento(request, id):
 
     try:
@@ -66,10 +68,9 @@ def mudar_apontamento(request, id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def carregar_acesso(request):
 
-    print(request.FILES)
-    print(request.data)
     arquivo = request.FILES.get("file")
 
     if not arquivo:
@@ -78,9 +79,9 @@ def carregar_acesso(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    if not arquivo.name.endswith(".xls"):
+    if not arquivo.name.endswith((".xls", ".xlsx")):
         return Response(
-            {"erro": "Apenas arquivos .xls são permitidos."},
+            {"erro": "Apenas arquivos .xls e .xlsx são permitidos."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
