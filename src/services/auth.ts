@@ -4,7 +4,10 @@ export async function authFetch(
   url: string,
   options: RequestInit = {}
 ): Promise<Response> {
+
   const token = localStorage.getItem("access");
+
+  console.log("TOKEN AUTHFETCH:", token);
 
   if (!token) {
     throw new Error("Sem token");
@@ -12,13 +15,18 @@ export async function authFetch(
 
   let response = await fetch(url, {
     ...options,
+
     headers: {
+      "Content-Type": "application/json",
+
       ...(options.headers || {}),
+
       Authorization: `Bearer ${token}`,
     },
   });
 
   if (response.status === 401 || response.status === 403) {
+
     const refresh = localStorage.getItem("refresh");
 
     if (!refresh) {
@@ -29,25 +37,39 @@ export async function authFetch(
       `http://${API_HOST}:8001/api/users/api/token/refresh/`,
       {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ refresh }),
+
+        body: JSON.stringify({
+          refresh,
+        }),
       }
     );
 
     if (!refreshResponse.ok) {
+
+      localStorage.clear();
+
+      window.location.href = "/login";
+
       throw new Error("Refresh inválido");
     }
 
-    const data: { access: string } = await refreshResponse.json();
+    const data: { access: string } =
+      await refreshResponse.json();
 
     localStorage.setItem("access", data.access);
 
-    return fetch(url, {
+    response = await fetch(url, {
       ...options,
+
       headers: {
+        "Content-Type": "application/json",
+
         ...(options.headers || {}),
+
         Authorization: `Bearer ${data.access}`,
       },
     });

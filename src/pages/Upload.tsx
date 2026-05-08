@@ -57,8 +57,9 @@ export default function Upload() {
   }, []);
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
-    setEstaBloqueado(true);
     e.preventDefault();
+
+    setEstaBloqueado(true);
 
     if (!token) {
       setMensagem("Sessão expirada. Faça login novamente.");
@@ -70,15 +71,16 @@ export default function Upload() {
 
     if (!fileInput.files || !fileInput.files[0]) {
       setMensagem("Selecione um arquivo primeiro!");
+      setEstaBloqueado(false);
       return;
     }
 
-    const file = fileInput.files[0];
-
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
+      const file = fileInput.files[0];
+
+      const formData = new FormData();
+      formData.append("file", file);
+
       const response = await fetch(
         `http://${API_HOST}:8000/api/acesso/upload-xls/`,
         {
@@ -96,14 +98,20 @@ export default function Upload() {
           window.location.replace("/login");
           return;
         }
-        throw new Error("Erro");
+
+        const erro = await response.json();
+        console.log(erro);
+
+        throw new Error("Erro no upload");
       }
 
       setMensagem("Processamento sendo feito...");
       setLoading(true);
-      setEstaBloqueado(false);
+
     } catch (error) {
+      console.error(error);
       setMensagem("Erro no upload.");
+      setEstaBloqueado(false);
     }
   };
 
