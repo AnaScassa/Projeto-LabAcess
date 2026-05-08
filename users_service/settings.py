@@ -10,9 +10,15 @@ SECRET_KEY = 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    "users_service",
+    "localhost",
+    "127.0.0.1",
+    "*"
+]
 
 USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = None
 
 CSRF_TRUSTED_ORIGINS = [
     "http://users_service:8000",
@@ -59,6 +65,7 @@ INSTALLED_APPS = [
 
     # Apps
     'users',
+    'rest_framework_simplejwt',
 ]
 
 SITE_ID = 1
@@ -149,20 +156,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
-
 # REST FRAMEWORK
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        "rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
 }
 
 # CELERY
@@ -190,5 +195,4 @@ CACHES = {
 
 # ENV VARIABLES
 SECRET_API_KEY = os.environ.get("SECRET_API_KEY")
-SECRET_KEY = 'chave'
 SECRET_AUTHORIZATION = os.environ.get("SECRET_AUTHORIZATION")
