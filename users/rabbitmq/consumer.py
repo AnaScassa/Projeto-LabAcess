@@ -47,18 +47,15 @@ def callback(ch, method, properties, body):
         print("Recebido task_id:", task_id)
 
         headers = {
-            "X-Internal-Key": settings.SECRET_API_KEY
+            "X-Api-Key": "pbkdf2_sha256$1000000$EaYqRbLmLW9yWEEFxzLD7G$3OxMES/nb5+z6zqCtA9UmDKRGWvLL0Fp46KMdR5CEJY=", 
+            "Authorization": f"Api-Key xqynhxLl.rINMthO9xJjrtijI4Uzpqq1rXqFz2wZy"
         }
 
         print(headers)
 
         profiles_response = requests.get(
-            "http://users_service:8000/api/users/internal/profiles/",
-            headers={
-                **headers,
-                "Host": "localhost"
-            },
-            timeout=10
+            "http://users_service:8000/api/users/user-profile/",
+            headers=headers
         )
 
         print("PROFILE STATUS:", profiles_response.status_code)
@@ -71,12 +68,8 @@ def callback(ch, method, properties, body):
 
         
         users_response = requests.get(
-            "http://users_service:8000/api/users/internal/users/",
-            headers={
-                **headers,
-                "Host": "localhost"
-            },
-            timeout=10
+            "http://users_service:8000/api/users/user/",
+            headers=headers
         )
 
         print("USER STATUS:", users_response.status_code)
