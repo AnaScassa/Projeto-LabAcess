@@ -49,24 +49,55 @@ def processar_xls(self, caminho_arquivo, task_id):
     df = pd.read_excel(caminho_arquivo)
 
     for _, row in df.iterrows():
-        try:
-            matricula = str(row.get("MATRICULA", "")).strip()
+        matricula = str(row.get("MATRICULA", "")).strip()
 
-            usuario, _ = Usuario.objects.get_or_create(
-                matricula=matricula
-            )
+        if "NOME_ALUNO" in df.columns:
+            nome_usuario = row.get("NOME_ALUNO", "")
+            categoria = matricula[:3]
+        elif "NOME_FUNCIONARIO" in df.columns:
+            nome_usuario = row.get("NOME_FUNCIONARIO", "")
+            categoria = "FUNCIONARIO"
+        else:
+            nome_usuario = "Desconhecido"
+            categoria = "OUTRO"
 
-            Acesso.objects.create(
-                usuario=usuario,
-                desc_area=str(row.get("DESC_AREA", "")).strip(),
-                desc_evento=str(row.get("DESC_EVENTO", "")).strip(),
-                ent_sai=str(row.get("ENT_SAI", "")).strip(),
-            )
+        usuario, _ = Usuario.objects.get_or_create(
+            matricula=matricula,
+            defaults={
+                "nome_usuario": nome_usuario,
+                "categoriaUsuario": categoria,
+            }
+        )
 
-            print("SALVO:", matricula)
+        data = timezone.make_aware(pd.to_datetime(row.get("DATA")))
+        desc_evento = row.get("DESC_EVENTO", "")
+        apontamento = 0 if desc_evento == "Apontamento Normal" else 1
 
-        except Exception as e:
-            print("ERRO:", e)
+        obj, created = Acesso.objects.get_or_create(
+            usuario=usuario,
+            data_acesso=data,
+            desc_evento=desc_evento,
+            desc_area=row.get("DESC_AREA", ""),
+            ent_sai=row.get("ENT_SAI", ""),
+            defaults={
+                "desc_leitor": row.get("DESC_LEITOR", ""),
+                "apontamento": apontamento
+            }
+        )
+
+        if not created:
+            obj.apontamento = apontamento
+            obj.save()
+
+        if usuario.user_auth is None:
+            chain(
+                tentar_vincular_user_auth.s(usuario.id)
+            ).apply_async()
+            print("PROCESSAMENTO FINALIZADO")
+
+    if Acesso.objects.filter(apontamento=0):
+        corrigir_entradas_saida_inconsistentes()
+    print("CORREÇÃO AUTOMÁTICA DE APONTAMENTO CONCLUÍDA")
 
 
 @shared_task(bind=True)
