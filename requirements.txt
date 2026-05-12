@@ -69,3 +69,5 @@ xlrd==2.0.2
 factory_boy==3.2.1
 Faker==40.1.2
 pika==1.3.2
+python-dotenv==1.0.1
+python-decouple==3.8

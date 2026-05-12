@@ -12,6 +12,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "users_service",
+    "users_service:8000",
     "localhost",
     "127.0.0.1",
     "*"
@@ -73,6 +74,7 @@ SITE_ID = 1
 # MIDDLEWARE
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'users_service.middleware.InternalRequestMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
