@@ -5,6 +5,10 @@ import json
 
 def enviar_mensagem(usuarios_processados, mensagem):
 
+    print("ENTROU NO PUBLISHER")
+    print(usuarios_processados)
+    print(mensagem)
+
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(host='rabbitmq')
     )
