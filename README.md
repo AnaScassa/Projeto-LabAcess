@@ -1,93 +1,165 @@
-# usuarios-service
+# 👥 Users Service
 
+**Microserviço de Gerenciamento de Usuários e Autenticação** - Responsável por autenticação JWT, gerenciamento de perfis de usuários, controle de treinamentos de segurança e cache distribuído.
 
+---
 
-## Getting started
+## 📋 Visão Geral
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+O **users_service** é um microsserviço crítico que fornece:
+- 🔐 Autenticação JWT segura
+- 👤 Gerenciamento de perfis de usuários
+- 🎓 Rastreamento de treinamentos de segurança
+- 💾 Cache distribuído com Redis
+- 🔄 Processamento assíncrono com Celery
+- 🗣️ Comunicação inter-serviço via RabbitMQ
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+---
 
-## Add your files
+## 🚀 Tech Stack
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+| Camada | Tecnologias |
+|--------|-------------|
+| **Framework** | Django 5.2 + Django REST Framework |
+| **Autenticação** | JWT (djangorestframework-simplejwt), Django Allauth |
+| **Database** | PostgreSQL 15+ |
+| **Cache** | Redis 7+ |
+| **Task Queue** | Celery 5.6.2 + Redis broker |
+| **Message Queue** | RabbitMQ + kombu |
+| **Scheduled Jobs** | Django Celery Beat |
+| **CORS** | django-cors-headers |
+
+---
+
+## 📂 Estrutura de Pastas
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.unicamp.br/anacha/usuarios-service.git
-git branch -M main
-git push -uf origin main
+users_service/
+├── users/                      # App principal
+│   ├── migrations/
+│   ├── management/
+│   ├── rabbitmq/
+│   ├── tests/
+│   ├── models.py
+│   ├── serializers.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── api_internal.py
+│   ├── tasks.py
+│   └── ...
+├── users_service/             # Config Django
+│   ├── settings.py
+│   ├── urls.py
+│   ├── celery.py
+│   └── ...
+├── docker/                    # Dockerfiles
+├── fixtures/                  # Dados iniciais
+└── requirements.txt
 ```
 
-## Integrate with your tools
+---
 
-* [Set up project integrations](https://gitlab.unicamp.br/anacha/usuarios-service/-/settings/integrations)
+## 📊 Modelos de Dados
 
-## Collaborate with your team
+- **User** - Extended AbstractUser com full_name e dados de projeto
+- **UserProfile** - Perfil estendido com degree_area e dados de emergência
+- **SafetyTraining** - Registros de treinamento com datas de expiração
+- **SafetyTrainingGroup** - Sessões de treinamento em grupo
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+---
 
-## Test and Deploy
+## 🔌 API Endpoints
 
-Use the built-in continuous integration in GitLab.
+```http
+POST   /api/token/               # Obter JWT token
+POST   /api/token/refresh/       # Renovar token
+GET    /user/                    # Listar usuários
+POST   /user/                    # Criar usuário
+GET    /safety-training/         # Listar treinamentos
+GET    /internal/users/          # APIs internas
+```
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+---
 
-***
+## 🔐 Autenticação JWT
 
-# Editing this README
+- Access Token: 30 minutos
+- Refresh Token: 1 dia
+- Headers: `Authorization: Bearer <token>`
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+---
 
-## Suggestions for a good README
+## ⚙️ Celery & Async
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+- **Broker**: Redis
+- **Queue**: `fila_users`
+- **Task**: Processamento assíncrono de dados com cache
 
-## Name
-Choose a self-explaining name for your project.
+---
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## 🔄 RabbitMQ Integration
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+Comunica com smartCard service para sincronização de usuários.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+---
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## 🧪 Instalação
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+```bash
+# Setup local
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+# Variáveis de ambiente
+DEBUG=True
+SECRET_KEY=sua-chave-secreta
+DATABASE_URL=postgresql://user:pass@localhost/users_db
+REDIS_URL=redis://localhost:6379/0
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+# Migrações
+python manage.py migrate
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+# Criar superuser
+python manage.py createsuperuser
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+# Rodar servidor
+python manage.py runserver 0.0.0.0:8001
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+# Em outro terminal - Celery
+celery -A users_service worker -l info
+celery -A users_service beat -l info
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### 🐳 Docker
 
-## License
-For open source projects, say how it is licensed.
+```bash
+docker build -f docker/users.Dockerfile -t labacess-users:latest .
+docker-compose up -d users
+```
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+---
+
+## 🛡️ Segurança
+
+✅ JWT com assinatura segura  
+✅ Senhas hasheadas (PBKDF2)  
+✅ CORS configurado  
+✅ Rate limiting  
+✅ SQL Injection prevention  
+
+---
+
+## 🚀 Deployment
+
+Variáveis de produção em `.env`:
+```env
+DEBUG=False
+ALLOWED_HOSTS=users.api.example.com
+SECRET_KEY=<gerado>
+DATABASE_URL=postgresql://prod:pass@prod_db:5432/users_db_prod
+```
+
+---
+
+**Desenvolvido com ❤️ para autenticação segura em microsserviços**
