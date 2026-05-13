@@ -14,7 +14,8 @@ import time
 from smartcard.rabbitmq.publisher import enviar_mensagem
 
 
-@shared_task(bind=True)
+
+@shared_task(bind=True, queue="fila_rapida")
 def processar_xls(self, caminho_arquivo, task_id):
 
     enviar_mensagem("usuarios_processados", {"task_id": task_id})
@@ -24,27 +25,29 @@ def processar_xls(self, caminho_arquivo, task_id):
     timeout = 30
     inicio = time.time()
 
-    profiles = None
-    users = None
+    resposta = None
 
     while time.time() - inicio < timeout:
 
-        profiles = cache.get(f"profiles_{task_id}")
-        users = cache.get(f"users_{task_id}")
+        resposta = cache.get(f"users_response_{task_id}")
 
-        print(profiles)
-        print(users)
+        print("RESPOSTA:", resposta)
 
-        if profiles is not None and users is not None:
+        if resposta is not None:
             break
 
         print("Aguardando dados do users_service...")
         time.sleep(2)
 
-    if profiles is None or users is None:
+    if resposta is None:
         raise Exception("Timeout esperando users_service")
 
+    users = resposta["users"]
+    profiles = resposta["profiles"]
+
     print("Dados recebidos!")
+    print(f"USERS: {len(users)}")
+    print(f"PROFILES: {len(profiles)}")
 
     df = pd.read_excel(caminho_arquivo)
 
@@ -100,17 +103,47 @@ def processar_xls(self, caminho_arquivo, task_id):
     print("CORREÇÃO AUTOMÁTICA DE APONTAMENTO CONCLUÍDA")
 
 
-@shared_task(bind=True)
+@shared_task(bind=True, queue="fila_media")
 def tentar_vincular_user_auth(self, usuario_id):
 
     self.update_state(state="STARTED")
 
-    profiles = cache.get("profiles")
-    users = cache.get("users")
+    task_id = str(self.request.id)
 
-    if not profiles or not users:
-        print("Cache vazio!")
+    enviar_mensagem(
+        "usuarios_processados",
+        {
+            "task_id": task_id
+        }
+    )
+
+    print("Mensagem enviada para users_service")
+
+    timeout = 30
+    inicio = time.time()
+
+    resposta = None
+
+    while time.time() - inicio < timeout:
+
+        resposta = cache.get(
+            f"users_response_{task_id}"
+        )
+
+        print("RESPOSTA:", resposta)
+
+        if resposta is not None:
+            break
+
+        print("Aguardando dados do users_service...")
+        time.sleep(2)
+
+    if resposta is None:
+        print("Timeout esperando users_service")
         return False
+
+    profiles = resposta["profiles"]
+    users = resposta["users"]
 
     usuario = Usuario.objects.filter(
         id=usuario_id,
@@ -120,22 +153,55 @@ def tentar_vincular_user_auth(self, usuario_id):
     if not usuario:
         return False
 
-    vinculou = vincular_por_matricula(usuario, profiles)
+    vinculou = vincular_por_matricula(
+        usuario,
+        profiles
+    )
 
     if not vinculou:
-        tentar_vincular_por_nome.delay(usuario.id)
+
+        tentar_vincular_por_nome.delay(
+            usuario.id
+        )
 
     return vinculou
 
-@shared_task(bind=True)
+@shared_task(bind=True, queue="fila_pesada")
 def tentar_vincular_por_nome(self, usuario_id):
+
     self.update_state(state="STARTED")
 
-    users = cache.get("users")
+    task_id = str(self.request.id)
 
-    if not users:
-        print("Cache users vazio!")
+    enviar_mensagem(
+        "usuarios_processados",
+        {
+            "task_id": task_id
+        }
+    )
+
+    timeout = 30
+    inicio = time.time()
+
+    resposta = None
+
+    while time.time() - inicio < timeout:
+
+        resposta = cache.get(
+            f"users_response_{task_id}"
+        )
+
+        if resposta is not None:
+            break
+
+        print("Aguardando users_service...")
+        time.sleep(2)
+
+    if resposta is None:
+        print("Timeout users_service")
         return False
+
+    users = resposta["users"]
 
     usuario = Usuario.objects.filter(
         id=usuario_id,
@@ -146,22 +212,41 @@ def tentar_vincular_por_nome(self, usuario_id):
         return False
 
     nome_usuario = usuario.nome_usuario.lower().strip()
+
     melhor = None
     score_max = 0
 
     for user in users:
-        nome_db = (user.get("full_name") or "").lower().strip()
+
+        nome_db = (
+            user.get("full_name") or ""
+        ).lower().strip()
+
         if not nome_db:
             continue
 
-        score = fuzz.token_sort_ratio(nome_usuario, nome_db)
+        score = fuzz.token_sort_ratio(
+            nome_usuario,
+            nome_db
+        )
+
         if score > score_max:
+
             score_max = score
             melhor = user
 
     if melhor and score_max >= 70:
+
         usuario.user_auth = melhor.get("id")
-        usuario.save(update_fields=["user_auth"])
+
+        usuario.save(
+            update_fields=["user_auth"]
+        )
+
+        print(
+            f"Vinculado por nome: {usuario.nome_usuario}"
+        )
+
         return True
 
     return False
