@@ -37,6 +37,13 @@ export default function Upload() {
         if (!res) return;
 
         const data = await res.json();
+        
+        if (data?.[0]?.status === "ERRO") {
+          setEstaBloqueado(true);
+          setLoading(false);
+          setMensagem("Erro no processamento");
+          return;
+        }
 
         if (data && Object.keys(data).length > 0) {
           setEstaBloqueado(true);

@@ -7,8 +7,6 @@ export async function authFetch(
 
   const token = localStorage.getItem("access");
 
-  console.log("TOKEN AUTHFETCH:", token);
-
   if (!token) {
     throw new Error("Sem token");
   }
