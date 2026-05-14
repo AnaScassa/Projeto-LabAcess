@@ -93,13 +93,40 @@ GET    /internal/users/          # APIs internas
 
 - **Broker**: Redis
 - **Queue**: `fila_users`
-- **Task**: Processamento assíncrono de dados com cache
+- **Task**: `processar_usuarios` - Processa requisições do smartCard e retorna dados de usuários
 
 ---
 
 ## 🔄 RabbitMQ Integration
 
-Comunica com smartCard service para sincronização de usuários.
+### Filas de Comunicação
+- **`usuarios_processados`** ← Recebe solicitações do smartCard
+- **`usuarios_resposta`** → Envia dados de usuários para smartCard
+
+### Fluxo de Processamento
+
+```
+1. smartCard envia mensagem em 'usuarios_processados'
+   ↓
+2. Consumer thread em tasks.py dispara Celery
+   ↓
+3. processar_usuarios(task_id) executa:
+   - Lê User.objects.all()
+   - Lê UserProfile.objects.all()
+   - Publica resposta em 'usuarios_resposta'
+   ↓
+4. smartCard consome e salva no cache Redis
+```
+
+### Consumer em Thread Background
+
+O arquivo `users/tasks.py` inicia automaticamente uma thread daemon que:
+1. Conecta ao RabbitMQ
+2. Ouve a fila `usuarios_processados`
+3. Para cada mensagem recebida, dispara `processar_usuarios.delay(task_id)`
+4. A tarefa Celery executa assincronamente
+
+**Não bloqueia** a importação do módulo - usa threading!
 
 ---
 
