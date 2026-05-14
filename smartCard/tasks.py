@@ -11,6 +11,9 @@ from fuzzywuzzy import fuzz
 
 import pandas as pd
 import time
+import threading
+import pika
+import json
 from smartcard.rabbitmq.publisher import enviar_mensagem
 
 
@@ -290,3 +293,51 @@ def mesmoDia(data1, data2):
         data1_local.month == data2_local.month and
         data1_local.day == data2_local.day
     )
+
+def iniciar_consumer_usuarios():
+    connection = None
+
+    while connection is None:
+        try:
+            connection = pika.BlockingConnection(
+                pika.ConnectionParameters(host="rabbitmq")
+            )
+            print("Conectado RabbitMQ (Consumer)")
+        except Exception as e:
+            print(f"Aguardando RabbitMQ... {e}")
+            time.sleep(5)
+
+    channel = connection.channel()
+
+    channel.queue_declare(queue="usuarios_resposta", durable=True)
+
+    def callback(ch, method, properties, body):
+        try:
+            data = json.loads(body)
+            task_id = data["task_id"]
+
+            cache.set(
+                f"users_response_{task_id}",
+                data,
+                timeout=300
+            )
+
+            print(f"Resposta salva no cache para task_id: {task_id}")
+
+        except Exception as e:
+            print(f"ERRO ao processar resposta: {str(e)}")
+
+    channel.basic_consume(
+        queue="usuarios_resposta",
+        on_message_callback=callback,
+        auto_ack=True
+    )
+
+    print("Aguardando respostas do users_service...")
+    channel.start_consuming()
+
+consumer_thread = threading.Thread(
+    target=iniciar_consumer_usuarios,
+    daemon=True
+)
+consumer_thread.start()

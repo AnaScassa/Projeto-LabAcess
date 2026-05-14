@@ -1,5 +1,3 @@
-# este docker compose é para ilustrar a estrutura do projeto, não é o docker compose final
-# para rodar é necessário colocar esse arquivo na raiz do projeto, onde estão as pastas smartcard, users-service, frontend e docker
 services:
 
   backend:
@@ -20,6 +18,11 @@ services:
 
     command: >
       sh -c "
+        until python -c 'import socket; s=socket.socket(); s.connect((\"postgres\",5432))'; do
+          echo 'Esperando postgres...';
+          sleep 2;
+        done;
+
         python manage.py migrate &&
         python manage.py runserver 0.0.0.0:8000
       "
@@ -50,6 +53,11 @@ services:
 
     command: >
       sh -c "
+        until python -c 'import socket; s=socket.socket(); s.connect((\"postgres\",5432))'; do
+          echo 'Esperando postgres...';
+          sleep 2;
+        done;
+
         python manage.py migrate &&
         python manage.py init_users &&
         python manage.py runserver 0.0.0.0:8000
@@ -57,6 +65,7 @@ services:
 
     depends_on:
       - postgres
+      - redis
       - rabbitmq
 
   users_consumer:
@@ -66,9 +75,6 @@ services:
 
     container_name: users_consumer
 
-    environment:
-      SECRET_API_KEY: minha-chave-secreta
-
     restart: always
 
     volumes:
@@ -76,14 +82,25 @@ services:
 
     command: >
       sh -c "
-        echo 'Aguardando mensagens...' &&
-        python -u users/rabbitmq/consumer.py
+        until python -c 'import socket; s=socket.socket(); s.connect((\"postgres\",5432))'; do
+          echo 'Esperando postgres...';
+          sleep 2;
+        done;
+
+        until python -c 'import socket; s=socket.socket(); s.connect((\"rabbitmq\",5672))'; do
+          echo 'Esperando rabbitmq...';
+          sleep 2;
+        done;
+
+        echo 'Aguardando mensagens RabbitMQ...' &&
+        python -u users/consumer.py
       "
 
     depends_on:
       - rabbitmq
       - users_service
       - redis
+      - postgres
 
   celery:
     build:
@@ -93,10 +110,17 @@ services:
     container_name: smartcard_celery
 
     command: >
-      celery -A core worker
-      --loglevel=info
-      --concurrency=1
-      -Q fila_rapida,fila_media,fila_pesada
+      sh -c "
+        until python -c 'import socket; s=socket.socket(); s.connect((\"redis\",6379))'; do
+          echo 'Esperando redis...';
+          sleep 2;
+        done;
+
+        celery -A core worker
+        --loglevel=info
+        --concurrency=1
+        -Q fila_rapida,fila_media,fila_pesada
+      "
 
     restart: always
 
@@ -108,6 +132,32 @@ services:
     volumes:
       - ./smartcard:/app
       - media_volume:/app/media
+
+  users_celery:
+    build:
+      context: ./users_service
+      dockerfile: docker/users.Dockerfile
+
+    container_name: users_celery
+
+    command: >
+      sh -c "
+        until python -c 'import socket; s=socket.socket(); s.connect((\"rabbitmq\",5672))'; do
+          echo 'Esperando rabbitmq...';
+          sleep 2;
+        done;
+
+        celery -A users_service worker --loglevel=info
+      "
+
+    restart: always
+
+    volumes:
+      - ./users_service:/app
+
+    depends_on:
+      - rabbitmq
+      - users_service
 
   frontend:
     build:

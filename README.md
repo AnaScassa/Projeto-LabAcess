@@ -86,13 +86,41 @@ Categorias suportadas:
 
 ---
 
-## 📥 Fluxo de Processamento
+## 📥 Fluxo de Processamento com Integração
 
 ```
-Frontend Upload → Celery Task → Parse XLS → 
-Fuzzy Match (users_service) → Validar Dados → 
-Criar Records → RabbitMQ Events → Frontend
+1. Frontend Upload XLS
+   ↓
+2. Celery: processar_xls(arquivo, task_id)
+   ↓
+3. Envia: RabbitMQ 'usuarios_processados' com task_id
+   ↓
+4. Aguarda: Redis Cache[users_response_{task_id}] (timeout 30s)
+   ↓
+5. users_service responde em 'usuarios_resposta'
+   ↓
+6. Consumer thread salva resposta no cache
+   ↓
+7. processar_xls continua - Parse XLS + Fuzzy Match
+   ↓
+8. Validação de dados e criação de registros
+   ↓
+9. Resposta via API para Frontend
 ```
+
+### Filas RabbitMQ
+- **`usuarios_processados`** → Solicitações para users_service
+- **`usuarios_resposta`** ← Respostas do users_service
+
+### Consumer Thread em Background
+
+O arquivo `smartcard/tasks.py` inicia automaticamente:
+1. Thread daemon que ouve `usuarios_resposta`
+2. Callback recebe dados do users_service
+3. Salva em Redis: `cache.set(f'users_response_{task_id}', data, timeout=300)`
+4. `processar_xls` lê do cache com polling (a cada 2s)
+
+**Timeout**: 30 segundos esperando resposta antes de falhar
 
 ---
 
