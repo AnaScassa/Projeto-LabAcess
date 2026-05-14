@@ -25,7 +25,7 @@ const MONTH_NAMES = [
 function formatMonthLabel(monthKey: string) {
   const [year, month] = monthKey.split("-").map(Number);
   if (!year || !month) return monthKey;
-  return `${MONTH_NAMES[month - 1]} ${year}`;
+  return `${MONTH_NAMES[month - 1]}`;
 }
 
 export default function GraficoAcessos() {
