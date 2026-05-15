@@ -1,5 +1,3 @@
-#docker-compose.yml somente para ilustração, coloque o código na raiz do projeto
-
 services:
 
   backend:
@@ -121,10 +119,30 @@ services:
       - "5432:5432"
 
     restart: always
-
     volumes:
       - postgres_smartcard:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  windows:
+    image: dockurr/windows
+    container_name: windows
+    environment:
+      KVM: "N"
+      VERSION: "11"
+
+    devices:
+      #- /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    volumes:
+      - ./windows:/storage
+    restart: always
+    stop_grace_period: 2m
 
   rabbitmq:
     image: rabbitmq:3-management
