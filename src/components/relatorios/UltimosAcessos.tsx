@@ -29,7 +29,7 @@ export default function UltimosAcessos() {
                 <thead className="table-light" style={{ position: "sticky", top: 0 }}>
                     <tr>
                         <th>Usuário</th>
-                        <th>Data de Acesso</th>
+                        <th>Data</th>
                         <th>Tipo</th>
                     </tr>
                 </thead>
