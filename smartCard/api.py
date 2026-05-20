@@ -50,17 +50,35 @@ class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
         return super().get_queryset()
 
 class TaskCompleted(viewsets.ModelViewSet):
-    queryset = Processamento.objects.all()
+    queryset = Processamento.objects.all().order_by("-criado_em")
     serializer_class = ProcessamentoSerializer
     permission_classes = [AllowAny]
     #authentication_classes = []
 
+
+    def get_queryset(self):
+        print(self.request.user)
+        self.queryset = Processamento.objects.filter(
+            user=self.request.user.id
+        ).exclude(status="ERRO").order_by("-criado_em")
+        
+        return super().get_queryset()
+    
+    def get_object(self):
+        obj = super().get_object()
+        if not obj.exists():
+            obj = [] #objeto processado fora do banco com status vazio!
+        return obj
+        
     @action(detail=False, methods=['get'])
     def status(self, request):
-        tem_tasks = Processamento.objects.exists()
+        tem_tasks = Processamento.objects.filter(user=request.user).exclude(status="ERRO")
+
+        if not tem_tasks.exists():
+            tem_tasks = None
 
         return Response({
-            "tem_tasks": tem_tasks
+            "tem_tasks": tem_tasks.exists()
         })
     
 class ApontamentoViewSet(ReadOnlyModelViewSet):
@@ -81,9 +99,6 @@ class AuthorizationTokenSerializer(serializers.Serializer):
         fields = ['user']
         
 class CustomObtainAuthorizationTokenView(ObtainAuthorizationTokenView):
-    """
-    Retorna um JWT de autorização (SSO)
-    """
     serializer_class = AuthorizationTokenSerializer
 
 def create_authorization_payload(session_token, user, user_obj, **kwargs):

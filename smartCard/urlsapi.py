@@ -4,7 +4,6 @@ from smartcard.api import AcessoViewSet, GroupViewSet, UsuarioViewSet, TaskCompl
 from django.urls import include, path
 
 from rest_framework import routers
-from rest_framework_simplejwt.views import TokenRefreshView
 
 
 router = routers.DefaultRouter()

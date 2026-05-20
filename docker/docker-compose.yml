@@ -15,6 +15,7 @@ services:
     volumes:
       - ./smartcard:/app
       - media_volume:/app/media
+      - C:/Users/anacha/Desktop/pasta:/testeshared
 
     command: >
       sh -c "
@@ -127,20 +128,20 @@ services:
     image: dockurr/windows
     container_name: windows
     environment:
-      KVM: "N"
       VERSION: "11"
-
+      KVM: "N"
+      BOOT: "powershell -ExecutionPolicy Bypass -File C:\\storage\\install-ses.ps1"
     devices:
-      #- /dev/kvm
       - /dev/net/tun
     cap_add:
       - NET_ADMIN
     ports:
-      - 8006:8006
-      - 3389:3389/tcp
-      - 3389:3389/udp
+      - "8006:8006"
+      - "3389:3389/tcp"
+      - "3389:3389/udp"
     volumes:
       - ./windows:/storage
+      - C:/Users/anacha/Desktop/pasta:/data
     restart: always
     stop_grace_period: 2m
 

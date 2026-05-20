@@ -1,6 +1,5 @@
 from django.core.cache import cache
 from django.utils import timezone
-from django.conf import settings
 
 from celery import shared_task, shared_task
 from celery import chain
@@ -47,6 +46,15 @@ def processar_xls(self, caminho_arquivo, task_id):
 
     users = resposta["users"]
     profiles = resposta["profiles"]
+    
+    cache.set(
+        "users_global",
+        {
+            "users": users,
+            "profiles": profiles
+        },
+        timeout=3600
+    )
 
     print("Dados recebidos!")
     print(f"USERS: {len(users)}")
@@ -111,42 +119,16 @@ def tentar_vincular_user_auth(self, usuario_id):
 
     self.update_state(state="STARTED")
 
-    task_id = str(self.request.id)
+    dados = cache.get("users_global")
 
-    enviar_mensagem(
-        "usuarios_processados",
-        {
-            "task_id": task_id
-        }
-    )
+    if not dados:
 
-    print("Mensagem enviada para users_service")
+        print("CACHE NÃO ENCONTRADO")
 
-    timeout = 30
-    inicio = time.time()
-
-    resposta = None
-
-    while time.time() - inicio < timeout:
-
-        resposta = cache.get(
-            f"users_response_{task_id}"
-        )
-
-        print("RESPOSTA:", resposta)
-
-        if resposta is not None:
-            break
-
-        print("Aguardando dados do users_service...")
-        time.sleep(2)
-
-    if resposta is None:
-        print("Timeout esperando users_service")
         return False
 
-    profiles = resposta["profiles"]
-    users = resposta["users"]
+    profiles = dados["profiles"]
+    users = dados["users"]
 
     usuario = Usuario.objects.filter(
         id=usuario_id,
@@ -174,37 +156,15 @@ def tentar_vincular_por_nome(self, usuario_id):
 
     self.update_state(state="STARTED")
 
-    task_id = str(self.request.id)
+    dados = cache.get("users_global")
 
-    enviar_mensagem(
-        "usuarios_processados",
-        {
-            "task_id": task_id
-        }
-    )
+    if not dados:
 
-    timeout = 30
-    inicio = time.time()
+        print("CACHE NÃO ENCONTRADO")
 
-    resposta = None
-
-    while time.time() - inicio < timeout:
-
-        resposta = cache.get(
-            f"users_response_{task_id}"
-        )
-
-        if resposta is not None:
-            break
-
-        print("Aguardando users_service...")
-        time.sleep(2)
-
-    if resposta is None:
-        print("Timeout users_service")
         return False
 
-    users = resposta["users"]
+    users = dados["users"]
 
     usuario = Usuario.objects.filter(
         id=usuario_id,
