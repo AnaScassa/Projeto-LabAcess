@@ -5,6 +5,9 @@ import Menu from "../../components/style/Menu";
 
 export default function RelatorioRecente(){
   const { usuarios } = useUsuarios();
+  const hoje = new Date();
+  const umMesAtras = new Date();
+  umMesAtras.setMonth(hoje.getMonth() - 1);
 
     return (
       <div className="wrapper">
@@ -16,6 +19,7 @@ export default function RelatorioRecente(){
                 <div className="tituloUltimoMes">
                   <h3 className="card-title">Relatório do último mês lab</h3>
                 </div>
+                <p className="card-subtitle text-muted">Período: {umMesAtras.toLocaleDateString()} - {hoje.toLocaleDateString()}</p>
                 <FiltroRecente usuarios={usuarios}/>
               </div>
             </div>
