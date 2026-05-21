@@ -81,23 +81,17 @@ def processar_xls(self, caminho_arquivo, task_id):
             categoria = "OUTRO"
 
         usuario, _ = Usuario.objects.get_or_create(matricula=matricula,defaults={
-                "nome_usuario": nome_usuario,
-                "categoriaUsuario": categoria,
-            })
+            "nome_usuario": nome_usuario,
+            "categoriaUsuario": categoria,
+        })
 
         data = timezone.make_aware(pd.to_datetime(row.get("DATA")))
         desc_evento = row.get("DESC_EVENTO", "")
         apontamento = 0 if desc_evento == "Apontamento Normal" else 1
 
-        obj, created = Acesso.objects.get_or_create(
-            usuario=usuario,
-            data_acesso=data,
-            desc_evento=desc_evento,
-            desc_area=row.get("DESC_AREA", ""),
-            ent_sai=row.get("ENT_SAI", ""),
-            defaults={
-                "desc_leitor": row.get("DESC_LEITOR", ""),
-                "apontamento": apontamento
+        obj, created = Acesso.objects.get_or_create(usuario=usuario, data_acesso=data, desc_evento=desc_evento,
+            desc_area=row.get("DESC_AREA", ""), ent_sai=row.get("ENT_SAI", ""), defaults={
+                "desc_leitor": row.get("DESC_LEITOR", ""), "apontamento": apontamento
             })
 
         if not created:
@@ -112,6 +106,9 @@ def processar_xls(self, caminho_arquivo, task_id):
         corrigir_entradas_saida_inconsistentes()
         
     print("FINALIZAÇÃO DE PROCESSAMENTO DE XLS")
+    cache.delete("users_global")
+    print("CACHE LIMPO")
+    print(cache.get("users_global"))
 
 @shared_task(bind=True, queue="fila_media")
 def tentar_vincular_user_auth(self, usuario_id):
