@@ -28,10 +28,12 @@ def task_iniciada(sender=None, task_id=None, task=None, **kwargs):
 def task_enviada(sender=None, headers=None, **kwargs):
 
     task_id = headers.get("id")
+    task_name = headers.get("task")
 
     with transaction.atomic():
         Processamento.objects.update_or_create(
             task_id=task_id,
+            task_name=task_name,
             defaults={
                 "status": "PENDING"
             }

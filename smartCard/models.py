@@ -48,6 +48,7 @@ class Processamento(models.Model):
     atualizado_em = models.DateTimeField(auto_now=True)
     user = models.CharField(max_length=100,  null=True, unique=False)
     task_id_parent = models.CharField(max_length=255, null=True, unique=False)
+    task_name = models.CharField(max_length=255, null=True, unique=False)
 
     class Meta:
         unique_together = ('id', 'task_id', 'status')

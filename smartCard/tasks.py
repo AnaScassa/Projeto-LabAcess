@@ -5,7 +5,7 @@ from celery import shared_task, shared_task
 from celery import chain
 
 from .services import vincular_por_matricula
-from .models import Usuario, Acesso
+from .models import Processamento, Usuario, Acesso
 from fuzzywuzzy import fuzz
 
 import pandas as pd
@@ -105,6 +105,7 @@ def processar_xls(self, caminho_arquivo, task_id):
     if Acesso.objects.filter(apontamento=0):
         corrigir_entradas_saida_inconsistentes()
         
+    Processamento.objects.filter(task_id=task_id).update(status="SUCCESS")
     print("FINALIZAÇÃO DE PROCESSAMENTO DE XLS")
     cache.delete("users_global")
     print("CACHE LIMPO")
