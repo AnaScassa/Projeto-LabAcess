@@ -16,6 +16,7 @@ export default function UltimosAcessos() {
                 usuario: usuario.nome_usuario,
                 data_acesso: acesso.data_acesso,
                 ent_sai: acesso.ent_sai,
+                desc_area: acesso.desc_area,
             }));
     });
 
@@ -31,6 +32,7 @@ export default function UltimosAcessos() {
                         <th>Usuário</th>
                         <th>Data</th>
                         <th>Tipo</th>
+                        <th>Porta</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,6 +44,7 @@ export default function UltimosAcessos() {
                                 <td>
                                     {acesso.ent_sai === "1" ? "Entrada" : "Saída"}
                                 </td>
+                                <td>{acesso.desc_area}</td>
                             </tr>
                         );
                     })}
