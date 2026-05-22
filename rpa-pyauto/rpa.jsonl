@@ -1,0 +1,47 @@
+{"time": "2026-05-22 10:16:05", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:16:18", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:17:32", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:17:46", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:19:10", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:19:30", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:21:14", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:21:19", "level": "ERROR", "message": "Erro inesperado no upload: Failed to read img/erro_arquivo.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-22 10:25:37", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:25:50", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:27:29", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:30:11", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:30:11", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:30:24", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:30:24", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:30:39", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:30:40", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:32:27", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:32:31", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:35:19", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:35:25", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:35:57", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:36:03", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:36:59", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:37:06", "level": "ERROR", "message": "Erro inesperado no upload: "}
+{"time": "2026-05-22 10:38:57", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:39:03", "level": "ERROR", "message": "Traceback (most recent call last):\n  File \"C:\\Users\\anacha\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 172, in wrapper\n    return wrappedFunction(*args, **kwargs)\n  File \"C:\\Users\\anacha\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 204, in locateCenterOnScreen\n    return pyscreeze.locateCenterOnScreen(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\anacha\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 447, in locateCenterOnScreen\n    coords = locateOnScreen(image, **kwargs)\n  File \"C:\\Users\\anacha\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 405, in locateOnScreen\n    retVal = locate(image, screenshotIm, **kwargs)\n  File \"C:\\Users\\anacha\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 383, in locate\n    points = tuple(locateAll(needleImage, haystackImage, **kwargs))\n  File \"C:\\Users\\anacha\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 257, in _locateAll_opencv\n    raise ImageNotFoundException('Could not locate the image (highest confidence = %.3f)' % result.max())\npyscreeze.ImageNotFoundException: Could not locate the image (highest confidence = 0.308)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\anacha\\Documents\\projetoLabAcess\\rpa-pyauto\\web.py\", line 63, in upload\n    erro = pyautogui.locateCenterOnScreen('img/erro.PNG', confidence=0.8)\n  File \"C:\\Users\\anacha\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 174, in wrapper\n    raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npyautogui.ImageNotFoundException\n"}
+{"time": "2026-05-22 10:40:14", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:40:21", "level": "INFO", "message": "Arquivo carregado com sucesso: funcionarios.xls"}
+{"time": "2026-05-22 10:40:34", "level": "ERROR", "message": "Erro ao carregar arquivo: alunos.xls"}
+{"time": "2026-05-22 10:40:43", "level": "ERROR", "message": "Erro ao carregar arquivo: prestadores.xls"}
+{"time": "2026-05-22 10:43:40", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-22 10:43:43", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-22 10:43:49", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:44:02", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-22 10:44:08", "level": "INFO", "message": "Arquivo salvo: funcionarios.xls"}
+{"time": "2026-05-22 10:44:22", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-22 10:44:27", "level": "INFO", "message": "Arquivo salvo: alunos.xls"}
+{"time": "2026-05-22 10:44:41", "level": "INFO", "message": "Consulta realizada: prestadores"}
+{"time": "2026-05-22 10:44:47", "level": "INFO", "message": "Arquivo salvo: prestadores.xls"}
+{"time": "2026-05-22 10:44:54", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 10:45:01", "level": "INFO", "message": "Arquivo carregado com sucesso: funcionarios.xls"}
+{"time": "2026-05-22 10:45:13", "level": "ERROR", "message": "Erro ao carregar arquivo: alunos.xls"}
+{"time": "2026-05-22 10:45:22", "level": "ERROR", "message": "Erro ao carregar arquivo: prestadores.xls"}
+{"time": "2026-05-22 10:45:25", "level": "INFO", "message": "Arquivo excluído: C:\\Users\\anacha\\Documents\\arquivos\\funcionarios.xls"}
+{"time": "2026-05-22 10:45:25", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\alunos.xls"}
+{"time": "2026-05-22 10:45:25", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\prestadores.xls"}
