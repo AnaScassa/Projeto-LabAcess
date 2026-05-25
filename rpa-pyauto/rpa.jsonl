@@ -45,3 +45,357 @@
 {"time": "2026-05-22 10:45:25", "level": "INFO", "message": "Arquivo excluído: C:\\Users\\anacha\\Documents\\arquivos\\funcionarios.xls"}
 {"time": "2026-05-22 10:45:25", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\alunos.xls"}
 {"time": "2026-05-22 10:45:25", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\prestadores.xls"}
+{"time": "2026-05-22 12:12:21", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-22 12:12:25", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-22 12:12:30", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 12:12:44", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-22 12:12:50", "level": "INFO", "message": "Arquivo salvo: funcionarios.xls"}
+{"time": "2026-05-22 12:13:04", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-22 12:13:09", "level": "INFO", "message": "Arquivo salvo: alunos.xls"}
+{"time": "2026-05-22 12:13:23", "level": "INFO", "message": "Consulta realizada: prestadores"}
+{"time": "2026-05-22 12:13:29", "level": "INFO", "message": "Arquivo salvo: prestadores.xls"}
+{"time": "2026-05-22 12:13:36", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-22 12:13:42", "level": "INFO", "message": "Arquivo carregado com sucesso: funcionarios.xls"}
+{"time": "2026-05-22 12:13:49", "level": "ERROR", "message": "Campo de arquivo não encontrado"}
+{"time": "2026-05-22 12:13:49", "level": "ERROR", "message": "Campo de arquivo não encontrado"}
+{"time": "2026-05-22 12:13:49", "level": "INFO", "message": "Arquivo excluído: C:\\Users\\anacha\\Documents\\arquivos\\funcionarios.xls"}
+{"time": "2026-05-22 12:13:49", "level": "INFO", "message": "Arquivo excluído: C:\\Users\\anacha\\Documents\\arquivos\\alunos.xls"}
+{"time": "2026-05-22 12:13:49", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\prestadores.xls"}
+{"time": "2026-05-25 04:37:53", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 04:37:58", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 04:37:58", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x000001D7883E81C0>"}
+{"time": "2026-05-25 04:38:08", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 04:38:10", "level": "ERROR", "message": "Traceback (most recent call last):\n  File \"C:\\Users\\Docker\\Desktop\\Shared\\rpa-pyauto\\web.py\", line 37, in upload\n    enviar = pyautogui.locateCenterOnScreen('img/enviar.PNG', confidence=0.8)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 228, in _couldNotImportPyScreeze\n    raise PyAutoGUIException(\n        \"PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call.\"\n    )\npyautogui.PyAutoGUIException: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call.\n"}
+{"time": "2026-05-25 04:38:10", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\funcionarios.xls"}
+{"time": "2026-05-25 04:38:10", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\alunos.xls"}
+{"time": "2026-05-25 04:38:11", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\prestadores.xls"}
+{"time": "2026-05-25 04:39:07", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 04:39:18", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 04:39:18", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x000001D38C5A81C0>"}
+{"time": "2026-05-25 04:39:25", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 04:39:25", "level": "ERROR", "message": "Traceback (most recent call last):\n  File \"C:\\Users\\Docker\\Desktop\\Shared\\rpa-pyauto\\web.py\", line 37, in upload\n    enviar = pyautogui.locateCenterOnScreen('img/enviar.PNG', confidence=0.8)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 228, in _couldNotImportPyScreeze\n    raise PyAutoGUIException(\n        \"PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call.\"\n    )\npyautogui.PyAutoGUIException: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call.\n"}
+{"time": "2026-05-25 04:39:25", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\funcionarios.xls"}
+{"time": "2026-05-25 04:39:25", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\alunos.xls"}
+{"time": "2026-05-25 04:39:25", "level": "WARNING", "message": "Arquivo não encontrado para exclusão: C:\\Users\\anacha\\Documents\\arquivos\\prestadores.xls"}
+{"time": "2026-05-25 04:40:18", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 04:40:29", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 04:40:29", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x0000024404363340>"}
+{"time": "2026-05-25 04:41:56", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 04:42:07", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 04:42:12", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x00000280808981C0>"}
+{"time": "2026-05-25 04:44:52", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 04:45:04", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 04:45:09", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x0000020C6F2D3480>"}
+{"time": "2026-05-25 04:45:44", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 04:45:55", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 04:46:00", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x00000278C8E733C0>"}
+{"time": "2026-05-25 04:48:35", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 04:48:46", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 04:48:51", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x000001DE69E43340>"}
+{"time": "2026-05-25 04:50:49", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 04:51:00", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 04:51:08", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 04:51:22", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 04:51:36", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 04:51:50", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 04:58:29", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 04:58:40", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 04:58:48", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 04:58:48", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 04:58:48", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 04:58:48", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:00:16", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:00:27", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:00:35", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:00:35", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:00:35", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:00:35", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:03:04", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:03:10", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:03:13", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:03:13", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:03:13", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:03:13", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:05:49", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:05:54", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:05:57", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:05:57", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:05:57", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:05:57", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:07:40", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:07:46", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:07:49", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:07:49", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:07:49", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:07:49", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:09:09", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:09:15", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:09:18", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:09:18", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:09:18", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:09:18", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:10:17", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:10:23", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:10:23", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x000001F062A43540>"}
+{"time": "2026-05-25 05:14:00", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:14:06", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:14:09", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:14:09", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:14:09", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:14:09", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:16:33", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:16:39", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:16:42", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:17:11", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:17:39", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:18:08", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:18:58", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:19:03", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:19:06", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:19:32", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:19:58", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:20:23", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:20:35", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:20:41", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:20:44", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:21:10", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:21:35", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:22:01", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:22:10", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:22:16", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:22:19", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:22:45", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:23:10", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:23:36", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:26:25", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:26:30", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:26:33", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:27:59", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:28:06", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:28:09", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:29:28", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:29:34", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:29:37", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:31:46", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:31:52", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:31:55", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:32:41", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:32:47", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:32:50", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:33:54", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:34:00", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:34:03", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:35:28", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:35:34", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:35:37", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:35:50", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:36:02", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:36:15", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:46:47", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:46:53", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:46:56", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:47:09", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:47:22", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:47:34", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:51:28", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:51:34", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:51:37", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:51:46", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:51:52", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:51:55", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:52:08", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:52:21", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:53:48", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:53:54", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:53:57", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:54:12", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:54:18", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:54:21", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:54:34", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:56:59", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:58:07", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 05:58:13", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 05:58:16", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 05:58:29", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:58:42", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 05:58:55", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 06:02:24", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 06:02:30", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 06:02:33", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 06:02:46", "level": "ERROR", "message": "Erro no loop funcionarios: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 06:02:58", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 06:03:11", "level": "ERROR", "message": "Erro no loop prestadores: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."}
+{"time": "2026-05-25 06:25:22", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 06:25:28", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 06:25:31", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 06:25:44", "level": "ERROR", "message": "Erro no loop funcionarios: Failed to read /img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:25:57", "level": "ERROR", "message": "Erro no loop alunos: Failed to read /img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:26:09", "level": "ERROR", "message": "Erro no loop prestadores: Failed to read /img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:26:49", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 06:26:55", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 06:26:58", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 06:27:11", "level": "ERROR", "message": "Erro no loop funcionarios: Failed to read ./img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:27:23", "level": "ERROR", "message": "Erro no loop alunos: Failed to read ./img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:27:36", "level": "ERROR", "message": "Erro no loop prestadores: Failed to read ./img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:30:59", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 06:31:05", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 06:31:08", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 06:31:20", "level": "ERROR", "message": "Erro no loop funcionarios: Failed to read ./img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:31:33", "level": "ERROR", "message": "Erro no loop alunos: Failed to read ./img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:31:46", "level": "ERROR", "message": "Erro no loop prestadores: Failed to read ./img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:32:42", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 06:32:48", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 06:32:51", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 06:33:04", "level": "ERROR", "message": "Erro no loop funcionarios: Failed to read img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:33:16", "level": "ERROR", "message": "Erro no loop alunos: Failed to read img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:33:29", "level": "ERROR", "message": "Erro no loop prestadores: Failed to read img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:40:01", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 06:40:07", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 06:40:10", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 06:40:23", "level": "ERROR", "message": "Erro no loop funcionarios: Failed to read img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:40:36", "level": "ERROR", "message": "Erro no loop alunos: Failed to read img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 06:40:49", "level": "ERROR", "message": "Erro no loop prestadores: Failed to read img/consultar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 07:38:28", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 07:38:34", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 07:38:37", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 07:38:50", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-25 07:38:56", "level": "INFO", "message": "Arquivo salvo: funcionarios.xls"}
+{"time": "2026-05-25 07:39:09", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-25 07:39:14", "level": "INFO", "message": "Arquivo salvo: alunos.xls"}
+{"time": "2026-05-25 07:39:27", "level": "INFO", "message": "Consulta realizada: prestadores"}
+{"time": "2026-05-25 07:39:33", "level": "INFO", "message": "Arquivo salvo: prestadores.xls"}
+{"time": "2026-05-25 11:38:50", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 11:38:55", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 11:38:58", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 11:39:11", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-25 11:39:17", "level": "INFO", "message": "Arquivo salvo: funcionarios.xls"}
+{"time": "2026-05-25 11:39:29", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-25 11:39:35", "level": "INFO", "message": "Arquivo salvo: alunos.xls"}
+{"time": "2026-05-25 11:39:48", "level": "INFO", "message": "Consulta realizada: prestadores"}
+{"time": "2026-05-25 11:39:53", "level": "INFO", "message": "Arquivo salvo: prestadores.xls"}
+{"time": "2026-05-25 08:20:11", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 08:20:18", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 08:20:21", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 08:20:21", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 08:20:22", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-25 08:20:22", "level": "ERROR", "message": "Erro no loop prestadores: "}
+{"time": "2026-05-25 08:22:29", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 08:22:35", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 08:22:38", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 08:22:38", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 08:22:39", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-25 08:22:39", "level": "ERROR", "message": "Erro no loop prestadores: "}
+{"time": "2026-05-25 12:21:38", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:21:43", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:21:46", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:21:46", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 12:21:46", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-25 12:21:46", "level": "ERROR", "message": "Erro no loop prestadores: "}
+{"time": "2026-05-25 12:23:17", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:23:22", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:23:25", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:23:25", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 12:23:25", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-25 12:23:25", "level": "ERROR", "message": "Erro no loop prestadores: "}
+{"time": "2026-05-25 12:24:49", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:24:54", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:24:57", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:24:58", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 12:24:58", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-25 12:24:58", "level": "ERROR", "message": "Erro no loop prestadores: "}
+{"time": "2026-05-25 12:26:21", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:26:26", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:26:29", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:26:30", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 12:26:30", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-25 12:26:30", "level": "ERROR", "message": "Erro no loop prestadores: "}
+{"time": "2026-05-25 12:30:02", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:30:07", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:30:10", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:30:23", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-25 12:30:29", "level": "INFO", "message": "Arquivo salvo: funcionarios.xls"}
+{"time": "2026-05-25 08:33:09", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 08:33:15", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 08:33:18", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 08:33:31", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-25 08:33:37", "level": "INFO", "message": "Arquivo salvo: funcionarios.xls"}
+{"time": "2026-05-25 08:33:50", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-25 08:33:56", "level": "INFO", "message": "Arquivo salvo: alunos.xls"}
+{"time": "2026-05-25 08:34:09", "level": "INFO", "message": "Consulta realizada: prestadores"}
+{"time": "2026-05-25 08:34:15", "level": "INFO", "message": "Arquivo salvo: prestadores.xls"}
+{"time": "2026-05-25 12:52:35", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:52:40", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:52:43", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:52:56", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 12:52:59", "level": "ERROR", "message": "Erro no loop alunos: PyAutoGUI fail-safe triggered from mouse moving to a corner of the screen. To disable this fail-safe, set pyautogui.FAILSAFE to False. DISABLING FAIL-SAFE IS NOT RECOMMENDED."}
+{"time": "2026-05-25 12:53:46", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:53:51", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:53:54", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:54:07", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 12:56:42", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:56:47", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:56:50", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:57:18", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:57:24", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:57:27", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:57:45", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:57:50", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:57:53", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:58:06", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 12:58:19", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-25 12:58:32", "level": "ERROR", "message": "Erro no loop prestadores: "}
+{"time": "2026-05-25 12:59:15", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 12:59:20", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 12:59:24", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 12:59:36", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 13:01:07", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 13:01:13", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 13:01:16", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 13:01:16", "level": "ERROR", "message": "Erro no loop funcionarios: Failed to read ./img/dasSas.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 13:01:16", "level": "ERROR", "message": "Erro no loop alunos: Failed to read ./img/dasSas.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 13:01:16", "level": "ERROR", "message": "Erro no loop prestadores: Failed to read ./img/dasSas.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-25 13:01:57", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 13:02:02", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 13:02:05", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 13:02:05", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 13:02:18", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-25 13:02:24", "level": "INFO", "message": "Arquivo salvo: alunos.xls"}
+{"time": "2026-05-25 13:02:37", "level": "INFO", "message": "Consulta realizada: prestadores"}
+{"time": "2026-05-25 13:02:42", "level": "INFO", "message": "Arquivo salvo: prestadores.xls"}
+{"time": "2026-05-25 13:02:53", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 13:02:58", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 13:03:01", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 13:03:01", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 13:03:01", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-25 13:03:01", "level": "ERROR", "message": "Erro no loop prestadores: "}
+{"time": "2026-05-25 13:03:42", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 13:03:47", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 13:03:50", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 13:03:50", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 13:03:50", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-25 13:03:50", "level": "ERROR", "message": "Erro no loop prestadores: "}
+{"time": "2026-05-25 13:04:13", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 13:04:19", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 13:04:22", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 13:04:22", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-25 13:06:43", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 13:06:48", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 13:06:51", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 13:07:05", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x00000235637E1140>"}
+{"time": "2026-05-25 13:08:14", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 13:08:20", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 13:08:23", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 13:08:37", "level": "ERROR", "message": "Erro inesperado no login: <traceback object at 0x00000180EE161500>"}
+{"time": "2026-05-25 09:11:48", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 09:11:55", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 09:11:59", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 09:12:14", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-25 09:12:43", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-25 09:12:49", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-25 09:12:52", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-25 09:13:07", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-25 09:13:13", "level": "INFO", "message": "Arquivo salvo: funcionarios.xls"}
+{"time": "2026-05-25 09:13:28", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-25 09:13:33", "level": "INFO", "message": "Arquivo salvo: alunos.xls"}
+{"time": "2026-05-25 09:13:48", "level": "INFO", "message": "Consulta realizada: prestadores"}
+{"time": "2026-05-25 09:13:54", "level": "INFO", "message": "Arquivo salvo: prestadores.xls"}

@@ -51,7 +51,7 @@ def upload():
                 logger.error("Campo de arquivo não encontrado")
                 continue
 
-            caminho = (f"C:\\Users\\anacha\\Documents\\arquivos\\{nome}.xls")
+            caminho = (f"C:\\Users\\Documents\\arquivos\\{nome}.xls")
 
             pyautogui.click(arquivo)
             time.sleep(1)
