@@ -68,7 +68,7 @@ def entrarSes():
         logger.error(f"Erro inesperado no login: {e.__traceback__}")
 
 def pegar_arquivo():
-    hora_calculada = datetime.now() - timedelta(minutes=5)
+    hora_calculada = datetime.now() - timedelta(minutes=30)
     hora_formatada = hora_calculada.strftime("%H%M")
     hora_atual_formatada = datetime.now().strftime("%H%M")
     
@@ -76,56 +76,82 @@ def pegar_arquivo():
     a = ["funcionarios", "alunos", "prestadores"]
     
     for i in range(3):
-        try:
+        try:            
             time.sleep(3)
             pyautogui.click(522, 41)
-            time.sleep(2) 
-            pyautogui.click(522, n[i])
-            
             time.sleep(2)
+
+            pyautogui.click(522, n[i])
+            time.sleep(3)
+
             pyautogui.click(525, 535)
             time.sleep(2)
+
             pyautogui.write(hora_formatada)
+            time.sleep(1)
+
             pyautogui.press("tab")
+            time.sleep(1)
+
             pyautogui.write(hora_atual_formatada)
-            
-            time.sleep(5)
-            consultar = pyautogui.locateCenterOnScreen('./img/consultarMarcacao.PNG', confidence=0.8)
+            time.sleep(2)
+
+            consultar = pyautogui.locateCenterOnScreen('./img/consultarMarcacao.PNG',confidence=0.6,grayscale=True)
+
             if consultar is None:
                 logger.error("Botão consultar não encontrado na tela")
                 continue
 
-            if consultar:
-                pyautogui.click(consultar)
-                logger.info(f"Consulta realizada: {a[i]}")
-            else:
-                logger.error("Botão consultar não encontrado")
-                continue
-            
-            time.sleep(2)
-            exportar = pyautogui.locateCenterOnScreen('./img/exportar.PNG', confidence=0.8)
-            
+            pyautogui.click(consultar)
+            logger.info(f"Consulta realizada: {a[i]}")
+
+            time.sleep(8)  
+
+            exportar = pyautogui.locateCenterOnScreen('./img/exportar.PNG',confidence=0.6,grayscale=True)
+
             if exportar:
                 try:
                     pyautogui.click(exportar)
+                    time.sleep(5)  
+                    
                 except Exception:
                     pyautogui.press("enter")
                     logger.warning("Sem dados para exportar")
                     continue
             else:
+                pyautogui.press("enter")
                 logger.error("Botão exportar não encontrado")
                 continue
-            
+
             time.sleep(3)
+
+            pyautogui.click(608, 364)
+            time.sleep(0.5)
+
+            pyautogui.doubleClick(608, 364)
+            time.sleep(0.5)
+
+            pyautogui.hotkey("ctrl", "a")
+            time.sleep(0.2)
+
+            pyautogui.press("backspace")
             nome_arquivo = a[i] + ".xls"
-            
+
             pyautogui.write(nome_arquivo)
+            time.sleep(1)
+
             pyautogui.press("tab")
+            pyautogui.press("tab")
+            time.sleep(1)
+
             pyautogui.press("enter")
+            time.sleep(3)
+
             pyautogui.press("enter")
-            
+            time.sleep(3)  
+
             logger.info(f"Arquivo salvo: {nome_arquivo}")
-        
+            
         except Exception as e:
             logger.error(f"Erro no loop {a[i]}: {e}")
             
