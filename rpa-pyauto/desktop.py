@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import os
-import time 
+import time
+import traceback 
 import pyautogui
 import static
 import logging
@@ -33,6 +34,7 @@ logger.addHandler(console_handler)
 
 def entrarSes():
     logger.info("RPA iniciado")
+    time.sleep(5)
     
     try:
         pyautogui.press('win')
@@ -42,19 +44,33 @@ def entrarSes():
         logger.info("SESClient aberto com sucesso")
     except Exception as e:
         logger.error(f"Erro ao abrir o SESClient: {e}")
+        
+    erroIniciar = pyautogui.locateCenterOnScreen('./img/erroIniciar.PNG', confidence=0.8, grayscale=True)
+    
+    if erroIniciar:
+        try:
+            time.sleep(1)
+            pyautogui.press("enter")
+        except Exception as e:
+            logger.error("Erro ao iniciar o SESClient: " + str(erroIniciar))
+            return
     
     try:
         usuario = pyautogui.locateCenterOnScreen('./img/usuarioSes.PNG', confidence=0.8)
         time.sleep(1)
         
         if usuario is None:
-            pyautogui.press("enter")
+            time.sleep(2)
+            pyautogui.click(500, 300)
             logger.error("Campo de usuário não encontrado na tela")
-        
-        pyautogui.click(usuario)    
-        pyautogui.typewrite(str(static.USUARIO), interval=0.05)
-        pyautogui.press("tab")
-        pyautogui.write(static.SENHA, interval=0.1)
+            pyautogui.typewrite(str(static.USUARIO), interval=0.05)
+            pyautogui.press("tab")
+            pyautogui.write(static.SENHA, interval=0.1)
+        else:
+            pyautogui.click(usuario) 
+            pyautogui.typewrite(str(static.USUARIO), interval=0.05)
+            pyautogui.press("tab")
+            pyautogui.write(static.SENHA, interval=0.1)
                 
         pyautogui.press("tab")
         pyautogui.press("tab")
@@ -63,9 +79,9 @@ def entrarSes():
         pyautogui.press("enter")
         logger.info("Login realizado com sucesso")
         pegar_arquivo()
-            
-    except Exception as e:
-        logger.error(f"Erro inesperado no login: {e.__traceback__}")
+
+    except Exception:
+        logger.error(traceback.format_exc())
 
 def pegar_arquivo():
     hora_calculada = datetime.now() - timedelta(minutes=30)

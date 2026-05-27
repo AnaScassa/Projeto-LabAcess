@@ -1,6 +1,5 @@
 import time
 import pyautogui
-import pyautogui
 from desktop import entrarSes, excluir_arquivo
 from web import entrarSite
 
