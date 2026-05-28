@@ -665,3 +665,115 @@
 {"time": "2026-05-27 15:55:51", "level": "INFO", "message": "Arquivo salvo: prestadores.xls"}
 {"time": "2026-05-27 16:14:29", "level": "INFO", "message": "RPA iniciado"}
 {"time": "2026-05-27 16:14:35", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-27 16:50:39", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-27 16:50:49", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-27 16:50:59", "level": "ERROR", "message": "Erro ao verificar tela de erro: "}
+{"time": "2026-05-27 16:50:59", "level": "ERROR", "message": "Traceback (most recent call last):\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 172, in wrapper\n    return wrappedFunction(*args, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 204, in locateCenterOnScreen\n    return pyscreeze.locateCenterOnScreen(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 447, in locateCenterOnScreen\n    coords = locateOnScreen(image, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 405, in locateOnScreen\n    retVal = locate(image, screenshotIm, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 383, in locate\n    points = tuple(locateAll(needleImage, haystackImage, **kwargs))\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 257, in _locateAll_opencv\n    raise ImageNotFoundException('Could not locate the image (highest confidence = %.3f)' % result.max())\npyscreeze.ImageNotFoundException: Could not locate the image (highest confidence = 0.323)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\Docker\\Desktop\\Shared\\rpa-pyauto\\desktop.py\", line 61, in entrarSes\n    usuario = pyautogui.locateCenterOnScreen('./img/usuarioSes.PNG', confidence=0.8)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 174, in wrapper\n    raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npyautogui.ImageNotFoundException\n"}
+{"time": "2026-05-27 16:54:05", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-27 16:54:15", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-27 16:54:26", "level": "ERROR", "message": "Erro ao verificar tela de erro: "}
+{"time": "2026-05-27 16:54:26", "level": "ERROR", "message": "Traceback (most recent call last):\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 172, in wrapper\n    return wrappedFunction(*args, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 204, in locateCenterOnScreen\n    return pyscreeze.locateCenterOnScreen(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 447, in locateCenterOnScreen\n    coords = locateOnScreen(image, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 405, in locateOnScreen\n    retVal = locate(image, screenshotIm, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 383, in locate\n    points = tuple(locateAll(needleImage, haystackImage, **kwargs))\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 257, in _locateAll_opencv\n    raise ImageNotFoundException('Could not locate the image (highest confidence = %.3f)' % result.max())\npyscreeze.ImageNotFoundException: Could not locate the image (highest confidence = 0.323)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\Docker\\Desktop\\Shared\\rpa-pyauto\\desktop.py\", line 62, in entrarSes\n    usuario = pyautogui.locateCenterOnScreen('./img/usuarioSes.PNG', confidence=0.8)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 174, in wrapper\n    raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npyautogui.ImageNotFoundException\n"}
+{"time": "2026-05-27 16:57:59", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-27 16:58:09", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-27 16:58:19", "level": "ERROR", "message": "Erro ao verificar tela de erro: Failed to read ./img/aiar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-27 16:58:20", "level": "ERROR", "message": "Traceback (most recent call last):\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 172, in wrapper\n    return wrappedFunction(*args, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 204, in locateCenterOnScreen\n    return pyscreeze.locateCenterOnScreen(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 447, in locateCenterOnScreen\n    coords = locateOnScreen(image, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 405, in locateOnScreen\n    retVal = locate(image, screenshotIm, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 383, in locate\n    points = tuple(locateAll(needleImage, haystackImage, **kwargs))\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 257, in _locateAll_opencv\n    raise ImageNotFoundException('Could not locate the image (highest confidence = %.3f)' % result.max())\npyscreeze.ImageNotFoundException: Could not locate the image (highest confidence = 0.322)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\Docker\\Desktop\\Shared\\rpa-pyauto\\desktop.py\", line 62, in entrarSes\n    usuario = pyautogui.locateCenterOnScreen('./img/usuarioSes.PNG', confidence=0.8)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 174, in wrapper\n    raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npyautogui.ImageNotFoundException\n"}
+{"time": "2026-05-28 04:14:52", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:15:03", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:15:13", "level": "ERROR", "message": "Traceback (most recent call last):\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 172, in wrapper\n    return wrappedFunction(*args, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 204, in locateCenterOnScreen\n    return pyscreeze.locateCenterOnScreen(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 447, in locateCenterOnScreen\n    coords = locateOnScreen(image, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 405, in locateOnScreen\n    retVal = locate(image, screenshotIm, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 383, in locate\n    points = tuple(locateAll(needleImage, haystackImage, **kwargs))\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 257, in _locateAll_opencv\n    raise ImageNotFoundException('Could not locate the image (highest confidence = %.3f)' % result.max())\npyscreeze.ImageNotFoundException: Could not locate the image (highest confidence = 0.322)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\Docker\\Desktop\\Shared\\rpa-pyauto\\desktop.py\", line 50, in entrarSes\n    usuario = pyautogui.locateCenterOnScreen('./img/usuarioSes.PNG', confidence=0.8)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 174, in wrapper\n    raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npyautogui.ImageNotFoundException\n"}
+{"time": "2026-05-28 04:16:36", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:16:46", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:16:56", "level": "ERROR", "message": "Traceback (most recent call last):\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 172, in wrapper\n    return wrappedFunction(*args, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 204, in locateCenterOnScreen\n    return pyscreeze.locateCenterOnScreen(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 447, in locateCenterOnScreen\n    coords = locateOnScreen(image, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 405, in locateOnScreen\n    retVal = locate(image, screenshotIm, **kwargs)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 383, in locate\n    points = tuple(locateAll(needleImage, haystackImage, **kwargs))\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyscreeze\\__init__.py\", line 257, in _locateAll_opencv\n    raise ImageNotFoundException('Could not locate the image (highest confidence = %.3f)' % result.max())\npyscreeze.ImageNotFoundException: Could not locate the image (highest confidence = 0.352)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\Docker\\Desktop\\Shared\\rpa-pyauto\\desktop.py\", line 50, in entrarSes\n    usuario = pyautogui.locateCenterOnScreen('./img/usuarioSes.PNG', confidence=0.8)\n  File \"C:\\Program Files\\Python313\\Lib\\site-packages\\pyautogui\\__init__.py\", line 174, in wrapper\n    raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npyautogui.ImageNotFoundException\n"}
+{"time": "2026-05-28 04:19:23", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:19:33", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:19:45", "level": "WARNING", "message": "Campo de usuário não encontrado na tela"}
+{"time": "2026-05-28 04:19:50", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 04:20:04", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-28 04:22:11", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:22:22", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:22:33", "level": "WARNING", "message": "Campo de usuário não encontrado na tela"}
+{"time": "2026-05-28 04:22:40", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 04:22:55", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 04:23:22", "level": "INFO", "message": "Arquivo salvo: funcionarios.xls"}
+{"time": "2026-05-28 04:23:37", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-28 04:23:44", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:23:55", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:24:09", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 04:24:24", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 04:24:50", "level": "INFO", "message": "Arquivo salvo: funcionarios.xls"}
+{"time": "2026-05-28 04:25:05", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-28 04:25:13", "level": "ERROR", "message": "Erro no loop alunos: Failed to read ./img/exportar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-28 04:25:28", "level": "INFO", "message": "Consulta realizada: prestadores"}
+{"time": "2026-05-28 04:25:36", "level": "ERROR", "message": "Erro no loop prestadores: Failed to read ./img/exportar.PNG because file is missing, has improper permissions, or is an unsupported or invalid format"}
+{"time": "2026-05-28 04:27:09", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:27:20", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:27:29", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 04:27:44", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 04:27:49", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-28 04:28:04", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-28 04:34:27", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:34:37", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:34:47", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 04:35:02", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 04:35:07", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-28 04:36:21", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:36:32", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:36:41", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 04:36:57", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-05-28 04:37:13", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-05-28 04:39:51", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:40:01", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:40:10", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 04:40:26", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-05-28 04:40:41", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-28 04:41:11", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:41:22", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:41:31", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 04:41:46", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 04:41:51", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-28 04:42:06", "level": "INFO", "message": "Consulta realizada: alunos"}
+{"time": "2026-05-28 04:42:11", "level": "ERROR", "message": "Erro no loop alunos: "}
+{"time": "2026-05-28 04:43:56", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:44:06", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:44:15", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 04:44:31", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 04:44:36", "level": "ERROR", "message": "Erro no loop funcionarios: "}
+{"time": "2026-05-28 04:45:45", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 04:45:56", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 04:46:05", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 04:46:20", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 04:46:27", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-05-28 08:56:07", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 08:56:17", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 08:56:26", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 08:56:42", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 08:56:48", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-05-28 08:59:17", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 08:59:27", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 08:59:36", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 08:59:51", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 08:59:59", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-05-28 09:05:31", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 09:05:41", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 09:05:50", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 09:06:05", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 09:06:13", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-05-28 09:11:15", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 09:11:26", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 09:11:35", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 09:11:50", "level": "INFO", "message": "Consulta realizada: funcionarios"}
+{"time": "2026-05-28 09:11:56", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-05-28 09:16:02", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 09:16:12", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 09:16:21", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 09:16:36", "level": "INFO", "message": "Consulta realizada: [0]"}
+{"time": "2026-05-28 09:16:43", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-05-28 09:17:00", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 09:17:10", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 09:17:20", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 09:17:35", "level": "INFO", "message": "Consulta realizada: [0]"}
+{"time": "2026-05-28 09:17:42", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-05-28 09:21:01", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-05-28 09:21:12", "level": "INFO", "message": "SESClient aberto com sucesso"}
+{"time": "2026-05-28 09:21:21", "level": "INFO", "message": "Login realizado com sucesso"}
+{"time": "2026-05-28 09:21:36", "level": "INFO", "message": "Consulta realizada: [0]"}
+{"time": "2026-05-28 09:21:43", "level": "INFO", "message": "Nenhum dado foi retornado"}
