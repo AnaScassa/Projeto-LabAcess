@@ -81,8 +81,7 @@ def processar_xls(self, caminho_arquivo, task_id):
             categoria = "OUTRO"
 
         usuario, _ = Usuario.objects.get_or_create(matricula=matricula,defaults={
-            "nome_usuario": nome_usuario,
-            "categoriaUsuario": categoria,
+            "nome_usuario": nome_usuario, "categoriaUsuario": categoria,
         })
 
         data = timezone.make_aware(pd.to_datetime(row.get("DATA")))
@@ -124,7 +123,6 @@ def processar_csv(self, caminho_arquivo, task_id):
 
     def on_response(ch, method, props, body):
         nonlocal resposta
-
         print("Mensagem recebida!")
 
         if props.correlation_id == corr_id:
@@ -133,10 +131,9 @@ def processar_csv(self, caminho_arquivo, task_id):
 
     channel.basic_consume(queue=callback_queue, on_message_callback=on_response, auto_ack=True)
 
-    channel.basic_publish(exchange='', routing_key='usuarios_processados', properties=pika.BasicProperties(reply_to=callback_queue, correlation_id=corr_id,),
-        body=json.dumps({
-            "task_id": task_id
-        })
+    channel.basic_publish(exchange='', routing_key='usuarios_processados', properties=pika.BasicProperties(
+        reply_to=callback_queue, correlation_id=corr_id,),
+        body=json.dumps({"task_id": task_id})
     )
 
     timeout = 30
@@ -156,26 +153,38 @@ def processar_csv(self, caminho_arquivo, task_id):
 
     users = resposta["users"]
     profiles = resposta["profiles"]
-
-    cache.set("users_global", {
-        "users": users,
-        "profiles": profiles
-    }, timeout=3600)
+    cache.set("users_global", {"users": users, "profiles": profiles}, timeout=3600)
 
     print("Dados recebidos!")
     print(f"USERS: {len(users)}")
     print(f"PROFILES: {len(profiles)}")
 
     df = pd.read_csv(caminho_arquivo, sep=";", encoding="latin1")
+    df.columns = df.columns.str.strip()
+    print(df.columns.tolist())
 
     for _, row in df.iterrows():
-
         matricula = str(row.get("Matrícula", "")).strip()
 
-        nome_usuario = row.get("Funcionário", "")
-        categoria = "FUNCIONARIO"
+        if "Aluno" in df.columns:
+            nome_usuario = row.get("Aluno", "")
+            categoria = matricula[:3]
 
-        usuario, _ = Usuario.objects.get_or_create(matricula=matricula, defaults={
+        elif "Prestador" in df.columns:
+            nome_usuario = row.get("Prestador", "")
+            categoria = "PRESTADOR"
+
+        elif "Funcionário" in df.columns:
+            nome_usuario = row.get("Funcionário", "")
+            categoria = "FUNCIONARIO"
+
+        else:
+            nome_usuario = "Desconhecido"
+            categoria = "OUTRO"
+
+        usuario, _ = Usuario.objects.get_or_create(
+            matricula=matricula,
+            defaults={
                 "nome_usuario": nome_usuario,
                 "categoriaUsuario": categoria,
             }
@@ -186,12 +195,11 @@ def processar_csv(self, caminho_arquivo, task_id):
         desc_evento = row.get("Evento", "")
         apontamento = (0 if desc_evento == "Apontamento Normal" else 1)
 
-        obj, created = Acesso.objects.get_or_create(usuario=usuario, data_acesso=data, desc_evento=desc_evento, desc_area=row.get("Área", ""),
+        obj, created = Acesso.objects.get_or_create(usuario=usuario, data_acesso=data, desc_evento=desc_evento, desc_area=row.get("Área", ""), 
             ent_sai=row.get("E/S", ""), defaults={
                 "desc_leitor": row.get("Leitor", ""),
                 "apontamento": apontamento
-            }
-        )
+            })
 
         if not created:
             obj.apontamento = apontamento
