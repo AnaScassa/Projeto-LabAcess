@@ -110,6 +110,105 @@ def processar_xls(self, caminho_arquivo, task_id):
     cache.delete("users_global")
     print("CACHE LIMPO")
     print(cache.get("users_global"))
+    
+    
+@shared_task(bind=True, queue="fila_rapida")
+def processar_csv(self, caminho_arquivo, task_id):
+
+    corr_id = str(task_id)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+    channel = connection.channel()
+    result = channel.queue_declare(queue='', exclusive=True)
+    callback_queue = result.method.queue
+    resposta = None
+
+    def on_response(ch, method, props, body):
+        nonlocal resposta
+
+        print("Mensagem recebida!")
+
+        if props.correlation_id == corr_id:
+            resposta = json.loads(body)
+            print("Resposta válida recebida!")
+
+    channel.basic_consume(queue=callback_queue, on_message_callback=on_response, auto_ack=True)
+
+    channel.basic_publish(exchange='', routing_key='usuarios_processados', properties=pika.BasicProperties(reply_to=callback_queue, correlation_id=corr_id,),
+        body=json.dumps({
+            "task_id": task_id
+        })
+    )
+
+    timeout = 30
+    inicio = time.time()
+
+    while resposta is None:
+        connection.process_data_events(time_limit=1)
+
+        if time.time() - inicio > timeout:
+            break
+
+    print("RESPOSTA:", resposta)
+    connection.close()
+
+    if resposta is None:
+        raise Exception("Timeout esperando users_service")
+
+    users = resposta["users"]
+    profiles = resposta["profiles"]
+
+    cache.set("users_global", {
+        "users": users,
+        "profiles": profiles
+    }, timeout=3600)
+
+    print("Dados recebidos!")
+    print(f"USERS: {len(users)}")
+    print(f"PROFILES: {len(profiles)}")
+
+    df = pd.read_csv(caminho_arquivo, sep=";", encoding="latin1")
+
+    for _, row in df.iterrows():
+
+        matricula = str(row.get("Matrícula", "")).strip()
+
+        nome_usuario = row.get("Funcionário", "")
+        categoria = "FUNCIONARIO"
+
+        usuario, _ = Usuario.objects.get_or_create(matricula=matricula, defaults={
+                "nome_usuario": nome_usuario,
+                "categoriaUsuario": categoria,
+            }
+        )
+
+        data_str = f"{row.get('Data')} {row.get('Hora')}"
+        data = timezone.make_aware(pd.to_datetime(data_str, dayfirst=True))
+        desc_evento = row.get("Evento", "")
+        apontamento = (0 if desc_evento == "Apontamento Normal" else 1)
+
+        obj, created = Acesso.objects.get_or_create(usuario=usuario, data_acesso=data, desc_evento=desc_evento, desc_area=row.get("Área", ""),
+            ent_sai=row.get("E/S", ""), defaults={
+                "desc_leitor": row.get("Leitor", ""),
+                "apontamento": apontamento
+            }
+        )
+
+        if not created:
+            obj.apontamento = apontamento
+            obj.save()
+
+        if usuario.user_auth is None:
+            chain(tentar_vincular_user_auth.s(usuario.id)).apply_async()
+            print("PROCESSAMENTO FINALIZADO")
+
+    if Acesso.objects.filter(apontamento=0):
+        corrigir_entradas_saida_inconsistentes()
+
+    Processamento.objects.filter(task_id=task_id).update(status="SUCCESS")
+    print("FINALIZAÇÃO DE PROCESSAMENTO DE CSV")
+    cache.delete("users_global")
+    print("CACHE LIMPO")
+    print(cache.get("users_global"))
 
 @shared_task(bind=True, queue="fila_media")
 def tentar_vincular_user_auth(self, usuario_id):

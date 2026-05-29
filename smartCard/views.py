@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from .tasks import processar_xls
+from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
 from .models import Usuario, Acesso, Processamento
 from django_celery_results.models import TaskResult
@@ -58,8 +58,8 @@ def carregar_acesso(request):
     if not arquivo:
         return Response({"erro": "Nenhum arquivo enviado."}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not arquivo.name.endswith((".xls", ".xlsx")):
-        return Response({"erro": "Apenas arquivos .xls e .xlsx são permitidos."}, status=status.HTTP_400_BAD_REQUEST)
+    if not arquivo.name.endswith((".xls", ".csv")):
+        return Response({"erro": "Apenas arquivos .xls e .csv são permitidos."},status=status.HTTP_400_BAD_REQUEST)
 
     caminho = salvar_arquivo_temporario(arquivo)
     task_uuid = str(uuid.uuid4())
@@ -69,7 +69,11 @@ def carregar_acesso(request):
     with transaction.atomic():
         Processamento.objects.create(task_id=task_uuid, status="PENDING", user=request.user.id)
 
-    processar_xls.apply_async(args=[caminho, task_uuid], task_id=task_uuid)
+    if arquivo.name.endswith((".xls")):
+        processar_xls.apply_async(args=[caminho, task_uuid],task_id=task_uuid)
+
+    elif arquivo.name.endswith(".csv"):
+        processar_csv.apply_async(args=[caminho, task_uuid],task_id=task_uuid)
 
     return Response({"message": "Arquivo enviado para processamento.", "task_id": task_uuid, "status": "PENDING",
         "user": request.user.id}, status=status.HTTP_202_ACCEPTED)
