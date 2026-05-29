@@ -146,7 +146,7 @@ export default function Upload() {
                 <div className="card-body d-flex flex-column justify-content-center align-items-center" style={{ height: "100%", gap: "20px" }}>
                   <form onSubmit={handleUpload}>
                     <div className="d-flex flex-column" style={{ gap: "30px" }}>
-                      <input type="file" id="fileInput" accept=".xls,.xlsx" />
+                      <input type="file" id="fileInput" accept=".xls,.csv" />
 
                       <div className="d-flex flex-column align-items-center" style={{ width: "100%" }}>
                         <button className="btn btn-primary" type="submit" disabled={estaBloqueado} style={{ minWidth: "130px" }}>
