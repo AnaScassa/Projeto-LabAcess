@@ -5,8 +5,35 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+# Helper function to read Docker secrets
+def read_secret(secret_name, default=None):
+    """
+    Lê um secret do Docker, com fallback para variável de ambiente.
+    """
+    secret_path = f'/run/secrets/{secret_name}'
+    
+    # Tenta ler do arquivo secret do Docker
+    try:
+        if os.path.isfile(secret_path):
+            with open(secret_path, 'r') as f:
+                content = f.read().strip()
+                if content:
+                    return content
+    except (FileNotFoundError, IsADirectoryError, PermissionError):
+        pass
+    
+    # Fallback para variável de ambiente
+    env_value = os.getenv(secret_name.upper())
+    if env_value:
+        return env_value
+    
+    # Fallback para valor padrão
+    return default
+
+
 # SECURITY
-SECRET_KEY = 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw'
+SECRET_KEY = read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw')
 
 DEBUG = True
 
@@ -114,11 +141,11 @@ WSGI_APPLICATION = 'users_service.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "users_db",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "postgres",
-        "PORT": "5432",
+        "NAME": os.getenv('DB_NAME', 'users_db'),
+        "USER": os.getenv('DB_USER', 'postgres'),
+        "PASSWORD": read_secret('postgres_password', 'postgres'),
+        "HOST": os.getenv('DB_HOST', 'postgres'),
+        "PORT": os.getenv('DB_PORT', '5432'),
     }
 }
 
@@ -158,6 +185,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # JWT
 SIMPLE_JWT = {
+    "ALGORITHM": read_secret('jwt_algorithm', 'HS256'),
+    "SIGNING_KEY": read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw'),
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
@@ -196,5 +225,5 @@ CACHES = {
 }
 
 # ENV VARIABLES
-SECRET_API_KEY = os.environ.get("SECRET_API_KEY")
-SECRET_AUTHORIZATION = os.environ.get("SECRET_AUTHORIZATION")
+SECRET_API_KEY = read_secret('secret_api_key')
+SECRET_AUTHORIZATION = read_secret('secret_authorization')
