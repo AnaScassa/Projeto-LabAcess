@@ -20,11 +20,32 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def read_secret(secret_name, default=None):
+    """
+    Lê um secret do Docker, com fallback para variável de ambiente.
+    """
+    secret_path = f'/run/secrets/{secret_name}'
+    
+    try:
+        if os.path.isfile(secret_path):
+            with open(secret_path, 'r') as f:
+                content = f.read().strip()
+                if content:
+                    return content
+    except (FileNotFoundError, IsADirectoryError, PermissionError):
+        pass
+    
+    env_value = os.getenv(secret_name.upper())
+    if env_value:
+        return env_value
+    
+    return default
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw'
+SECRET_KEY = read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -107,11 +128,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "smartcard",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "postgres",
-        "PORT": "5432",
+        "NAME": os.getenv('DB_NAME', 'smartcard'),
+        "USER": os.getenv('DB_USER', 'jax'),
+        "PASSWORD": read_secret('postgres_password', 'postgres'),
+        "HOST": os.getenv('DB_HOST', 'postgres'),
+        "PORT": os.getenv('DB_PORT', '5432'),
     }
 }
 
@@ -170,6 +191,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
+    "ALGORITHM": read_secret('jwt_algorithm', 'HS256'),
+    "SIGNING_KEY": read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw'),
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
@@ -195,5 +218,5 @@ CACHES = {
     }
 }
 
-SECRET_API_KEY = os.environ.get("SECRET_API_KEY")
-SECRET_AUTHORIZATION = os.environ.get("SECRET_AUTHORIZATION")
+SECRET_API_KEY = read_secret('secret_api_key')
+SECRET_AUTHORIZATION = read_secret('secret_authorization')

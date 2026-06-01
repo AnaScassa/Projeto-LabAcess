@@ -17,6 +17,22 @@ services:
       - media_volume:/app/media
       - C:/Users/anacha/Desktop/pasta:/testeshared
 
+    environment:
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      JWT_ALGORITHM_FILE: /run/secrets/jwt_algorithm
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: postgres
+      DB_USER: postgres
+
+    secrets:
+      - jwt_secret
+      - jwt_algorithm
+      - postgres_password
+      - secret_authorization
+      - secret_api_key
+
     command: >
       sh -c "
         until python -c 'import socket; s=socket.socket(); s.connect((\"postgres\",5432))'; do
@@ -31,6 +47,7 @@ services:
           echo 'Esperando rabbitmq...';
           sleep 2;
         done;
+        python manage.py makemigrations;
         python manage.py migrate;
         python manage.py runserver 0.0.0.0:8000 &
         celery -A core worker \
@@ -60,6 +77,22 @@ services:
     volumes:
       - ./users_service:/app
 
+    environment:
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      JWT_ALGORITHM_FILE: /run/secrets/jwt_algorithm
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: users_db
+      DB_USER: postgres
+
+    secrets:
+      - jwt_secret
+      - jwt_algorithm
+      - postgres_password
+      - secret_authorization
+      - secret_api_key
+
     command: >
       sh -c "
         until python -c 'import socket; s=socket.socket(); s.connect((\"postgres\",5432))'; do
@@ -70,6 +103,7 @@ services:
           echo 'Esperando rabbitmq...';
           sleep 2;
         done;
+        python manage.py makemigrations;
         python manage.py migrate;
         python manage.py init_users;
         python manage.py runserver 0.0.0.0:8000 &
@@ -120,30 +154,31 @@ services:
       - "5432:5432"
 
     restart: always
+    
     volumes:
       - postgres_smartcard:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  windows:
-    image: dockurr/windows
-    container_name: windows
-    environment:
-      VERSION: "11"
-      KVM: "N"
-      BOOT: "powershell -ExecutionPolicy Bypass -File C:\\storage\\install-ses.ps1"
-    devices:
-      - /dev/net/tun
-    cap_add:
-      - NET_ADMIN
-    ports:
-      - "8006:8006"
-      - "3389:3389/tcp"
-      - "3389:3389/udp"
-    volumes:
-      - ./windows:/storage
-      - C:/Users/anacha/Desktop/pasta:/data
-    restart: always
-    stop_grace_period: 2m
+ # windows:
+ #   image: dockurr/windows
+ #   container_name: windows
+ #   environment:
+ #     VERSION: "11"
+ #     KVM: "N"
+ #     BOOT: "powershell -ExecutionPolicy Bypass -File C:\\storage\\install-ses.ps1"
+ #   devices:
+ #     - /dev/net/tun
+ #   cap_add:
+ #     - NET_ADMIN
+ #   ports:
+ #     - "8006:8006"
+ #     - "3389:3389/tcp"
+ #     - "3389:3389/udp"
+ #   volumes:
+ #     - ./windows:/storage
+ #     - C:/Users/anacha/Desktop/pasta:/data
+ #   restart: always
+ #   stop_grace_period: 2m
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -155,7 +190,19 @@ services:
       - "15672:15672"
 
     restart: always
-
+  
+secrets:
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+  jwt_algorithm:
+    file: ./secrets/jwt_algorithm.txt
+  secret_authorization:
+    file: ./secrets/secret_authorization.txt
+  secret_api_key:
+    file: ./secrets/secret_api_key.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+    
 volumes:
   media_volume:
   postgres_smartcard:
