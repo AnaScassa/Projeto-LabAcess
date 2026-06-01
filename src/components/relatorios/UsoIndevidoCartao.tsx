@@ -15,6 +15,11 @@ export default function UsoIndevidoCartao() {
         
         <div className="card-header">
           <h3 className="card-title" style={{ fontWeight: 500 }}>Uso indevido do cartão (último mês)</h3>
+          <div className="d-flex gap-2 align-items-end justify-content-end">
+            <button className="btn btn-secondary d-flex justify-content-center align-items-center" style={{ width: "35px", height: "35px", padding: 0 }}>
+              <i className="fas fa-trash m-0"></i>
+            </button>
+          </div>
         </div>
 
         <div

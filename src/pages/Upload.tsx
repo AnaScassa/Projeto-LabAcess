@@ -140,7 +140,7 @@ export default function Upload() {
             <div className="col-md-6">
               <div className="card" style={{ height: "400px" }}>
                 <div className="card-header">
-                  <h3 className="card-title" style={{ fontWeight: 500 }}>Upload de Planilha Excel</h3>
+                  <h3 className="card-title" style={{ fontWeight: 500 }}>Upload de Arquivos</h3>
                 </div>
 
                 <div className="card-body d-flex flex-column justify-content-center align-items-center" style={{ height: "100%", gap: "20px" }}>
@@ -164,6 +164,14 @@ export default function Upload() {
                   
                   {mensagem && <p className="mt-3 mb-0">{mensagem}</p>}
                 </div>
+
+                <div className="card-footer d-flex justify-content-center">
+                  <button className="btn btn-outline-secondary">
+                    <i className="fas fa-sync-alt me-2"></i>
+                    Buscar registros dos últimos 5 minutos
+                  </button>
+                </div>
+
               </div>
             </div>
 

@@ -25,9 +25,14 @@ export default function AcessoIndevidos() {
      <div className="card-header">
         <h3 className="card-title d-flex align-items-center" style={{ fontWeight: 500, gap: "8px" }}>Uso inconsistente do cartão (última semana)
           <i className="fas fa-info-circle align-items-center" style={{fontSize: "14px", cursor: "pointer", color: "#6c757d"}}
-            title="As datas do dia de hoje não contam.">
+            title="Os dados do dia de hoje aparecerão amanhã.">
           </i>
         </h3>
+        <div className="d-flex gap-2 align-items-end justify-content-end">
+          <button className="btn btn-secondary d-flex justify-content-center align-items-center" style={{ width: "35px", height: "35px", padding: 0 }}>
+            <i className="fas fa-trash m-0"></i>
+          </button>
+        </div>
       </div>
 
         <div className="card-body p-0" style={{ maxHeight: "340px", overflowY: "auto" }}>
