@@ -7,7 +7,25 @@ import type { Usuario } from "../../types/Usuario";
 export default function UsoIndevidoCartao() {
   const { usuarios } = useUsuarios();   
   const { apontamento } = useApontamento();  
-  const { handleApontamento } = useApontamentoActions();
+  const { handleApontamento, handleApontamentoMultiple } = useApontamentoActions();
+
+  const filteredApontamentos = apontamento.filter((ap: Apontamento) => {
+    const isApontamento = String(ap.apontamento) === "1" || Number(ap.apontamento) === 1;
+
+    const dataAcesso = new Date(ap.data_acesso);
+    const hoje = new Date();
+    const trintaDiasAtras = new Date();
+    trintaDiasAtras.setDate(hoje.getDate() - 30);
+
+    const dentroDos30Dias = dataAcesso >= trintaDiasAtras;
+
+    return isApontamento && dentroDos30Dias;
+  });
+
+  const handleLimparTodos = () => {
+    const ids = filteredApontamentos.map((ap: Apontamento) => ap.id);
+    handleApontamentoMultiple(ids);
+  };
 
   return (
     <div className="col-md-6">
@@ -16,7 +34,8 @@ export default function UsoIndevidoCartao() {
         <div className="card-header">
           <h3 className="card-title" style={{ fontWeight: 500 }}>Uso indevido do cartão (último mês)</h3>
           <div className="d-flex gap-2 align-items-end justify-content-end">
-            <button className="btn btn-secondary d-flex justify-content-center align-items-center" style={{ width: "35px", height: "35px", padding: 0 }}>
+            <button onClick={handleLimparTodos} className="btn btn-secondary d-flex justify-content-center align-items-center" 
+              style={{ width: "25px", height: "25px", padding: 0 }} title="Limpar todos os registros">
               <i className="fas fa-trash m-0"></i>
             </button>
           </div>
@@ -37,19 +56,7 @@ export default function UsoIndevidoCartao() {
             </thead>
 
             <tbody>
-              {apontamento
-                .filter((ap: Apontamento) => {
-                  const isApontamento = String(ap.apontamento) === "1" || Number(ap.apontamento) === 1;
-
-                  const dataAcesso = new Date(ap.data_acesso);
-                  const hoje = new Date();
-                  const trintaDiasAtras = new Date();
-                  trintaDiasAtras.setDate(hoje.getDate() - 30);
-
-                  const dentroDos30Dias = dataAcesso >= trintaDiasAtras;
-
-                  return isApontamento && dentroDos30Dias;
-                }).map((ap: Apontamento) => {
+              {filteredApontamentos.map((ap: Apontamento) => {
                   const usuario = usuarios.find((u: Usuario) => u.matricula === ap.usuario_id);
 
                   return (

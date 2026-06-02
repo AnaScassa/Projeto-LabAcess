@@ -7,7 +7,7 @@ import type { Usuario } from "../../types/Usuario";
 export default function AcessoIndevidos() {
   const { usuarios } = useUsuarios();
   const { apontamento } = useApontamento();
-  const { handleApontamento } = useApontamentoActions();
+  const { handleApontamento, handleApontamentoMultiple } = useApontamentoActions();
 
   const isLastWeek = (data: string): boolean => {
     const dataAcesso = new Date(data);
@@ -16,6 +16,15 @@ export default function AcessoIndevidos() {
     const umaSemanaAtras = new Date(hoje);
     umaSemanaAtras.setDate(hoje.getDate() - 7);
     return dataAcesso >= umaSemanaAtras && dataAcesso < hoje;
+  };
+
+  const filteredApontamentos = apontamento.filter((ap: Apontamento) =>
+    (String(ap.apontamento) === "2" || Number(ap.apontamento) === 2) && isLastWeek(ap.data_acesso))
+    .sort((a: Apontamento, b: Apontamento) => new Date(b.data_acesso).getTime()  - new Date(a.data_acesso).getTime());
+
+  const handleLimparTodos = () => {
+    const ids = filteredApontamentos.map((ap: Apontamento) => ap.id);
+    handleApontamentoMultiple(ids);
   };
 
   return (
@@ -29,7 +38,8 @@ export default function AcessoIndevidos() {
           </i>
         </h3>
         <div className="d-flex gap-2 align-items-end justify-content-end">
-          <button className="btn btn-secondary d-flex justify-content-center align-items-center" style={{ width: "35px", height: "35px", padding: 0 }}>
+          <button onClick={handleLimparTodos} className="btn btn-secondary d-flex justify-content-center align-items-center" 
+            style={{ width: "25px", height: "25px", padding: 0 }} title="Limpar todos os registros">
             <i className="fas fa-trash m-0"></i>
           </button>
         </div>
@@ -48,11 +58,7 @@ export default function AcessoIndevidos() {
             </thead>
 
             <tbody>
-              {apontamento
-                .filter((ap: Apontamento) =>
-                  (String(ap.apontamento) === "2" || Number(ap.apontamento) === 2) && isLastWeek(ap.data_acesso))
-                  .sort((a: Apontamento, b: Apontamento) => new Date(b.data_acesso).getTime() 
-                  - new Date(a.data_acesso).getTime()) .map((ap: Apontamento) => {
+              {filteredApontamentos.map((ap: Apontamento) => {
                     const usuario = usuarios.find((u: Usuario) => u.matricula === ap.usuario_id);
 
                     return (
