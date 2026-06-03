@@ -1,36 +1,9 @@
 from datetime import datetime, timedelta
-import os
 import time
 import traceback 
 import pyautogui
 import static
-import logging
-import json
-
-class JsonFormatter(logging.Formatter):
-    def format(self, record):
-        log_record = {
-            "time": datetime.fromtimestamp(record.created).strftime("%Y-%m-%d %H:%M:%S"),
-            "level": record.levelname,
-            "message": record.getMessage()
-        }
-        return json.dumps(log_record, ensure_ascii=False)
-
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-if logger.hasHandlers():
-    logger.handlers.clear()
-
-file_handler = logging.FileHandler("rpa.jsonl", encoding="utf-8")
-file_handler.setFormatter(JsonFormatter())
-
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-
-logger.addHandler(file_handler)
-logger.addHandler(console_handler)
+from jsonFormatter import logger
 
 def entrarSes():
     logger.info("RPA iniciado")
@@ -190,20 +163,7 @@ def pegar_arquivo():
             
         if sair is not None:
             pyautogui.click(sair)
+    
+    pyautogui.hotkey('alt', 'f4')
             
-            
-def excluir_arquivo():
-    try:
-        arquivos = ["funcionarios", "alunos", "prestadores"]
-        
-        for nome in arquivos:
-            caminho = f"C:\\Users\\anacha\\Documents\\arquivos\\{nome}.xls"
-            try:
-                os.remove(caminho)
-                logger.info(f"Arquivo excluído: {caminho}")
-            except FileNotFoundError:
-                logger.warning(f"Arquivo não encontrado para exclusão: {caminho}")
-            except Exception as e:
-                logger.error(f"Erro ao excluir arquivo {caminho}: {e}")
-    except Exception as e:
-        logger.error(f"Erro inesperado na exclusão de arquivos: {e}")
+    

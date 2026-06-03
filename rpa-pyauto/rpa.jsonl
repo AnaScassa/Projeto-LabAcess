@@ -777,3 +777,184 @@
 {"time": "2026-05-28 09:21:21", "level": "INFO", "message": "Login realizado com sucesso"}
 {"time": "2026-05-28 09:21:36", "level": "INFO", "message": "Consulta realizada: [0]"}
 {"time": "2026-05-28 09:21:43", "level": "INFO", "message": "Nenhum dado foi retornado"}
+{"time": "2026-06-02 12:55:01", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_02062026122844.csv"}
+{"time": "2026-06-02 12:55:01", "level": "INFO", "message": "Status: 401"}
+{"time": "2026-06-02 12:55:01", "level": "INFO", "message": "Resposta: {\"detail\":\"Given token not valid for any token type\",\"code\":\"token_not_valid\",\"messages\":[{\"token_class\":\"AccessToken\",\"token_type\":\"access\",\"message\":\"Token is invalid\"}]}"}
+{"time": "2026-06-02 12:55:01", "level": "ERROR", "message": "Erro ao enviar arquivo. Status: 401"}
+{"time": "2026-06-02 12:59:47", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_02062026122844.csv"}
+{"time": "2026-06-02 12:59:47", "level": "INFO", "message": "Status: 401"}
+{"time": "2026-06-02 12:59:47", "level": "INFO", "message": "Resposta: {\"detail\":\"Given token not valid for any token type\",\"code\":\"token_not_valid\",\"messages\":[{\"token_class\":\"AccessToken\",\"token_type\":\"access\",\"message\":\"Token is invalid\"}]}"}
+{"time": "2026-06-02 12:59:47", "level": "ERROR", "message": "Erro ao enviar arquivo. Status: 401"}
+{"time": "2026-06-03 08:43:20", "level": "INFO", "message": "RPA iniciado"}
+{"time": "2026-06-03 08:43:36", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_02062026122844.csv"}
+{"time": "2026-06-03 08:43:36", "level": "INFO", "message": "Status: 401"}
+{"time": "2026-06-03 08:43:36", "level": "INFO", "message": "Resposta: {\"detail\":\"Given token not valid for any token type\",\"code\":\"token_not_valid\",\"messages\":[{\"token_class\":\"AccessToken\",\"token_type\":\"access\",\"message\":\"Token is invalid\"}]}"}
+{"time": "2026-06-03 08:43:36", "level": "ERROR", "message": "Erro ao enviar arquivo. Status: 401"}
+{"time": "2026-06-03 08:44:39", "level": "INFO", "message": "Token carregado (primeiros 20 chars): xqynhxLl.rINMthO9xJj..."}
+{"time": "2026-06-03 08:44:39", "level": "INFO", "message": "Tamanho do token: 41 caracteres"}
+{"time": "2026-06-03 08:44:39", "level": "INFO", "message": "Header Authorization: Bearer xqynhxLl.rINMthO9xJj..."}
+{"time": "2026-06-03 08:44:39", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_02062026122844.csv"}
+{"time": "2026-06-03 08:44:39", "level": "INFO", "message": "Status: 401"}
+{"time": "2026-06-03 08:44:39", "level": "INFO", "message": "Resposta da API: {\"detail\":\"Given token not valid for any token type\",\"code\":\"token_not_valid\",\"messages\":[{\"token_class\":\"AccessToken\",\"token_type\":\"access\",\"message\":\"Token is invalid\"}]}"}
+{"time": "2026-06-03 08:44:39", "level": "INFO", "message": "Headers da resposta: {'Date': 'Wed, 03 Jun 2026 11:46:04 GMT', 'Server': 'WSGIServer/0.2 CPython/3.12.13', 'Content-Type': 'application/json', 'WWW-Authenticate': 'Bearer realm=\"api\"', 'Vary': 'Accept, origin', 'Allow': 'OPTIONS, POST', 'X-Frame-Options': 'DENY', 'Content-Length': '172', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Cross-Origin-Opener-Policy': 'same-origin'}"}
+{"time": "2026-06-03 08:44:39", "level": "ERROR", "message": "Erro ao enviar arquivo. Status: 401"}
+{"time": "2026-06-03 08:46:57", "level": "INFO", "message": "Tentando fazer login com usuário"}
+{"time": "2026-06-03 08:46:57", "level": "ERROR", "message": "Erro ao fazer login. Status: 404"}
+{"time": "2026-06-03 08:46:57", "level": "ERROR", "message": "Resposta: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n  <title>Page not found at /api/token/</title>\n  <meta name=\"robots\" content=\"NONE,NOARCHIVE\">\n  <style>\n    html * { padding:0; margin:0; }\n    body * { padding:10px 20px; }\n    body * * { padding:0; }\n    body { font-family: sans-serif; background:#eee; color:#000; }\n    body > :where(header, main, footer) { border-bottom:1px solid #ddd; }\n    h1 { font-weight:normal; margin-bottom:.4em; }\n    h1 small { font-size:60%; color:#666; font-weight:normal; }\n    table { border:none; border-collapse: collapse; width:100%; }\n    td, th { vertical-align:top; padding:2px 3px; }\n    th { width:12em; text-align:right; color:#666; padding-right:.5em; }\n    #info { background:#f6f6f6; }\n    #info ol { margin: 0.5em 4em; }\n    #info ol li { font-family: monospace; }\n    #summary { background: #ffc; }\n    #explanation { background:#eee; border-bottom: 0px none; }\n    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }\n  </style>\n</head>\n<body>\n  <header id=\"summary\">\n    <h1>Page not found <small>(404)</small></h1>\n    \n    <table class=\"meta\">\n      <tr>\n        <th scope=\"row\">Request Method:</th>\n        <td>POST</td>\n      </tr>\n      <tr>\n        <th scope=\"row\">Request URL:</th>\n        <td>http://localhost:8000/api/token/</td>\n      </tr>\n      \n    </table>\n  </header>\n\n  <main id=\"info\">\n    \n      <p>\n      Using the URLconf defined in <code>core.urls</code>,\n      Django tried these URL patterns, in this order:\n      </p>\n      <ol>\n        \n          <li>\n            \n              <code>\n                admin/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/acesso/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                authorize/\n                \n              </code>\n            \n          </li>\n        \n      </ol>\n      <p>\n        \n          The current path, <code>api/token/</code>,\n        \n        didn’t match any of these.\n      </p>\n    \n  </main>\n\n  <footer id=\"explanation\">\n    <p>\n      You’re seeing this error because you have <code>DEBUG = True</code> in\n      your Django settings file. Change that to <code>False</code>, and Django\n      will display a standard 404 page.\n    </p>\n  </footer>\n</body>\n</html>\n"}
+{"time": "2026-06-03 08:46:57", "level": "ERROR", "message": "Erro ao obter token JWT: Falha na autenticação: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n  <title>Page not found at /api/token/</title>\n  <meta name=\"robots\" content=\"NONE,NOARCHIVE\">\n  <style>\n    html * { padding:0; margin:0; }\n    body * { padding:10px 20px; }\n    body * * { padding:0; }\n    body { font-family: sans-serif; background:#eee; color:#000; }\n    body > :where(header, main, footer) { border-bottom:1px solid #ddd; }\n    h1 { font-weight:normal; margin-bottom:.4em; }\n    h1 small { font-size:60%; color:#666; font-weight:normal; }\n    table { border:none; border-collapse: collapse; width:100%; }\n    td, th { vertical-align:top; padding:2px 3px; }\n    th { width:12em; text-align:right; color:#666; padding-right:.5em; }\n    #info { background:#f6f6f6; }\n    #info ol { margin: 0.5em 4em; }\n    #info ol li { font-family: monospace; }\n    #summary { background: #ffc; }\n    #explanation { background:#eee; border-bottom: 0px none; }\n    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }\n  </style>\n</head>\n<body>\n  <header id=\"summary\">\n    <h1>Page not found <small>(404)</small></h1>\n    \n    <table class=\"meta\">\n      <tr>\n        <th scope=\"row\">Request Method:</th>\n        <td>POST</td>\n      </tr>\n      <tr>\n        <th scope=\"row\">Request URL:</th>\n        <td>http://localhost:8000/api/token/</td>\n      </tr>\n      \n    </table>\n  </header>\n\n  <main id=\"info\">\n    \n      <p>\n      Using the URLconf defined in <code>core.urls</code>,\n      Django tried these URL patterns, in this order:\n      </p>\n      <ol>\n        \n          <li>\n            \n              <code>\n                admin/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/acesso/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                authorize/\n                \n              </code>\n            \n          </li>\n        \n      </ol>\n      <p>\n        \n          The current path, <code>api/token/</code>,\n        \n        didn’t match any of these.\n      </p>\n    \n  </main>\n\n  <footer id=\"explanation\">\n    <p>\n      You’re seeing this error because you have <code>DEBUG = True</code> in\n      your Django settings file. Change that to <code>False</code>, and Django\n      will display a standard 404 page.\n    </p>\n  </footer>\n</body>\n</html>\n"}
+{"time": "2026-06-03 08:46:57", "level": "ERROR", "message": "Não foi possível obter token JWT: Falha na autenticação: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n  <title>Page not found at /api/token/</title>\n  <meta name=\"robots\" content=\"NONE,NOARCHIVE\">\n  <style>\n    html * { padding:0; margin:0; }\n    body * { padding:10px 20px; }\n    body * * { padding:0; }\n    body { font-family: sans-serif; background:#eee; color:#000; }\n    body > :where(header, main, footer) { border-bottom:1px solid #ddd; }\n    h1 { font-weight:normal; margin-bottom:.4em; }\n    h1 small { font-size:60%; color:#666; font-weight:normal; }\n    table { border:none; border-collapse: collapse; width:100%; }\n    td, th { vertical-align:top; padding:2px 3px; }\n    th { width:12em; text-align:right; color:#666; padding-right:.5em; }\n    #info { background:#f6f6f6; }\n    #info ol { margin: 0.5em 4em; }\n    #info ol li { font-family: monospace; }\n    #summary { background: #ffc; }\n    #explanation { background:#eee; border-bottom: 0px none; }\n    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }\n  </style>\n</head>\n<body>\n  <header id=\"summary\">\n    <h1>Page not found <small>(404)</small></h1>\n    \n    <table class=\"meta\">\n      <tr>\n        <th scope=\"row\">Request Method:</th>\n        <td>POST</td>\n      </tr>\n      <tr>\n        <th scope=\"row\">Request URL:</th>\n        <td>http://localhost:8000/api/token/</td>\n      </tr>\n      \n    </table>\n  </header>\n\n  <main id=\"info\">\n    \n      <p>\n      Using the URLconf defined in <code>core.urls</code>,\n      Django tried these URL patterns, in this order:\n      </p>\n      <ol>\n        \n          <li>\n            \n              <code>\n                admin/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/acesso/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                authorize/\n                \n              </code>\n            \n          </li>\n        \n      </ol>\n      <p>\n        \n          The current path, <code>api/token/</code>,\n        \n        didn’t match any of these.\n      </p>\n    \n  </main>\n\n  <footer id=\"explanation\">\n    <p>\n      You’re seeing this error because you have <code>DEBUG = True</code> in\n      your Django settings file. Change that to <code>False</code>, and Django\n      will display a standard 404 page.\n    </p>\n  </footer>\n</body>\n</html>\n"}
+{"time": "2026-06-03 08:55:14", "level": "INFO", "message": "Tentando fazer login com usuário: mkeiler"}
+{"time": "2026-06-03 08:55:14", "level": "INFO", "message": "Endpoint: http://localhost:8001/api/users/api/token/"}
+{"time": "2026-06-03 08:55:15", "level": "INFO", "message": "Status: 401"}
+{"time": "2026-06-03 08:55:15", "level": "ERROR", "message": "Erro ao fazer login. Status: 401"}
+{"time": "2026-06-03 08:55:15", "level": "ERROR", "message": "Resposta: {\"detail\":\"No active account found with the given credentials\"}"}
+{"time": "2026-06-03 08:55:15", "level": "ERROR", "message": "Erro ao obter token JWT: Falha na autenticação: {\"detail\":\"No active account found with the given credentials\"}"}
+{"time": "2026-06-03 08:55:15", "level": "ERROR", "message": "Não foi possível obter token JWT: Falha na autenticação: {\"detail\":\"No active account found with the given credentials\"}"}
+{"time": "2026-06-03 08:55:36", "level": "INFO", "message": "Tentando fazer login com usuário: mkeiler"}
+{"time": "2026-06-03 08:55:36", "level": "INFO", "message": "Endpoint: http://localhost:8001/api/users/api/token/"}
+{"time": "2026-06-03 08:55:36", "level": "INFO", "message": "Status: 200"}
+{"time": "2026-06-03 08:55:36", "level": "INFO", "message": "✅ Token JWT obtido com sucesso!"}
+{"time": "2026-06-03 08:55:36", "level": "INFO", "message": "Token (primeiros 30 chars): eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 08:55:36", "level": "INFO", "message": "Header Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 08:55:36", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_02062026122844.csv"}
+{"time": "2026-06-03 08:55:36", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 08:55:36", "level": "INFO", "message": "Resposta da API: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"7932b770-090a-49a2-a0cc-f17eb34082fc\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 08:55:36", "level": "INFO", "message": "Headers da resposta: {'Date': 'Wed, 03 Jun 2026 11:57:01 GMT', 'Server': 'WSGIServer/0.2 CPython/3.12.13', 'Content-Type': 'application/json', 'Vary': 'Accept, origin', 'Allow': 'OPTIONS, POST', 'X-Frame-Options': 'DENY', 'Content-Length': '130', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Cross-Origin-Opener-Policy': 'same-origin'}"}
+{"time": "2026-06-03 08:55:36", "level": "ERROR", "message": "Erro ao enviar arquivo. Status: 202"}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Tentando fazer login com usuário"}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Endpoint: http://localhost:8001/api/users/api/token/"}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Status: 200"}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Token JWT obtido com sucesso!"}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Token (primeiros 30 chars): eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Header Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_02062026122844.csv"}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Resposta da API: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"f9ddf0d8-6679-4091-b1cd-e9ee3f3b2b1e\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Headers da resposta: {'Date': 'Wed, 03 Jun 2026 11:59:05 GMT', 'Server': 'WSGIServer/0.2 CPython/3.12.13', 'Content-Type': 'application/json', 'Vary': 'Accept, origin', 'Allow': 'OPTIONS, POST', 'X-Frame-Options': 'DENY', 'Content-Length': '130', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Cross-Origin-Opener-Policy': 'same-origin'}"}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 08:57:40", "level": "INFO", "message": "Task ID para acompanhamento: f9ddf0d8-6679-4091-b1cd-e9ee3f3b2b1e"}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Tentando fazer login com usuário"}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Endpoint: http://localhost:8001/api/users/api/token/"}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Status: 200"}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Token JWT obtido com sucesso!"}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Token (primeiros 30 chars): eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Header Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_02062026122844.csv"}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Resposta da API: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"25e6f1b5-54cf-4565-be6d-0cfb2a0e1b5f\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Headers da resposta: {'Date': 'Wed, 03 Jun 2026 11:59:24 GMT', 'Server': 'WSGIServer/0.2 CPython/3.12.13', 'Content-Type': 'application/json', 'Vary': 'Accept, origin', 'Allow': 'OPTIONS, POST', 'X-Frame-Options': 'DENY', 'Content-Length': '130', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Cross-Origin-Opener-Policy': 'same-origin'}"}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 08:57:59", "level": "INFO", "message": "Task ID para acompanhamento: 25e6f1b5-54cf-4565-be6d-0cfb2a0e1b5f"}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Tentando fazer login com usuário"}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Endpoint: http://localhost:8001/api/users/api/token/"}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Status: 200"}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Token JWT obtido com sucesso!"}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Token (primeiros 30 chars): eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Header Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090114.csv"}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Resposta da API: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"dab21158-5785-4903-ac57-a7ae20241b8a\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Headers da resposta: {'Date': 'Wed, 03 Jun 2026 12:02:52 GMT', 'Server': 'WSGIServer/0.2 CPython/3.12.13', 'Content-Type': 'application/json', 'Vary': 'Accept, origin', 'Allow': 'OPTIONS, POST', 'X-Frame-Options': 'DENY', 'Content-Length': '130', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Cross-Origin-Opener-Policy': 'same-origin'}"}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 09:01:28", "level": "INFO", "message": "Task ID para acompanhamento: dab21158-5785-4903-ac57-a7ae20241b8a"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Encontrados 3 arquivos CSV mais recentes"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "  - ses_export_03062026090114.csv"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "  - ses_export_03062026090102.csv"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "  - ses_export_03062026090047.csv"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Tentando fazer login com usuário: anacha"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Endpoint: http://localhost:8001/api/users/api/token/"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Status: 200"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Token JWT obtido com sucesso!"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Token (primeiros 30 chars): eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Header Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090114.csv"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Resposta da API: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"08e790c0-b91e-4018-a599-9951a83b3efa\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Headers da resposta: {'Date': 'Wed, 03 Jun 2026 12:04:31 GMT', 'Server': 'WSGIServer/0.2 CPython/3.12.13', 'Content-Type': 'application/json', 'Vary': 'Accept, origin', 'Allow': 'OPTIONS, POST', 'X-Frame-Options': 'DENY', 'Content-Length': '130', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Cross-Origin-Opener-Policy': 'same-origin'}"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Task ID para acompanhamento: 08e790c0-b91e-4018-a599-9951a83b3efa"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Tentando fazer login com usuário: anacha"}
+{"time": "2026-06-03 09:03:06", "level": "INFO", "message": "Endpoint: http://localhost:8001/api/users/api/token/"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Status: 200"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Token JWT obtido com sucesso!"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Token (primeiros 30 chars): eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Header Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090102.csv"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Resposta da API: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"3106e80b-87c9-445a-a0db-46c2a30afb78\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Headers da resposta: {'Date': 'Wed, 03 Jun 2026 12:04:31 GMT', 'Server': 'WSGIServer/0.2 CPython/3.12.13', 'Content-Type': 'application/json', 'Vary': 'Accept, origin', 'Allow': 'OPTIONS, POST', 'X-Frame-Options': 'DENY', 'Content-Length': '130', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Cross-Origin-Opener-Policy': 'same-origin'}"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Task ID para acompanhamento: 3106e80b-87c9-445a-a0db-46c2a30afb78"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Tentando fazer login com usuário: anacha"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Endpoint: http://localhost:8001/api/users/api/token/"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Status: 200"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Token JWT obtido com sucesso!"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Token (primeiros 30 chars): eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Header Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ik..."}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090047.csv"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Resposta da API: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"2fb93f0a-3a76-475c-82e9-5dd68e101ae1\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Headers da resposta: {'Date': 'Wed, 03 Jun 2026 12:04:32 GMT', 'Server': 'WSGIServer/0.2 CPython/3.12.13', 'Content-Type': 'application/json', 'Vary': 'Accept, origin', 'Allow': 'OPTIONS, POST', 'X-Frame-Options': 'DENY', 'Content-Length': '130', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Cross-Origin-Opener-Policy': 'same-origin'}"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 09:03:07", "level": "INFO", "message": "Task ID para acompanhamento: 2fb93f0a-3a76-475c-82e9-5dd68e101ae1"}
+{"time": "2026-06-03 12:25:16", "level": "INFO", "message": "Encontrados 3 arquivos CSV mais recentes"}
+{"time": "2026-06-03 12:25:16", "level": "INFO", "message": " - ses_export_03062026090114.csv"}
+{"time": "2026-06-03 12:25:16", "level": "INFO", "message": " - ses_export_03062026090102.csv"}
+{"time": "2026-06-03 12:25:16", "level": "INFO", "message": " - ses_export_03062026090047.csv"}
+{"time": "2026-06-03 12:25:16", "level": "ERROR", "message": "Erro ao enviar arquivo: Token 'acess' não encontrado. Execute o programa com 'infisical run -- python main.py'"}
+{"time": "2026-06-03 12:25:16", "level": "ERROR", "message": "Erro ao enviar arquivo: Token 'acess' não encontrado. Execute o programa com 'infisical run -- python main.py'"}
+{"time": "2026-06-03 12:25:16", "level": "ERROR", "message": "Erro ao enviar arquivo: Token 'acess' não encontrado. Execute o programa com 'infisical run -- python main.py'"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": "Encontrados 3 arquivos CSV mais recentes"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": " - ses_export_03062026090114.csv"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": " - ses_export_03062026090102.csv"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": " - ses_export_03062026090047.csv"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090114.csv"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": "Status: 401"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": "Resposta: {\"detail\":\"Given token not valid for any token type\",\"code\":\"token_not_valid\",\"messages\":[{\"token_class\":\"AccessToken\",\"token_type\":\"access\",\"message\":\"Token is expired\"}]}"}
+{"time": "2026-06-03 12:29:40", "level": "ERROR", "message": "Erro ao enviar arquivo. Status: 401"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090102.csv"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": "Status: 401"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": "Resposta: {\"detail\":\"Given token not valid for any token type\",\"code\":\"token_not_valid\",\"messages\":[{\"token_class\":\"AccessToken\",\"token_type\":\"access\",\"message\":\"Token is expired\"}]}"}
+{"time": "2026-06-03 12:29:40", "level": "ERROR", "message": "Erro ao enviar arquivo. Status: 401"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090047.csv"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": "Status: 401"}
+{"time": "2026-06-03 12:29:40", "level": "INFO", "message": "Resposta: {\"detail\":\"Given token not valid for any token type\",\"code\":\"token_not_valid\",\"messages\":[{\"token_class\":\"AccessToken\",\"token_type\":\"access\",\"message\":\"Token is expired\"}]}"}
+{"time": "2026-06-03 12:29:40", "level": "ERROR", "message": "Erro ao enviar arquivo. Status: 401"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Encontrados 3 arquivos CSV mais recentes"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": " - ses_export_03062026090114.csv"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": " - ses_export_03062026090102.csv"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": " - ses_export_03062026090047.csv"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090114.csv"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Resposta: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"3e6b8e20-18a6-4a80-9bfb-cd0c99aac542\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Task ID: 3e6b8e20-18a6-4a80-9bfb-cd0c99aac542"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090102.csv"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Resposta: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"a9cbb47d-9845-4fff-85ec-79fea030f9f2\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Task ID: a9cbb47d-9845-4fff-85ec-79fea030f9f2"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090047.csv"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Resposta: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"a7fd91cc-2c8e-4dd9-9955-793974f9d65b\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 12:32:05", "level": "INFO", "message": "Task ID: a7fd91cc-2c8e-4dd9-9955-793974f9d65b"}
+{"time": "2026-06-03 12:36:34", "level": "INFO", "message": "Encontrados 3 arquivos CSV mais recentes"}
+{"time": "2026-06-03 12:36:34", "level": "INFO", "message": " - ses_export_03062026090114.csv"}
+{"time": "2026-06-03 12:36:34", "level": "INFO", "message": " - ses_export_03062026090102.csv"}
+{"time": "2026-06-03 12:36:34", "level": "INFO", "message": " - ses_export_03062026090047.csv"}
+{"time": "2026-06-03 12:36:34", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090114.csv"}
+{"time": "2026-06-03 12:36:34", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 12:36:34", "level": "INFO", "message": "Resposta: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"b46fa75f-5231-40ed-9031-a45773fda00b\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 12:36:34", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 12:36:34", "level": "INFO", "message": "Task ID: b46fa75f-5231-40ed-9031-a45773fda00b"}
+{"time": "2026-06-03 12:36:35", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090102.csv"}
+{"time": "2026-06-03 12:36:35", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 12:36:35", "level": "INFO", "message": "Resposta: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"9a289a56-af66-40d0-ae0a-3fac6201d212\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 12:36:35", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 12:36:35", "level": "INFO", "message": "Task ID: 9a289a56-af66-40d0-ae0a-3fac6201d212"}
+{"time": "2026-06-03 12:36:35", "level": "INFO", "message": "Arquivo enviado: C:\\Sualtech\\SESClient\\ses_export_03062026090047.csv"}
+{"time": "2026-06-03 12:36:35", "level": "INFO", "message": "Status: 202"}
+{"time": "2026-06-03 12:36:35", "level": "INFO", "message": "Resposta: {\"message\":\"Arquivo enviado para processamento.\",\"task_id\":\"83050435-8268-4307-bf0f-b38b1efb684c\",\"status\":\"PENDING\",\"user\":\"596\"}"}
+{"time": "2026-06-03 12:36:35", "level": "INFO", "message": "Arquivo enviado com sucesso"}
+{"time": "2026-06-03 12:36:35", "level": "INFO", "message": "Task ID: 83050435-8268-4307-bf0f-b38b1efb684c"}

@@ -1,20 +1,12 @@
-import time
-import pyautogui
-from desktop import entrarSes, excluir_arquivo
-from web import entrarSite
-from teste import teste1
+from desktop import entrarSes
+from api import enviar_arquivo_api, obter_ultimos_csvs
 
 def main():
-    entrarSes()
-    #entrarSite()
-    #excluir_arquivo()
-    #time.sleep(5)
-    #x, y = pyautogui.position()
-    #print(f"X: {x} Y: {y}")
-    #teste1()
+    #entrarSes()
+    arquivos = obter_ultimos_csvs(quantidade=3)
     
-
+    for arquivo in arquivos:
+        enviar_arquivo_api(arquivo)
 
 if __name__ == "__main__":
     main()
-    
