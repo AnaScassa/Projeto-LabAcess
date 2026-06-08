@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import os
 import time
 import traceback 
 import pyautogui
@@ -165,5 +166,23 @@ def pegar_arquivo():
             pyautogui.click(sair)
     
     pyautogui.hotkey('alt', 'f4')
+    logger.info("RPA finalizado")
+    
+def excluir_csvs():
+    pasta = r"C:\Sualtech\SESClient"
+
+    try:
+        csvs = [
+            os.path.join(pasta, arquivo)
+            for arquivo in os.listdir(pasta)
+            if arquivo.lower().endswith(".csv")
+        ]
+
+        for arquivo in csvs:
+            os.remove(arquivo)
+            logger.info(f"Arquivo excluído: {arquivo}")
+
+    except Exception as e:
+        logger.error(f"Erro ao excluir CSVs: {e}")
             
     

@@ -3,46 +3,54 @@ import requests
 from jsonFormatter import logger
 
 def obter_token_jwt():
-    access = os.getenv("acess")
+
+    logger.info(f"acess = {os.getenv('acess') is not None}")
+    logger.info(f"refresh = {os.getenv('refresh') is not None}")
+
     refresh = os.getenv("refresh")
 
-    response = requests.post("http://localhost:8001/api/users/api/token/refresh/",
+    response = requests.post("http://ccspc-041.ccs.unicamp.br:8001/api/users/api/token/refresh/",
         json={
             "refresh": refresh
         }
     )
 
+    logger.info(response.text)
+
     if response.status_code != 200:
         raise Exception(f"Erro ao renovar token: {response.text}")
 
-    novo_access = response.json()["access"]
-    return novo_access
-
+    return response.json()["access"]
 
 def obter_ultimos_csvs(quantidade=3):
     pasta = r"C:\Sualtech\SESClient"
 
-    csvs = [
-        os.path.join(pasta, arquivo)
-        for arquivo in os.listdir(pasta)
-        if arquivo.lower().endswith(".csv")
-    ]
+    try:
+        csvs = [
+            os.path.join(pasta, arquivo)
+            for arquivo in os.listdir(pasta)
+            if arquivo.lower().endswith(".csv")
+        ]
 
-    if not csvs:
-        raise FileNotFoundError(f"Nenhum arquivo CSV encontrado em {pasta}")
+        if not csvs:
+            raise FileNotFoundError(f"Nenhum arquivo CSV encontrado em {pasta}")
 
-    csvs_ordenados = sorted(csvs, key=os.path.getmtime, reverse=True)
-    ultimos = csvs_ordenados[:quantidade]
-    logger.info(f"Encontrados {len(ultimos)} arquivos CSV mais recentes")
+        csvs_ordenados = sorted(csvs, key=os.path.getmtime, reverse=True)
+        ultimos = csvs_ordenados[:quantidade]
+        logger.info(f"Encontrados {len(ultimos)} arquivos CSV mais recentes")
 
-    for arquivo in ultimos:
-        logger.info(f" - {os.path.basename(arquivo)}")
+        for arquivo in ultimos:
+            logger.info(f" - {os.path.basename(arquivo)}")
 
-    return ultimos
+        return ultimos
+    
+    except Exception as e:
+        logger.error(f"Erro ao obter arquivos CSV: {e}")
+        return []
 
 
 def enviar_arquivo_api(caminho_arquivo):
-    url = "http://localhost:8000/api/acesso/upload-xls/"
+    url = "http://ccspc-041.ccs.unicamp.br:8000/api/acesso/upload-xls/"
 
     try:
         authorization_token = obter_token_jwt()

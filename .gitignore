@@ -32,6 +32,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.jsonl
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -115,4 +116,3 @@ media/
 *.pyc
 *.db
 *.pid
-rpa.json
