@@ -1,21 +1,41 @@
 import os
 import requests
 from jsonFormatter import logger
+from dotenv import load_dotenv
+
+load_dotenv()
+
+INFISICAL_TOKEN = os.getenv("INFISICAL_TOKEN")
+INFISICAL_PROJECT_ID = os.getenv("INFISICAL_PROJECT_ID")
+INFISICAL_ENVIRONMENT = "dev"
+
+import subprocess
+import json
+
+def obter_secret(nome_secret):
+    resultado = subprocess.run(["infisical", "secrets", "get", nome_secret, "--token", INFISICAL_TOKEN, "-o", "json"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8"
+    )
+
+    if resultado.returncode != 0:
+        raise Exception(f"Erro ao buscar secret: {resultado.stderr}")
+
+    dados = json.loads(resultado.stdout)
+
+    logger.info(f"DADOS INFISICAL: {dados}")
+
+    return dados[0]["secretValue"]
 
 def obter_token_jwt():
-
-    logger.info(f"acess = {os.getenv('acess') is not None}")
-    logger.info(f"refresh = {os.getenv('refresh') is not None}")
-
-    refresh = os.getenv("refresh")
+    refresh = obter_secret("refresh")
 
     response = requests.post("http://ccspc-041.ccs.unicamp.br:8001/api/users/api/token/refresh/",
         json={
             "refresh": refresh
         }
     )
-
-    logger.info(response.text)
 
     if response.status_code != 200:
         raise Exception(f"Erro ao renovar token: {response.text}")
@@ -33,17 +53,21 @@ def obter_ultimos_csvs(quantidade=3):
         ]
 
         if not csvs:
-            raise FileNotFoundError(f"Nenhum arquivo CSV encontrado em {pasta}")
+            raise FileNotFoundError(
+                f"Nenhum arquivo CSV encontrado em {pasta}"
+            )
 
         csvs_ordenados = sorted(csvs, key=os.path.getmtime, reverse=True)
+
         ultimos = csvs_ordenados[:quantidade]
+
         logger.info(f"Encontrados {len(ultimos)} arquivos CSV mais recentes")
 
         for arquivo in ultimos:
             logger.info(f" - {os.path.basename(arquivo)}")
 
         return ultimos
-    
+
     except Exception as e:
         logger.error(f"Erro ao obter arquivos CSV: {e}")
         return []
@@ -77,7 +101,7 @@ def enviar_arquivo_api(caminho_arquivo):
                 try:
                     data = response.json()
                     logger.info(f"Task ID: {data.get('task_id')}")
-                except:
+                except Exception:
                     pass
 
         else:
