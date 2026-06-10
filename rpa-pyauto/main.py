@@ -1,5 +1,5 @@
 from desktop import entrarSes, excluir_csvs
-from api import enviar_arquivo_api, obter_ultimos_csvs
+from csv import enviar_arquivo_api, obter_ultimos_csvs
 
 def main():
     #entrarSes()
