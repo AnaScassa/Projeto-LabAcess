@@ -4,6 +4,7 @@ import json
 import time
 from django.contrib.auth import get_user_model
 from users.models import UserProfile
+from django.core.cache import cache
 
 User = get_user_model()
 
@@ -32,10 +33,13 @@ def iniciar_consumer():
             
             users = list(User.objects.all().values())
             profiles = list(UserProfile.objects.all().values())
-
+            
+            cache.set("users_global", {f"users_{task_id}": users, f"profiles_{task_id}": profiles}, timeout=3600)
+            
+            
             resposta = {
-                "users": users,
-                "profiles": profiles,
+                "users": f"users_{task_id}",
+                "profiles": f"profiles_{task_id}",
                 "status": "success"
             }
 
