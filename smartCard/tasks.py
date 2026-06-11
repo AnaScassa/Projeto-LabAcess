@@ -34,6 +34,7 @@ def processar_xls(self, caminho_arquivo, task_id):
             print("Resposta válida recebida!")
 
     channel.basic_consume(queue=callback_queue, on_message_callback=on_response, auto_ack=True)
+
     channel.basic_publish(exchange='', routing_key='usuarios_processados', properties=pika.BasicProperties(reply_to=callback_queue, correlation_id=corr_id,),
         body=json.dumps({
             "task_id": task_id
@@ -53,13 +54,9 @@ def processar_xls(self, caminho_arquivo, task_id):
     if resposta is None:
         raise Exception("Timeout esperando users_service")
 
-    users = resposta["users"]
-    profiles = resposta["profiles"]
-    
-    cache.set("users_global",{
-        "users": users,
-        "profiles": profiles
-    },timeout=3600)
+    dados = cache.get("users_global")
+    users = dados[resposta["users"]]
+    profiles = dados[resposta["profiles"]]
 
     print("Dados recebidos!")
     print(f"USERS: {len(users)}")
@@ -132,9 +129,7 @@ def processar_csv(self, caminho_arquivo, task_id):
     channel.basic_consume(queue=callback_queue, on_message_callback=on_response, auto_ack=True)
 
     channel.basic_publish(exchange='', routing_key='usuarios_processados', properties=pika.BasicProperties(
-        reply_to=callback_queue, correlation_id=corr_id,),
-        body=json.dumps({"task_id": task_id})
-    )
+        reply_to=callback_queue, correlation_id=corr_id,), body=json.dumps({"task_id": task_id}))
 
     timeout = 30
     inicio = time.time()
@@ -151,9 +146,11 @@ def processar_csv(self, caminho_arquivo, task_id):
     if resposta is None:
         raise Exception("Timeout esperando users_service")
 
-    users = resposta["users"]
-    profiles = resposta["profiles"]
-    cache.set("users_global", {"users": users, "profiles": profiles}, timeout=3600)
+
+    dados = cache.get("users_global")
+    users = dados[resposta["users"]]
+    profiles = dados[resposta["profiles"]]
+    #cache.set("users_global", {"users": users, "profiles": profiles}, timeout=3600)
 
     print("Dados recebidos!")
     print(f"USERS: {len(users)}")
@@ -182,13 +179,10 @@ def processar_csv(self, caminho_arquivo, task_id):
             nome_usuario = "Desconhecido"
             categoria = "OUTRO"
 
-        usuario, _ = Usuario.objects.get_or_create(
-            matricula=matricula,
-            defaults={
-                "nome_usuario": nome_usuario,
-                "categoriaUsuario": categoria,
-            }
-        )
+        usuario, _ = Usuario.objects.get_or_create(matricula=matricula,defaults={
+            "nome_usuario": nome_usuario,
+            "categoriaUsuario": categoria,
+            })
 
         data_str = f"{row.get('Data')} {row.get('Hora')}"
         data = timezone.make_aware(pd.to_datetime(data_str, dayfirst=True))
@@ -222,14 +216,15 @@ def processar_csv(self, caminho_arquivo, task_id):
 def tentar_vincular_user_auth(self, usuario_id):
 
     self.update_state(state="STARTED")
+    task_id = self.request.root_id
     dados = cache.get("users_global")
 
     if not dados:
         print("CACHE NÃO ENCONTRADO")
         return False
 
-    profiles = dados["profiles"]
-    users = dados["users"]
+    profiles = dados[f"profiles_{task_id}"]
+    users = dados[f"users_{task_id}"]
 
     usuario = Usuario.objects.filter(id=usuario_id, user_auth__isnull=True).first()
 
@@ -252,8 +247,10 @@ def tentar_vincular_por_nome(self, usuario_id):
     if not dados:
         print("CACHE NÃO ENCONTRADO")
         return False
-
-    users = dados["users"]
+    task_id = self.request.root_id
+  
+    users = dados[f"users_{task_id}"]
+    
     usuario = Usuario.objects.filter(id=usuario_id, user_auth__isnull=True).first()
 
     if not usuario or not usuario.nome_usuario:
