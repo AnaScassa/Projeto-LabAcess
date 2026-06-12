@@ -78,9 +78,9 @@ services:
       - ./users_service:/app
 
     environment:
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
-      JWT_ALGORITHM_FILE: /run/secrets/jwt_algorithm
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      JWT_SECRET: jwt_secret
+      JWT_ALGORITHM: jwt_algorithm
+      POSTGRES_PASSWORD: postgres_password
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: users_db
@@ -113,6 +113,31 @@ services:
     depends_on:
       - postgres
       - redis
+      - rabbitmq
+
+  csv_consumer:
+    build:
+      context: ./smartcard
+      dockerfile: docker/backend.Dockerfile
+
+    container_name: csv_consumer
+
+    volumes:
+      - ./smartcard:/app
+
+    secrets:
+      - secret_authorization
+      - secret_api_key
+
+    command: >
+      sh -c "
+        until python -c 'import socket; s=socket.socket(); s.connect((\"rabbitmq\",5672))'; do
+          echo 'Esperando rabbitmq...';
+          sleep 2;
+        done;
+        python smartcard/rpa_csv.py
+      "
+    depends_on:
       - rabbitmq
 
   frontend:

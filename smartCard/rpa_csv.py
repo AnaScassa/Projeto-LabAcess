@@ -1,9 +1,21 @@
 import json
 import base64
 from io import BytesIO
-
 import pika
 import requests
+import os
+import sys
+import django
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
+django.setup()
+
+from core.settings import SECRET_API_KEY
 
 def callback_csv(ch, method, properties, body):
     print("CHEGOU NO CALLBACK")
@@ -21,7 +33,7 @@ def callback_csv(ch, method, properties, body):
 
         response = requests.post("http://backend:8000/api/acesso/upload-xls/",
             headers={
-                "Authorization": f"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgxMTgyODY5LCJpYXQiOjE3ODExODEwNjksImp0aSI6Ijg1NzMxYzViYTlhNzQ5ZTI5YjA0ZTRiZTk3NzA1N2U3IiwidXNlcl9pZCI6IjU5NiJ9.lumBoQxv_pMbXgm4DMlff3hT0DtyebYZhOntAc9Xrvc"
+                "Authorization": f"{SECRET_API_KEY}"
             },
             files={
                 "file": (nome, arquivo, "text/csv")
