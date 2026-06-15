@@ -35,15 +35,9 @@ def obter_ultimos_csvs(quantidade=3):
         return []
     
 def enviar_arquivo_rabbit(arquivo):
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(
-            host="143.106.5.41",
-            port=5672
-        )
-    )
-
+    
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="143.106.5.41", port=5672))
     channel = connection.channel()
-
     channel.queue_declare(queue="csvs")
 
     with open(arquivo, "rb") as f:
@@ -54,12 +48,6 @@ def enviar_arquivo_rabbit(arquivo):
         "conteudo": conteudo
     }
 
-    channel.basic_publish(
-        exchange="",
-        routing_key="csvs",
-        body=json.dumps(mensagem)
-    )
-
+    channel.basic_publish(exchange="", routing_key="csvs", body=json.dumps(mensagem))
     print(f"Arquivo enviado: {mensagem['nome']}")
-
     connection.close()
