@@ -1,18 +1,20 @@
+import tempfile
+
 from django.core.cache import cache
 from django.utils import timezone
 
 from celery import shared_task, shared_task
-from celery import chain
-
 from .services import vincular_por_matricula
 from .models import Processamento, Usuario, Acesso
 from fuzzywuzzy import fuzz
 
+import uuid
 import pandas as pd
 import time
 import threading
 import pika
 import json
+import base64
 
 @shared_task(bind=True, queue="fila_rapida")
 def processar_xls(self, caminho_arquivo, task_id):
@@ -54,10 +56,15 @@ def processar_xls(self, caminho_arquivo, task_id):
     if resposta is None:
         raise Exception("Timeout esperando users_service")
 
-    dados = cache.get("users_global")
-    users = dados[resposta["users"]]
-    profiles = dados[resposta["profiles"]]
+    dados = cache.get(f"users_global_{task_id}")
 
+    if not dados:
+        print("CACHE NÃO ENCONTRADO")
+        return False
+
+    profiles = dados["profiles"]
+    users = dados["users"]
+    
     print("Dados recebidos!")
     print(f"USERS: {len(users)}")
     print(f"PROFILES: {len(profiles)}")
@@ -95,7 +102,7 @@ def processar_xls(self, caminho_arquivo, task_id):
             obj.save()
 
         if usuario.user_auth is None:
-            chain(tentar_vincular_user_auth.s(usuario.id)).apply_async()
+            tentar_vincular_user_auth.delay(usuario.id, task_id)
             print("PROCESSAMENTO FINALIZADO")
 
     if Acesso.objects.filter(apontamento=0):
@@ -103,7 +110,7 @@ def processar_xls(self, caminho_arquivo, task_id):
         
     Processamento.objects.filter(task_id=task_id).update(status="SUCCESS")
     print("FINALIZAÇÃO DE PROCESSAMENTO DE XLS")
-    cache.delete("users_global")
+    #cache.delete("users_global")
     print("CACHE LIMPO")
     print(cache.get("users_global"))
     
@@ -147,9 +154,15 @@ def processar_csv(self, caminho_arquivo, task_id):
         raise Exception("Timeout esperando users_service")
 
 
-    dados = cache.get("users_global")
-    users = dados[resposta["users"]]
-    profiles = dados[resposta["profiles"]]
+    dados = cache.get(f"users_global_{task_id}")
+
+    if not dados:
+        print("CACHE NÃO ENCONTRADO")
+        return False
+
+    profiles = dados["profiles"]
+    users = dados["users"]
+
     #cache.set("users_global", {"users": users, "profiles": profiles}, timeout=3600)
 
     print("Dados recebidos!")
@@ -200,7 +213,7 @@ def processar_csv(self, caminho_arquivo, task_id):
             obj.save()
 
         if usuario.user_auth is None:
-            chain(tentar_vincular_user_auth.s(usuario.id)).apply_async()
+            tentar_vincular_user_auth.delay(usuario.id, task_id)
             print("PROCESSAMENTO FINALIZADO")
 
     if Acesso.objects.filter(apontamento=0):
@@ -213,18 +226,24 @@ def processar_csv(self, caminho_arquivo, task_id):
     print(cache.get("users_global"))
 
 @shared_task(bind=True, queue="fila_media")
-def tentar_vincular_user_auth(self, usuario_id):
+def tentar_vincular_user_auth(self, usuario_id, task_id):
 
     self.update_state(state="STARTED")
-    task_id = self.request.root_id
-    dados = cache.get("users_global")
+    dados = cache.get(f"users_global_{task_id}")
 
     if not dados:
         print("CACHE NÃO ENCONTRADO")
         return False
 
-    profiles = dados[f"profiles_{task_id}"]
-    users = dados[f"users_{task_id}"]
+    profiles = dados["profiles"]
+    users = dados["users"]
+
+    if not dados:
+        print("CACHE NÃO ENCONTRADO")
+        return False
+    
+    profiles = dados[f"profiles"]
+    users = dados[f"users"]
 
     usuario = Usuario.objects.filter(id=usuario_id, user_auth__isnull=True).first()
 
@@ -234,22 +253,31 @@ def tentar_vincular_user_auth(self, usuario_id):
     vinculou = vincular_por_matricula(usuario, profiles)
 
     if not vinculou:
-        tentar_vincular_por_nome.delay(usuario.id)
+        tentar_vincular_por_nome.delay(usuario.id, task_id)
         
     return vinculou
 
 @shared_task(bind=True, queue="fila_pesada")
-def tentar_vincular_por_nome(self, usuario_id):
+def tentar_vincular_por_nome(self, usuario_id, task_id):
 
+    
     self.update_state(state="STARTED")
-    dados = cache.get("users_global")
+    dados = cache.get(f"users_global_{task_id}")
 
     if not dados:
         print("CACHE NÃO ENCONTRADO")
         return False
-    task_id = self.request.root_id
+
+    profiles = dados["profiles"]
+    users = dados["users"]
+
+    print("TASK ID:", task_id)
+    
+    if not dados:
+        print("CACHE NÃO ENCONTRADO")
+        return False
   
-    users = dados[f"users_{task_id}"]
+    users = dados[f"users"]
     
     usuario = Usuario.objects.filter(id=usuario_id, user_auth__isnull=True).first()
 
@@ -341,9 +369,46 @@ def iniciar_consumer_usuarios():
             print(f"ERRO ao processar resposta: {str(e)}")
 
     channel.basic_consume(queue="usuarios_resposta", on_message_callback=callback, auto_ack=True)
-
     print("Aguardando respostas do users_service...")
     channel.start_consuming()
+    
+def iniciar_consumer_csv():
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq", port=5672, credentials=pika.PlainCredentials("guest", "guest")))
+    channel = connection.channel()
+    channel.queue_declare(queue="csvs", durable=True)
+    channel.basic_consume(queue="csvs", on_message_callback=callback_csv)
+    print("Aguardando CSVs...")
+    channel.start_consuming()
+    
+def callback_csv(ch, method, properties, body):
+    try:
+        dados = json.loads(body)
+        nome = dados["nome"]
+        conteudo = base64.b64decode(dados["conteudo"])
 
-consumer_thread = threading.Thread(target=iniciar_consumer_usuarios, daemon=True)
-consumer_thread.start()
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as arquivo_temp:
+            arquivo_temp.write(conteudo)
+            caminho_arquivo = arquivo_temp.name
+
+        task_id = str(uuid.uuid4())
+        Processamento.objects.create(task_id=task_id, status="PENDING")
+        print(f"CSV enviado para processamento: {nome}")
+        processar_csv.delay(caminho_arquivo, task_id)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+
+    except Exception as e:
+        print("Erro callback:", repr(e))
+        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
+
+try:
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq", port=5672, credentials=pika.PlainCredentials("guest", "guest")))
+    print("Conectado ao RabbitMQ!")
+
+except Exception as e:
+    print("Erro ao conectar:", repr(e))
+    raise
+
+consumer_csv_thread = threading.Thread(target=iniciar_consumer_csv, daemon=True) 
+consumer_usuarios_thread = threading.Thread(target=iniciar_consumer_usuarios, daemon=True)
+consumer_csv_thread.start()
+consumer_usuarios_thread.start()

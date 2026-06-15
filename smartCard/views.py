@@ -9,6 +9,7 @@ from .models import Usuario, Acesso, Processamento
 from django_celery_results.models import TaskResult
 from django.db import transaction
 from smartcard.rabbitmq.publisher import enviar_mensagem
+from rest_framework_api_key.permissions import HasAPIKey
 
 import uuid
 
@@ -50,7 +51,7 @@ def mudar_apontamento(request, id):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated | HasAPIKey])
 def carregar_acesso(request):
 
     arquivo = request.FILES.get("file")
