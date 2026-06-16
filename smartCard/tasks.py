@@ -4,6 +4,7 @@ from django.core.cache import cache
 from django.utils import timezone
 
 from celery import shared_task, shared_task
+
 from .services import vincular_por_matricula
 from .models import Processamento, Usuario, Acesso
 from fuzzywuzzy import fuzz

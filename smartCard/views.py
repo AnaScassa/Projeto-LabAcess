@@ -92,3 +92,10 @@ def verificar_tasks_user(user, user_id):
 
     if total == success:
         Processamento.objects.filter(user=user).delete()
+        
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def buscar_registro(request):
+    print("Buscando registros para o usuário:", request.user.id)
+    enviar_mensagem("buscar",{"user_id": request.user.id})
+    return Response({"status": "enviado"})
