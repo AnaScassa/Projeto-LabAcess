@@ -15,9 +15,7 @@ def obter_ultimos_csvs(quantidade=3):
         ]
 
         if not csvs:
-            raise FileNotFoundError(
-                f"Nenhum arquivo CSV encontrado em {pasta}"
-            )
+            raise FileNotFoundError(f"Nenhum arquivo CSV encontrado em {pasta}")
 
         csvs_ordenados = sorted(csvs, key=os.path.getmtime, reverse=True)
 
@@ -38,7 +36,7 @@ def enviar_arquivo_rabbit(arquivo):
     
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="143.106.5.41", port=5672))
     channel = connection.channel()
-    channel.queue_declare(queue="csvs")
+    channel.queue_declare(queue="csvs", durable=True)
 
     with open(arquivo, "rb") as f:
         conteudo = base64.b64encode(f.read()).decode("utf-8")

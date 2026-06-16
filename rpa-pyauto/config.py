@@ -1,6 +1,25 @@
 import os
 from dotenv import load_dotenv
 from jsonFormatter import logger
+from infisical import InfisicalClient
+
+load_dotenv()
+
+def carregar_secrets_infisical():
+    try:
+        client = InfisicalClient(
+            client_id=os.getenv("INFISICAL_CLIENT_ID"),
+            client_secret=os.getenv("INFISICAL_CLIENT_SECRET")
+        )
+    
+        logger.info("Conectado ao Infisical")
+        return client
+        
+    except Exception as e:
+        logger.warning(f"Erro ao conectar Infisical: {e}")
+        return None
+
+INFISICAL_CLIENT = carregar_secrets_infisical()
 
 RABBITMQ_HOST = os.getenv('RABBITMQ_HOST', 'localhost')
 RABBITMQ_PORT = int(os.getenv('RABBITMQ_PORT', 5672))
