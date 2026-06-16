@@ -2,6 +2,7 @@ import { TailSpin } from "react-loader-spinner";
 import { useState, useEffect } from "react";
 import { useTreinamento } from "../hooks/useTreinamento";
 import { authFetch } from "../services/auth";
+import { buscarRegistro } from "../services/buscarRegistro";
 import GraficoAcessos from "../components/graficos/Acessos";
 import GraficosUsuariosAtivos from "../components/graficos/UsuariosAtivos";
 import UsoIndevidoCartao from "../components/relatorios/UsoIndevidoCartao";
@@ -16,6 +17,7 @@ export default function Upload() {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
+  const [bloqueado, setBloqueado] = useState(false);
   const { treinamentos } = useTreinamento();
   
   useEffect(() => {
@@ -62,6 +64,19 @@ export default function Upload() {
     const interval = setInterval(verificarProcessamento, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleBuscar = async () => {
+    try {
+      setBloqueado(true);
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 127000);
+    } catch (error) {
+      console.error(error);
+      setBloqueado(false);
+    }
+  };
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -166,23 +181,14 @@ export default function Upload() {
                 </div>
 
                 <div className="card-footer d-flex justify-content-center">
-                  <button className="btn btn-outline-secondary">
+                  <button className="btn btn-outline-secondary" onClick={() => {handleBuscar(); buscarRegistro();}} disabled={bloqueado}>
                     <i className="fas fa-sync-alt me-2"></i>
-                    Buscar registros dos últimos 5 minutos
+                    {bloqueado ? "Buscando registros..." : "Buscar registros dos últimos 5 minutos"}
                   </button>
                 </div>
 
               </div>
             </div>
-
-            <UsoIndevidoCartao/>
-
-          </div>
-        </section>
-
-        <section className="content px-4">
-          <div className="row">
-
             <div className="col-md-6">
               <div className="card" style={{ height: "400px" }}>
                 <div className="card-header">
@@ -191,6 +197,14 @@ export default function Upload() {
                   <UltimosAcessos />
               </div>
             </div>
+            
+          </div>
+        </section>
+
+        <section className="content px-4">
+          <div className="row">
+
+            <UsoIndevidoCartao/>
 
             <AcessoIndevidos/>
 

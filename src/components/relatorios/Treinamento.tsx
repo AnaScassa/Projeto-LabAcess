@@ -301,7 +301,7 @@ export default function CalculadorNaoExpirados({
   return (
     <div>
       <div className="mb-5 py-4">
-        <h4 className="mb-3">Treinamentos Não Expirados - Usuários com Pouco Acesso</h4>
+        <h4 className="mb-3">Usuários com Pouco Acesso</h4>
         <div className="card-body">
           <div className="dataTables_wrapper dt-bootstrap4">
             <div className="row">
