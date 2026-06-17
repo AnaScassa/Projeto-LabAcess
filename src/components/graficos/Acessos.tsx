@@ -73,12 +73,10 @@ export default function GraficoAcessos() {
 
         const anoAtual = new Date().getFullYear();
         const anoDesejado = anoAtual - 1;
-        const filteredMonthKeys = Array.from(monthMinutes.keys())
-          .filter((key) => {
-            const [year] = key.split("-").map(Number);
-            return year === anoDesejado;
-          })
-          .sort();
+        const filteredMonthKeys = Array.from(monthMinutes.keys()).filter((key) => {
+          const [year] = key.split("-").map(Number);
+          return year === anoDesejado;
+        }).sort();
 
         setLabels(filteredMonthKeys.map(formatMonthLabel));
         setValues(filteredMonthKeys.map((key) =>(monthMinutes.get(key) ?? 0) / 60));

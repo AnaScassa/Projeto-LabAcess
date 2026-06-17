@@ -2,6 +2,7 @@ export type Usuario = {
   matricula: string;
   nome_usuario: string;
   user_auth_id: string;
+  categoria?: string;
   acessos?: {
     id: number; 
     desc_area: string;

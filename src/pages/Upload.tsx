@@ -71,6 +71,7 @@ export default function Upload() {
 
       setTimeout(() => {
         window.location.reload();
+        console.log("Dados buscados!");
       }, 127000);
     } catch (error) {
       console.error(error);

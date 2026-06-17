@@ -45,30 +45,14 @@ export default function FiltroPortasCheckbox({
       <label className="mb-0">Filtrar Portas:</label>
 
       <div className="form-check m-0">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          checked={selecionadas.includes("todas")}
-          onChange={() => toggle("todas")}
-          id="todas"
-        />
-        <label className="form-check-label" htmlFor="todas">
-          Todas
-        </label>
+        <input className="form-check-input" type="checkbox" checked={selecionadas.includes("todas")} onChange={() => toggle("todas")} id="todas"/>
+        <label className="form-check-label" htmlFor="todas">Todas</label>
       </div>
 
       {portas.map((p, i) => (
         <div className="form-check m-0" key={i}>
-          <input
-            className="form-check-input"
-            type="checkbox"
-            checked={selecionadas.includes(p)}
-            onChange={() => toggle(p)}
-            id={p}
-          />
-          <label className="form-check-label" htmlFor={p}>
-            {p}
-          </label>
+          <input className="form-check-input" type="checkbox" checked={selecionadas.includes(p)} onChange={() => toggle(p)} id={p}/>
+          <label className="form-check-label" htmlFor={p}>{p}</label>
         </div>
       ))}
     </div>
