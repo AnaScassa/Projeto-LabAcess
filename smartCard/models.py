@@ -4,22 +4,13 @@ class Usuario(models.Model):
     matricula = models.CharField(max_length=20, unique=True)
     nome_usuario = models.CharField(max_length=100)
     categoriaUsuario = models.CharField(max_length=50, blank=True, null=True)
-
-    user_auth = models.BigIntegerField(
-        null=True,
-        blank=True
-    )
+    user_auth = models.BigIntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.nome_usuario} ({self.matricula})"
 
 class Acesso(models.Model):
-    usuario = models.ForeignKey(
-        Usuario,
-        to_field = 'matricula',
-        related_name ='acessos',
-        on_delete=models.CASCADE
-    ) 
+    usuario = models.ForeignKey(Usuario, to_field = 'matricula', related_name ='acessos', on_delete=models.CASCADE) 
     data_acesso = models.DateTimeField(null=True, blank=True)
     desc_evento = models.CharField(max_length=100) 
     desc_area = models.CharField(max_length=100) 

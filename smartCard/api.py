@@ -32,19 +32,16 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all().order_by("name")
     serializer_class = GroupSerializer
     permission_classes = [IsAuthenticated]
-    #authentication_classes = [JWTAuthentication, SessionAuthentication]
 
 class AcessoViewSet(viewsets.ModelViewSet):
     queryset = Acesso.objects.all() 
     serializer_class = AcessoSerializer
     permission_classes = [IsAuthenticated]
-    #authentication_classes = [JWTAuthentication, SessionAuthentication]
 
 class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Usuario.objects.all().order_by("nome_usuario")
     serializer_class = UsuarioSerializer 
     permission_classes = [IsAuthenticated]
-    #authentication_classes = [JWTAuthentication, SessionAuthentication]
 
     def get_queryset(self):
         return super().get_queryset()

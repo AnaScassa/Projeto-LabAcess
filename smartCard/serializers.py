@@ -21,6 +21,7 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
             'user_auth_id',
             'matricula',
             'nome_usuario',
+            'categoriaUsuario',
             'acessos',
         ]
 
@@ -33,7 +34,7 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
                 "data_acesso": localtime(acesso.data_acesso),
                 "desc_area": acesso.desc_area,
                 "ent_sai": acesso.ent_sai,
-                "apontamento": acesso.apontamento
+                "apontamento": acesso.apontamento,
             }
             for acesso in acessos
         ]
@@ -44,11 +45,7 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AcessoSerializer(serializers.HyperlinkedModelSerializer):
-    usuario = serializers.SlugRelatedField(
-        slug_field='matricula',
-        queryset=Usuario.objects.all()
-    )
-
+    usuario = serializers.SlugRelatedField(slug_field='matricula', queryset=Usuario.objects.all())
     username_auth = serializers.SerializerMethodField()
     email_auth = serializers.SerializerMethodField()
     _perfil_cache = {}
@@ -65,6 +62,7 @@ class AcessoSerializer(serializers.HyperlinkedModelSerializer):
             'desc_leitor',
             'ent_sai',
             'username_auth',
+            'categoriaUsuario',
             'email_auth',
         ]
 
