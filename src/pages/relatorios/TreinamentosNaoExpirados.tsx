@@ -11,17 +11,10 @@ export default function RelatorioNaoExpirados() {
   const { users } = useUsers();
   const { treinamentos } = useTreinamento();
   const { usuarios } = useUsuarios();
-
   const [portasSelecionadas, setPortasSelecionadas] = useState<string[]>([]);
 
   const portas = useMemo(() => {
-    return Array.from(
-      new Set(
-        Array.isArray(usuarios)
-          ? usuarios.flatMap((u) => u.acessos?.map((a) => a.desc_area) || [])
-          : []
-      )
-    );
+    return Array.from(new Set(Array.isArray(usuarios) ? usuarios.flatMap((u) => u.acessos?.map((a) => a.desc_area) || []): []));
   }, [usuarios]);
 
   return (
@@ -35,18 +28,9 @@ export default function RelatorioNaoExpirados() {
                 <h3 className="card-title">Treinamentos não expirados</h3>
               </div>
               <div className="py-4">
-                <FiltroPortasCheckbox
-                  portas={portas}
-                  selecionadas={portasSelecionadas}
-                  onChange={setPortasSelecionadas}
-                />
-                </div>
-                <CalculadorNaoExpirados
-                  users={users}
-                  usuarios={usuarios}
-                  treinamentos={treinamentos}
-                  portasSelecionadas={portasSelecionadas}
-                />
+                <FiltroPortasCheckbox portas={portas} selecionadas={portasSelecionadas} onChange={setPortasSelecionadas}/>
+              </div>
+                <CalculadorNaoExpirados users={users} usuarios={usuarios} treinamentos={treinamentos} portasSelecionadas={portasSelecionadas}/>
             </div>
           </div>
         </div>

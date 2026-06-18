@@ -34,7 +34,7 @@ export default function GraficosUsuariosAtivos() {
           .map((u: Usuario) => {
             const nome = primeiroUltimoNome( u.nome_usuario || u.matricula || "Sem nome");
             const minutos = calcularTempoUsuario(u, "CCS_LAB", null, null);
-            const categoria = u.categoria;
+            const categoria = u.categoriaUsuario;
             return { usuario: nome, minutos, categoria };
           }).sort((a, b) => b.minutos - a.minutos).slice(0, 6);
 

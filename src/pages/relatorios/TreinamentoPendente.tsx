@@ -7,7 +7,6 @@ export default function RelatorioTreinamentoPendente() {
   const { users } = useUsers();
   const { treinamentos } = useTreinamento();
 
-
   return (
     <div className="wrapper">
       <Menu />
@@ -18,10 +17,8 @@ export default function RelatorioTreinamentoPendente() {
               <div className="tituloUltimoMes">
                 <h3 className="card-title">Treinamentos pendentes</h3>
               </div>
-              <CalculadorTreinamentoPendente
-                users={users}
-                treinamentos={treinamentos}
-              />
+
+              <CalculadorTreinamentoPendente users={users} treinamentos={treinamentos}/>
             </div>
           </div>
         </div>

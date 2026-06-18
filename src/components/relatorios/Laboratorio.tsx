@@ -9,6 +9,7 @@ interface CalculadorLabProps {
   usuarios: any[];
   tempoInicio: Date | null;
   tempoFim: Date | null;
+  categoriasSelecionadas: string[];
 }
 
 type SortField = "usuario" | "tempoTotal";
@@ -16,7 +17,8 @@ type SortField = "usuario" | "tempoTotal";
 export default function CalculadorLab({
   usuarios = [],
   tempoInicio,
-  tempoFim
+  tempoFim,
+  categoriasSelecionadas
 }: CalculadorLabProps) {
     const [relatorio, setRelatorio] = useState<Relatorio[]>([]);
     const [totalSistema, setTotalSistema] = useState("0h 0min");
@@ -76,18 +78,36 @@ export default function CalculadorLab({
     };
 
     const visiblePages = getVisiblePages(page, totalPaginas);
+    const usuariosFiltrados = usuarios.filter((u) => {
+    if (categoriasSelecionadas.length === 0 ||categoriasSelecionadas.includes("todas")) {
+      return true;
+    }
+
+    const ehAluno = !isNaN(Number(u.categoriaUsuario));
+      
+    if (ehAluno && categoriasSelecionadas.includes("ALUNO")) {
+      return true;
+    }
+
+    if (u.categoriaUsuario === "FUNCIONARIO" && categoriasSelecionadas.includes("FUNCIONARIO")){
+      return true;
+    }
+
+    return false;
+    });
 
     useEffect(() => {
       const resultado: Relatorio[] = [];
       let contadorUsuarios = 0;
       let totalGeral = 0;
 
-      usuarios.forEach((user) => {
+      usuariosFiltrados.forEach((user) => {
         const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, tempoInicio, tempoFim);
         if (totalUsuario > 0) {
           totalGeral += totalUsuario;
         }
-        contadorUsuarios = processarResultadoUsuario(totalUsuario, user, usuarios, resultado, contadorUsuarios);
+
+        contadorUsuarios = processarResultadoUsuario(totalUsuario, user, usuariosFiltrados, resultado, contadorUsuarios);
       });
 
       const { horas, minutos } = mediaHorasMinutos(totalGeral, contadorUsuarios);
@@ -98,7 +118,7 @@ export default function CalculadorLab({
       setTotalSistema(`${horas2}h ${minutos2}min`);
       setContagemUsuario(contadorUsuarios);
 
-  }, [usuarios, tempoInicio, tempoFim]);
+    }, [usuariosFiltrados, tempoInicio, tempoFim]);
 
 
 

@@ -6,6 +6,7 @@ interface SemAcessoProps {
   usuarios: any[];
   tempoInicio: Date | null;
   tempoFim: Date | null;
+  categoriasSelecionadas: string[];
 }
 
 interface UsuarioSemAcesso {
@@ -15,7 +16,8 @@ interface UsuarioSemAcesso {
 export default function SemAcesso({
   usuarios = [],
   tempoInicio,
-  tempoFim
+  tempoFim,
+  categoriasSelecionadas
 }: SemAcessoProps) {
 
   const [semAcesso, setSemAcesso] = useState<UsuarioSemAcesso[]>([]);
@@ -27,9 +29,7 @@ export default function SemAcesso({
 
   const semAcessoOrdenado = useMemo(() => {
     return [...semAcesso].sort((a, b) => {
-      return sortAsc
-        ? a.usuario.localeCompare(b.usuario, "pt", { sensitivity: "base" })
-        : b.usuario.localeCompare(a.usuario, "pt", { sensitivity: "base" });
+      return sortAsc ? a.usuario.localeCompare(b.usuario, "pt", { sensitivity: "base" }) : b.usuario.localeCompare(a.usuario, "pt", { sensitivity: "base" });
     });
   }, [semAcesso, sortAsc]);
 
@@ -62,14 +62,31 @@ export default function SemAcesso({
   };
 
   const visiblePages = getVisiblePages(page, totalPaginas);
+  const usuariosFiltrados = usuarios.filter((u) => {
+  if (categoriasSelecionadas.length === 0 ||categoriasSelecionadas.includes("todas")) {
+    return true;
+  }
 
+    const ehAluno = !isNaN(Number(u.categoriaUsuario));
+    
+    if (ehAluno && categoriasSelecionadas.includes("ALUNO")) {
+      return true;
+    }
+
+    if (u.categoriaUsuario === "FUNCIONARIO" && categoriasSelecionadas.includes("FUNCIONARIO")){
+      return true;
+    }
+
+    return false;
+  });
+  
   useEffect(() => {
     const semAcessoLista: UsuarioSemAcesso[] = [];
     let contadorUsuarios = 0;
 
     const usuariosMap: Record<string, any> = {};
 
-    usuarios.forEach((u) => {
+    usuariosFiltrados.forEach((u) => {
       const base = getMatriculaBase(u.matricula);
 
       if (!usuariosMap[base]) {
@@ -80,12 +97,7 @@ export default function SemAcesso({
     const usuariosUnicos = Object.values(usuariosMap);
 
     usuariosUnicos.forEach((user: any) => {
-      const totalUsuario = calcularTempoUsuario(
-        user,
-        PORTA_LAB,
-        tempoInicio,
-        tempoFim
-      );
+      const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, tempoInicio, tempoFim);
 
       if (totalUsuario === 0) {
         contadorUsuarios++;
@@ -97,7 +109,7 @@ export default function SemAcesso({
 
     setSemAcesso(semAcessoLista);
     setContagemUsuario(contadorUsuarios);
-  }, [usuarios, tempoInicio, tempoFim]);
+  },[usuarios, tempoInicio, tempoFim, categoriasSelecionadas]);
 
   useEffect(() => {
     setPage(0);
@@ -113,13 +125,7 @@ export default function SemAcesso({
               <table className="table table-bordered table-hover dataTable text-left">
                 <thead>
                   <tr>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        setSortAsc((prev) => !prev);
-                        setPage(0);
-                      }}
-                    >
+                    <th style={{ cursor: "pointer" }} onClick={() => {setSortAsc((prev) => !prev); setPage(0);}}>
                       Usuário {sortAsc ? "▲" : "▼"}
                     </th>
                   </tr>
@@ -130,13 +136,11 @@ export default function SemAcesso({
                     <tr>
                       <td colSpan={1}>Todos os usuários acessaram o laboratório.</td>
                     </tr>
-                  ) : (
-                    paginaVisivel.map((u, i) => (
-                      <tr key={i}>
-                        <td>{u.usuario}</td>
-                      </tr>
-                    ))
-                  )}
+                  ) : (paginaVisivel.map((u, i) => (
+                    <tr key={i}>
+                      <td>{u.usuario}</td>
+                    </tr>
+                    )))}
                 </tbody>
               </table>
             </div>
@@ -167,14 +171,10 @@ export default function SemAcesso({
                         <li key={idx} className="paginate_button page-item disabled">
                           <span className="page-link">...</span>
                         </li>
-                      );
-                    }
+                      );}
                     const pageNum = item as number;
                     return (
-                      <li
-                        key={idx}
-                        className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}
-                      >
+                      <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
                         <button className="page-link" onClick={() => setPage(pageNum)}>
                           {pageNum + 1}
                         </button>

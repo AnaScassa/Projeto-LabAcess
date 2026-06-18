@@ -9,9 +9,14 @@ type SortFieldPouco = "nome" | "tempoTotal";
 
 interface CalculadorLabProps {
   usuarios: any[];
+  categoriasSelecionadas: string[];
 }
 
-export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
+export default function CalculadorLab({ 
+  usuarios = [] ,
+  categoriasSelecionadas
+}: CalculadorLabProps) {
+
   const [relatorio, setRelatorio] = useState<Relatorio[]>([]);
   const [totalSistema, setTotalSistema] = useState("0h 0min");
   const [contagemUsuario, setContagemUsuario] = useState(0);
@@ -22,6 +27,24 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
   const [sortAscPouco, setSortAscPouco] = useState(true);
   const PORTA_LAB = "CCS_LAB";
 
+  const usuariosFiltrados = usuarios.filter((u) => {
+  if (categoriasSelecionadas.length === 0 ||categoriasSelecionadas.includes("todas")) {
+    return true;
+  }
+
+    const ehAluno = !isNaN(Number(u.categoriaUsuario));
+    
+    if (ehAluno && categoriasSelecionadas.includes("ALUNO")) {
+      return true;
+    }
+
+    if (u.categoriaUsuario === "FUNCIONARIO" && categoriasSelecionadas.includes("FUNCIONARIO")){
+      return true;
+    }
+
+    return false;
+  });
+
   useEffect(() => {
     const resultado: Relatorio[] = [];
     const hoje = new Date();
@@ -31,17 +54,16 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
     let totalGeral = 0;
 
     umMesAtras.setMonth(hoje.getMonth() - 1);
-
-    usuarios.forEach((user) => {
-      const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, umMesAtras, hoje);
+    usuariosFiltrados.forEach((user) => {const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, umMesAtras, hoje);
 
       if (totalUsuario > 0) {
         contadorUsuarios++;
         totalGeral += totalUsuario;
+
         const { horas2, minutos2 } = minutosParaHoras(totalUsuario);
 
         resultado.push({
-          usuario: getNomeUsuario(user.matricula, usuarios),
+          usuario: getNomeUsuario(user.matricula, usuariosFiltrados),
           tempoTotal: `${horas2}h ${minutos2}min`,
           tempoTotalMinutos: totalUsuario,
         });
@@ -55,7 +77,7 @@ export default function CalculadorLab({ usuarios = [] }: CalculadorLabProps) {
     setTotalSistema(`${total.horas2}h ${total.minutos2}min`);
     setContagemUsuario(contadorUsuarios);
     setMediaTempo(`${media.horas}h ${media.minutos}min`);
-  }, [usuarios]);
+  }, [usuariosFiltrados]);
 
   const relatorioOrdenado = useMemo(() => {
     return [...relatorio].sort((a, b) => {
