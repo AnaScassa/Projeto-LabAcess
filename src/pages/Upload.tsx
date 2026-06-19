@@ -11,6 +11,7 @@ import Menu from "../components/style/Menu";
 import { API_HOST } from "../utils/static";
 import AcessoIndevidos from "../components/relatorios/AcessosIndevidos";
 import UltimosAcessos from "../components/relatorios/UltimosAcessos";
+import StatusAluno from "../components/relatorios/StatusUsuario"
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
@@ -210,6 +211,10 @@ export default function Upload() {
             <AcessoIndevidos/>
 
           </div>
+        </section>
+
+        <section className="content px-4">
+            <StatusAluno/>      
         </section>
 
         <section className="content px-4">
