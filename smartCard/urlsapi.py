@@ -1,4 +1,4 @@
-from smartcard.views import buscar_registro, carregar_acesso, lista_usuarios, mudar_apontamento
+from smartcard.views import buscar_registro, carregar_acesso, lista_usuarios, mudar_apontamento, usuarios_ativos
 from smartcard.api import AcessoViewSet, GroupViewSet, UsuarioViewSet, TaskCompleted, ApontamentoViewSet
 
 from django.urls import include, path
@@ -19,4 +19,5 @@ urlpatterns = [
     path("lista-usuarios/", lista_usuarios, name="lista_usuarios"),
     path("desativar-apontamento/<int:id>/", mudar_apontamento, name="desativar_apontamento"),
     path("buscar-registro/", buscar_registro, name="buscar_registro"),
+    path("usuarios-ativos", usuarios_ativos, name="usuarios_ativos"),
 ]

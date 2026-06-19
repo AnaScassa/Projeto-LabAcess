@@ -1,12 +1,6 @@
 from urllib3 import request
 
-from smartcard.serializers import (
-    GroupSerializer,
-    AcessoSerializer,
-    UsuarioSerializer,
-    ProcessamentoSerializer,
-    ApontamentoSerializer
-)
+from smartcard.serializers import (GroupSerializer, AcessoSerializer, UsuarioSerializer, ProcessamentoSerializer, ApontamentoSerializer)
 
 from rest_framework.response import Response
 from rest_framework import viewsets

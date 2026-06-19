@@ -2,6 +2,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
@@ -10,6 +12,7 @@ from django_celery_results.models import TaskResult
 from django.db import transaction
 from smartcard.rabbitmq.publisher import enviar_mensagem
 from rest_framework_api_key.permissions import HasAPIKey
+from datetime import date
 
 import uuid
 
@@ -20,14 +23,33 @@ def lista_acessos(request):
     return Response(list(acessos), status=status.HTTP_200_OK)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def lista_usuarios(request):
     usuarios = Usuario.objects.values('id', 'nome_usuario')
     return Response(list(usuarios), status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def usuarios_ativos(request):
+    hoje = date.today()
+
+    acessos = (
+        Acesso.objects.filter(data_acesso__date=hoje).order_by('usuario_id', '-data_acesso').values('id', 'usuario_id', 'data_acesso', 'desc_evento', 'desc_area', 'ent_sai'))
+
+    ultimos_acessos = {}
+
+    for acesso in acessos:
+        usuario_id = acesso['usuario_id']
+
+        if usuario_id not in ultimos_acessos:
+            ultimos_acessos[usuario_id] = acesso
+
+    return JsonResponse(list(ultimos_acessos.values()), safe=False)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def acessos_erro(request):
-    acessos = Acesso.objects.filter(apontamento__in=[1, 2]).values('id', 'data_acesso', 'desc_evento', 'usuario_id', 'apontamento',)
+    acessos = Acesso.objects.filter(apontamento__in=[1, 2]).values('id', 'data_acesso', 'desc_evento', 'usuario_id', 'apontamento')
     
     # 0 = acessos sem erro
     # 1 = acessos com desc_evento inconsistente
