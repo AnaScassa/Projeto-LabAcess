@@ -11,7 +11,6 @@ export function useUsuarios() {
       const data = await carregarUsuarios();
       setUsuarios(data);
       setLoading(false);
-      console.log("usuarios carregados:", usuarios);
     }
 
     load();

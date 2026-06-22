@@ -34,9 +34,6 @@ export async function carregarUsuarios(): Promise<Usuario[]> {
     }
 
     const data = await res.json();
-
-    console.log("usuarios carregados:", data);
-
     return data;
 
   } catch (error) {

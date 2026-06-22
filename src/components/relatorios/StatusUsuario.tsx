@@ -35,8 +35,10 @@ export default function StatusAluno() {
           };
         });
 
-        setUsuariosCCS(usuariosComNome.filter((u) => u.ent_sai === "1" && u.desc_area?.toUpperCase() === "CCS"));
-        setUsuariosLab(usuariosComNome.filter((u) => u.ent_sai === "1" && (u.desc_area?.toUpperCase() === "LAB" || u.desc_area?.toUpperCase() === "CCS_LAB")));
+        const ordenarPorData = (lista: UsuarioComNome[]) => [...lista].sort((a, b) => new Date(b.data_acesso).getTime() - new Date(a.data_acesso).getTime());
+
+        setUsuariosCCS(ordenarPorData(usuariosComNome.filter((u) => u.ent_sai === "1" && u.desc_area?.toUpperCase() === "CCS")));
+        setUsuariosLab(ordenarPorData(usuariosComNome.filter((u) => u.ent_sai === "1" && (u.desc_area?.toUpperCase() === "LAB" || u.desc_area?.toUpperCase() === "CCS_LAB"))));
 
       } catch (error) {
         console.error(error);
