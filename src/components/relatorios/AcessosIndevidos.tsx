@@ -18,10 +18,9 @@ export default function AcessoIndevidos() {
     return dataAcesso >= umaSemanaAtras && dataAcesso < hoje;
   };
 
-  const filteredApontamentos = apontamento.filter((ap: Apontamento) =>
-    (String(ap.apontamento) === "2" || Number(ap.apontamento) === 2) && isLastWeek(ap.data_acesso))
+  const filteredApontamentos = apontamento.filter((ap: Apontamento) => (String(ap.apontamento) === "2" || Number(ap.apontamento) === 2) && isLastWeek(ap.data_acesso))
     .sort((a: Apontamento, b: Apontamento) => new Date(b.data_acesso).getTime()  - new Date(a.data_acesso).getTime());
-
+    
   const handleLimparTodos = () => {
     const ids = filteredApontamentos.map((ap: Apontamento) => ap.id);
     handleApontamentoMultiple(ids);
@@ -73,9 +72,7 @@ export default function AcessoIndevidos() {
                           {ap.ent_sai === "1" ? "Usuário entrou e não saiu" : "Usuário saiu e não entrou"}
                         </td>
                         <td>
-                          <button
-                            onClick={() => handleApontamento(ap.id)}
-                            className="btn btn-danger d-flex justify-content-center align-items-center"
+                          <button onClick={() => handleApontamento(ap.id)} className="btn btn-danger d-flex justify-content-center align-items-center"
                             style={{width: "55px", height: "35px", padding: 0}}>
                             <i className="fas fa-trash m-0"></i>
                           </button>

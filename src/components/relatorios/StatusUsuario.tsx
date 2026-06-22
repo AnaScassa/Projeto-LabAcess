@@ -62,7 +62,7 @@ export default function StatusAluno() {
             <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 1 }}>
               <tr>
                 <th>Usuário</th>
-                <th>Último acesso</th>
+                <th>Última Entrada</th>
               </tr>
             </thead>
 
@@ -102,7 +102,7 @@ export default function StatusAluno() {
             <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 1 }}>
               <tr>
                 <th>Usuário</th>
-                <th>Último acesso</th>
+                <th>Última Entrada</th>
               </tr>
             </thead>
 

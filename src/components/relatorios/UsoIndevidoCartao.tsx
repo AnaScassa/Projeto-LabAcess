@@ -69,9 +69,7 @@ export default function UsoIndevidoCartao() {
                       </td>
                       <td>{ap.desc_evento}</td>
                       <td>
-                        <button
-                          onClick={() => handleApontamento(ap.id)}
-                          className="btn btn-danger d-flex justify-content-center align-items-center"
+                        <button onClick={() => {handleApontamento(ap.id); }} className="btn btn-danger d-flex justify-content-center align-items-center"
                           style={{ width: "55px", height: "35px", padding: 0 }}>
                           <i className="fas fa-trash m-0"></i>
                         </button>
