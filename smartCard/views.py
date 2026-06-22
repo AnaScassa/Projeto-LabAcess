@@ -34,7 +34,8 @@ def usuarios_ativos(request):
     hoje = date.today()
 
     acessos = (
-        Acesso.objects.filter(data_acesso__date=hoje).order_by('usuario_id', '-data_acesso').values('id', 'usuario_id', 'data_acesso', 'desc_evento', 'desc_area', 'ent_sai'))
+        Acesso.objects.filter(data_acesso__date=hoje).order_by('usuario_id', '-data_acesso').values('id', 'usuario_id', 'data_acesso', 'desc_evento', 'desc_area', 'ent_sai')
+    )
 
     ultimos_acessos = {}
 

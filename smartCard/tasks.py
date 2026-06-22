@@ -111,7 +111,6 @@ def processar_xls(self, caminho_arquivo, task_id):
         
     Processamento.objects.filter(task_id=task_id).update(status="SUCCESS")
     print("FINALIZAÇÃO DE PROCESSAMENTO DE XLS")
-    #cache.delete("users_global")
     print("CACHE LIMPO")
     print(cache.get("users_global"))
     
@@ -163,8 +162,6 @@ def processar_csv(self, caminho_arquivo, task_id):
 
     profiles = dados["profiles"]
     users = dados["users"]
-
-    #cache.set("users_global", {"users": users, "profiles": profiles}, timeout=3600)
 
     print("Dados recebidos!")
     print(f"USERS: {len(users)}")
@@ -311,8 +308,9 @@ def tentar_vincular_por_nome(self, usuario_id, task_id):
 
 def marcar_apontamento2(acesso):
     if acesso.desc_evento == "Apontamento Normal":
-        acesso.apontamento = 2
-        acesso.save(update_fields=["apontamento"])
+        if acesso.apontamento != 3:
+            acesso.apontamento = 2
+            acesso.save(update_fields=["apontamento"])
 
 
 def corrigir_entradas_saida_inconsistentes():
