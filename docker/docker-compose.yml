@@ -62,6 +62,7 @@ services:
       - redis
       - rabbitmq
       - users_service
+      - mailhog
 
   users_service:
     build:
@@ -115,31 +116,7 @@ services:
       - postgres
       - redis
       - rabbitmq
-
-  csv_consumer:
-    build:
-      context: ./smartcard
-      dockerfile: docker/backend.Dockerfile
-
-    container_name: csv_consumer
-
-    volumes:
-      - ./smartcard:/app
-
-    secrets:
-      - secret_authorization
-      - secret_api_key
-
-    command: >
-      sh -c "
-        until python -c 'import socket; s=socket.socket(); s.connect((\"rabbitmq\",5672))'; do
-          echo 'Esperando rabbitmq...';
-          sleep 2;
-        done;
-        python smartcard/rpa_csv.py
-      "
-    depends_on:
-      - rabbitmq
+      - mailhog
 
   frontend:
     build:
@@ -194,6 +171,14 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+    restart: always
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
     restart: always
   
 secrets:

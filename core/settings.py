@@ -221,3 +221,9 @@ CACHES = {
 
 SECRET_API_KEY = read_secret('secret_api_key')
 SECRET_AUTHORIZATION = read_secret('secret_authorization')
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "mailhog"
+EMAIL_PORT = 1025
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = False

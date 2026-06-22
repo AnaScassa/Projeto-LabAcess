@@ -2,13 +2,14 @@ import tempfile
 
 from django.core.cache import cache
 from django.utils import timezone
+from django.core.mail import send_mail
 
 from celery import shared_task, shared_task
 
 from .services import vincular_por_matricula
 from .models import Processamento, Usuario, Acesso
 from fuzzywuzzy import fuzz
-
+import smtplib
 import uuid
 import pandas as pd
 import time
@@ -199,6 +200,20 @@ def processar_csv(self, caminho_arquivo, task_id):
         data = timezone.make_aware(pd.to_datetime(data_str, dayfirst=True))
         desc_evento = row.get("Evento", "")
         apontamento = (0 if desc_evento == "Apontamento Normal" else 1)
+        
+        if apontamento == 1:
+            print("CHEGOU NO IF BLOCK")
+            print("APONTAMENTO:", apontamento)
+            try:
+                send_mail(
+                    "Subject here",
+                    "Here is the message.",
+                    "qualquer@coisa.com",
+                    ["qualquer@destino.com"],
+                )
+                print("EMAIL ENVIADO")
+            except Exception as e:
+                print("ERRO EMAIL:", e)
 
         obj, created = Acesso.objects.get_or_create(usuario=usuario, data_acesso=data, desc_evento=desc_evento, desc_area=row.get("Área", ""), 
             ent_sai=row.get("E/S", ""), defaults={
@@ -319,7 +334,7 @@ def corrigir_entradas_saida_inconsistentes():
             acessos = Acesso.objects.filter(usuario=usuario, desc_area=area).order_by('data_acesso')
             stack = None
             for acesso in acessos:
-                if acesso.ent_sai == '1':  
+                if acesso.ent_sai == '1':
                     if stack is not None:
                         marcar_apontamento2(acesso)
                     stack = acesso
