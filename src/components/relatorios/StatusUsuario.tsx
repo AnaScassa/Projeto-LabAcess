@@ -6,7 +6,7 @@ import type { Usuario } from "../../types/Usuario";
 type UsuarioAtivo = {
   usuario_id: string;
   desc_area: string;
-  ent_sai: number;
+  ent_sai: string;
   data_acesso: string;
 }
 
@@ -35,8 +35,8 @@ export default function StatusAluno() {
           };
         });
 
-        setUsuariosCCS(usuariosComNome.filter((u) => u.desc_area?.toUpperCase().includes("CCS")));
-        setUsuariosLab(usuariosComNome.filter((u) => u.desc_area?.toUpperCase().includes("LAB")));
+        setUsuariosCCS(usuariosComNome.filter((u) => u.ent_sai === "1" && u.desc_area?.toUpperCase() === "CCS"));
+        setUsuariosLab(usuariosComNome.filter((u) => u.ent_sai === "1" && (u.desc_area?.toUpperCase() === "LAB" || u.desc_area?.toUpperCase() === "CCS_LAB")));
 
       } catch (error) {
         console.error(error);

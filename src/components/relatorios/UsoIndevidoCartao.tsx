@@ -41,9 +41,7 @@ export default function UsoIndevidoCartao() {
           </div>
         </div>
 
-        <div
-          className="card-body p-0"
-          style={{ maxHeight: "340px", overflowY: "auto" }}>
+        <div className="card-body p-0" style={{ maxHeight: "340px", overflowY: "auto" }}>
           <table className="table table-striped mb-0">
             
             <thead className="table-light" style={{ position: "sticky", top: 0 }}>
