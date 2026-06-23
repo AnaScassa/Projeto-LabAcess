@@ -12,6 +12,8 @@ import { API_HOST } from "../utils/static";
 import AcessoIndevidos from "../components/relatorios/AcessosIndevidos";
 import UltimosAcessos from "../components/relatorios/UltimosAcessos";
 import StatusAluno from "../components/relatorios/StatusUsuario"
+import { solicitarPermissaoNotificacao } from "../utils/notificacoes";
+import { useMailhogNotifications } from "../hooks/useMailhogNotifications";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
@@ -20,10 +22,12 @@ export default function Upload() {
   const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
   const [bloqueado, setBloqueado] = useState(false);
   const { treinamentos } = useTreinamento();
+
+  useMailhogNotifications();
   
   useEffect(() => {
     const storedToken = localStorage.getItem("access");
-    
+    solicitarPermissaoNotificacao();
     if (!storedToken) {
       window.location.replace("/login");
       return;
