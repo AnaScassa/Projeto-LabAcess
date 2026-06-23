@@ -206,12 +206,19 @@ def processar_csv(self, caminho_arquivo, task_id):
             print("APONTAMENTO:", apontamento)
             try:
                 send_mail(
-                    "Subject here",
-                    "Here is the message.",
-                    "qualquer@coisa.com",
-                    ["qualquer@destino.com"],
+                    "Novo uso indevido do cartão detectado",
+                    f"""
+                    Evento: {desc_evento}
+                    Usuario: {nome_usuario}
+                    Matricula: {matricula}
+                    Data/Hora: {data}
+                    Area: {row.get('Área', '')}
+                    Leitor: {row.get('Leitor', '')}
+                    """,
+                    "sistema@local.com",
+                    ["CCSNANO"],
+                    fail_silently=False,
                 )
-                print("EMAIL ENVIADO")
             except Exception as e:
                 print("ERRO EMAIL:", e)
 

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.http import JsonResponse
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
@@ -15,6 +15,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from datetime import date
 
 import uuid
+import requests
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -122,3 +123,13 @@ def buscar_registro(request):
     print("Buscando registros para o usuário:", request.user.id)
     enviar_mensagem("buscar",{"user_id": request.user.id})
     return Response({"status": "enviado"})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def emails(request):
+    try:
+        r = requests.get("http://mailhog:8025/api/v2/messages", timeout=5)
+        return JsonResponse(r.json(), safe=False, status=r.status_code)
+
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({"error": "MailHog indisponível", "details": str(e)}, status=500)
