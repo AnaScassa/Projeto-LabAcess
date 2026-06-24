@@ -2,14 +2,16 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
+
+from django.http import JsonResponse
+from django.core.cache import cache
+from django.db import transaction
+from django_celery_results.models import TaskResult
 
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
 from .models import Usuario, Acesso, Processamento
-from django_celery_results.models import TaskResult
-from django.db import transaction
 from smartcard.rabbitmq.publisher import enviar_mensagem
 from rest_framework_api_key.permissions import HasAPIKey
 from datetime import date
@@ -129,7 +131,24 @@ def buscar_registro(request):
 def emails(request):
     try:
         r = requests.get("http://mailhog:8025/api/v2/messages", timeout=5)
-        return JsonResponse(r.json(), safe=False, status=r.status_code)
+        data = r.json()
+
+        emails = data.get("items", [])
+
+        ja_enviados = cache.get("emails_enviados", [])
+
+        novos = []
+
+        for email in emails:
+            email_id = email["ID"]
+
+            if email_id not in ja_enviados:
+                novos.append(email)
+                ja_enviados.append(email_id)
+
+        cache.set("emails_enviados", ja_enviados, timeout=3600)
+
+        return JsonResponse({"items": novos, "total_novos": len(novos)})
 
     except requests.exceptions.RequestException as e:
         return JsonResponse({"error": "MailHog indisponível", "details": str(e)}, status=500)

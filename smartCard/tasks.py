@@ -206,7 +206,7 @@ def processar_csv(self, caminho_arquivo, task_id):
             print("APONTAMENTO:", apontamento)
             try:
                 send_mail(
-                    "Novo uso indevido do cartão detectado",
+                    "Novo uso indevido do cartao detectado",
                     f"""
                     Evento: {desc_evento}
                     Usuario: {nome_usuario}
