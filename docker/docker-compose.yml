@@ -33,6 +33,9 @@ services:
       - secret_authorization
       - secret_api_key
 
+    env_file:
+      - .env
+
     command: >
       sh -c "
         until python -c 'import socket; s=socket.socket(); s.connect((\"postgres\",5432))'; do
