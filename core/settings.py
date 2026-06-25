@@ -21,9 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def read_secret(secret_name, default=None):
-    """
-    Lê um secret do Docker, com fallback para variável de ambiente.
-    """
     secret_path = f'/run/secrets/{secret_name}'
     
     try:
@@ -223,7 +220,7 @@ SECRET_API_KEY = read_secret('secret_api_key')
 SECRET_AUTHORIZATION = read_secret('secret_authorization')
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "mailhog"
-EMAIL_PORT = 1025
-EMAIL_USE_TLS = False
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False

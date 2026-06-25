@@ -2,13 +2,15 @@ import tempfile
 
 from django.core.cache import cache
 from django.utils import timezone
-from django.core.mail import send_mail
+from django.core.mail import get_connection, send_mail
+from django.conf import settings
 
 from celery import shared_task, shared_task
 
 from .services import vincular_por_matricula
 from .models import Processamento, Usuario, Acesso
 from fuzzywuzzy import fuzz
+from dotenv import load_dotenv
 import smtplib
 import uuid
 import pandas as pd
@@ -17,6 +19,12 @@ import threading
 import pika
 import json
 import base64
+import os
+
+load_dotenv()
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 @shared_task(bind=True, queue="fila_rapida")
 def processar_xls(self, caminho_arquivo, task_id):
@@ -201,26 +209,40 @@ def processar_csv(self, caminho_arquivo, task_id):
         desc_evento = row.get("Evento", "")
         apontamento = (0 if desc_evento == "Apontamento Normal" else 1)
         
-        if apontamento == 1:
-            print("CHEGOU NO IF BLOCK")
-            print("APONTAMENTO:", apontamento)
+        if apontamento == 1:            
+            mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
+            gmail = get_connection(host="smtp.gmail.com", port=587, username=EMAIL_HOST_USER, password=EMAIL_HOST_PASSWORD , use_tls=True)
+            mensagem = f"""
+            Evento: {desc_evento}
+            Usuario: {nome_usuario}
+            Matricula: {matricula}
+            Data/Hora: {data}
+            Area: {row.get('Área', '')}
+            Leitor: {row.get('Leitor', '')}
+            """
+            
             try:
                 send_mail(
-                    "Novo uso indevido do cartao detectado",
-                    f"""
-                    Evento: {desc_evento}
-                    Usuario: {nome_usuario}
-                    Matricula: {matricula}
-                    Data/Hora: {data}
-                    Area: {row.get('Área', '')}
-                    Leitor: {row.get('Leitor', '')}
-                    """,
-                    "sistema@local.com",
-                    ["CCSNANO"],
+                    "Novo uso indevido do cartão detectado",
+                    mensagem,
+                    EMAIL_HOST_USER,
+                    ["anacha@unicamp.br"],
+                    connection=gmail,
                     fail_silently=False,
                 )
+
+                send_mail(
+                    "Novo uso indevido do cartao detectado",
+                    mensagem,
+                    EMAIL_HOST_USER,
+                    ["anacha@unicamp.br"],
+                    connection=mailhog,
+                    fail_silently=False,
+                )
+
             except Exception as e:
-                print("ERRO EMAIL:", e)
+                print("ERRO:", repr(e))
+                raise
 
         obj, created = Acesso.objects.get_or_create(usuario=usuario, data_acesso=data, desc_evento=desc_evento, desc_area=row.get("Área", ""), 
             ent_sai=row.get("E/S", ""), defaults={
