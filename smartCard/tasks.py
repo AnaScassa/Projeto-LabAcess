@@ -101,6 +101,41 @@ def processar_xls(self, caminho_arquivo, task_id):
         data = timezone.make_aware(pd.to_datetime(row.get("DATA")))
         desc_evento = row.get("DESC_EVENTO", "")
         apontamento = 0 if desc_evento == "Apontamento Normal" else 1
+        
+        if apontamento == 1:            
+            mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
+            gmail = get_connection(host="smtp.gmail.com", port=587, username=EMAIL_HOST_USER, password=EMAIL_HOST_PASSWORD , use_tls=True)
+            mensagem = f"""
+            Evento: {desc_evento}
+            Usuario: {nome_usuario}
+            Matricula: {matricula}
+            Data/Hora: {data}
+            Area: {row.get('DESC_AREA', '')}
+            Leitor: {row.get('DESC_LEITOR', '')}
+            """
+            
+            try:
+                send_mail(
+                    "Novo uso indevido do cartão detectado",
+                    mensagem,
+                    EMAIL_HOST_USER,
+                    ["anacha@unicamp.br"],
+                    connection=gmail,
+                    fail_silently=False,
+                )
+
+                send_mail(
+                    "Novo uso indevido do cartao detectado",
+                    mensagem,
+                    EMAIL_HOST_USER,
+                    ["anacha@unicamp.br"],
+                    connection=mailhog,
+                    fail_silently=False,
+                )
+
+            except Exception as e:
+                print("ERRO:", repr(e))
+                raise
 
         obj, created = Acesso.objects.get_or_create(usuario=usuario, data_acesso=data, desc_evento=desc_evento,
             desc_area=row.get("DESC_AREA", ""), ent_sai=row.get("ENT_SAI", ""), defaults={
