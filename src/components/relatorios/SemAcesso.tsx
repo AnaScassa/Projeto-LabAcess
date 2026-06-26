@@ -20,22 +20,67 @@ export default function SemAcesso({
   categoriasSelecionadas
 }: SemAcessoProps) {
 
-  const [semAcesso, setSemAcesso] = useState<UsuarioSemAcesso[]>([]);
-  const [contagemUsuario, setContagemUsuario] = useState(0);
   const [page, setPage] = useState(0);
+  const [sortAsc, setSortAsc] = useState(true);
   const rowsPerPage = 15;
   const PORTA_LAB = "CCS_LAB";
-  const [sortAsc, setSortAsc] = useState(true);
 
-  const semAcessoOrdenado = useMemo(() => {
-    return [...semAcesso].sort((a, b) => {
-      return sortAsc ? a.usuario.localeCompare(b.usuario, "pt", { sensitivity: "base" }) : b.usuario.localeCompare(a.usuario, "pt", { sensitivity: "base" });
+  const usuariosFiltrados = useMemo(() => {
+    return usuarios.filter((u) => {
+      if (categoriasSelecionadas.length === 0 || categoriasSelecionadas.includes("todas")) {
+        return true;
+      }
+
+      const ehAluno = !isNaN(Number(u.categoriaUsuario));
+
+      if (ehAluno && categoriasSelecionadas.includes("ALUNO")) {
+        return true;
+      }
+
+      if (u.categoriaUsuario === "FUNCIONARIO" && categoriasSelecionadas.includes("FUNCIONARIO")) {
+        return true;
+      }
+
+      return false;
     });
-  }, [semAcesso, sortAsc]);
+  }, [usuarios, categoriasSelecionadas]);
+
+  const { listaSemAcesso, contagemUsuario } = useMemo(() => {
+    const lista: UsuarioSemAcesso[] = [];
+    let contador = 0;
+
+    const usuariosMap: Record<string, any> = {};
+
+    usuariosFiltrados.forEach((u) => {
+      const base = getMatriculaBase(u.matricula);
+      if (!usuariosMap[base]) usuariosMap[base] = u;
+    });
+
+    const usuariosUnicos = Object.values(usuariosMap);
+
+    for (const user of usuariosUnicos) {
+      const total = calcularTempoUsuario(user, PORTA_LAB, tempoInicio, tempoFim);
+
+      if (total === 0) {
+        contador++;
+        lista.push({usuario: user.nome_usuario});
+      }
+    }
+
+    return {
+      listaSemAcesso: lista,
+      contagemUsuario: contador
+    };
+  }, [usuariosFiltrados, tempoInicio, tempoFim]);
 
   useEffect(() => {
     setPage(0);
-  }, [semAcessoOrdenado]);
+  }, [listaSemAcesso]);
+
+  const semAcessoOrdenado = useMemo(() => {
+    return [...listaSemAcesso].sort((a, b) => sortAsc ? a.usuario.localeCompare(b.usuario, "pt", { sensitivity: "base" })
+      : b.usuario.localeCompare(a.usuario, "pt", { sensitivity: "base" }));
+  }, [listaSemAcesso, sortAsc]);
 
   const paginaVisivel = semAcessoOrdenado.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const totalPaginas = Math.ceil(semAcessoOrdenado.length / rowsPerPage);
@@ -46,7 +91,7 @@ export default function SemAcesso({
     const pages: (number | string)[] = [];
     pages.push(0);
 
-    if (current > 3) pages.push('...');
+    if (current > 3) pages.push("...");
 
     const start = Math.max(1, current - 1);
     const end = Math.min(total - 2, current + 1);
@@ -55,108 +100,48 @@ export default function SemAcesso({
       pages.push(i);
     }
 
-    if (current < total - 4) pages.push('...');
+    if (current < total - 4) pages.push("...");
 
     pages.push(total - 1);
     return pages;
   };
 
   const visiblePages = getVisiblePages(page, totalPaginas);
-  const usuariosFiltrados = usuarios.filter((u) => {
-  if (categoriasSelecionadas.length === 0 ||categoriasSelecionadas.includes("todas")) {
-    return true;
-  }
-
-    const ehAluno = !isNaN(Number(u.categoriaUsuario));
-    
-    if (ehAluno && categoriasSelecionadas.includes("ALUNO")) {
-      return true;
-    }
-
-    if (u.categoriaUsuario === "FUNCIONARIO" && categoriasSelecionadas.includes("FUNCIONARIO")){
-      return true;
-    }
-
-    return false;
-  });
-  
-  useEffect(() => {
-    const semAcessoLista: UsuarioSemAcesso[] = [];
-    let contadorUsuarios = 0;
-
-    const usuariosMap: Record<string, any> = {};
-
-    usuariosFiltrados.forEach((u) => {
-      const base = getMatriculaBase(u.matricula);
-
-      if (!usuariosMap[base]) {
-        usuariosMap[base] = u;
-      }
-    });
-
-    const usuariosUnicos = Object.values(usuariosMap);
-
-    usuariosUnicos.forEach((user: any) => {
-      const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, tempoInicio, tempoFim);
-
-      if (totalUsuario === 0) {
-        contadorUsuarios++;
-        semAcessoLista.push({
-          usuario: user.nome_usuario
-        });
-      }
-    });
-
-    setSemAcesso(semAcessoLista);
-    setContagemUsuario(contadorUsuarios);
-  },[usuarios, tempoInicio, tempoFim, categoriasSelecionadas]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [semAcesso]);
 
   return (
     <div className="card-body">
-      <div className="dataTables_wrapper dt-bootstrap4">
+      <div className="table-responsive">
+        <table className="table table-bordered table-hover text-left">
+          <thead>
+            <tr>
+              <th style={{ cursor: "pointer" }} onClick={() => {setSortAsc((prev) => !prev); setPage(0);}}>
+                Usuário {sortAsc ? "▲" : "▼"}
+              </th>
+            </tr>
+          </thead>
 
-        <div className="row">
-          <div className="col-sm-12">
-            <div className="table-responsive">
-              <table className="table table-bordered table-hover dataTable text-left">
-                <thead>
-                  <tr>
-                    <th style={{ cursor: "pointer" }} onClick={() => {setSortAsc((prev) => !prev); setPage(0);}}>
-                      Usuário {sortAsc ? "▲" : "▼"}
-                    </th>
-                  </tr>
-                </thead>
+          <tbody>
+            {semAcessoOrdenado.length === 0 ? (
+              <tr>
+                <td>Todos os usuários acessaram o laboratório.</td>
+              </tr>
+            ) : (
+              paginaVisivel.map((u, i) => (
+                <tr key={i}>
+                  <td>{u.usuario}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
-                <tbody>
-                  {semAcesso.length === 0 ? (
-                    <tr>
-                      <td colSpan={1}>Todos os usuários acessaram o laboratório.</td>
-                    </tr>
-                  ) : (paginaVisivel.map((u, i) => (
-                    <tr key={i}>
-                      <td>{u.usuario}</td>
-                    </tr>
-                    )))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+      <div className="d-flex justify-content-between mt-3">
+        <div>
+          <strong>Total:</strong> {contagemUsuario}
         </div>
 
-        <div className="row">
-          <div className="col-sm-12 col-md-5">
-            <div className="dataTables_info text-left">
-              Mostrando {semAcessoOrdenado.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
-              {Math.min((page + 1) * rowsPerPage, semAcessoOrdenado.length)} de{" "}
-              {semAcessoOrdenado.length} registros
-            </div>
-          </div>
-
-          <div className="col-sm-12 col-md-7 d-flex justify-content-md-end justify-content-start">
+        <div className="col-sm-12 col-md-7 d-flex justify-content-md-end justify-content-start">
             <div style={{ maxWidth: "90%", overflowX: "auto" }}>
               <div className="dataTables_paginate paging_simple_numbers">
                 <ul className="pagination flex-wrap">
@@ -190,13 +175,6 @@ export default function SemAcesso({
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="mt-3 text-left">
-          <p className="mb-1">
-            <strong>Total de usuários:</strong> {contagemUsuario}
-          </p>
-        </div>
       </div>
     </div>
   );

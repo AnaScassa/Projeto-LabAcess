@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { calcularTempoUsuario } from "../../utils/calcularTempoUsuario";
 import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
 import { minutosParaHoras } from "../../utils/horasMinutos";
@@ -12,49 +12,48 @@ interface CalculadorLabProps {
   categoriasSelecionadas: string[];
 }
 
-export default function CalculadorLab({ 
-  usuarios = [] ,
+export default function CalculadorLab({
+  usuarios = [],
   categoriasSelecionadas
 }: CalculadorLabProps) {
 
-  const [relatorio, setRelatorio] = useState<Relatorio[]>([]);
-  const [totalSistema, setTotalSistema] = useState("0h 0min");
-  const [contagemUsuario, setContagemUsuario] = useState(0);
-  const [mediaTempo, setMediaTempo] = useState("0h 0min");
   const [page, setPage] = useState(0);
-  const rowsPerPage = 15;
   const [sortFieldPoucoTempo, setSortFieldPoucoTempo] = useState<SortFieldPouco>("nome");
   const [sortAscPouco, setSortAscPouco] = useState(true);
+  const rowsPerPage = 15;
   const PORTA_LAB = "CCS_LAB";
 
-  const usuariosFiltrados = usuarios.filter((u) => {
-  if (categoriasSelecionadas.length === 0 ||categoriasSelecionadas.includes("todas")) {
-    return true;
-  }
+  const usuariosFiltrados = useMemo(() => {
+    return usuarios.filter((u) => {
+      if (categoriasSelecionadas.length === 0 || categoriasSelecionadas.includes("todas")) {
+        return true;
+      }
 
-    const ehAluno = !isNaN(Number(u.categoriaUsuario));
-    
-    if (ehAluno && categoriasSelecionadas.includes("ALUNO")) {
-      return true;
-    }
+      const ehAluno = !isNaN(Number(u.categoriaUsuario));
 
-    if (u.categoriaUsuario === "FUNCIONARIO" && categoriasSelecionadas.includes("FUNCIONARIO")){
-      return true;
-    }
+      if (ehAluno && categoriasSelecionadas.includes("ALUNO")) {
+        return true;
+      }
 
-    return false;
-  });
+      if (u.categoriaUsuario === "FUNCIONARIO" && categoriasSelecionadas.includes("FUNCIONARIO")) {
+        return true;
+      }
 
-  useEffect(() => {
+      return false;
+    });
+  }, [usuarios, categoriasSelecionadas]);
+
+  const calculo = useMemo(() => {
     const resultado: Relatorio[] = [];
     const hoje = new Date();
     const umMesAtras = new Date();
+    umMesAtras.setMonth(hoje.getMonth() - 1);
 
     let contadorUsuarios = 0;
     let totalGeral = 0;
 
-    umMesAtras.setMonth(hoje.getMonth() - 1);
-    usuariosFiltrados.forEach((user) => {const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, umMesAtras, hoje);
+    usuariosFiltrados.forEach((user) => {
+      const totalUsuario = calcularTempoUsuario(user, PORTA_LAB, umMesAtras, hoje);
 
       if (totalUsuario > 0) {
         contadorUsuarios++;
@@ -65,7 +64,7 @@ export default function CalculadorLab({
         resultado.push({
           usuario: getNomeUsuario(user.matricula, usuariosFiltrados),
           tempoTotal: `${horas2}h ${minutos2}min`,
-          tempoTotalMinutos: totalUsuario,
+          tempoTotalMinutos: totalUsuario
         });
       }
     });
@@ -73,45 +72,41 @@ export default function CalculadorLab({
     const media = mediaHorasMinutos(totalGeral, contadorUsuarios);
     const total = minutosParaHoras(totalGeral);
 
-    setRelatorio(resultado);
-    setTotalSistema(`${total.horas2}h ${total.minutos2}min`);
-    setContagemUsuario(contadorUsuarios);
-    setMediaTempo(`${media.horas}h ${media.minutos}min`);
+    return {
+      relatorio: resultado,
+      contagemUsuario: contadorUsuarios,
+      totalSistema: `${total.horas2}h ${total.minutos2}min`,
+      mediaTempo: `${media.horas}h ${media.minutos}min`
+    };
   }, [usuariosFiltrados]);
+
+  const relatorio = calculo.relatorio;
+  const contagemUsuario = calculo.contagemUsuario;
+  const totalSistema = calculo.totalSistema;
+  const mediaTempo = calculo.mediaTempo;
 
   const relatorioOrdenado = useMemo(() => {
     return [...relatorio].sort((a, b) => {
       if (sortFieldPoucoTempo === "nome") {
-        return sortAscPouco ? a.usuario.localeCompare(b.usuario, "pt", {
-          sensitivity: "base",
-        }) : b.usuario.localeCompare(a.usuario, "pt", {
-          sensitivity: "base",
-        });
+        return sortAscPouco ? a.usuario.localeCompare(b.usuario, "pt", { sensitivity: "base" }) : b.usuario.localeCompare(a.usuario, "pt", { sensitivity: "base" });
       }
 
       return sortAscPouco ? (a.tempoTotalMinutos || 0) - (b.tempoTotalMinutos || 0) : (b.tempoTotalMinutos || 0) - (a.tempoTotalMinutos || 0);
-
     });
   }, [relatorio, sortFieldPoucoTempo, sortAscPouco]);
 
-  useEffect(() => {
-    setPage(0);
-  }, [relatorioOrdenado]);
-
   const paginaVisivel = relatorioOrdenado.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const totalPaginas = Math.ceil(relatorioOrdenado.length / rowsPerPage);
+
   const getVisiblePages = (current: number, total: number) => {
     if (total <= 6) {
       return Array.from({ length: total }, (_, i) => i);
     }
 
     const pages: (number | string)[] = [];
-
     pages.push(0);
 
-    if (current > 3) {
-      pages.push("...");
-    }
+    if (current > 3) pages.push("...");
 
     const start = Math.max(1, current - 1);
     const end = Math.min(total - 2, current + 1);
@@ -120,16 +115,17 @@ export default function CalculadorLab({
       pages.push(i);
     }
 
-    if (current < total - 4) {
-      pages.push("...");
-    }
+    if (current < total - 4) pages.push("...");
 
     pages.push(total - 1);
-
     return pages;
   };
 
   const visiblePages = getVisiblePages(page, totalPaginas);
+
+  useMemo(() => {
+    setPage(0);
+  }, [relatorio]);
 
   return (
     <div className="card-body">
