@@ -83,10 +83,24 @@ def processar_xls(self, caminho_arquivo, task_id):
 
     for _, row in df.iterrows():
         matricula = str(row.get("MATRICULA", "")).strip()
-
+        desc_evento = row.get("DESC_EVENTO", "")
+        apontamento = 0 if desc_evento == "Apontamento Normal" else 1
+        
         if "NOME_ALUNO" in df.columns:
+            hora_dt = pd.to_datetime(str(row["HORA"]).strip(), format="%Y-%m-%d %H:%M:%S")
+            ent_sai = str(row.get("ENT_SAI", "")).strip()
+
+            if ent_sai == "1" and (hora_dt.hour >= 18 or hora_dt.hour <= 5):
+                desc_evento = "Acesso de aluno após a hora permitida"
+                apontamento = 1
+                
+            if ent_sai == "0" and (hora_dt.hour >= 19 or hora_dt.hour <= 5):
+                desc_evento = "Saída de aluno após a hora permitida"
+                apontamento = 1
+                
             nome_usuario = row.get("NOME_ALUNO", "")
             categoria = matricula[:3]
+            
         elif "NOME_FUNCIONARIO" in df.columns:
             nome_usuario = row.get("NOME_FUNCIONARIO", "")
             categoria = "FUNCIONARIO"
@@ -95,12 +109,10 @@ def processar_xls(self, caminho_arquivo, task_id):
             categoria = "OUTRO"
 
         usuario, _ = Usuario.objects.get_or_create(matricula=matricula,defaults={
-            "nome_usuario": nome_usuario, "categoriaUsuario": categoria,
+            "nome_usuario": nome_usuario, "categoriaUsuario": categoria
         })
 
         data = timezone.make_aware(pd.to_datetime(row.get("DATA")))
-        desc_evento = row.get("DESC_EVENTO", "")
-        apontamento = 0 if desc_evento == "Apontamento Normal" else 1
         
         if apontamento == 1:            
             mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
@@ -217,8 +229,21 @@ def processar_csv(self, caminho_arquivo, task_id):
 
     for _, row in df.iterrows():
         matricula = str(row.get("Matrícula", "")).strip()
-
+        desc_evento = row.get("Evento", "")
+        apontamento = (0 if desc_evento == "Apontamento Normal" else 1)
+        
         if "Aluno" in df.columns:
+            hora_dt = pd.to_datetime(str(row["Hora"]).strip(), format="%H:%M:%S")
+            ent_sai = str(row.get("E/S", "")).strip()
+
+            if ent_sai == "1" and (hora_dt.hour >= 18 or hora_dt.hour <= 5) :
+                desc_evento = "Acesso de aluno após a hora permitida"
+                apontamento = 1
+                
+            if ent_sai == "0" and (hora_dt.hour >= 19 or hora_dt.hour <= 5):
+                desc_evento = "Saída de aluno após a hora permitida"
+                apontamento = 1
+
             nome_usuario = row.get("Aluno", "")
             categoria = matricula[:3]
 
@@ -235,14 +260,11 @@ def processar_csv(self, caminho_arquivo, task_id):
             categoria = "OUTRO"
 
         usuario, _ = Usuario.objects.get_or_create(matricula=matricula,defaults={
-            "nome_usuario": nome_usuario,
-            "categoriaUsuario": categoria,
-            })
+            "nome_usuario": nome_usuario, "categoriaUsuario": categoria,
+        })
 
         data_str = f"{row.get('Data')} {row.get('Hora')}"
         data = timezone.make_aware(pd.to_datetime(data_str, dayfirst=True))
-        desc_evento = row.get("Evento", "")
-        apontamento = (0 if desc_evento == "Apontamento Normal" else 1)
         
         if apontamento == 1:            
             mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
@@ -280,7 +302,7 @@ def processar_csv(self, caminho_arquivo, task_id):
                 raise
 
         obj, created = Acesso.objects.get_or_create(usuario=usuario, data_acesso=data, desc_evento=desc_evento, desc_area=row.get("Área", ""), 
-            ent_sai=row.get("E/S", ""), defaults={
+            ent_sai=row.get("E/S", ""),  defaults={
                 "desc_leitor": row.get("Leitor", ""),
                 "apontamento": apontamento
             })
