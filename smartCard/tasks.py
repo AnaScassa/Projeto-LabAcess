@@ -1,3 +1,4 @@
+from datetime import date
 import tempfile
 
 from django.core.cache import cache
@@ -113,8 +114,9 @@ def processar_xls(self, caminho_arquivo, task_id):
         })
 
         data = timezone.make_aware(pd.to_datetime(row.get("DATA")))
+        data_atual = date.today()
         
-        if apontamento == 1:            
+        if apontamento == 1 and data.date() == data_atual:            
             mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
             gmail = get_connection(host="smtp.gmail.com", port=587, username=EMAIL_HOST_USER, password=EMAIL_HOST_PASSWORD , use_tls=True)
             mensagem = f"""
@@ -265,8 +267,9 @@ def processar_csv(self, caminho_arquivo, task_id):
 
         data_str = f"{row.get('Data')} {row.get('Hora')}"
         data = timezone.make_aware(pd.to_datetime(data_str, dayfirst=True))
+        data_atual = date.today()
         
-        if apontamento == 1:            
+        if apontamento == 1 and data.date() == data_atual:            
             mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
             gmail = get_connection(host="smtp.gmail.com", port=587, username=EMAIL_HOST_USER, password=EMAIL_HOST_PASSWORD , use_tls=True)
             mensagem = f"""
