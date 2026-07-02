@@ -47,8 +47,7 @@ export default function BotaoVoltar() {
                             </p>
                         </a>
 
-                        <ul className="nav nav-treeview" 
-                            style={{maxHeight: relatoriosAberto ? "500px" : "0", opacity: relatoriosAberto ? 1 : 0, overflow: "hidden", transition: "max-height 0.5s ease"}}>
+                        <ul className={`nav nav-treeview ${relatoriosAberto ? "submenu-open" : ""}`} style={{display: "block"}}>
                             <li className="nav-item">
                                 <Link to="/tempoPermanencia" className={`nav-link ${isActive("/tempoPermanencia") ? "active bg-white text-dark" : ""}`}>
                                     <i className="far fa-circle nav-icon"></i>
@@ -88,9 +87,8 @@ export default function BotaoVoltar() {
                             </p>
                         </a>
 
-                        <ul className="nav nav-treeview" 
-                        style={{maxHeight: treinamentoAberto ? "500px" : "0", opacity: treinamentoAberto ? 1 : 0, overflow: "hidden", transition: "max-height 0.5s ease"}}>
-                           <li className="nav-item">
+                        <ul className={`nav nav-treeview ${treinamentoAberto ? "submenu-open" : ""}`} style={{display: "block"}}>
+                          <li className="nav-item">
                                 <Link to="/relatorioTreinamento" className={`nav-link ${isActive("/relatorioTreinamento") ? "active bg-white text-dark" : ""}`}>
                                     <i className="far fa-circle nav-icon"></i>
                                     <p>Expirados</p>

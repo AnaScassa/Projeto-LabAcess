@@ -18,6 +18,22 @@ i{
   justify-content: start;
 }
 
+.nav-treeview {
+  display: block;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform-origin: top;
+  transform: translateY(-10px);
+  transition: max-height 0.4s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.nav-treeview.submenu-open {
+  max-height: 1000px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .tituloMenu{
   font-size: 25px !important;
   font-weight: 700 !important;
