@@ -37,7 +37,12 @@ export default function BotaoVoltar() {
                             <p>Upload de Planilha</p>
                         </Link>
                     </li>
-
+                    <li className="nav-item">
+                        <Link to="/email" className={`nav-link ${isActive("/email") ? "active bg-white text-dark" : ""}`}>
+                            <i className="fas fa-sharp fa-solid fa-envelope"></i>
+                            <p>Controle de Emails</p>
+                        </Link>
+                    </li>
                     <li className={`nav-item ${relatoriosAberto ? "menu-open" : ""}`}>
                         <a href="#" className="nav-link active" onClick={(e) =>{e.preventDefault(); setRelatoriosAberto(!relatoriosAberto);}}>
                             <i className="nav-icon fas fa-file-alt"></i>

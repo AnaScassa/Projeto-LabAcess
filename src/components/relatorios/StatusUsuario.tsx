@@ -75,8 +75,12 @@ export default function StatusAluno() {
                     <strong>{usuario.nome_usuario}</strong>
                   </td>
 
-                  <td>
-                    {new Date(usuario.data_acesso).toLocaleString("pt-BR")}
+                  <td className="text-nowrap align-middle">
+                    {new Date(usuario.data_acesso).toLocaleTimeString("pt-BR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
                   </td>
                 </tr>
               ))}
@@ -115,8 +119,12 @@ export default function StatusAluno() {
                     <strong>{usuario.nome_usuario}</strong>
                   </td>
 
-                  <td>
-                    {new Date(usuario.data_acesso).toLocaleString("pt-BR")}
+                  <td className="text-nowrap align-middle">
+                    {new Date(usuario.data_acesso).toLocaleTimeString("pt-BR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
                   </td>
                 </tr>
               ))}

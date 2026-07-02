@@ -10,8 +10,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch(
-        `http://${API_HOST}:8001/api/users/api/token/`,
+      const response = await fetch(`http://${API_HOST}:8001/api/users/api/token/`,
         {
           method: "POST",
           headers: {
@@ -62,13 +61,7 @@ export default function Login() {
             <form onSubmit={handleLogin}>
 
               <div className="input-group mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Usuário"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
+                <input type="text" className="form-control" placeholder="Usuário" value={username} onChange={(e) => setUsername(e.target.value)}/>
                 <div className="input-group-append">
                   <div className="input-group-text">
                     <span className="fas fa-user"></span>
@@ -77,13 +70,7 @@ export default function Login() {
               </div>
 
               <div className="input-group mb-3">
-                <input
-                  type="password"
-                  className="form-control"
-                  placeholder="Senha"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <input type="password" className="form-control" placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)}/>
                 <div className="input-group-append">
                   <div className="input-group-text">
                     <span className="fas fa-lock"></span>

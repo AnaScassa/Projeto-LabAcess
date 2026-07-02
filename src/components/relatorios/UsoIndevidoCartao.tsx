@@ -20,7 +20,7 @@ export default function UsoIndevidoCartao() {
     const dentroDos30Dias = dataAcesso >= trintaDiasAtras;
 
     return isApontamento && dentroDos30Dias;
-  });
+  }).sort((a, b) => new Date(b.data_acesso).getTime() - new Date(a.data_acesso).getTime());;
 
   const handleLimparTodos = () => {
     const ids = filteredApontamentos.map((ap: Apontamento) => ap.id);
