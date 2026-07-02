@@ -43,9 +43,7 @@ class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
 class TaskCompleted(viewsets.ModelViewSet):
     queryset = Processamento.objects.all().order_by("-criado_em")
     serializer_class = ProcessamentoSerializer
-    permission_classes = [AllowAny]
-    #authentication_classes = []
-
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         print(self.request.user)
@@ -58,7 +56,7 @@ class TaskCompleted(viewsets.ModelViewSet):
     def get_object(self):
         obj = super().get_object()
         if not obj.exists():
-            obj = [] #objeto processado fora do banco com status vazio!
+            obj = [] 
         return obj
         
     @action(detail=False, methods=['get'])
@@ -75,7 +73,6 @@ class TaskCompleted(viewsets.ModelViewSet):
 class ApontamentoViewSet(ReadOnlyModelViewSet):
     serializer_class = ApontamentoSerializer
     permission_classes = [IsAuthenticated]
-    #authentication_classes = [JWTAuthentication, SessionAuthentication]
 
     def get_queryset(self):
         return Acesso.objects.filter(apontamento__in=[1, 2])

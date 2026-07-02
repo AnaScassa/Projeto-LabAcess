@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.permissions import IsAuthenticated
 
 from django.http import JsonResponse
@@ -11,7 +11,7 @@ from django_celery_results.models import TaskResult
 
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
-from .models import Usuario, Acesso, Processamento
+from .models import Emails, Usuario, Acesso, Processamento
 from smartcard.rabbitmq.publisher import enviar_mensagem
 from rest_framework_api_key.permissions import HasAPIKey
 from datetime import date
@@ -49,6 +49,35 @@ def usuarios_ativos(request):
             ultimos_acessos[usuario_id] = acesso
 
     return JsonResponse(list(ultimos_acessos.values()), safe=False)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def lista_emails(request):
+    emails = Emails.objects.filter(esta_ativo=True).values('id', 'email', 'criado_em')
+    return Response(list(emails), status=status.HTTP_200_OK)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def desativar_email(request, id):
+    try:
+        email_obj = Emails.objects.get(id=id)
+        email_obj.esta_ativo = False
+        email_obj.save()
+        return Response({"msg": "Email desativado com sucesso"})
+    
+    except Emails.DoesNotExist:
+        return Response({"erro": "Email não encontrado"}, status=404)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cadastrar_email(request):
+    email = request.data.get("email")
+
+    if not email:
+        return Response({"erro": "Email não fornecido"}, status=400)
+
+    Emails.objects.create(email=email)
+    return Response({"msg": "Email cadastrado com sucesso"}, status=201)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
