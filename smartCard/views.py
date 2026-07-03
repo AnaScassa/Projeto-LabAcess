@@ -53,7 +53,7 @@ def usuarios_ativos(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def lista_emails(request):
-    emails = Emails.objects.filter(esta_ativo=True).values('id', 'email', 'criado_em')
+    emails = Emails.objects.filter(esta_ativo=True).values('id', 'email', 'criado_em', 'ativado')
     return Response(list(emails), status=status.HTTP_200_OK)
 
 @api_view(['PATCH'])
@@ -76,7 +76,8 @@ def cadastrar_email(request):
     if not email:
         return Response({"erro": "Email não fornecido"}, status=400)
 
-    Emails.objects.create(email=email)
+    Emails.objects.create(email=email)    
+    
     return Response({"msg": "Email cadastrado com sucesso"}, status=201)
 
 @api_view(['GET'])
@@ -181,3 +182,4 @@ def emails(request):
 
     except requests.exceptions.RequestException as e:
         return JsonResponse({"error": "MailHog indisponível", "details": str(e)}, status=500)
+    

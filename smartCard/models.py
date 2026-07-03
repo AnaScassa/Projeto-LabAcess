@@ -51,3 +51,4 @@ class Emails(models.Model):
     email = models.EmailField(unique=False)
     criado_em = models.DateTimeField(auto_now_add=True)
     esta_ativo = models.BooleanField(default=True)
+    ativado = models.BooleanField(default=True)

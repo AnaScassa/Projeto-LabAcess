@@ -9,7 +9,7 @@ from django.conf import settings
 from celery import shared_task, shared_task
 
 from .services import vincular_por_matricula
-from .models import Processamento, Usuario, Acesso
+from .models import Emails, Processamento, Usuario, Acesso
 from fuzzywuzzy import fuzz
 from dotenv import load_dotenv
 import smtplib
@@ -72,7 +72,7 @@ def processar_xls(self, caminho_arquivo, task_id):
     if not dados:
         print("CACHE NÃO ENCONTRADO")
         return False
-
+  
     profiles = dados["profiles"]
     users = dados["users"]
     
@@ -133,7 +133,7 @@ def processar_xls(self, caminho_arquivo, task_id):
                     "Novo uso indevido do cartão detectado",
                     mensagem,
                     EMAIL_HOST_USER,
-                    ["anacha@unicamp.br"],
+                    [email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list('email', flat=True)],
                     connection=gmail,
                     fail_silently=False,
                 )
@@ -142,7 +142,7 @@ def processar_xls(self, caminho_arquivo, task_id):
                     "Novo uso indevido do cartao detectado",
                     mensagem,
                     EMAIL_HOST_USER,
-                    ["anacha@unicamp.br"],
+                    [email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list('email', flat=True)],
                     connection=mailhog,
                     fail_silently=False,
                 )
@@ -286,7 +286,7 @@ def processar_csv(self, caminho_arquivo, task_id):
                     "Novo uso indevido do cartão detectado",
                     mensagem,
                     EMAIL_HOST_USER,
-                    ["anacha@unicamp.br"],
+                    [email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list('email', flat=True)],
                     connection=gmail,
                     fail_silently=False,
                 )
@@ -295,7 +295,7 @@ def processar_csv(self, caminho_arquivo, task_id):
                     "Novo uso indevido do cartao detectado",
                     mensagem,
                     EMAIL_HOST_USER,
-                    ["anacha@unicamp.br"],
+                    [email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list('email', flat=True)], 
                     connection=mailhog,
                     fail_silently=False,
                 )
