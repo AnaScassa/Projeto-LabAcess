@@ -6,6 +6,28 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
 
+  const handleEmail = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(`http://${API_HOST}:8000/api/acesso/registrar-email/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: username }),
+        }
+      );
+      
+      const data = await response.json();
+      console.log("Email registrado:", data);
+    } catch (error) {
+      console.error("Erro ao registrar email:", error);
+      setMensagem("Erro ao conectar com o servidor");
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {    
     e.preventDefault();
 
@@ -46,6 +68,12 @@ export default function Login() {
 
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await handleEmail(e);
+    await handleLogin(e);
+  };
+
   return (
     <div className="login-page" style={{ minHeight: "100vh" }}>
       <div className="login-box">
@@ -58,7 +86,7 @@ export default function Login() {
           <div className="card-body">
             <p className="login-box-msg">Faça login para continuar</p>
 
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleSubmit}>
 
               <div className="input-group mb-3">
                 <input type="text" className="form-control" placeholder="Usuário" value={username} onChange={(e) => setUsername(e.target.value)}/>
