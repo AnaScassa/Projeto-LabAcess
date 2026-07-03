@@ -49,9 +49,6 @@ class TaskCompleted(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]    
 
     def get_queryset(self):
-        print(self.request.user)
-        print("email: " + self.request.user.email)
-        print(self.request.user.id)
         
         email = self.request.user.email
         Emails.objects.get_or_create(email=email, defaults={"esta_ativo": True, "ativado": False})
@@ -72,7 +69,7 @@ class TaskCompleted(viewsets.ModelViewSet):
             tem_tasks = None
 
         return Response({"tem_tasks": tem_tasks.exists()})
-        
+    
 class ApontamentoViewSet(ReadOnlyModelViewSet):
     serializer_class = ApontamentoSerializer
     permission_classes = [IsAuthenticated]
