@@ -100,7 +100,7 @@ export default function Emails() {
                             <h3>Emails cadastrados</h3>
                         </div>
                         <div className="card-body d-flex justify-content-center align-items-center">
-                            <div className="input-group mr-2" style={{ width: "400px" }}>
+                            <div className="input-group mr-2 align-items-center justify-content-center" style={{ width: "400px" }}>
                                 <form className="d-flex align-items-center justify-content-center gap-2 flex-wrap" onSubmit={(e) => {e.preventDefault(); handleCadastrarEmail();}}>
                                     <input type="email" className="form-control mb-2" placeholder="Digite o email..." value={email} onChange={(e) => setEmail(e.target.value)}/>
                                     <button className="btn btn-primary" type="submit">Cadastrar Email</button>

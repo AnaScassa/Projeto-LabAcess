@@ -9,6 +9,7 @@ import RelatorioNaoExpirados from "./pages/relatorios/TreinamentosNaoExpirados";
 import Login from "./pages/Login";
 import PrivateRoute from "../src/routes/PrivateRoute"
 import RelatorioTreinamentoPendente from "./pages/relatorios/TreinamentoPendente";
+import TreinamentosPendentesNaoTreinados from "./pages/relatorios/TreinamentosPendentesNaoTreinados";
 import Emails from "./pages/Emails";
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
       <Route path="/relatorioTreinamentoPendente" element={<PrivateRoute><RelatorioTreinamentoPendente/></PrivateRoute>}/>
       <Route path="/email" element={<PrivateRoute><Emails/></PrivateRoute>}/>
       <Route path="/login" element={<Login />} />
+      <Route path="/TreinamentosPendentesNaoTreinados" element={<PrivateRoute><TreinamentosPendentesNaoTreinados/></PrivateRoute>}/>
     </Routes>
   );
 }

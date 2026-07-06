@@ -22,27 +22,17 @@ export default function CalculadorTreinamentoPendente({
   }, [users]);
 
   const treinamentosPendentes = useMemo(() => {
-    const nomes = treinamentos
-      .filter((t) => !t.expiration_date)
-      .map((t) => {
-        const user = usersMap[t.user_id];
-        return user ? getUserFullName(user) : null;
-      })
-      .filter(Boolean) as string[];
+    const nomes = treinamentos.filter((t) => !t.expiration_date).map((t) => {
+      const user = usersMap[t.user_id]; 
+
+      return user ? getUserFullName(user) : null;
+      }).filter(Boolean) as string[];
 
     const nomesUnicos = [...new Set(nomes)];
-    return nomesUnicos.sort((a, b) =>
-      sortAsc
-        ? a.localeCompare(b, "pt", { sensitivity: "base" })
-        : b.localeCompare(a, "pt", { sensitivity: "base" })
-    );
+    return nomesUnicos.sort((a, b) => sortAsc ? a.localeCompare(b, "pt", { sensitivity: "base" }) : b.localeCompare(a, "pt", { sensitivity: "base" }));
   }, [treinamentos, usersMap, sortAsc]);
 
-  const paginaVisivel = treinamentosPendentes.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
-
+  const paginaVisivel = treinamentosPendentes.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const totalPaginas = Math.ceil(treinamentosPendentes.length / rowsPerPage);
 
   const getVisiblePages = (current: number, total: number) => {
@@ -130,10 +120,7 @@ export default function CalculadorTreinamentoPendente({
                     }
                     const pageNum = item as number;
                     return (
-                      <li
-                        key={idx}
-                        className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}
-                      >
+                      <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
                         <button className="page-link" onClick={() => setPage(pageNum)}>
                           {pageNum + 1}
                         </button>

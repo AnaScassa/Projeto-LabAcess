@@ -110,7 +110,14 @@ export default function BotaoVoltar() {
                             <li className="nav-item">
                                 <Link to="/relatorioTreinamentoPendente" className={`nav-link ${isActive("/relatorioTreinamentoPendente") ? "active bg-white text-dark" : ""}`}>
                                     <i className="far fa-circle nav-icon"></i>
-                                    <p>Pendentes</p>
+                                    <p>Pendentes Treinados</p>
+                                </Link>
+                            </li>
+
+                            <li className="nav-item">
+                                <Link to="/TreinamentosPendentesNaoTreinados" className={`nav-link ${isActive("/TreinamentosPendentesNaoTreinados") ? "active bg-white text-dark" : ""}`}>
+                                    <i className="far fa-circle nav-icon"></i>
+                                    <p>Alunos Não Treinados</p>
                                 </Link>
                             </li>
                         </ul>
