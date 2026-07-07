@@ -1,12 +1,10 @@
-from time import sleep
 from threading import Thread, Event
 import pika
-
+from publisher import enviar_mensagem
 from desktop import entrarSes, excluir_csvs
 from csv_utils import obter_ultimos_csvs, enviar_arquivo_rabbit
 
-executar_agora = Event()
-
+executar_agora = Event() 
 
 def executar_rpa():
     try:
@@ -14,10 +12,12 @@ def executar_rpa():
         
         entrarSes()
 
-        arquivos = obter_ultimos_csvs(quantidade=3)
+        arquivos, total_linhas = obter_ultimos_csvs(quantidade=3)
 
         for arquivo in arquivos:
             enviar_arquivo_rabbit(arquivo)
+
+        enviar_mensagem({"status": "ok", "total_linhas": total_linhas}, "buscar_concluido")
 
         excluir_csvs()
 
@@ -43,11 +43,11 @@ def ouvir_fila():
 
 
 def main():
+
     Thread(target=ouvir_fila, daemon=True).start()
 
     while True:
         executar_rpa()
-
         print("Aguardando próxima execução...")
         
         executar_agora.wait(timeout=300) 

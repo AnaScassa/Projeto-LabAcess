@@ -1,36 +1,63 @@
+import csv
 import json
 import os
 import base64
 import pika
 from jsonFormatter import logger
+import static
 
 def obter_ultimos_csvs(quantidade=3):
-    pasta = r"C:\Sualtech\SESClient"
 
     try:
         csvs = [
-            os.path.join(pasta, arquivo)
-            for arquivo in os.listdir(pasta)
+            os.path.join(static.PASTA, arquivo)
+            for arquivo in os.listdir(static.PASTA)
             if arquivo.lower().endswith(".csv")
         ]
 
         if not csvs:
-            raise FileNotFoundError(f"Nenhum arquivo CSV encontrado em {pasta}")
+            raise FileNotFoundError(f"Nenhum arquivo CSV encontrado em {static.PASTA}")
 
         csvs_ordenados = sorted(csvs, key=os.path.getmtime, reverse=True)
 
         ultimos = csvs_ordenados[:quantidade]
 
         logger.info(f"Encontrados {len(ultimos)} arquivos CSV mais recentes")
+            
+        total_linhas = contar_linhas_csv()
 
-        for arquivo in ultimos:
-            logger.info(f" - {os.path.basename(arquivo)}")
-
-        return ultimos
+        return ultimos, total_linhas
 
     except Exception as e:
         logger.error(f"Erro ao obter arquivos CSV: {e}")
-        return []
+        return [], 0
+    
+def contar_linhas_csv():
+    total_linhas = 0
+
+    try:
+        for nome_arquivo in os.listdir(static.PASTA):
+            if nome_arquivo.lower().endswith(".csv"):
+                caminho_arquivo = os.path.join(static.PASTA, nome_arquivo)
+
+                with open(caminho_arquivo, "r", encoding="latin-1") as arquivo_csv:
+                    leitor = csv.reader(arquivo_csv, delimiter=";")
+
+                    next(leitor, None)
+
+                    linhas = sum(1 for _ in leitor)
+
+                    total_linhas += linhas
+
+                    logger.info(f"{nome_arquivo}: {linhas} registros")
+
+        logger.info(f"Total de registros: {total_linhas}")
+
+        return total_linhas
+
+    except Exception as e:
+        logger.error(f"Erro ao contar linhas dos CSVs: {e}")
+        return 0
     
 def enviar_arquivo_rabbit(arquivo):
     
