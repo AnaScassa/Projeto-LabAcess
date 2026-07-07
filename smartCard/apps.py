@@ -5,4 +5,5 @@ class SmartCardConfig(AppConfig):
     name = 'smartcard'
     
     def ready(self):
+        import smartcard.receber_resposta
         import smartcard.celery_signals
