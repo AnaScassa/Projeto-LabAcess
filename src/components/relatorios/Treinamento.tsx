@@ -43,35 +43,23 @@ const getNomeHelper = (u: Users) => {
   return u.username;
 };
 
-const contarAcessosHelper = (
-  usuario: Usuario,
-  dataExp: string,
-  portasSelecionadas: string[]
-) => {
+const contarAcessosHelper = (usuario: Usuario, dataExp: string, portasSelecionadas: string[]) => {
   if (!usuario?.acessos) return 0;
   const dataExpiracao = new Date(dataExp);
-  let acessos = usuario.acessos.filter(
-    (a) => new Date(a.data_acesso) <= dataExpiracao && a.ent_sai === "1"
-  );
+  let acessos = usuario.acessos.filter((a) => new Date(a.data_acesso) <= dataExpiracao && a.ent_sai === "1");
   if (portasSelecionadas.length > 0 && !portasSelecionadas.includes("todas")) {
     acessos = acessos.filter((a) => portasSelecionadas.includes(a.desc_area));
   }
   return acessos.length;
 };
 
-const getUltimoAcessoHelper = (
-  usuario: Usuario,
-  portasSelecionadas: string[]
-) => {
+const getUltimoAcessoHelper = (usuario: Usuario, portasSelecionadas: string[]) => {
   if (!usuario?.acessos?.length) return null;
   let acessos = usuario.acessos.filter((a) => a.ent_sai === "1");
   if (portasSelecionadas.length > 0 && !portasSelecionadas.includes("todas")) {
     acessos = acessos.filter((a) => portasSelecionadas.includes(a.desc_area));
   }
-  const ultimo = acessos
-    .map((a) => new Date(a.data_acesso))
-    .filter((dt) => !Number.isNaN(dt.getTime()))
-    .sort((a, b) => b.getTime() - a.getTime())[0];
+  const ultimo = acessos.map((a) => new Date(a.data_acesso)).filter((dt) => !Number.isNaN(dt.getTime())).sort((a, b) => b.getTime() - a.getTime())[0];
   return ultimo || null;
 };
 
@@ -92,16 +80,11 @@ const formatTempoSemEntrarHelper = (ultimoAcesso: Date | null) => {
   return parts.length > 0 ? parts.join(" e ") : "menos de 1 minuto";
 };
 
-const contarAcessosUltimos10MesesHelper = (
-  usuario: Usuario,
-  portasSelecionadas: string[]
-) => {
+const contarAcessosUltimos10MesesHelper = (usuario: Usuario, portasSelecionadas: string[]) => {
   if (!usuario?.acessos) return 0;
   const dezMesesAtras = new Date();
   dezMesesAtras.setMonth(dezMesesAtras.getMonth() - 10);
-  let acessos = usuario.acessos.filter(
-    (a) => new Date(a.data_acesso) >= dezMesesAtras && a.ent_sai === "1"
-  );
+  let acessos = usuario.acessos.filter((a) => new Date(a.data_acesso) >= dezMesesAtras && a.ent_sai === "1");
   if (portasSelecionadas.length > 0 && !portasSelecionadas.includes("todas")) {
     acessos = acessos.filter((a) => portasSelecionadas.includes(a.desc_area));
   }
@@ -132,58 +115,41 @@ export default function CalculadorNaoExpirados({
   const dadosTabelaPoucoAcesso = useMemo<RowPoucoAcesso[]>(() => {
     const hoje = new Date();
 
-    return treinamentos
-      .filter((t) => {
-        if (!t.expiration_date) return false;
-        const dataExp = new Date(t.expiration_date);
-        return dataExp >= hoje;
-      })
-      .map((t) => {
+    return treinamentos.filter((t) => {
+      if (!t.expiration_date) return false;
+      const dataExp = new Date(t.expiration_date);
+      return dataExp >= hoje;
+      }).map((t) => {
         const user = usersMap[Number(t.user_id)];
         const usuarioAcesso = usuariosMap[Number(t.user_id)];
-        const acessosUltimos10Meses = usuarioAcesso
-          ? contarAcessosUltimos10MesesHelper(usuarioAcesso, portasSelecionadas)
-          : 0;
+        const acessosUltimos10Meses = usuarioAcesso ? contarAcessosUltimos10MesesHelper(usuarioAcesso, portasSelecionadas) : 0;
 
         if (acessosUltimos10Meses >= 10) return null;
 
-        const ultimoAcessoDate = usuarioAcesso
-          ? getUltimoAcessoHelper(usuarioAcesso, portasSelecionadas)
-          : null;
-        const tempoSemEntrarRaw = ultimoAcessoDate
-          ? new Date().getTime() - ultimoAcessoDate.getTime()
-          : Number.POSITIVE_INFINITY;
+        const ultimoAcessoDate = usuarioAcesso ? getUltimoAcessoHelper(usuarioAcesso, portasSelecionadas) : null;
+        const tempoSemEntrarRaw = ultimoAcessoDate ? new Date().getTime() - ultimoAcessoDate.getTime() : Number.POSITIVE_INFINITY;
 
         return {
           nome: user ? getNomeHelper(user) : "Usuário não encontrado",
           dataExp: new Date(t.expiration_date).toLocaleDateString("pt-BR"),
           dataExpRaw: new Date(t.expiration_date),
-          ultimoAcesso: ultimoAcessoDate
-            ? ultimoAcessoDate.toLocaleString("pt-BR")
-            : "Sem acesso",
+          ultimoAcesso: ultimoAcessoDate ? ultimoAcessoDate.toLocaleString("pt-BR") : "Sem acesso",
           ultimoAcessoRaw: ultimoAcessoDate,
           tempoSemEntrar: formatTempoSemEntrarHelper(ultimoAcessoDate),
           tempoSemEntrarRaw,
-          acessos: usuarioAcesso
-            ? contarAcessosHelper(usuarioAcesso, t.expiration_date, portasSelecionadas)
-            : 0,
+          acessos: usuarioAcesso ? contarAcessosHelper(usuarioAcesso, t.expiration_date, portasSelecionadas) : 0,
           acessosUltimos10Meses,
         };
-      })
-      .filter((item): item is RowPoucoAcesso => item !== null);
+      }).filter((item): item is RowPoucoAcesso => item !== null);
   }, [treinamentos, usersMap, usuariosMap, portasSelecionadas]);
 
   const dadosTabelaPoucoAcessoOrdenado = useMemo(() => {
     return [...dadosTabelaPoucoAcesso].sort((a, b) => {
       if (sortFieldPouco === "nome") {
-        return sortAscPouco
-          ? a.nome.localeCompare(b.nome, "pt", { sensitivity: "base" })
-          : b.nome.localeCompare(a.nome, "pt", { sensitivity: "base" });
+        return sortAscPouco ? a.nome.localeCompare(b.nome, "pt", { sensitivity: "base" }) : b.nome.localeCompare(a.nome, "pt", { sensitivity: "base" });
       }
       if (sortFieldPouco === "dataExp") {
-        return sortAscPouco
-          ? a.dataExpRaw.getTime() - b.dataExpRaw.getTime()
-          : b.dataExpRaw.getTime() - a.dataExpRaw.getTime();
+        return sortAscPouco ? a.dataExpRaw.getTime() - b.dataExpRaw.getTime() : b.dataExpRaw.getTime() - a.dataExpRaw.getTime();
       }
       if (sortFieldPouco === "ultimoAcesso") {
         const aTime = a.ultimoAcessoRaw ? a.ultimoAcessoRaw.getTime() : Number.POSITIVE_INFINITY;
@@ -191,16 +157,12 @@ export default function CalculadorNaoExpirados({
         return sortAscPouco ? aTime - bTime : bTime - aTime;
       }
       if (sortFieldPouco === "tempoSemEntrar") {
-        return sortAscPouco
-          ? a.tempoSemEntrarRaw - b.tempoSemEntrarRaw
-          : b.tempoSemEntrarRaw - a.tempoSemEntrarRaw;
+        return sortAscPouco ? a.tempoSemEntrarRaw - b.tempoSemEntrarRaw : b.tempoSemEntrarRaw - a.tempoSemEntrarRaw;
       }
       if (sortFieldPouco === "acessos") {
         return sortAscPouco ? a.acessos - b.acessos : b.acessos - a.acessos;
       }
-      return sortAscPouco
-        ? a.acessosUltimos10Meses - b.acessosUltimos10Meses
-        : b.acessosUltimos10Meses - a.acessosUltimos10Meses;
+      return sortAscPouco ? a.acessosUltimos10Meses - b.acessosUltimos10Meses : b.acessosUltimos10Meses - a.acessosUltimos10Meses;
     });
   }, [dadosTabelaPoucoAcesso, sortFieldPouco, sortAscPouco]);
 
@@ -208,72 +170,49 @@ export default function CalculadorNaoExpirados({
     const hoje = new Date();
 
     const usuariosComTreinamentosValidos = new Set(
-      treinamentos
-        .filter((t) => {
-          if (!t.expiration_date) return false;
-          const dataExp = new Date(t.expiration_date);
-          return dataExp >= hoje;
-        })
-        .map((t) => Number(t.user_id))
-    );
+      treinamentos.filter((t) => {
+        if (!t.expiration_date) return false;
+        const dataExp = new Date(t.expiration_date);
+        return dataExp >= hoje;
+        }).map((t) => Number(t.user_id)));
 
-    return usuarios
-      .filter((usuario) => usuariosComTreinamentosValidos.has(Number(usuario.user_auth_id)))
-      .map((usuario) => {
-        const user = usersMap[Number(usuario.user_auth_id)];
-        const acessosUltimos10Meses = contarAcessosUltimos10MesesHelper(usuario, portasSelecionadas);
+    return usuarios.filter((usuario) => usuariosComTreinamentosValidos.has(Number(usuario.user_auth_id))).map((usuario) => {
+      const user = usersMap[Number(usuario.user_auth_id)];
+      const acessosUltimos10Meses = contarAcessosUltimos10MesesHelper(usuario, portasSelecionadas);
 
-        if (acessosUltimos10Meses < 10) return null;
+      if (acessosUltimos10Meses < 10) return null;
 
-        const ultimoAcessoDate = getUltimoAcessoHelper(usuario, portasSelecionadas);
-        const tempoSemEntrarRaw = ultimoAcessoDate
-          ? new Date().getTime() - ultimoAcessoDate.getTime()
-          : Number.POSITIVE_INFINITY;
+      const ultimoAcessoDate = getUltimoAcessoHelper(usuario, portasSelecionadas);
+      const tempoSemEntrarRaw = ultimoAcessoDate ? new Date().getTime() - ultimoAcessoDate.getTime() : Number.POSITIVE_INFINITY;
 
         return {
           nome: user ? getNomeHelper(user) : "Usuário não encontrado",
-          ultimoAcesso: ultimoAcessoDate
-            ? ultimoAcessoDate.toLocaleString("pt-BR")
-            : "Sem acesso",
+          ultimoAcesso: ultimoAcessoDate ? ultimoAcessoDate.toLocaleString("pt-BR") : "Sem acesso",
           ultimoAcessoRaw: ultimoAcessoDate,
           tempoSemEntrar: formatTempoSemEntrarHelper(ultimoAcessoDate),
           tempoSemEntrarRaw,
           acessosUltimos10Meses,
         };
-      })
-      .filter((item): item is RowMuitoAcesso => item !== null);
+      }).filter((item): item is RowMuitoAcesso => item !== null);
   }, [usuarios, usersMap, portasSelecionadas, treinamentos]);
 
   const dadosTabelaMuitoAcessoOrdenado = useMemo(() => {
     return [...dadosTabelaMuitoAcesso].sort((a, b) => {
       if (sortFieldMuito === "nome") {
-        return sortAscMuito
-          ? a.nome.localeCompare(b.nome, "pt", { sensitivity: "base" })
-          : b.nome.localeCompare(a.nome, "pt", { sensitivity: "base" });
+        return sortAscMuito ? a.nome.localeCompare(b.nome, "pt", { sensitivity: "base" }) : b.nome.localeCompare(a.nome, "pt", { sensitivity: "base" });
       }
       if (sortFieldMuito === "ultimoAcesso") {
         const aTime = a.ultimoAcessoRaw ? a.ultimoAcessoRaw.getTime() : Number.POSITIVE_INFINITY;
         const bTime = b.ultimoAcessoRaw ? b.ultimoAcessoRaw.getTime() : Number.POSITIVE_INFINITY;
         return sortAscMuito ? aTime - bTime : bTime - aTime;
       }
-      return sortAscMuito
-        ? a.tempoSemEntrarRaw - b.tempoSemEntrarRaw
-        : b.tempoSemEntrarRaw - a.tempoSemEntrarRaw;
+      return sortAscMuito ? a.tempoSemEntrarRaw - b.tempoSemEntrarRaw : b.tempoSemEntrarRaw - a.tempoSemEntrarRaw;
     });
   }, [dadosTabelaMuitoAcesso, sortFieldMuito, sortAscMuito]);
 
-  const paginaVisivelPoucoAcesso = dadosTabelaPoucoAcessoOrdenado.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
-
+  const paginaVisivelPoucoAcesso = dadosTabelaPoucoAcessoOrdenado.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const totalPaginasPoucoAcesso = Math.ceil(dadosTabelaPoucoAcessoOrdenado.length / rowsPerPage);
-
-  const paginaVisivelMuitoAcesso = dadosTabelaMuitoAcessoOrdenado.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
-
+  const paginaVisivelMuitoAcesso = dadosTabelaMuitoAcessoOrdenado.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const totalPaginasMuitoAcesso = Math.ceil(dadosTabelaMuitoAcessoOrdenado.length / rowsPerPage);
 
   const getVisiblePages = (current: number, total: number) => {
@@ -310,88 +249,70 @@ export default function CalculadorNaoExpirados({
                   <table className="table table-bordered table-hover dataTable text-left">
                     <thead>
                       <tr>
-                        <th
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            if (sortFieldPouco === "nome") {
-                              setSortAscPouco((prev) => !prev);
-                            } else {
-                              setSortFieldPouco("nome");
-                              setSortAscPouco(true);
-                            }
-                            setPage(0);
-                          }}
-                        >
+                        <th style={{ cursor: "pointer" }} onClick={() => {
+                          if (sortFieldPouco === "nome") {
+                            setSortAscPouco((prev) => !prev);
+                          } else {
+                            setSortFieldPouco("nome");
+                            setSortAscPouco(true);
+                          }
+                          setPage(0);
+                          }}>
                           Usuário {sortFieldPouco === "nome" ? (sortAscPouco ? "▲" : "▼") : ""}
                         </th>
-                        <th
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            if (sortFieldPouco === "dataExp") {
-                              setSortAscPouco((prev) => !prev);
-                            } else {
-                              setSortFieldPouco("dataExp");
-                              setSortAscPouco(false);
-                            }
-                            setPage(0);
-                          }}
-                        >
+                        <th style={{ cursor: "pointer" }} onClick={() => {
+                          if (sortFieldPouco === "dataExp") {
+                            setSortAscPouco((prev) => !prev);
+                          } else {
+                            setSortFieldPouco("dataExp");
+                            setSortAscPouco(false);
+                          }
+                          setPage(0);
+                          }}>
                           Data de Expiração {sortFieldPouco === "dataExp" ? (sortAscPouco ? "▲" : "▼") : ""}
                         </th>
-                        <th
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            if (sortFieldPouco === "ultimoAcesso") {
-                              setSortAscPouco((prev) => !prev);
-                            } else {
-                              setSortFieldPouco("ultimoAcesso");
-                              setSortAscPouco(false);
-                            }
-                            setPage(0);
-                          }}
-                        >
+                        <th style={{ cursor: "pointer" }} onClick={() => {
+                          if (sortFieldPouco === "ultimoAcesso") {
+                            setSortAscPouco((prev) => !prev);
+                          } else {
+                            setSortFieldPouco("ultimoAcesso");
+                            setSortAscPouco(false);
+                          }
+                          setPage(0);
+                          }}>
                           Último acesso {sortFieldPouco === "ultimoAcesso" ? (sortAscPouco ? "▲" : "▼") : ""}
                         </th>
-                        <th
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            if (sortFieldPouco === "tempoSemEntrar") {
-                              setSortAscPouco((prev) => !prev);
-                            } else {
-                              setSortFieldPouco("tempoSemEntrar");
-                              setSortAscPouco(false);
-                            }
-                            setPage(0);
-                          }}
-                        >
+                        <th style={{ cursor: "pointer" }} onClick={() => {
+                          if (sortFieldPouco === "tempoSemEntrar") {
+                            setSortAscPouco((prev) => !prev);
+                          } else {
+                            setSortFieldPouco("tempoSemEntrar");
+                            setSortAscPouco(false);
+                          }
+                          setPage(0);
+                          }}>
                           Tempo sem entrar {sortFieldPouco === "tempoSemEntrar" ? (sortAscPouco ? "▲" : "▼") : ""}
                         </th>
-                        <th
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            if (sortFieldPouco === "acessos") {
-                              setSortAscPouco((prev) => !prev);
-                            } else {
-                              setSortFieldPouco("acessos");
-                              setSortAscPouco(false);
-                            }
-                            setPage(0);
-                          }}
-                        >
+                        <th style={{ cursor: "pointer" }} onClick={() => {
+                          if (sortFieldPouco === "acessos") {
+                            setSortAscPouco((prev) => !prev);
+                          } else {
+                            setSortFieldPouco("acessos");
+                            setSortAscPouco(false);
+                          }
+                          setPage(0);
+                          }}>
                           Acessos antes da expiração {sortFieldPouco === "acessos" ? (sortAscPouco ? "▲" : "▼") : ""}
                         </th>
-                        <th
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            if (sortFieldPouco === "acessosUltimos10Meses") {
-                              setSortAscPouco((prev) => !prev);
-                            } else {
-                              setSortFieldPouco("acessosUltimos10Meses");
-                              setSortAscPouco(false);
-                            }
-                            setPage(0);
-                          }}
-                        >
+                        <th style={{ cursor: "pointer" }} onClick={() => {
+                          if (sortFieldPouco === "acessosUltimos10Meses") {
+                            setSortAscPouco((prev) => !prev);
+                          } else {
+                            setSortFieldPouco("acessosUltimos10Meses");
+                            setSortAscPouco(false);
+                          }
+                          setPage(0);
+                          }}>
                           Acessos últimos 10 meses {sortFieldPouco === "acessosUltimos10Meses" ? (sortAscPouco ? "▲" : "▼") : ""}
                         </th>
                       </tr>
@@ -486,41 +407,38 @@ export default function CalculadorNaoExpirados({
                             setPage(0);
                           }}> Usuário {sortFieldMuito === "nome" ? (sortAscMuito ? "▲" : "▼") : ""}
                         </th>
-                        <th
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            if (sortFieldMuito === "ultimoAcesso") {
-                              setSortAscMuito((prev) => !prev);
-                            } else {
-                              setSortFieldMuito("ultimoAcesso");
-                              setSortAscMuito(false);
-                            }
-                            setPage(0);
-                          }}> Último acesso {sortFieldMuito === "ultimoAcesso" ? (sortAscMuito ? "▲" : "▼") : ""}
+                        <th style={{ cursor: "pointer" }} onClick={() => {
+                          if (sortFieldMuito === "ultimoAcesso") {
+                            setSortAscMuito((prev) => !prev);
+                          } else {
+                            setSortFieldMuito("ultimoAcesso");
+                            setSortAscMuito(false);
+                          }
+                          setPage(0);
+                          }}> 
+                          Último acesso {sortFieldMuito === "ultimoAcesso" ? (sortAscMuito ? "▲" : "▼") : ""}
                         </th>
-                        <th
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            if (sortFieldMuito === "tempoSemEntrar") {
-                              setSortAscMuito((prev) => !prev);
-                            } else {
-                              setSortFieldMuito("tempoSemEntrar");
-                              setSortAscMuito(false);
-                            }
-                            setPage(0);
-                          }}> Tempo sem entrar {sortFieldMuito === "tempoSemEntrar" ? (sortAscMuito ? "▲" : "▼") : ""}
+                        <th style={{ cursor: "pointer" }} onClick={() => {
+                          if (sortFieldMuito === "tempoSemEntrar") {
+                            setSortAscMuito((prev) => !prev);
+                          } else {
+                            setSortFieldMuito("tempoSemEntrar");
+                            setSortAscMuito(false);
+                          }
+                          setPage(0);
+                          }}> 
+                          Tempo sem entrar {sortFieldMuito === "tempoSemEntrar" ? (sortAscMuito ? "▲" : "▼") : ""}
                         </th>
-                        <th
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            if (sortFieldMuito === "acessosUltimos10Meses") {
-                              setSortAscMuito((prev) => !prev);
-                            } else {
-                              setSortFieldMuito("acessosUltimos10Meses");
-                              setSortAscMuito(false);
-                            }
-                            setPage(0);
-                          }}> Acessos últimos 10 meses {sortFieldMuito === "acessosUltimos10Meses" ? (sortAscMuito ? "▲" : "▼") : ""}
+                        <th style={{ cursor: "pointer" }} onClick={() => {
+                          if (sortFieldMuito === "acessosUltimos10Meses") {
+                            setSortAscMuito((prev) => !prev);
+                          } else {
+                            setSortFieldMuito("acessosUltimos10Meses");
+                            setSortAscMuito(false);
+                          }
+                          setPage(0);
+                          }}> 
+                          Acessos últimos 10 meses {sortFieldMuito === "acessosUltimos10Meses" ? (sortAscMuito ? "▲" : "▼") : ""}
                         </th>
                       </tr>
                     </thead>

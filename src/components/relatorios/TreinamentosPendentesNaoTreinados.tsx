@@ -41,9 +41,20 @@ const usuariosSemTreinamento = useMemo(() => {
     if (usuariosComTreinamento.has(String(user.id))) return false;
 
       return true;
-    }).map((user) => user.full_name);
+    }).map((user) => {
+      const usuarioRelacionado = usuariosMap[String(user.id)];
 
-  return lista.sort((a, b) => sortAsc ? a.localeCompare(b, "pt", { sensitivity: "base" }) : b.localeCompare(a, "pt", { sensitivity: "base" }));
+      const acessos = usuarioRelacionado.acessos ?? [];
+
+      const ultimoAcesso = acessos.length > 0 ? acessos.reduce((maisRecente, atual) => 
+        new Date(atual.data_acesso) > new Date(maisRecente.data_acesso) ? atual : maisRecente).data_acesso : null;
+
+      return {
+        nome: user.full_name, totalAcessos: acessos.length, ultimoAcesso,
+      };
+    });
+
+  return lista.sort((a, b) => sortAsc ? a.nome.localeCompare(b.nome, "pt", { sensitivity: "base" }) : b.nome.localeCompare(a.nome, "pt", { sensitivity: "base" }));
 }, [users, usuariosMap, usuariosComTreinamento, sortAsc]);
 
 const paginaVisivel = usuariosSemTreinamento.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -90,6 +101,12 @@ useEffect(() => {
                     <th style={{ cursor: "pointer" }} onClick={() => {setSortAsc((prev) => !prev); setPage(0);}}>
                       Usuário {sortAsc ? "▲" : "▼"}
                     </th>
+                    <th>
+                      Total de Acessos
+                    </th>
+                    <th>
+                      Último Acesso
+                    </th>
                   </tr>
                 </thead>
 
@@ -99,9 +116,11 @@ useEffect(() => {
                       <td>Todos os usuários possuem treinamento.</td>
                     </tr>
                   ) : (
-                    paginaVisivel.map((nome, index) => (
-                      <tr key={index}>
-                        <td>{nome}</td>
+                    paginaVisivel.map((user) => (
+                      <tr key={user.nome}>
+                        <td>{user.nome}</td>
+                        <td>{user.totalAcessos}</td>
+                        <td>{user.ultimoAcesso ? new Date(user.ultimoAcesso).toLocaleString("pt-BR") : "-"}</td>
                       </tr>
                     ))
                   )}
