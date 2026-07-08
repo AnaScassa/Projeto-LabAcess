@@ -214,11 +214,63 @@ export default function Upload() {
                   {mensagem && <p className="mt-3 mb-0">{mensagem}</p>}
                 </div>
 
-                <div className="card-footer d-flex justify-content-center">
+                <div className="card-footer footer-busca">
                   <button className="btn btn-outline-secondary" onClick={() => {handleBuscar(); buscarRegistro();}} disabled={bloqueado}>
                     <i className="fas fa-sync-alt me-2"></i>
                     {bloqueado ? "Buscando registros..." : "Buscar registros dos últimos 5 minutos"}
                   </button>
+
+                  <details className="details-custom">
+                    <summary className="btn btn-outline-secondary btn-sm">
+                      <div className="d-flex align-items-center justify-content-center w-100">
+                        <i className="fas fa-chevron-down"></i>
+                      </div>
+                    </summary>
+
+                    <div className="details-content card shadow-sm mt-3">
+                      <div className="card-body ">
+
+                        <h6 className="mb-3 text-center">
+                          <i className="fas fa-search me-2"></i>
+                          Busca Avançada
+                        </h6>
+
+                        <div className="row g-3">
+
+                          <div className="col-md-6">
+                            <label className="form-label">Data inicial</label>
+                            <input type="date" className="form-control" />
+                          </div>
+
+                          <div className="col-md-6">
+                            <label className="form-label">Data final</label>
+                            <input type="date" className="form-control" />
+                          </div>
+
+                          <div className="col-md-6">
+                            <label className="form-label">Hora inicial</label>
+                            <input type="time" className="form-control" />
+                          </div>
+
+                          <div className="col-md-6">
+                            <label className="form-label">Hora final</label>
+                            <input type="time" className="form-control" />
+                          </div>
+
+                        </div>
+
+                        <hr/>
+
+                        <div className="text-center">
+                          <button className="btn btn-outline-secondary" onClick={() => {handleBuscar(); buscarRegistro();}} disabled={bloqueado}>
+                            <i className="fas fa-sync-alt me-2"></i>
+                            {bloqueado ? "Buscando registros..." : "Buscar registros"}
+                          </button>
+                        </div>
+
+                      </div>
+                    </div>
+                  </details>
                 </div>
 
               </div>
