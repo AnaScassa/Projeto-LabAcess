@@ -48,17 +48,10 @@ export default function Login() {
       }
 
       const data = await response.json();
-
-      console.log("ACCESS:", data.access);
-      console.log("REFRESH:", data.refresh);
-
+      
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
       localStorage.setItem("username", username);
-
-      console.log("LS ACCESS:", localStorage.getItem("access"));
-      console.log("LS REFRESH:", localStorage.getItem("refresh"));
-      console.log("LS USERNAME:", localStorage.getItem("username"));
 
       window.location.replace("/");
     } catch (error) {

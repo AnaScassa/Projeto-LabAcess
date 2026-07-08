@@ -14,6 +14,8 @@ import UltimosAcessos from "../components/relatorios/UltimosAcessos";
 import StatusAluno from "../components/relatorios/StatusUsuario"
 import { solicitarPermissaoNotificacao } from "../utils/notificacoes";
 import { useMailhogNotifications } from "../hooks/useMailhogNotifications";
+import { limparResposta } from "../services/limparResposta";
+import { buscarResposta } from "../services/buscarResposta";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
@@ -34,15 +36,25 @@ export default function Upload() {
     }
     
     setToken(storedToken);
+
+    const buscarRegistro = async () => {
+
+      const verificar = await buscarResposta();
+
+      if (verificar.length > 0) {
+        const dados = verificar[0];
+        alert(`Novos dados foram recebidos \n Quantidade: ${dados.quantidade}`);
+        await limparResposta();
+        window.location.reload();
+        
+      }
+    }
     
     const verificarProcessamento = async () => {
       try {
-        const res = await authFetch(
-          `http://${API_HOST}:8000/api/acesso/processamento/`
-        );
+        const res = await authFetch(`http://${API_HOST}:8000/api/acesso/processamento/`);
 
         if (!res) return;
-
         const data = await res.json();
         
         if (data?.[0]?.status === "ERRO") {
@@ -66,24 +78,40 @@ export default function Upload() {
     };
 
     verificarProcessamento();
+    buscarRegistro();
     const interval = setInterval(verificarProcessamento, 3000);
-    return () => clearInterval(interval);
+    const interval2 = setInterval(buscarRegistro, 3000);
+    return () => {
+      clearInterval(interval); 
+      clearInterval(interval2);
+    };
   }, []);
 
   const handleBuscar = async () => {
     try {
       setBloqueado(true);
 
-      setTimeout(() => {
-        window.location.reload();
-        console.log("Dados buscados!");
-      }, 127000);
+      const intervalo = setInterval(async () => {
+        try {
+          const resposta = await buscarResposta();
+
+          if (resposta.length > 0) {
+            clearInterval(intervalo);
+            const dados = resposta[0];
+            setBloqueado(false);
+            alert(`Processamento concluído!\nQuantidade: ${dados.quantidade}`);
+            await limparResposta();
+            window.location.reload();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }, 2000);
     } catch (error) {
       console.error(error);
       setBloqueado(false);
     }
   };
-
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

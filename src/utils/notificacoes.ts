@@ -1,5 +1,4 @@
 export async function solicitarPermissaoNotificacao() {
-  console.log("FUNÇÃO CHAMADA");
 
   if (!("Notification" in window)) {
     console.log("Navegador não suporta notificações");
@@ -9,7 +8,6 @@ export async function solicitarPermissaoNotificacao() {
   console.log("Permissão atual:", Notification.permission);
 
   if (Notification.permission === "granted") {
-    console.log("Já permitido");
     return;
   }
 

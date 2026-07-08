@@ -21,12 +21,11 @@ export default function BotaoVoltar() {
         <span className="ml-3 nav-link" style={{color: "rgba(0, 0, 0, .5)"}}>{username ? `Olá, ${username}` : "ControleLab"}</span>
     </nav>
 
-    <aside className="main-sidebar sidebar-dark-primary elevation-4">
-        <a href="#" className="brand-link d-flex align-items-center align-content-center" style={{gap: "5px"}}>
-            <i className="fas fa-flask brand-image pl-1"></i>
-            <span className="brand-text font-weight-light tituloMenu">ContoleLab</span>
-            <button className="btn btn-link p-0 text-white ml-auto d-lg-none" data-widget="pushmenu" style={{ fontSize: "18px", margin: "5px 10px 0 0" }}>✕</button>
-        </a>
+    <aside className="main-sidebar sidebar-dark-primary elevation-4 align-items-center justify-content-center">
+        <div className="brand-link d-flex align-items-center justify-content-center" style={{ position: "relative" }}>
+            <span className="brand-text font-weight-light tituloMenu">ControleLab</span>
+            <button className="btn btn-link p-0 text-white d-lg-none position-absolute" data-widget="pushmenu" style={{ fontSize: "18px", right: "15px", top: "50%", transform: "translateY(-50%)" }}>✕</button>
+        </div>
 
         <div className="sidebar">
             <nav className="mt-2">
