@@ -11,7 +11,7 @@ from django_celery_results.models import TaskResult
 
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
-from .models import Emails, Usuario, Acesso, Processamento
+from .models import Emails, Resposta, Usuario, Acesso, Processamento
 from smartcard.rabbitmq.publisher import enviar_mensagem
 from rest_framework_api_key.permissions import HasAPIKey
 from datetime import date
@@ -204,4 +204,16 @@ def registrar_email(request):
     Emails.objects.get_or_create(email=request.user.email, defaults={"esta_ativo": True, "ativado": False,},)
 
     return Response({"message": "Email registrado com sucesso"})
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def receber_resposta(request):
+    resposta = Resposta.objects.values("status", "quantidade", "criado_em").order_by("-criado_em")[:1]
+    return Response(resposta, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def limpar_resposta(request):
+    Resposta.objects.all().delete()
+    return Response({"message": "Respostas limpas com sucesso"}, status=status.HTTP_200_OK)
     

@@ -1,13 +1,21 @@
-from operator import call
-
 import pika
 import threading
+import json
+from django.utils import timezone
+from .models import Resposta
 
 executar_agora = threading.Event()
 
 def callback(ch, method, properties, body):
     print("Recebido comando de busca")
-    print(body.decode())
+    dados = json.loads(body)
+    quantidade = dados.get("total_linhas", 0)
+    status = dados.get("status", "PENDING")
+    print("Quantidade:", quantidade)
+    print("Status:", status)
+    
+    Resposta.objects.create(status=status, quantidade=quantidade, criado_em=timezone.now())
+    
     executar_agora.set()
 
 def ouvir_fila():
