@@ -70,6 +70,8 @@ def pegar_arquivo():
     hora_calculada = datetime.now() - timedelta(minutes=10)
     hora_formatada = hora_calculada.strftime("%H%M")
     hora_atual_formatada = datetime.now().strftime("%H%M")
+    data1 = datetime.now().strftime("%d%m%Y")
+    data2 = datetime.now().strftime("%d%m%Y")
     
     n = [60, 110, 80]
     
@@ -82,8 +84,20 @@ def pegar_arquivo():
             pyautogui.click(522, n[i])
             time.sleep(3)
 
-            pyautogui.click(525, 535)
+            pyautogui.click(358, 537)
             time.sleep(2)
+            
+            pyautogui.write(data1)
+            time.sleep(1)
+            
+            pyautogui.press("tab")
+            time.sleep(1)
+            
+            pyautogui.write(data2)
+            time.sleep(1)
+
+            pyautogui.press("tab")
+            time.sleep(1)
 
             pyautogui.write(hora_formatada)
             time.sleep(1)

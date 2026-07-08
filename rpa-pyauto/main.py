@@ -3,6 +3,8 @@ import pika
 from publisher import enviar_mensagem
 from desktop import entrarSes, excluir_csvs
 from csv_utils import obter_ultimos_csvs, enviar_arquivo_rabbit
+import time
+import pyautogui
 
 executar_agora = Event() 
 
