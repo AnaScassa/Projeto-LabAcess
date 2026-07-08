@@ -5,6 +5,11 @@ import traceback
 import pyautogui
 import static
 from jsonFormatter import logger
+from threading import Thread
+from buscar_registro import ouvir_fila, fila_busca
+from queue import Empty
+
+Thread(target=ouvir_fila, daemon=True).start()
 
 def entrarSes():
     logger.info("RPA iniciado")
@@ -67,12 +72,31 @@ def entrarSes():
         logger.error(traceback.format_exc())
 
 def pegar_arquivo():
-    hora_calculada = datetime.now() - timedelta(minutes=10)
-    hora_formatada = hora_calculada.strftime("%H%M")
-    hora_atual_formatada = datetime.now().strftime("%H%M")
-    data1 = datetime.now().strftime("%d%m%Y")
-    data2 = datetime.now().strftime("%d%m%Y")
-    
+   from queue import Empty
+from datetime import datetime, timedelta
+
+def pegar_arquivo():
+    try:
+        dados = fila_busca.get_nowait()
+        logger.info(f"Busca manual recebida: {dados}")
+
+        data1 = dados["data_inicio"]
+        hora_inicio = dados["hora_inicio"]
+        data2 = dados["data_fim"]
+        hora_fim = dados["hora_fim"]
+
+    except Empty:
+        logger.info("Nenhuma busca manual. Executando busca automática.")
+
+        agora = datetime.now()
+        hora_calculada = agora - timedelta(minutes=10)
+
+        data1 = agora.strftime("%d%m%Y")
+        hora_inicio = hora_calculada.strftime("%H%M")
+
+        data2 = agora.strftime("%d%m%Y")
+        hora_fim = agora.strftime("%H%M")
+
     n = [60, 110, 80]
     
     for i in range(3):
@@ -99,13 +123,13 @@ def pegar_arquivo():
             pyautogui.press("tab")
             time.sleep(1)
 
-            pyautogui.write(hora_formatada)
+            pyautogui.write(hora_inicio)
             time.sleep(1)
 
             pyautogui.press("tab")
             time.sleep(1)
 
-            pyautogui.write(hora_atual_formatada)
+            pyautogui.write(hora_fim)
             time.sleep(2)
 
             try:
