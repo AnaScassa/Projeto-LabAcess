@@ -6,10 +6,8 @@ import pyautogui
 import static
 from jsonFormatter import logger
 from threading import Thread
-from buscar_registro import ouvir_fila, fila_busca
 from queue import Empty
-
-Thread(target=ouvir_fila, daemon=True).start()
+from buscar_registro import fila_busca
 
 def entrarSes():
     logger.info("RPA iniciado")
