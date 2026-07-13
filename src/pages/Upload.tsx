@@ -24,6 +24,10 @@ export default function Upload() {
   const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
   const [bloqueado, setBloqueado] = useState(false);
   const { treinamentos } = useTreinamento();
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
+  const [horaInicio, setHoraInicio] = useState("");
+  const [horaFim, setHoraFim] = useState(""); 
 
   useMailhogNotifications();
   
@@ -137,16 +141,13 @@ export default function Upload() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch(
-        `http://${API_HOST}:8000/api/acesso/upload-xls/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch(`http://${API_HOST}:8000/api/acesso/upload-xls/`,{
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
@@ -215,7 +216,7 @@ export default function Upload() {
                 </div>
 
                 <div className="card-footer footer-busca">
-                  <button className="btn btn-outline-secondary" onClick={() => {handleBuscar(); buscarRegistro();}} disabled={bloqueado}>
+                  <button className="btn btn-outline-secondary" onClick={() => {handleBuscar(); buscarRegistro(null, null, null, null);}} disabled={bloqueado}>
                     <i className="fas fa-sync-alt me-2"></i>
                     {bloqueado ? "Buscando registros..." : "Buscar registros dos últimos 5 minutos"}
                   </button>
@@ -239,22 +240,22 @@ export default function Upload() {
 
                           <div className="col-md-6">
                             <label className="form-label">Data inicial</label>
-                            <input type="date" className="form-control" />
+                            <input type="date" className="form-control" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
                           </div>
 
                           <div className="col-md-6">
                             <label className="form-label">Data final</label>
-                            <input type="date" className="form-control" />
+                            <input type="date" className="form-control" value={dataFim} onChange={(e) => setDataFim(e.target.value)} />
                           </div>
 
                           <div className="col-md-6">
                             <label className="form-label">Hora inicial</label>
-                            <input type="time" className="form-control" />
+                            <input type="time" className="form-control" value={horaInicio}  onChange={(e) => setHoraInicio(e.target.value)} />
                           </div>
 
                           <div className="col-md-6">
                             <label className="form-label">Hora final</label>
-                            <input type="time" className="form-control" />
+                            <input type="time" className="form-control" value={horaFim} onChange={(e) => setHoraFim(e.target.value)} />
                           </div>
 
                         </div>
@@ -262,7 +263,7 @@ export default function Upload() {
                         <hr/>
 
                         <div className="text-center">
-                          <button className="btn btn-outline-secondary" onClick={() => {handleBuscar(); buscarRegistro();}} disabled={bloqueado}>
+                          <button className="btn btn-outline-secondary" onClick={() => {handleBuscar(); buscarRegistro(dataInicio, horaInicio, dataFim, horaFim);}} disabled={bloqueado}>
                             <i className="fas fa-sync-alt me-2"></i>
                             {bloqueado ? "Buscando registros..." : "Buscar registros"}
                           </button>
