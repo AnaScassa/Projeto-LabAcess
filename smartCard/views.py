@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.permissions import IsAuthenticated
+from datetime import datetime, timedelta
 
 from django.http import JsonResponse
 from django.core.cache import cache
@@ -163,8 +164,45 @@ def verificar_tasks_user(user, user_id):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def buscar_registro(request):
-    print("Buscando registros para o usuário:", request.user.id)
-    enviar_mensagem("buscar",{"user_id": request.user.id})
+    data_inicio = request.data.get("data_inicio")
+    hora_inicio = request.data.get("hora_inicio")
+    data_fim = request.data.get("data_fim")
+    hora_fim = request.data.get("hora_fim")
+
+    agora = datetime.now()
+    hora_calculada = agora - timedelta(minutes=10)
+
+    if data_inicio:
+        data_inicio = datetime.strptime(data_inicio, "%Y-%m-%d").strftime("%d%m%Y")
+    else:
+        data_inicio = agora.strftime("%d%m%Y")
+
+    if hora_inicio:
+        hora_inicio = hora_inicio.replace(":", "")
+    else:
+        hora_inicio = hora_calculada.strftime("%H%M")
+
+    if data_fim:
+        data_fim = datetime.strptime(data_fim, "%Y-%m-%d").strftime("%d%m%Y")
+    else:
+        data_fim = hora_calculada.strftime("%d%m%Y")
+
+    if hora_fim:
+        hora_fim = hora_fim.replace(":", "")
+    else:
+        hora_fim =  agora.strftime("%H%M")
+
+    mensagem = {
+        "user_id": request.user.id,
+        "data_inicio": data_inicio,
+        "hora_inicio": hora_inicio,
+        "data_fim": data_fim,
+        "hora_fim": hora_fim,
+    }
+
+    print(mensagem)
+
+    enviar_mensagem("buscar", mensagem)
     return Response({"status": "enviado"})
 
 @api_view(['GET'])
