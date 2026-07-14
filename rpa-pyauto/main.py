@@ -8,7 +8,7 @@ import time
 from publisher import enviar_mensagem
 from desktop import entrarSes, excluir_csvs
 from csv_utils import obter_ultimos_csvs, enviar_arquivo_rabbit
-from buscar_registro import fila_busca
+from buscar_registro import fila_busca, ouvir_fila
 
 execucao_em_andamento = Lock()
 
@@ -16,7 +16,7 @@ scheduler = None
 scheduled_job = None
 
 
-def executar_rpa(motivo="agendamento"):
+def executar_rpa(motivo="agendamento", dados_busca=None):
     global scheduled_job
 
     if not execucao_em_andamento.acquire(blocking=False):
@@ -26,20 +26,14 @@ def executar_rpa(motivo="agendamento"):
     try:
         print(f"\n========== INICIANDO RPA ({motivo}) ==========")
 
-        entrarSes()
+        entrarSes(dados_busca)
 
         arquivos, total_linhas = obter_ultimos_csvs(quantidade=3)
 
         for arquivo in arquivos:
             enviar_arquivo_rabbit(arquivo)
 
-        enviar_mensagem(
-            {
-                "status": "ok",
-                "total_linhas": total_linhas
-            },
-            "buscar_concluido"
-        )
+        enviar_mensagem({"status": "ok", "total_linhas": total_linhas}, "buscar_concluido")
 
         excluir_csvs()
 
@@ -52,9 +46,7 @@ def executar_rpa(motivo="agendamento"):
         execucao_em_andamento.release()
 
         if scheduled_job:
-            scheduled_job.modify(
-                next_run_time=datetime.now() + timedelta(minutes=5)
-            )
+            scheduled_job.modify(next_run_time=datetime.now() + timedelta(minutes=5))
 
 
 def callback(ch, method, properties, body):
@@ -65,18 +57,6 @@ def callback(ch, method, properties, body):
     fila_busca.put(mensagem)
 
     ch.basic_ack(method.delivery_tag)
-
-def ouvir_fila():
-    print("Conectando RabbitMQ...")
-
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="143.106.5.41", port=5672))
-    channel = connection.channel()
-    channel.queue_declare(queue="buscar", durable=True)
-    channel.basic_consume(queue="buscar", on_message_callback=callback, auto_ack=False)
-
-    print("RabbitMQ aguardando mensagens...")
-
-    channel.start_consuming()
 
 def process_queue():
     print("Thread process_queue iniciada.")
@@ -89,7 +69,7 @@ def process_queue():
         print("Mensagem retirada da fila:", mensagem)
 
         try:
-            executar_rpa("RabbitMQ")
+            executar_rpa("RabbitMQ", mensagem)
         finally:
             fila_busca.task_done()
 

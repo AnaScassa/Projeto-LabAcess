@@ -5,11 +5,27 @@ import traceback
 import pyautogui
 import static
 from jsonFormatter import logger
-from threading import Thread
-from queue import Empty
-from buscar_registro import fila_busca
 
-def entrarSes():
+def resolver_dados_busca(dados_busca=None):
+    if dados_busca is not None:
+        return {
+            "data1": dados_busca["data_inicio"],
+            "hora_inicio": dados_busca["hora_inicio"],
+            "data2": dados_busca["data_fim"],
+            "hora_fim": dados_busca["hora_fim"],
+        }
+
+    agora = datetime.now()
+    hora_calculada = agora - timedelta(minutes=10)
+
+    return {
+        "data1": agora.strftime("%d%m%Y"),
+        "hora_inicio": hora_calculada.strftime("%H%M"),
+        "data2": agora.strftime("%d%m%Y"),
+        "hora_fim": agora.strftime("%H%M"),
+    }
+
+def entrarSes(dados_busca=None):
     logger.info("RPA iniciado")
     time.sleep(5)
     
@@ -61,7 +77,7 @@ def entrarSes():
 
         logger.info("Login realizado com sucesso")
 
-        pegar_arquivo()
+        pegar_arquivo(dados_busca)
 
     except Exception:
         logger.error(traceback.format_exc())
@@ -69,31 +85,18 @@ def entrarSes():
     except Exception:
         logger.error(traceback.format_exc())
 
-def pegar_arquivo():
-   from queue import Empty
-from datetime import datetime, timedelta
+def pegar_arquivo(dados_busca=None):
+    dados = resolver_dados_busca(dados_busca)
 
-def pegar_arquivo():
-    try:
-        dados = fila_busca.get_nowait()
-        logger.info(f"Busca manual recebida: {dados}")
-
-        data1 = dados["data_inicio"]
-        hora_inicio = dados["hora_inicio"]
-        data2 = dados["data_fim"]
-        hora_fim = dados["hora_fim"]
-
-    except Empty:
+    if dados_busca is None:
         logger.info("Nenhuma busca manual. Executando busca automática.")
+    else:
+        logger.info(f"Busca manual recebida: {dados_busca}")
 
-        agora = datetime.now()
-        hora_calculada = agora - timedelta(minutes=10)
-
-        data1 = agora.strftime("%d%m%Y")
-        hora_inicio = hora_calculada.strftime("%H%M")
-
-        data2 = agora.strftime("%d%m%Y")
-        hora_fim = agora.strftime("%H%M")
+    data1 = dados["data1"]
+    hora_inicio = dados["hora_inicio"]
+    data2 = dados["data2"]
+    hora_fim = dados["hora_fim"]
 
     n = [60, 110, 80]
     
