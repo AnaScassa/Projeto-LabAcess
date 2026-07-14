@@ -149,6 +149,37 @@ export default function Upload() {
       setEstaBloqueado(false);
     }
   };
+  const validarBusca = () => {
+    if (!dataInicio || !dataFim || !horaInicio || !horaFim) {
+      alert("Preencha todas as datas e horários para realizar a busca.");
+      return false;
+    }
+
+    const inicio = new Date(`${dataInicio}T${horaInicio}`);
+    const fim = new Date(`${dataFim}T${horaFim}`);
+
+    const agora = new Date();
+
+    if (inicio > agora || fim > agora) {
+      alert("Não é possível buscar registros futuros.");
+      return false;
+    }
+
+    if (inicio > fim) {
+      alert("A data inicial não pode ser maior que a data final.");
+      return false;
+    }
+
+    const diferencaMs = fim.getTime() - inicio.getTime();
+    const diferencaDias = diferencaMs / (1000 * 60 * 60 * 24);
+
+    if (diferencaDias > 7) {
+      alert("A busca não pode ultrapassar 7 dias de diferença.");
+      return false;
+    }
+
+    return true;
+};
   
   return (
     <div className="wrapper">
@@ -241,7 +272,12 @@ export default function Upload() {
                         <hr/>
 
                         <div className="text-center">
-                          <button className="btn btn-outline-secondary" onClick={() => {handleBuscar(); buscarRegistro(dataInicio, horaInicio, dataFim, horaFim);}} disabled={bloqueado}>
+                          <button className="btn btn-outline-secondary" 
+                            onClick={() => {
+                              if (validarBusca()) {
+                                handleBuscar();
+                                buscarRegistro(dataInicio, horaInicio, dataFim, horaFim);
+                              }}}>
                             <i className="fas fa-sync-alt me-2"></i>
                             {bloqueado ? "Buscando registros..." : "Buscar registros"}
                           </button>
