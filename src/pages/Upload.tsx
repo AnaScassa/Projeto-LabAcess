@@ -1,21 +1,20 @@
 import { TailSpin } from "react-loader-spinner";
 import { useState, useEffect } from "react";
 import { useTreinamento } from "../hooks/useTreinamento";
-import { authFetch } from "../services/auth";
 import { buscarRegistro } from "../services/buscarRegistro";
 import GraficoAcessos from "../components/graficos/Acessos";
 import GraficosUsuariosAtivos from "../components/graficos/UsuariosAtivos";
 import UsoIndevidoCartao from "../components/relatorios/UsoIndevidoCartao";
 import ContagemTreinamento from "../components/style/ContagemTreinamento";
 import Menu from "../components/style/Menu";
-import { API_HOST } from "../utils/static";
 import AcessoIndevidos from "../components/relatorios/AcessosIndevidos";
 import UltimosAcessos from "../components/relatorios/UltimosAcessos";
 import StatusAluno from "../components/relatorios/StatusUsuario"
 import { solicitarPermissaoNotificacao } from "../utils/notificacoes";
 import { useMailhogNotifications } from "../hooks/useMailhogNotifications";
-import { limparResposta } from "../services/limparResposta";
-import { buscarResposta } from "../services/buscarResposta";
+import { limparResposta,buscarResposta } from "../services/respostas";
+import { verificarProcessamento } from "../services/processamento";
+import { fazerUpload } from "../services/upload";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
@@ -34,6 +33,7 @@ export default function Upload() {
   useEffect(() => {
     const storedToken = localStorage.getItem("access");
     solicitarPermissaoNotificacao();
+
     if (!storedToken) {
       window.location.replace("/login");
       return;
@@ -53,37 +53,32 @@ export default function Upload() {
         
       }
     }
-    
-    const verificarProcessamento = async () => {
-      try {
-        const res = await authFetch(`http://${API_HOST}:8000/api/acesso/processamento/`);
 
-        if (!res) return;
-        const data = await res.json();
-        
-        if (data?.[0]?.status === "ERRO") {
-          setEstaBloqueado(true);
-          setLoading(false);
-          setMensagem("Erro no processamento");
-          return;
-        }
+    const verificarStatus = async () => {
+      const data = await verificarProcessamento();
 
-        if (data && Object.keys(data).length > 0) {
-          setEstaBloqueado(true);
-          setLoading(true);
-        } else {
-          setEstaBloqueado(false);
-          setLoading(false);
-          setMensagem("Página pronta para novo upload");
-        }
-      } catch (error) {
-        console.error(error);
+      if (data?.[0]?.status === "ERRO"){
+        setEstaBloqueado(true);
+        setLoading(false);
+        setMensagem("Erro no processamento");
+        return;
+      }
+
+      if (data && Object.keys(data).length > 0){
+        setEstaBloqueado(true);
+        setLoading(true);
+
+      } else {
+        setEstaBloqueado(false);
+        setLoading(false);
+        setMensagem("Página pronta para novo upload");
+
       }
     };
 
-    verificarProcessamento();
+    verificarStatus();
     buscarRegistro();
-    const interval = setInterval(verificarProcessamento, 3000);
+    const interval = setInterval(verificarStatus, 3000);
     const interval2 = setInterval(buscarRegistro, 3000);
     return () => {
       clearInterval(interval); 
@@ -137,29 +132,12 @@ export default function Upload() {
 
     try {
       const file = fileInput.files[0];
+      const resposta = await fazerUpload(file);
 
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch(`http://${API_HOST}:8000/api/acesso/upload-xls/`,{
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        if (response.status === 401 || response.status === 403) {
-          localStorage.removeItem("access");
-          window.location.replace("/login");
-          return;
-        }
-
-        const erro = await response.json();
-        console.log(erro);
-
-        throw new Error("Erro no upload");
+      if (!resposta) {
+        setMensagem("Erro no upload.");
+        setEstaBloqueado(false);
+        return;
       }
 
       setMensagem("Processamento sendo feito...");
@@ -171,7 +149,7 @@ export default function Upload() {
       setEstaBloqueado(false);
     }
   };
-
+  
   return (
     <div className="wrapper">
       <Menu/>

@@ -1,22 +1,15 @@
 import { useEffect, useState } from "react";
 import Menu from "../components/style/Menu";
-import { authFetch } from "../services/auth";
-import { API_HOST } from "../utils/static";
-
-interface Email {
-    id: number;
-    email: string;
-    criado_em: string;
-    ativado: boolean;
-}
+import {listaEmails, cadastrarEmail, desativarEmail} from "../services/email";
+import type { Email } from "../types/Email";
 
 export default function Emails() {
     const [emails, setEmails] = useState<Email[]>([]);
-    const [email, setEmail] = useState<string>("");
+    const [email, setEmail] = useState("");
 
-    const listaEmails = async () => {
+    const carregarEmails = async () => {
         try {
-            const res = await authFetch(`http://${API_HOST}:8000/api/acesso/lista-emails`);
+            const res = await listaEmails();
             if (!res) return;
 
             const data = await res.json();
@@ -27,63 +20,51 @@ export default function Emails() {
     };
 
     useEffect(() => {
-        listaEmails();
+        carregarEmails();
     }, []);
 
-    const handleDesativarEmail = async (id: number) => {
-        try {
-            const res = await authFetch(`http://${API_HOST}:8000/api/acesso/desativar-emails/${id}/`, {
-                method: "PATCH",
-            });
-            if (!res) return;
-            if (res.ok) {
-                alert("Email excluido com sucesso");
-                listaEmails();
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     const handleCadastrarEmail = async () => {
-        if (!email?.trim()) return;
+        if (!email.trim()) return;
 
         try {
-            const res = await authFetch(`http://${API_HOST}:8000/api/acesso/cadastrar-email/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email }),
-            });
+            const res = await cadastrarEmail(email);
             if (!res) return;
-            if (res.ok) {
-                alert("Email cadastrado com sucesso");
-                setEmail(""); 
-                listaEmails();
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
-    const handleAtivarEmail = async (emailParam:string) => {
-        if (!emailParam?.trim()) return;
-
-        try {
-            const res = await authFetch(`http://${API_HOST}:8000/api/acesso/cadastrar-email/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email: emailParam }),
-            });
-
-            if (!res) return;
             if (res.ok) {
                 alert("Email cadastrado com sucesso");
                 setEmail("");
-                listaEmails();
+                carregarEmails();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleAtivarEmail = async (emailParam: string) => {
+        if (!emailParam.trim()) return;
+
+        try {
+            const res = await cadastrarEmail(emailParam);
+            if (!res) return;
+
+            if (res.ok) {
+                alert("Email cadastrado com sucesso");
+                setEmail("");
+                carregarEmails();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleDesativarEmail = async (id: number) => {
+        try {
+            const res = await desativarEmail(id);
+            if (!res) return;
+
+            if (res.ok) {
+                alert("Email excluído com sucesso");
+                carregarEmails();
             }
         } catch (error) {
             console.error(error);

@@ -1,4 +1,4 @@
-import { desativarApontamento } from "../services/desativamento";
+import { desativarApontamento } from "../services/apontamento";
 import Swal from "sweetalert2";
 
 export const useApontamentoActions = () => {

@@ -1,70 +1,53 @@
 import { useState } from "react";
-import { API_HOST } from "../utils/static";
+import { fazerLogin } from "../services/login";
+import { registrarEmail } from "../services/email";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
 
-  const handleEmail = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleEmail = async () => {
     try {
-      const response = await fetch(`http://${API_HOST}:8000/api/acesso/registrar-email/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: username }),
-        }
-      );
-      
+      const response = await registrarEmail(username);
       const data = await response.json();
       console.log("Email registrado:", data);
+
     } catch (error) {
       console.error("Erro ao registrar email:", error);
       setMensagem("Erro ao conectar com o servidor");
     }
   };
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {    
-    e.preventDefault();
-
+  const handleLogin = async () => {
     try {
-      const response = await fetch(`http://${API_HOST}:8001/api/users/api/token/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, password }),
-        },
-      );
+      const response = await fazerLogin(username, password);
 
       if (!response.ok) {
-        setMensagem("Usuário ou senha inválidos");
-        return;
+          setMensagem("Usuário ou senha inválidos");
+          return;
       }
 
       const data = await response.json();
-      
+
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
       localStorage.setItem("username", username);
 
       window.location.replace("/");
-    } catch (error) {
-      console.error(error);
-      setMensagem("Erro ao conectar com o servidor");
-    }
 
+    } catch (error) {
+        console.error(error);
+        setMensagem("Erro ao conectar com o servidor");
+    }
   };
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await handleEmail(e);
-    await handleLogin(e);
+
+    await handleEmail();
+    await handleLogin();
   };
 
   return (
