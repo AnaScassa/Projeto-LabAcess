@@ -1,10 +1,9 @@
-from threading import Thread, Lock
-from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import datetime, timedelta
 import json
-import pika
 import time
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from threading import Thread, Lock
+from datetime import datetime, timedelta
 from publisher import enviar_mensagem
 from desktop import entrarSes, excluir_csvs
 from csv_utils import obter_ultimos_csvs, enviar_arquivo_rabbit
@@ -27,13 +26,14 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
         print(f"\n========== INICIANDO RPA ({motivo}) ==========")
 
         entrarSes(dados_busca)
-
         arquivos, total_linhas = obter_ultimos_csvs(quantidade=3)
 
         for arquivo in arquivos:
             enviar_arquivo_rabbit(arquivo)
+            if arquivo is None:
+                enviar_mensagem({"status": "nenhum arquivo foi enviado", "total_linhas": None}, "buscar_concluido")
 
-        enviar_mensagem({"status": "ok", "total_linhas": total_linhas}, "buscar_concluido")
+        enviar_mensagem({"status": "finalizado", "total_linhas": total_linhas}, "buscar_concluido")
 
         excluir_csvs()
 

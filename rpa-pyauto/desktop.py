@@ -1,10 +1,13 @@
 from datetime import datetime, timedelta
+from jsonFormatter import logger
+from publisher import enviar_mensagem
+
 import os
 import time
 import traceback 
 import pyautogui
 import static
-from jsonFormatter import logger
+
 
 def resolver_dados_busca(dados_busca=None):
     if dados_busca is not None:
@@ -25,7 +28,9 @@ def resolver_dados_busca(dados_busca=None):
         "hora_fim": agora.strftime("%H%M"),
     }
 
+
 def entrarSes(dados_busca=None):
+    enviar_mensagem({"status": "iniciando", "total_linhas": None}, "buscar_concluido")
     logger.info("RPA iniciado")
     time.sleep(5)
     
@@ -101,6 +106,9 @@ def pegar_arquivo(dados_busca=None):
     n = [60, 110, 80]
     
     for i in range(3):
+        
+        enviar_mensagem({"status": "buscando dados", "total_linhas": None}, "buscar_concluido")
+            
         try:            
             time.sleep(3)
             pyautogui.click(522, 41)
@@ -138,6 +146,7 @@ def pegar_arquivo(dados_busca=None):
             except pyautogui.ImageNotFoundException:
                 consultar = None
                 logger.error("Imagem não encontrada")
+                enviar_mensagem({"status": "ERRO!", "total_linhas": None}, "buscar_concluido")
             except Exception as erro:
                 consultar = None
                 logger.error(erro)
@@ -152,6 +161,12 @@ def pegar_arquivo(dados_busca=None):
              
             try:
                 icone_erro = pyautogui.locateCenterOnScreen('./img/iconeErro.PNG', minSearchTime=5 ,confidence=0.7)
+                if i == 0:
+                    enviar_mensagem({"status": "Nenhum dado novo de funcionario foi encontrado", "total_linhas": None}, "buscar_concluido")
+                elif i == 1:
+                    enviar_mensagem({"status": "Nenhum dado novo de aluno foi encontrado", "total_linhas": None}, "buscar_concluido")
+                elif i == 2:
+                    enviar_mensagem({"status": "Nenhum dado novo de prestadores de serviço foi encontrado", "total_linhas": None}, "buscar_concluido")
             except pyautogui.ImageNotFoundException:
                 icone_erro = None
             except Exception as erro:
@@ -192,6 +207,7 @@ def pegar_arquivo(dados_busca=None):
             logger.error(f"Erro no loop {[i]}: {e}")
     
     for i in range(3):
+        enviar_mensagem({"status": "saindo...", "total_linhas": None}, "buscar_concluido")
         time.sleep(2)
         try:
             sair = pyautogui.locateCenterOnScreen('./img/sair.png', confidence=0.8)

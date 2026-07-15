@@ -3,8 +3,8 @@ import json
 import os
 import base64
 import pika
-from jsonFormatter import logger
 import static
+from jsonFormatter import logger
 
 def obter_ultimos_csvs(quantidade=3):
 
