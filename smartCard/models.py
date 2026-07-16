@@ -48,8 +48,8 @@ class Processamento(models.Model):
         return f"{self.task_id} - {self.status}"
     
 class Resposta(models.Model):
-    status = models.CharField(max_length=20, choices=Processamento.STATUS_CHOICES, default="PENDING")
-    quantidade = models.IntegerField(default=0)
+    status = models.CharField(max_length=100)
+    quantidade = models.IntegerField(null=True, blank=True)
     criado_em = models.DateTimeField(auto_now_add=True)
 
 class Emails(models.Model):

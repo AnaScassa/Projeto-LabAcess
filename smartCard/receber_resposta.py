@@ -13,9 +13,17 @@ def callback(ch, method, properties, body):
     status = dados.get("status", "PENDING")
     print("Quantidade:", quantidade)
     print("Status:", status)
-    
-    Resposta.objects.create(status=status, quantidade=quantidade, criado_em=timezone.now())
-    
+
+    resposta = Resposta.objects.first()
+
+    if resposta is None:
+        Resposta.objects.create(status=status, quantidade=quantidade, criado_em=timezone.now())
+    else:
+        resposta.status = status
+        resposta.quantidade = quantidade
+        resposta.criado_em = timezone.now()
+        resposta.save()
+
     executar_agora.set()
 
 def ouvir_fila():

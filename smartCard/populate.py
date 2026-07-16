@@ -16,25 +16,14 @@ def criar_acessos(usuario, quantidade_dias=10):
     for _ in range(quantidade_dias):
         erro = random.random() < 0.1  
 
-        entrada = timezone.now() - timedelta(
-            days=random.randint(0, 30),
-            hours=random.randint(0, 5)
-        )
+        entrada = timezone.now() - timedelta(days=random.randint(0, 30), hours=random.randint(0, 5))
 
-        AcessoFactory.create(
-            usuario=usuario,
-            data_acesso=entrada,
-            ent_sai=1
-        )
+        AcessoFactory.create(usuario=usuario, data_acesso=entrada, ent_sai=1)
 
         if not erro:
             saida = entrada + timedelta(hours=random.randint(1, 10))
 
-            AcessoFactory.create(
-                usuario=usuario,
-                data_acesso=saida,
-                ent_sai=0
-            )
+            AcessoFactory.create(usuario=usuario, data_acesso=saida, ent_sai=0)
 
 def popular_banco():
     print("Verificando usuários base...")
