@@ -84,11 +84,11 @@ def cadastrar_email(request):
         else:
             existing_email.esta_ativo = True
             existing_email.ativado = True
-            existing_email.criado_em = date.today()
+            existing_email.criado_em = datetime.now()
             existing_email.save()
             return Response({"msg": "Email reativado com sucesso"}, status=200)
 
-    Emails.objects.create(email=email, ativado=True, esta_ativo=True, criado_em=date.today())    
+    Emails.objects.create(email=email, ativado=True, esta_ativo=True, criado_em=datetime.now())    
     
     return Response({"msg": "Email cadastrado com sucesso"}, status=201)
 
@@ -235,11 +235,9 @@ def emails(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def registrar_email(request):
-    print(request.user)
-    print("email:", request.user.email)
-    print(request.user.id)
 
-    Emails.objects.get_or_create(email=request.user.email, defaults={"esta_ativo": True, "ativado": False,},)
+    Emails.objects.get_or_create(email=request.user.email, 
+        defaults={"esta_ativo": True, "ativado": False, "criado_em": datetime.now()})
 
     return Response({"message": "Email registrado com sucesso"})
 
