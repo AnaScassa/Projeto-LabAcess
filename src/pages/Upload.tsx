@@ -99,11 +99,6 @@ export default function Upload() {
 
           if (resposta.length > 0) {
             clearInterval(intervalo);
-            //const dados = resposta[0];
-            //setBloqueado(false);
-            //alert(`Processamento concluído!\nQuantidade: ${dados.quantidade}`);
-            //await limparResposta();
-            //window.location.reload();
           }
         } catch (e) {
           console.error(e);

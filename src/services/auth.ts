@@ -31,15 +31,11 @@ export async function authFetch(
       throw new Error("Sem refresh token");
     }
 
-    const refreshResponse = await fetch(
-      `http://${API_HOST}:8001/api/users/api/token/refresh/`,
-      {
+    const refreshResponse = await fetch(`http://${API_HOST}:8001/api/users/api/token/refresh/`, {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify({
           refresh,
         }),
@@ -47,16 +43,12 @@ export async function authFetch(
     );
 
     if (!refreshResponse.ok) {
-
       localStorage.clear();
-
       window.location.href = "/login";
-
       throw new Error("Refresh inválido");
     }
 
-    const data: { access: string } =
-      await refreshResponse.json();
+    const data: { access: string } = await refreshResponse.json();
 
     localStorage.setItem("access", data.access);
 
