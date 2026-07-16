@@ -44,13 +44,16 @@ export default function Upload() {
     const buscarRegistro = async () => {
 
       const verificar = await buscarResposta();
-
-      if (verificar.length > 0) {
+      if (verificar?.length > 0) {
         const dados = verificar[0];
-        alert(`Novos dados foram recebidos \n Quantidade: ${dados.quantidade}`);
-        await limparResposta();
-        window.location.reload();
-        
+        console.log(dados.quantidade);
+
+        if (dados.quantidade != null && dados.quantidade != "null") {
+          await limparResposta();
+          alert(`Novos dados foram recebidos\nQuantidade: ${dados.quantidade}`);
+          window.location.reload();
+          console.log(dados.quantidade);
+        }
       }
     }
 
@@ -96,11 +99,11 @@ export default function Upload() {
 
           if (resposta.length > 0) {
             clearInterval(intervalo);
-            const dados = resposta[0];
-            setBloqueado(false);
-            alert(`Processamento concluído!\nQuantidade: ${dados.quantidade}`);
-            await limparResposta();
-            window.location.reload();
+            //const dados = resposta[0];
+            //setBloqueado(false);
+            //alert(`Processamento concluído!\nQuantidade: ${dados.quantidade}`);
+            //await limparResposta();
+            //window.location.reload();
           }
         } catch (e) {
           console.error(e);
