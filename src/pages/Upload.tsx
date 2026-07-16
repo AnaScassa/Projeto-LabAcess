@@ -18,6 +18,7 @@ import { fazerUpload } from "../services/upload";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
+  const [retorno, setRetorno] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
@@ -44,9 +45,13 @@ export default function Upload() {
     const buscarRegistro = async () => {
 
       const verificar = await buscarResposta();
+
       if (verificar?.length > 0) {
         const dados = verificar[0];
-        console.log(dados.quantidade);
+        const mensagem = dados.status;
+
+        setRetorno(mensagem);
+        setBloqueado(true);
 
         if (dados.quantidade != null && dados.quantidade != "null") {
           await limparResposta();
@@ -54,6 +59,9 @@ export default function Upload() {
           window.location.reload();
           console.log(dados.quantidade);
         }
+      }else{
+        setBloqueado(false);
+
       }
     }
 
@@ -89,26 +97,6 @@ export default function Upload() {
     };
   }, []);
 
-  const handleBuscar = async () => {
-    try {
-      setBloqueado(true);
-
-      const intervalo = setInterval(async () => {
-        try {
-          const resposta = await buscarResposta();
-
-          if (resposta.length > 0) {
-            clearInterval(intervalo);
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }, 2000);
-    } catch (error) {
-      console.error(error);
-      setBloqueado(false);
-    }
-  };
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -223,9 +211,9 @@ export default function Upload() {
                 </div>
 
                 <div className="card-footer footer-busca">
-                  <button className="btn btn-outline-secondary" onClick={() => {handleBuscar(); buscarRegistro(null, null, null, null);}} disabled={bloqueado}>
+                  <button className="btn btn-outline-secondary" onClick={() => {buscarRegistro(null, null, null, null);}} disabled={bloqueado}>
                     <i className="fas fa-sync-alt me-2"></i>
-                    {bloqueado ? "Buscando registros..." : "Buscar registros dos últimos 5 minutos"}
+                    {bloqueado ? retorno : "Buscar registros dos últimos 5 minutos"}
                   </button>
 
                   <details className="details-custom">
@@ -270,14 +258,10 @@ export default function Upload() {
                         <hr/>
 
                         <div className="text-center">
-                          <button className="btn btn-outline-secondary" 
-                            onClick={() => {
-                              if (validarBusca()) {
-                                handleBuscar();
-                                buscarRegistro(dataInicio, horaInicio, dataFim, horaFim);
-                              }}}>
+                          <button className="btn btn-outline-secondary" onClick={() => {
+                            if (validarBusca()) {buscarRegistro(dataInicio, horaInicio, dataFim, horaFim);}}} disabled={bloqueado}>
                             <i className="fas fa-sync-alt me-2"></i>
-                            {bloqueado ? "Buscando registros..." : "Buscar registros"}
+                            {bloqueado ? retorno : "Buscar registros"}
                           </button>
                         </div>
 
