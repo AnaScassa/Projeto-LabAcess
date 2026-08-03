@@ -1,6 +1,11 @@
+import logging
+
+from django.core.cache import cache
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import UserProfile, DegreeArea, User, SafetyTraining
+
+logger = logging.getLogger(__name__)
 
 class SafetyTrainingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -77,16 +82,21 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-
         token["email"] = user.email
-
         return token
 
     def validate(self, attrs):
+        print("CustomTokenObtainPairSerializer.validate called")
+        logger.info("CustomTokenObtainPairSerializer.validate called")
         data = super().validate(attrs)
 
         data["email"] = self.user.email
         data["username"] = self.user.username
         data["is_superuser"] = self.user.is_superuser
 
-        return data        
+        if data.get("access"):
+            print(f"SALVANDO CACHE {self.user.username}")
+            logger.info("SALVANDO CACHE %s", self.user.username)
+            cache.set(f"jwt_access_{self.user.username}", data["access"], timeout=None,)
+
+        return data
