@@ -27,6 +27,33 @@ load_dotenv()
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
+FERIADOS_FIXOS = {
+    "01-01",
+    "04-21",
+    "05-01",
+    "09-07",
+    "10-12",
+    "11-02",
+    "11-15",
+    "12-25",
+}
+
+def eh_fim_de_semana_ou_feriado(data):
+    if not data:
+        return False
+
+    if isinstance(data, str):
+        data = pd.to_datetime(data).date()
+
+    if hasattr(data, "date"):
+        data = data.date()
+
+    if data.weekday() >= 5:
+        return True
+
+    mes_dia = f"{data.month:02d}-{data.day:02d}"
+    return mes_dia in FERIADOS_FIXOS
+
 @shared_task(bind=True, queue="fila_rapida")
 def processar_xls(self, caminho_arquivo, task_id):
 
@@ -86,8 +113,13 @@ def processar_xls(self, caminho_arquivo, task_id):
         matricula = str(row.get("MATRICULA", "")).strip()
         desc_evento = row.get("DESC_EVENTO", "")
         apontamento = 0 if desc_evento == "Apontamento Normal" else 1
+        eh_aluno = False
+
+        data = timezone.make_aware(pd.to_datetime(row.get("DATA")))
+        data_atual = date.today()
         
         if "NOME_ALUNO" in df.columns:
+            eh_aluno = True
             hora_dt = pd.to_datetime(str(row["HORA"]).strip(), format="%Y-%m-%d %H:%M:%S")
             ent_sai = str(row.get("ENT_SAI", "")).strip()
 
@@ -113,8 +145,12 @@ def processar_xls(self, caminho_arquivo, task_id):
             "nome_usuario": nome_usuario, "categoriaUsuario": categoria
         })
 
-        data = timezone.make_aware(pd.to_datetime(row.get("DATA")))
-        data_atual = date.today()
+        if eh_aluno and apontamento == 0 and eh_fim_de_semana_ou_feriado(data) and ent_sai == "1":
+            desc_evento = "Acesso de aluno em dias sem expediente"
+            apontamento = 1
+        elif eh_aluno and apontamento == 0 and eh_fim_de_semana_ou_feriado(data) and ent_sai == "0":
+            desc_evento = "Saída de aluno em dias sem expediente"
+            apontamento = 1
         
         if apontamento == 1 and data.date() == data_atual:            
             mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
@@ -233,8 +269,14 @@ def processar_csv(self, caminho_arquivo, task_id):
         matricula = str(row.get("Matrícula", "")).strip()
         desc_evento = row.get("Evento", "")
         apontamento = (0 if desc_evento == "Apontamento Normal" else 1)
+        eh_aluno = False
+        
+        data_str = f"{row.get('Data')} {row.get('Hora')}"
+        data = timezone.make_aware(pd.to_datetime(data_str, dayfirst=True))
+        data_atual = date.today()
         
         if "Aluno" in df.columns:
+            eh_aluno = True
             hora_dt = pd.to_datetime(str(row["Hora"]).strip(), format="%H:%M:%S")
             ent_sai = str(row.get("E/S", "")).strip()
 
@@ -265,9 +307,9 @@ def processar_csv(self, caminho_arquivo, task_id):
             "nome_usuario": nome_usuario, "categoriaUsuario": categoria,
         })
 
-        data_str = f"{row.get('Data')} {row.get('Hora')}"
-        data = timezone.make_aware(pd.to_datetime(data_str, dayfirst=True))
-        data_atual = date.today()
+        if eh_aluno and apontamento == 0 and eh_fim_de_semana_ou_feriado(data):
+            desc_evento = "acesso de aluno em dias sem expediente"
+            apontamento = 1
         
         if apontamento == 1 and data.date() == data_atual:            
             mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
