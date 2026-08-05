@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 
 import os
+from django.core.cache import cache
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,7 +43,8 @@ def read_secret(secret_name, default=None):
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw')
+#jwtsecret2
+SECRET_KEY = read_secret('smartcard_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -188,22 +190,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-SIMPLE_JWT = {
-    "ALGORITHM": read_secret('jwt_algorithm', 'HS256'),
-    "SIGNING_KEY": read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw'),
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-}
-
-# Configuração do Celery 
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-CELERY_TASK_TRACK_STARTED = True
-
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
 
 CACHES = {
     "default": {
@@ -215,6 +201,26 @@ CACHES = {
         }
     }
 }
+
+print("SIGNING_KEY:", cache.get('SIGNING_KEY'))  # Debugging line to check the value of SIGNING_KEY
+SIMPLE_JWT = {
+    "ALGORITHM": read_secret('jwt_algorithm', 'HS256'),
+    "SIGNING_KEY": cache.get('SIGNING_KEY'),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+ 
+# Configuração do Celery 
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_TASK_TRACK_STARTED = True
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/" 
+
+#signal
 
 SECRET_API_KEY = read_secret('secret_api_key')
 SECRET_AUTHORIZATION = read_secret('secret_authorization')
