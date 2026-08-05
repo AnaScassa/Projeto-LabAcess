@@ -3,6 +3,8 @@ from pathlib import Path
 from datetime import timedelta
 import os
 
+from django.core.cache import cache
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,7 +36,7 @@ def read_secret(secret_name, default=None):
 
 
 # SECURITY
-SECRET_KEY = read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw')
+SECRET_KEY = read_secret('users_service_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw')
 
 DEBUG = True
 
@@ -185,13 +187,28 @@ MEDIA_URL = "/media/"
 # DEFAULT PK
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# REDIS CACHE
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
+        }
+    }
+}
+
+cache.set('SIGNING_KEY', read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw'), None)
+print("SIGNING_KEY:", cache.get('SIGNING_KEY'))  # Debugging line
 # JWT
 SIMPLE_JWT = {
     "ALGORITHM": read_secret('jwt_algorithm', 'HS256'),
-    "SIGNING_KEY": read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw'),
+    "SIGNING_KEY": cache.get('SIGNING_KEY'),
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -242,17 +259,6 @@ CELERY_TASK_SERIALIZER = "json"
 
 CELERY_RESULT_SERIALIZER = "json"
 
-# REDIS CACHE
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
-        }
-    }
-}
 
 # ENV VARIABLES
 SECRET_API_KEY = read_secret('secret_api_key')
