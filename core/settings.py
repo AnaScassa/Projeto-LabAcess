@@ -44,7 +44,7 @@ def read_secret(secret_name, default=None):
 
 # SECURITY WARNING: keep the secret key used in production secret!
 #jwtsecret2
-SECRET_KEY = read_secret('smartcard_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw')
+SECRET_KEY = read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
