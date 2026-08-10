@@ -5,33 +5,40 @@ export async function authFetch(
   options: RequestInit = {}
 ): Promise<Response> {
 
-  const token = localStorage.getItem("access");
+  let token = localStorage.getItem("access");
 
   if (!token) {
+    localStorage.clear();
+    window.location.href = "/login";
     throw new Error("Sem token");
   }
 
-  let response = await fetch(url, {
-    ...options,
+  const makeRequest = async (accessToken: string) => {
+    return fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  };
 
-    headers: {
-      "Content-Type": "application/json",
-
-      ...(options.headers || {}),
-
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  let response = await makeRequest(token);
 
   if (response.status === 401 || response.status === 403) {
 
     const refresh = localStorage.getItem("refresh");
 
     if (!refresh) {
+      localStorage.clear();
+      window.location.href = "/login";
       throw new Error("Sem refresh token");
     }
 
-    const refreshResponse = await fetch(`http://${API_HOST}:8000/api/users/api/token/refresh/`, {
+    const refreshResponse = await fetch(
+      `http://${API_HOST}:8000/api/users/api/token/refresh/`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,17 +59,9 @@ export async function authFetch(
 
     localStorage.setItem("access", data.access);
 
-    response = await fetch(url, {
-      ...options,
+    token = data.access;
 
-      headers: {
-        "Content-Type": "application/json",
-
-        ...(options.headers || {}),
-
-        Authorization: `Bearer ${data.access}`,
-      },
-    });
+    response = await makeRequest(token);
   }
 
   return response;
