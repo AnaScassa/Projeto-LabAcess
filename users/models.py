@@ -17,7 +17,7 @@ class User(AbstractUser):
     class Meta:
         verbose_name = _("User")
         verbose_name_plural = _("Users")
-
+        
     # add additional fields in here
     @property
     def full_name(self):
@@ -46,7 +46,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.get_full_name()
-
+                            
 class UserProfile(models.Model):
     """
     Model representing the user profile.

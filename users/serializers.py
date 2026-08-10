@@ -79,11 +79,15 @@ class UserApiSerializer(serializers.ModelSerializer):
         ]
         
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
 
         token["email"] = user.email
+        token["username"] = user.username
+        token["is_superuser"] = user.is_superuser
+        token["iss"] = "users-service"
 
         return token
 
@@ -94,4 +98,4 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["username"] = self.user.username
         data["is_superuser"] = self.user.is_superuser
 
-        return data  
+        return data

@@ -36,7 +36,9 @@ def read_secret(secret_name, default=None):
 
 
 # SECURITY
-SECRET_KEY = read_secret('users_service_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw')
+SECRET_KEY = read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw')
+JWT_SECRET = read_secret('jwt_secret')
+JWT_ALGORITHM = read_secret('jwt_algorithm', 'HS256')
 
 DEBUG = True
 
@@ -200,15 +202,15 @@ CACHES = {
 }
 
 cache.set('SIGNING_KEY', read_secret('jwt_secret', 'django-insecure-(1-0%ilh9nmtevz%&ztgap_-#nth4spofu9m3ovwhvb%2b1-iw'), None)
-print("SIGNING_KEY:", cache.get('SIGNING_KEY'))  # Debugging line
-# JWT
+JWT_SECRET = read_secret('jwt_secret')
+JWT_ALGORITHM = read_secret('jwt_algorithm', 'HS256')
+
 SIMPLE_JWT = {
-    "ALGORITHM": read_secret('jwt_algorithm', 'HS256'),
-    "SIGNING_KEY": cache.get('SIGNING_KEY'),
+    "ALGORITHM": JWT_ALGORITHM,
+    "SIGNING_KEY": JWT_SECRET,
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
