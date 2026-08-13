@@ -210,6 +210,7 @@ SIMPLE_JWT = {
     "SIGNING_KEY": JWT_SECRET,
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ISSUER": "users-service",
 }
 LOGGING = {
     "version": 1,
