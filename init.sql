@@ -1,0 +1,2 @@
+CREATE DATABASE smartcard;
+CREATE DATABASE users_db;
