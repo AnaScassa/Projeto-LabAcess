@@ -208,6 +208,7 @@ SIMPLE_JWT = {
     "SIGNING_KEY": cache.get('SIGNING_KEY'),
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ISSUER": "users-service",
 }
  
 # Configuração do Celery 
