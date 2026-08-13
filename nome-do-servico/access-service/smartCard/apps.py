@@ -1,9 +1,0 @@
-from django.apps import AppConfig
-
-class SmartCardConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'smartcard'
-    
-    def ready(self):
-        import smartcard.receber_resposta
-        import smartcard.celery_signals

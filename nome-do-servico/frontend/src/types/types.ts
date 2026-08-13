@@ -1,1 +1,0 @@
-export const areasCCS = ['CCS','CCS_LAB','CCSLAB2'];
