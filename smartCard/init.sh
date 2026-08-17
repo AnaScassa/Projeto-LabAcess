@@ -19,4 +19,4 @@ until python -c 'import socket; s=socket.socket(); s.connect(("postgres",5432))'
         --pool=solo \
         --concurrency=1 \
         --loglevel=info \
-        -Q fila_rapida,fila_media,fila_pesada'
+        -Q fila_rapida,fila_media,fila_pesada
