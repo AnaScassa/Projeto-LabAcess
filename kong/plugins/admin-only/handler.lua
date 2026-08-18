@@ -4,19 +4,40 @@ local AdminOnlyHandler = {
 }
 
 function AdminOnlyHandler:access(conf)
-    local jwt_claims = kong.ctx.shared.jwt_claims
 
-    if not jwt_claims then
-        return kong.response.exit(401, {
-            message = "JWT não encontrado"
-        })
+    if kong.request.get_method() == "OPTIONS" then
+        return
     end
 
-    if jwt_claims.is_superuser ~= true then
-        return kong.response.exit(403, {
-            message = "Acesso permitido somente para administradores"
-        })
+    local consumer = kong.client.get_consumer()
+
+    if consumer then
+        kong.log.notice("CONSUMER ENCONTRADO")
+
+        for k, v in pairs(consumer) do
+            kong.log.notice("CONSUMER FIELD: ", tostring(k), " = ", tostring(v))
+        end
+    else
+        kong.log.notice("CONSUMER = NIL")
     end
+
+    local credential = kong.client.get_credential()
+
+    if credential then
+        kong.log.notice("CREDENTIAL ENCONTRADA")
+
+        for k, v in pairs(credential) do
+            kong.log.notice(
+                "CREDENTIAL FIELD: ",
+                tostring(k),
+                " = ",
+                tostring(v)
+            )
+        end
+    else
+        kong.log.notice("CREDENTIAL = NIL")
+    end
+
 end
 
 return AdminOnlyHandler
