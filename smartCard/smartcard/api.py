@@ -1,29 +1,27 @@
-from django.contrib import auth
-from urllib3 import request
-
 from smartcard.serializers import (GroupSerializer, AcessoSerializer, UsuarioSerializer, ProcessamentoSerializer, ApontamentoSerializer)
-
-from rest_framework.response import Response
+from django.http import StreamingHttpResponse
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.authentication import SessionAuthentication, get_user_model
 from rest_framework.decorators import action
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from django.http import StreamingHttpResponse
+from rest_framework.renderers import BaseRenderer, JSONRenderer
 from smartcard.models import Acesso, Usuario, Processamento
 from django.contrib.auth.models import Group, User, User
 from .models import Emails
 
-from rest_framework import serializers, viewsets, exceptions
+from rest_framework import serializers, viewsets
 from rest_framework_sso.views import ObtainAuthorizationTokenView
 from rest_framework_sso import claims
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_sso import claims
-
+from rest_framework.renderers import BaseRenderer, JSONRenderer
+import json
+import time
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all().order_by("name")
@@ -43,32 +41,56 @@ class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return super().get_queryset()
 
+class EventStreamRenderer(BaseRenderer):
+    media_type = "text/event-stream"
+    format = "sse"
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        return data
+
+
 class TaskCompleted(viewsets.ModelViewSet):
     queryset = Processamento.objects.all().order_by("-criado_em")
     serializer_class = ProcessamentoSerializer
-    permission_classes = [IsAuthenticated]    
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [EventStreamRenderer]
 
     def get_queryset(self):
-        
+
         email = self.request.user.email
         Emails.objects.get_or_create(email=email, defaults={"esta_ativo": True, "ativado": False})
 
         return Processamento.objects.filter(user=self.request.user.id)
     
-    def get_object(self):
-        obj = super().get_object()
-        if not obj.exists():
-            obj = []  
-        return obj
-        
-    @action(detail=False, methods=['get'])
-    def status(self, request):
-        tem_tasks = Processamento.objects.filter(user=request.user).exclude(status="ERRO")
+    def list(self, request, *args, **kwargs):
 
-        if not tem_tasks.exists():
-            tem_tasks = None
+        usuario_id = request.user.id
 
-        return Response({"tem_tasks": tem_tasks.exists()})
+        print("GENERATOR INICIOU", flush=True)
+        def eventos():
+
+            while True:
+
+                print("PROCESSAMENTOS", flush=True)
+
+                processamentos = Processamento.objects.filter(user=usuario_id).order_by("-criado_em")
+
+                dados = self.get_serializer(processamentos, many=True).data
+
+                json_data = JSONRenderer().render(dados).decode("utf-8")
+
+                print("PROCESSAMENTOS ATUALIZADOS:", json_data, flush=True)
+
+                yield f"data: {json_data}\n\n"
+
+                time.sleep(2)
+
+        response = StreamingHttpResponse(eventos(), content_type="text/event-stream")
+
+        response["Cache-Control"] = "no-cache"
+        response["X-Accel-Buffering"] = "no"
+
+        return response
     
 class ApontamentoViewSet(ReadOnlyModelViewSet):
     serializer_class = ApontamentoSerializer

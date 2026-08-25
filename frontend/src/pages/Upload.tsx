@@ -13,6 +13,7 @@ import StatusAluno from "../components/relatorios/StatusUsuario"
 import { solicitarPermissaoNotificacao } from "../utils/notificacoes";
 import { useMailhogNotifications } from "../hooks/useMailhogNotifications";
 import { fazerUpload } from "../services/upload";
+import { verificarProcessamento } from "../services/processamento";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
@@ -30,19 +31,29 @@ export default function Upload() {
   useMailhogNotifications();
   
   useEffect(() => {
-    const storedToken = localStorage.getItem("access");
-    solicitarPermissaoNotificacao();
+      const storedToken = localStorage.getItem("access");
+      solicitarPermissaoNotificacao();
 
-    if (!storedToken) {
-      window.location.replace("/login");
-      return;
-    }
-    
-    setToken(storedToken);
+      if (!storedToken) {
+          window.location.replace("/login");
+          return;
+      }
 
-    return () => {
+      setToken(storedToken);
 
-    };
+      verificarProcessamento((processamentos) => {
+          const processando = processamentos.some((processamento) => processamento.status === "PROCESSANDO");
+
+          setLoading(processando);
+
+          if (processando) {
+              setMensagem("Processamento sendo feito...");
+          } else {
+              setMensagem("");
+              setEstaBloqueado(false);
+          }
+      });
+
   }, []);
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
