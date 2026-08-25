@@ -12,17 +12,15 @@ import UltimosAcessos from "../components/relatorios/UltimosAcessos";
 import StatusAluno from "../components/relatorios/StatusUsuario"
 import { solicitarPermissaoNotificacao } from "../utils/notificacoes";
 import { useMailhogNotifications } from "../hooks/useMailhogNotifications";
-import { limparResposta,buscarResposta } from "../services/respostas";
-import { verificarProcessamento } from "../services/processamento";
 import { fazerUpload } from "../services/upload";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
-  const [retorno, setRetorno] = useState("");
+  const [retorno] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
-  const [bloqueado, setBloqueado] = useState(false);
+  const [bloqueado] = useState(false);
   const { treinamentos } = useTreinamento();
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
@@ -42,58 +40,8 @@ export default function Upload() {
     
     setToken(storedToken);
 
-    const buscarRegistro = async () => {
-
-      const verificar = await buscarResposta();
-
-      if (verificar?.length > 0) {
-        const dados = verificar[0];
-        const mensagem = dados.status;
-
-        setRetorno(mensagem);
-        setBloqueado(true);
-
-        if (dados.quantidade != null && dados.quantidade != "null") {
-          await limparResposta();
-          alert(`Novos dados foram recebidos\nQuantidade: ${dados.quantidade}`);
-          window.location.reload();
-          console.log(dados.quantidade);
-        }
-      }else{
-        setBloqueado(false);
-
-      }
-    }
-
-    const verificarStatus = async () => {
-      const data = await verificarProcessamento();
-
-      if (data?.[0]?.status === "ERRO"){
-        setEstaBloqueado(true);
-        setLoading(false);
-        setMensagem("Erro no processamento");
-        return;
-      }
-
-      if (data && Object.keys(data).length > 0){
-        setEstaBloqueado(true);
-        setLoading(true);
-
-      } else {
-        setEstaBloqueado(false);
-        setLoading(false);
-        setMensagem("Página pronta para novo upload");
-
-      }
-    };
-
-    verificarStatus();
-    buscarRegistro();
-    const interval = setInterval(verificarStatus, 3000);
-    const interval2 = setInterval(buscarRegistro, 3000);
     return () => {
-      clearInterval(interval); 
-      clearInterval(interval2);
+
     };
   }, []);
 
