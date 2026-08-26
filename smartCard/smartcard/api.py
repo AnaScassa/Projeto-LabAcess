@@ -1,3 +1,5 @@
+import redis
+
 from smartcard.serializers import (GroupSerializer, AcessoSerializer, UsuarioSerializer, ProcessamentoSerializer, ApontamentoSerializer)
 from django.http import StreamingHttpResponse
 from rest_framework import viewsets
@@ -19,9 +21,9 @@ from django.utils.translation import gettext as _
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_sso import claims
-from rest_framework.renderers import BaseRenderer, JSONRenderer
-import json
-import time
+from rest_framework.renderers import BaseRenderer
+
+redis_client = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all().order_by("name")
@@ -56,34 +58,35 @@ class TaskCompleted(viewsets.ModelViewSet):
     renderer_classes = [EventStreamRenderer]
 
     def get_queryset(self):
-
         email = self.request.user.email
         Emails.objects.get_or_create(email=email, defaults={"esta_ativo": True, "ativado": False})
 
         return Processamento.objects.filter(user=self.request.user.id)
-    
+
     def list(self, request, *args, **kwargs):
 
         usuario_id = request.user.id
 
-        print("GENERATOR INICIOU", flush=True)
         def eventos():
+            pubsub = redis_client.pubsub()
+            pubsub.subscribe(f"task_completed:{usuario_id}")
+            print(f"SSE aguardando usuário {usuario_id}", flush=True)
 
-            while True:
+            for mensagem in pubsub.listen():
 
-                print("PROCESSAMENTOS", flush=True)
+                if mensagem["type"] != "message":
+                    continue
 
-                processamentos = Processamento.objects.filter(user=usuario_id).order_by("-criado_em")
+                dados = mensagem["data"]
 
-                dados = self.get_serializer(processamentos, many=True).data
+                if isinstance(dados, bytes):
+                    dados = dados.decode("utf-8")
 
-                json_data = JSONRenderer().render(dados).decode("utf-8")
+                yield f"data: {dados}\n\n"
 
-                print("PROCESSAMENTOS ATUALIZADOS:", json_data, flush=True)
+                break
 
-                yield f"data: {json_data}\n\n"
-
-                time.sleep(2)
+            pubsub.unsubscribe(f"task_completed:{usuario_id}")
 
         response = StreamingHttpResponse(eventos(), content_type="text/event-stream")
 
