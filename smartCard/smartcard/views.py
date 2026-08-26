@@ -155,12 +155,6 @@ def agora_por_fila():
         "fila_pesada": TaskResult.objects.filter(status="STARTED", task_name__icontains="processar_xls").count(),
     }
 
-def verificar_tasks_user(user, user_id):
-    total = Processamento.objects.filter(user=user, user_id=user_id).count()
-    success = Processamento.objects.filter(user=user, status="SUCCESS", user_id=user_id).count()
-
-    if total == success:
-        Processamento.objects.filter(user=user).delete()
         
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -253,4 +247,3 @@ def receber_resposta(request):
 def limpar_resposta(request):
     Resposta.objects.all().delete()
     return Response({"message": "Respostas limpas com sucesso"}, status=status.HTTP_200_OK)
-    
