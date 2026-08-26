@@ -41,18 +41,11 @@ export default function Upload() {
 
       setToken(storedToken);
 
-      verificarProcessamento((processamentos) => {
-          const processando = processamentos.some((processamento) => processamento.status === "PROCESSANDO");
-
-          setLoading(processando);
-
-          if (processando) {
-              setMensagem("Processamento sendo feito...");
-          } else {
-              setMensagem("");
-              setEstaBloqueado(false);
-          }
-      });
+    verificarProcessamento(() => {
+      setLoading(false);
+      setEstaBloqueado(false);
+      setMensagem("Processamento concluído!");
+    });
 
   }, []);
 
@@ -87,6 +80,12 @@ export default function Upload() {
 
       setMensagem("Processamento sendo feito...");
       setLoading(true);
+
+      verificarProcessamento(() => {
+        setLoading(false);
+        setEstaBloqueado(false);
+        setMensagem("Processamento concluído!");
+      });
 
     } catch (error) {
       console.error(error);

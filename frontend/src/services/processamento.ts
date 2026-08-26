@@ -1,18 +1,7 @@
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { API_HOST } from "../utils/static";
 
-export interface Processamento {
-    id: number;
-    task_id: string;
-    status: string;
-    criado_em: string;
-    atualizado_em: string;
-    user: string;
-    task_id_parent: string | null;
-    task_name: string | null;
-}
-
-export const verificarProcessamento = async (onAtualizacao: (processamentos: Processamento[]) => void) => {
+export const verificarProcessamento = async (onConcluido: () => void) => {
     const token = localStorage.getItem("access");
 
     if (!token) {
@@ -20,22 +9,29 @@ export const verificarProcessamento = async (onAtualizacao: (processamentos: Pro
     }
 
     await fetchEventSource(`http://${API_HOST}:8000/api/acesso/processamento/`, {
-        method: "GET",
+            method: "GET",
 
-        headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "text/event-stream",
-        },
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "text/event-stream",
+            },
 
-        onmessage(event) {
-            const dados: Processamento[] = JSON.parse(event.data);
+            onmessage(event) {
+                console.log("Mensagem recebida do backend:", event.data);
 
-            onAtualizacao(dados);
-        },
+                const dados = JSON.parse(event.data);
 
-        onerror(error) {
-            console.error("Erro no SSE:", error);
-            throw error;
-        },
-    });
+                if (dados.status === "COMPLETED") {
+                    console.log("Todas as tasks foram concluídas!");
+
+                    onConcluido();
+                }
+            },
+
+            onerror(error) {
+                console.error("Erro no SSE:", error);
+                throw error;
+            },
+        }
+    );
 };
