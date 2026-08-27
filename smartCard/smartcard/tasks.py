@@ -7,13 +7,12 @@ from django.core.mail import get_connection, send_mail
 from django.conf import settings
 
 from celery import shared_task, shared_task
+import shortuuid
 
 from .services import vincular_por_matricula
 from .models import Emails, Processamento, Usuario, Acesso
 from fuzzywuzzy import fuzz
 from dotenv import load_dotenv
-import smtplib
-import uuid
 import pandas as pd
 import time
 import threading
@@ -535,7 +534,7 @@ def callback_csv(ch, method, properties, body):
             arquivo_temp.write(conteudo)
             caminho_arquivo = arquivo_temp.name
 
-        task_id = str(uuid.uuid4())
+        task_id = shortuuid.uuid()
         Processamento.objects.create(task_id=task_id, status="PENDING")
         print(f"CSV enviado para processamento: {nome}")
         processar_csv.delay(caminho_arquivo, task_id)

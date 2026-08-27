@@ -1,7 +1,7 @@
 from django.conf import settings
 
 import os
-import uuid
+import shortuuid
 
 
 def vincular_por_matricula(usuario, profiles):
@@ -30,7 +30,7 @@ def vincular_por_matricula(usuario, profiles):
 def salvar_arquivo_temporario(arquivo):
     os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
 
-    nome = f"{uuid.uuid4()}_{arquivo.name}"
+    nome = f"{shortuuid.uuid()}_{arquivo.name}"
     caminho = os.path.join(settings.MEDIA_ROOT, nome)
 
     with open(caminho, "wb") as destino:

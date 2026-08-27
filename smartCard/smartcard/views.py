@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import IsAuthenticated
 from datetime import datetime, timedelta
 
@@ -17,8 +17,8 @@ from smartcard.rabbitmq.publisher import enviar_mensagem
 from rest_framework_api_key.permissions import HasAPIKey
 from datetime import date
 
-import uuid
 import requests
+import shortuuid
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -132,7 +132,7 @@ def carregar_acesso(request):
         return Response({"erro": "Apenas arquivos .xls e .csv são permitidos."},status=status.HTTP_400_BAD_REQUEST)
 
     caminho = salvar_arquivo_temporario(arquivo)
-    task_uuid = str(uuid.uuid4())
+    task_uuid = shortuuid.uuid()
 
     enviar_mensagem("usuarios_processados", {"task_id": task_uuid, "arquivo": caminho})
 
