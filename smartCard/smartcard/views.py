@@ -119,34 +119,32 @@ def mudar_apontamento(request, id):
         return Response({"erro": "Não encontrado"}, status=404)
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated | HasAPIKey])
 def carregar_acesso(request):
-
     arquivo = request.FILES.get("file")
 
     if not arquivo:
         return Response({"erro": "Nenhum arquivo enviado."}, status=status.HTTP_400_BAD_REQUEST)
 
     if not arquivo.name.endswith((".xls", ".csv")):
-        return Response({"erro": "Apenas arquivos .xls e .csv são permitidos."},status=status.HTTP_400_BAD_REQUEST)
+        return Response({"erro": "Apenas arquivos .xls e .csv são permitidos."}, status=status.HTTP_400_BAD_REQUEST)
 
     caminho = salvar_arquivo_temporario(arquivo)
     task_uuid = shortuuid.uuid()
+    user_id = request.user.id
+
+    with transaction.atomic():
+        Processamento.objects.create(task_id=task_uuid, status="PENDING", user=str(user_id))
 
     enviar_mensagem("usuarios_processados", {"task_id": task_uuid, "arquivo": caminho})
 
-    with transaction.atomic():
-        Processamento.objects.create(task_id=task_uuid, status="PENDING", user=request.user.id)
-
-    if arquivo.name.endswith((".xls")):
-        processar_xls.apply_async(args=[caminho, task_uuid],task_id=task_uuid)
-
+    if arquivo.name.endswith(".xls"):
+        processar_xls.apply_async(args=[caminho, task_uuid], task_id=task_uuid)
     elif arquivo.name.endswith(".csv"):
-        processar_csv.apply_async(args=[caminho, task_uuid],task_id=task_uuid)
+        processar_csv.apply_async(args=[caminho, task_uuid], task_id=task_uuid)
 
-    return Response({"message": "Arquivo enviado para processamento.", "task_id": task_uuid, "status": "PENDING",
-        "user": request.user.id}, status=status.HTTP_202_ACCEPTED)
+    return Response({"message": "Arquivo enviado para processamento.", "task_id": task_uuid, "status": "PENDING", "user": user_id}, status=status.HTTP_202_ACCEPTED)
     
 def agora_por_fila():
     return {
