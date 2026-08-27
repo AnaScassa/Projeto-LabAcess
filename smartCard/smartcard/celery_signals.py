@@ -40,28 +40,15 @@ def task_finalizada(sender=None, result=None, **kwargs):
     processo = Processamento.objects.filter(task_id=task_id).first()
 
     if not processo:
-        print(f"PROCESSO NÃO ENCONTRADO: {task_id}", flush=True)
+        print("PROCESSO NÃO ENCONTRADO", flush=True)
         return
 
     processo.status = "SUCCESS"
     processo.save()
-
     user = processo.user
-
-    if not user:
-        print(f"USUÁRIO NÃO ENCONTRADO PARA TASK: {task_id}", flush=True)
-        return
-
-    tarefas_usuario = Processamento.objects.filter(user=user)
-    total = tarefas_usuario.count()
-    success = tarefas_usuario.filter(status="SUCCESS").count()
-    erro = tarefas_usuario.filter(status="ERRO").count()
-
-    print(f"USUÁRIO: {user}", flush=True)
-    print(f"TOTAL DE TASKS: {total}", flush=True)
-    print(f"SUCCESS: {success}", flush=True)
-    print(f"ERROS: {erro}", flush=True)
-
+    total = Processamento.objects.filter(user=user).count()
+    success = Processamento.objects.filter(user=user, status="SUCCESS").count()
+    
     if total > 0 and total == success:
         print("TODAS AS TASKS TERMINARAM!", flush=True)
 
