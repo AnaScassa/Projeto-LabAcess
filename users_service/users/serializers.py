@@ -83,6 +83,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
+        token["id"] = user.id
         token["email"] = user.email
         token["username"] = user.username
         token["is_superuser"] = user.is_superuser
@@ -92,7 +93,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
-
+        data["id"] = self.user.id
         data["email"] = self.user.email
         data["username"] = self.user.username
         data["is_superuser"] = self.user.is_superuser
