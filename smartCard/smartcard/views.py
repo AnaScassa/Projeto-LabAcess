@@ -229,8 +229,7 @@ def emails(request):
 @permission_classes([IsAuthenticated])
 def registrar_email(request):
 
-    Emails.objects.get_or_create(email=request.user.email, 
-        defaults={"esta_ativo": True, "ativado": False, "criado_em": datetime.now()})
+    Emails.objects.get_or_create(email=request.user.email, defaults={"esta_ativo": True, "ativado": False, "criado_em": datetime.now()})
 
     return Response({"message": "Email registrado com sucesso"})
 
@@ -245,3 +244,21 @@ def receber_resposta(request):
 def limpar_resposta(request):
     Resposta.objects.all().delete()
     return Response({"message": "Respostas limpas com sucesso"}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def verificar_id(request, id):
+
+    print("ID RECEBIDO:", id)
+
+    processamentos = Processamento.objects.filter(user=str(id))
+
+    if not processamentos.exists():
+        return Response({"MENSAGEM": "Usuário sem processamento", "id_procurado": id}, status=404)
+
+    dados = []
+
+    for processo in processamentos:
+        dados.append({"id": processo.id, "task_id": processo.task_id, "status": processo.status, "task_id_parent": processo.task_id_parent, "task_name": processo.task_name,})
+
+    return Response({"MENSAGEM": "Processamentos encontrados", "user_id": id, "total": len(dados), "processamentos": dados}, status=200)
