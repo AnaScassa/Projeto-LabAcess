@@ -30,13 +30,19 @@ export default function Login() {
 
       const data = await response.json();
 
+      console.log("DATA DO LOGIN:", data);
+      console.log("ID RECEBIDO:", data.id);
+
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
+      localStorage.setItem("id", data.id);
       localStorage.setItem("username", username);
 
-      window.location.replace("/");
+      console.log("ID SALVO:", localStorage.getItem("id"));
 
+      window.location.replace("/");
     } catch (error) {
+
         console.error(error);
         setMensagem("Erro ao conectar com o servidor");
     }

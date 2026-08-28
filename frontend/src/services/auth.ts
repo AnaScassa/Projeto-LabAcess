@@ -1,10 +1,6 @@
 import { API_HOST } from "../utils/static";
 
-export async function authFetch(
-  url: string,
-  options: RequestInit = {}
-): Promise<Response> {
-
+export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
   let token = localStorage.getItem("access");
 
   if (!token) {
@@ -36,18 +32,15 @@ export async function authFetch(
       throw new Error("Sem refresh token");
     }
 
-    const refreshResponse = await fetch(
-      `http://${API_HOST}:8000/api/users/api/token/refresh/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          refresh,
-        }),
-      }
-    );
+    const refreshResponse = await fetch(`http://${API_HOST}:8000/api/users/api/token/refresh/`,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        refresh,
+      }),
+    });
 
     if (!refreshResponse.ok) {
       localStorage.clear();
@@ -55,9 +48,10 @@ export async function authFetch(
       throw new Error("Refresh inválido");
     }
 
-    const data: { access: string } = await refreshResponse.json();
+    const data: { access: string, id: string } = await refreshResponse.json();
 
     localStorage.setItem("access", data.access);
+    localStorage.setItem("id", data.id);
 
     token = data.access;
 

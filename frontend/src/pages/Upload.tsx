@@ -14,6 +14,7 @@ import { solicitarPermissaoNotificacao } from "../utils/notificacoes";
 import { useMailhogNotifications } from "../hooks/useMailhogNotifications";
 import { fazerUpload } from "../services/upload";
 import { verificarProcessamento } from "../services/processamento";
+import { verificarId } from "../services/conferirid";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
@@ -51,6 +52,22 @@ export default function Upload() {
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+  try {
+    const usuario_id = localStorage.getItem("id");
+
+    if (!usuario_id) {
+      throw new Error("ID do usuário não encontrado");
+    }
+
+    const response = await verificarId(usuario_id);
+    console.log("RESPOSTA:", response);
+
+  } catch (error) {
+    console.error(error);
+    console.log("deu erro!");
+    window.location.replace("/login");
+  }
 
     setEstaBloqueado(true);
 
