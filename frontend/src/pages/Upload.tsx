@@ -53,21 +53,35 @@ export default function Upload() {
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-  try {
-    const usuario_id = localStorage.getItem("id");
+    try {
+      const usuario_id = localStorage.getItem("id");
 
-    if (!usuario_id) {
-      throw new Error("ID do usuário não encontrado");
+      if (!usuario_id) {
+        window.location.replace("/login")
+        throw new Error("ID do usuário não encontrado");
+      }
+
+        const response = await verificarId(usuario_id);
+
+        console.log("STATUS:", response.status);
+
+        if (response.status === 200) {
+          setMensagem("Já existe um arquivo sendo processado.");
+          return;
+        }
+
+        if (response.status !== 200 && response.status !== 201) {
+          setMensagem("Erro ao verificar processamento.");
+          return;
+        }
+
+        setMensagem("Processando arquivo");
+
+    } catch (error) {
+      console.error(error);
+      console.log("deu erro!");
+      window.location.replace("/login");
     }
-
-    const response = await verificarId(usuario_id);
-    console.log("RESPOSTA:", response);
-
-  } catch (error) {
-    console.error(error);
-    console.log("deu erro!");
-    window.location.replace("/login");
-  }
 
     setEstaBloqueado(true);
 
