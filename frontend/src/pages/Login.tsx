@@ -7,53 +7,69 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
 
-  const handleEmail = async () => {
-    try {
-      const response = await registrarEmail(username);
-      const data = await response.json();
-      console.log("Email registrado:", data);
-
-    } catch (error) {
-      console.error("Erro ao registrar email:", error);
-      setMensagem("Erro ao conectar com o servidor");
-    }
-  };
-
   const handleLogin = async () => {
     try {
       const response = await fazerLogin(username, password);
 
       if (!response.ok) {
-          setMensagem("Usuário ou senha inválidos");
-          return;
+        setMensagem("Usuário ou senha inválidos");
+        return false;
       }
 
       const data = await response.json();
 
       console.log("DATA DO LOGIN:", data);
       console.log("ID RECEBIDO:", data.id);
+      console.log("EMAIL RECEBIDO:", data.email);
 
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
-      localStorage.setItem("id", data.id);
+      localStorage.setItem("id", String(data.id));
       localStorage.setItem("username", username);
 
-      console.log("ID SALVO:", localStorage.getItem("id"));
+      if (data.email) {
+        localStorage.setItem("email", data.email);
+      }
 
-      window.location.replace("/");
+      return true;
+
     } catch (error) {
-
-        console.error(error);
-        setMensagem("Erro ao conectar com o servidor");
+      console.error(error);
+      setMensagem("Erro ao conectar com o servidor");
+      return false;
     }
   };
 
+  const handleEmail = async () => {
+    try {
+      const response = await registrarEmail();
+
+      if (!response.ok) {
+        const erro = await response.text();
+        console.error("Erro ao registrar email:", erro);
+        return false;
+      }
+
+      return true;
+
+    } catch (error) {
+      console.error("Erro ao registrar email:", error);
+      return false;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    await handleLogin();
+    const loginSucesso = await handleLogin();
+
+    if (!loginSucesso) {
+      return;
+    }
+
     await handleEmail();
+
+    window.location.replace("/");
   };
 
   return (
@@ -62,7 +78,9 @@ export default function Login() {
 
         <div className="card card-outline card-primary">
           <div className="card-header text-center">
-            <h3><b>Controle</b>Lab</h3>
+            <h3>
+              <b>Controle</b>Lab
+            </h3>
           </div>
 
           <div className="card-body">
@@ -96,9 +114,7 @@ export default function Login() {
 
               <div className="row">
                 <div className="col-12">
-                  <button type="submit" className="btn btn-primary btn-block">
-                    Entrar
-                  </button>
+                  <button type="submit" className="btn btn-primary btn-block">Entrar</button>
                 </div>
               </div>
 
