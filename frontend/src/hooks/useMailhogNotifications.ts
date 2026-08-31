@@ -1,42 +1,53 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { exibirNotificacao } from "../utils/notificacoes";
 import { API_HOST } from "../utils/static";
 
 export function useMailhogNotifications() {
-  const idsVistos = useRef(new Set<string>());
 
   useEffect(() => {
-    const verificar = async () => {
-      const token = localStorage.getItem("access");
-      const res = await fetch(`http://${API_HOST}:8000/api/acesso/emails`, {
+
+    const token = localStorage.getItem("access");
+
+    if (!token) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    fetchEventSource(`http://${API_HOST}:8000/api/acesso/emails`, {
         method: "GET",
+
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          Accept: "text/event-stream",
         },
-      });
-      const data = await res.json();
 
-      const emails = data.items || [];
+        signal: controller.signal,
 
-      emails.forEach((email: any) => {
-        if (!idsVistos.current.has(email.ID)) {
-          idsVistos.current.add(email.ID);
+        onmessage(event) {
 
-          const assunto =
-            email.Content?.Headers?.Subject?.[0] ?? "Novo e-mail";
+          if (!event.data) {
+            return;
+          }
 
-          const mensagem =
-            email.Content?.Body?.substring(0, 120) ?? "";
+          const email = JSON.parse(event.data);
+          const assunto = email.Content?.Headers?.Subject?.[0] ?? "Novo e-mail";
+          const mensagem = email.Content?.Body?.substring(0, 120) ?? "";
 
           exibirNotificacao(assunto, mensagem);
-        }
-      });
+        },
+
+        onerror(error) {
+          console.error("Erro na conexão SSE:", error);
+          throw error;
+        },
+      }
+    );
+
+    return () => {
+      controller.abort();
     };
 
-    verificar();
-    const interval = setInterval(verificar, 3000);
-
-    return () => clearInterval(interval);
   }, []);
 }
