@@ -254,7 +254,7 @@ def verificar_id(request, id):
     processamentos = Processamento.objects.filter(user=str(id))
 
     if not processamentos.exists():
-        return Response({"MENSAGEM": "Usuário sem processamento", "id_procurado": id}, status=404)
+        return Response({"MENSAGEM": "Usuário sem processamento", "id_procurado": id}, status=201)
 
     dados = []
 

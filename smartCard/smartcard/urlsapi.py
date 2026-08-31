@@ -27,5 +27,5 @@ urlpatterns = [
     path("registrar-email/", registrar_email, name="registrar_email"),
     path("receber-resposta/", receber_resposta, name="receber_resposta"),
     path("limpar-resposta/", limpar_resposta, name="limpar_resposta"),
-    path("verificar-id/<str:id>/", verificar_id, name="verificar_id"),
+    path("verificar-id/<int:id>/", verificar_id, name="verificar_id"),
 ]
