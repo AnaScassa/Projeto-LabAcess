@@ -11,14 +11,17 @@ from django.db import transaction
 from django_celery_results.models import TaskResult
 from django.http import StreamingHttpResponse
 
+import json
+
+from .receber_resposta import REDIS_KEY_ULTIMA_RESPOSTA
+
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
-from .models import Emails, Resposta, Usuario, Acesso, Processamento
+from .models import Emails, Usuario, Acesso, Processamento
 from smartcard.rabbitmq.publisher import enviar_mensagem
 
-import requests
 import shortuuid
-import json, redis, time
+import redis
 
 from datetime import datetime, timedelta, date
 
@@ -227,14 +230,17 @@ def registrar_email(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def receber_resposta(request):
-    resposta = Resposta.objects.values("status", "quantidade", "criado_em").order_by("-criado_em")[:1]
-    return Response(resposta, status=status.HTTP_200_OK)
+    ultimo = redis_client.get(REDIS_KEY_ULTIMA_RESPOSTA)
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def limpar_resposta(request):
-    Resposta.objects.all().delete()
-    return Response({"message": "Respostas limpas com sucesso"}, status=status.HTTP_200_OK)
+    if not ultimo:
+        return Response({"status": "PENDING", "quantidade": 0, "criado_em": None}, status=status.HTTP_200_OK)
+
+    try:
+        resposta = json.loads(ultimo)
+    except (TypeError, ValueError):
+        return Response({"status": "PENDING", "quantidade": 0, "criado_em": None}, status=status.HTTP_200_OK)
+
+    return Response(resposta, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
