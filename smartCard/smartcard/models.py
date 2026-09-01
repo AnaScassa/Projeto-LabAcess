@@ -46,11 +46,6 @@ class Processamento(models.Model):
 
     def __str__(self):
         return f"{self.task_id} - {self.status}"
-    
-class Resposta(models.Model):
-    status = models.CharField(max_length=100)
-    quantidade = models.IntegerField(null=True, blank=True)
-    criado_em = models.DateTimeField(auto_now_add=True)
 
 class Emails(models.Model):
     email = models.EmailField(unique=False)
