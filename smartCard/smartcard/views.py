@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import BaseRenderer
 from rest_framework_api_key.permissions import HasAPIKey
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
 from django.http import JsonResponse
 from django.core.cache import cache
@@ -11,17 +13,14 @@ from django.db import transaction
 from django_celery_results.models import TaskResult
 from django.http import StreamingHttpResponse
 
-import json
-
-from .receber_resposta import REDIS_KEY_ULTIMA_RESPOSTA
-
+from .receber_resposta import REDIS_CANAL_RESPOSTA
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
 from .models import Emails, Usuario, Acesso, Processamento
 from smartcard.rabbitmq.publisher import enviar_mensagem
 
 import shortuuid
-import redis
+import redis, json
 
 from datetime import datetime, timedelta, date
 
@@ -227,20 +226,50 @@ def registrar_email(request):
 
     return Response({"message": "Email registrado com sucesso"})
 
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
 def receber_resposta(request):
-    ultimo = redis_client.get(REDIS_KEY_ULTIMA_RESPOSTA)
 
-    if not ultimo:
-        return Response({"status": "PENDING", "quantidade": 0, "criado_em": None}, status=status.HTTP_200_OK)
+    authenticator = JWTAuthentication()
 
     try:
-        resposta = json.loads(ultimo)
-    except (TypeError, ValueError):
-        return Response({"status": "PENDING", "quantidade": 0, "criado_em": None}, status=status.HTTP_200_OK)
+        header = authenticator.get_header(request)
 
-    return Response(resposta, status=status.HTTP_200_OK)
+        if header is None:
+            return StreamingHttpResponse(json.dumps({"detail": "Authorization header ausente"}), status=401, content_type="application/json")
+
+        raw_token = authenticator.get_raw_token(header)
+
+        if raw_token is None:
+            return StreamingHttpResponse(json.dumps({"detail": "Token ausente"}), status=401, content_type="application/json")
+
+        validated_token = authenticator.get_validated_token(raw_token)
+
+    except AuthenticationFailed as e:
+        return StreamingHttpResponse(json.dumps({"detail": str(e.detail)}), status=401, content_type="application/json")
+
+    def eventos():
+        pubsub = redis_client.pubsub()
+        pubsub.subscribe(REDIS_CANAL_RESPOSTA)
+
+        try:
+
+            for mensagem in pubsub.listen():
+
+                if mensagem["type"] != "message":
+                    continue
+
+                dados = mensagem["data"]
+
+                yield f"data: {dados}\n\n"
+
+        finally:
+            pubsub.unsubscribe(REDIS_CANAL_RESPOSTA)
+            pubsub.close()
+
+    response = StreamingHttpResponse(eventos(), content_type="text/event-stream")
+    response["Cache-Control"] = "no-cache"
+    response["X-Accel-Buffering"] = "no"
+
+    return response
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])

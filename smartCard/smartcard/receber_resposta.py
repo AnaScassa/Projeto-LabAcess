@@ -10,8 +10,9 @@ REDIS_KEY_ULTIMA_RESPOSTA = "ultima_resposta_rpa"
 REDIS_CANAL_RESPOSTA = "resposta_rpa"
 
 def publicar_resposta_no_redis(status, quantidade):
-    payload = {"status": status, "quantidade": quantidade, "criado_em": timezone.now().isoformat(),}
+    payload = {"status": status, "quantidade": quantidade, "criado_em": timezone.now().isoformat()}
     redis_client.set(REDIS_KEY_ULTIMA_RESPOSTA, json.dumps(payload))
+    redis_client.publish(REDIS_CANAL_RESPOSTA, json.dumps(payload))
 
     return payload
 
