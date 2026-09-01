@@ -1,24 +1,28 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes,renderer_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.permissions import IsAuthenticated
-from datetime import datetime, timedelta
+from rest_framework.renderers import BaseRenderer
+from rest_framework_api_key.permissions import HasAPIKey
 
 from django.http import JsonResponse
 from django.core.cache import cache
 from django.db import transaction
 from django_celery_results.models import TaskResult
+from django.http import StreamingHttpResponse
 
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
 from .models import Emails, Resposta, Usuario, Acesso, Processamento
 from smartcard.rabbitmq.publisher import enviar_mensagem
-from rest_framework_api_key.permissions import HasAPIKey
-from datetime import date
 
 import requests
 import shortuuid
+import json, redis, time
+
+from datetime import datetime, timedelta, date
+
+redis_client = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -36,11 +40,7 @@ def lista_usuarios(request):
 @permission_classes([IsAuthenticated])
 def usuarios_ativos(request):
     hoje = date.today()
-
-    acessos = (
-        Acesso.objects.filter(data_acesso__date=hoje).order_by('usuario_id', '-data_acesso').values('id', 'usuario_id', 'data_acesso', 'desc_evento', 'desc_area', 'ent_sai')
-    )
-
+    acessos = (Acesso.objects.filter(data_acesso__date=hoje).order_by('usuario_id', '-data_acesso').values('id', 'usuario_id', 'data_acesso', 'desc_evento', 'desc_area', 'ent_sai'))
     ultimos_acessos = {}
 
     for acesso in acessos:
@@ -185,46 +185,37 @@ def buscar_registro(request):
     else:
         hora_fim =  agora.strftime("%H%M")
 
-    mensagem = {
-        "user_id": request.user.id,
-        "data_inicio": data_inicio,
-        "hora_inicio": hora_inicio,
-        "data_fim": data_fim,
-        "hora_fim": hora_fim,
-    }
-
-    print(mensagem)
+    mensagem = {"user_id": request.user.id, "data_inicio": data_inicio, "hora_inicio": hora_inicio, "data_fim": data_fim, "hora_fim": hora_fim}
 
     enviar_mensagem("buscar", mensagem)
     return Response({"status": "enviado"})
 
-@api_view(['GET'])
+class EventStreamRenderer(BaseRenderer):
+    media_type = "text/event-stream"
+    format = "event-stream"
+    charset = None
+    render_style = "binary"
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        return data
+
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
+@renderer_classes([EventStreamRenderer])
 def emails(request):
-    try:
-        r = requests.get("http://mailhog:8025/api/v2/messages", timeout=5)
-        data = r.json()
+    def eventos():
+        pubsub=redis_client.pubsub()
+        pubsub.subscribe("novos_emails")
 
-        emails = data.get("items", [])
+        for mensagem in pubsub.listen():
+            if mensagem["type"]=="message":
+                yield f"data: {mensagem['data']}\n\n"
 
-        ja_enviados = cache.get("emails_enviados", [])
+    response=StreamingHttpResponse(eventos(),content_type="text/event-stream")
+    response["Cache-Control"]="no-cache"
+    response["X-Accel-Buffering"]="no"
+    return response
 
-        novos = []
-
-        for email in emails:
-            email_id = email["ID"]
-
-            if email_id not in ja_enviados:
-                novos.append(email)
-                ja_enviados.append(email_id)
-
-        cache.set("emails_enviados", ja_enviados, timeout=3600)
-
-        return JsonResponse({"items": novos, "total_novos": len(novos)})
-
-    except requests.exceptions.RequestException as e:
-        return JsonResponse({"error": "MailHog indisponível", "details": str(e)}, status=500)
-    
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def registrar_email(request):
@@ -248,9 +239,6 @@ def limpar_resposta(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def verificar_id(request, id):
-
-    print("ID RECEBIDO:", id)
-
     processamentos = Processamento.objects.filter(user=str(id))
 
     if not processamentos.exists():

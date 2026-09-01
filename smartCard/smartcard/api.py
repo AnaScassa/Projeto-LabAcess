@@ -1,24 +1,18 @@
 import redis
 
 from smartcard.serializers import (GroupSerializer, AcessoSerializer, UsuarioSerializer, ProcessamentoSerializer, ApontamentoSerializer)
-from django.http import StreamingHttpResponse
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.decorators import action
-from rest_framework.viewsets import ReadOnlyModelViewSet
-
-from django.http import StreamingHttpResponse
-from rest_framework.renderers import BaseRenderer, JSONRenderer
 from smartcard.models import Acesso, Usuario, Processamento
-from django.contrib.auth.models import Group, User, User
-from .models import Emails
 
-from rest_framework import serializers, viewsets
-from rest_framework_sso.views import ObtainAuthorizationTokenView
-from rest_framework_sso import claims
-from django.contrib.auth.models import User
+from django.http import StreamingHttpResponse
+from django.contrib.auth.models import Group, User
 from django.utils.translation import gettext as _
 
+from .models import Emails
+
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework import serializers, viewsets
+from rest_framework_sso.views import ObtainAuthorizationTokenView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_sso import claims
 from rest_framework.renderers import BaseRenderer

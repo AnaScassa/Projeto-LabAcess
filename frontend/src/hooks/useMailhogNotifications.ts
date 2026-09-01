@@ -4,7 +4,6 @@ import { exibirNotificacao } from "../utils/notificacoes";
 import { API_HOST } from "../utils/static";
 
 export function useMailhogNotifications() {
-
   useEffect(() => {
 
     const token = localStorage.getItem("access");

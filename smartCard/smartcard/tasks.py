@@ -1,18 +1,18 @@
 from datetime import date
-import tempfile
+from .services import vincular_por_matricula
+from .models import Emails, Processamento, Usuario, Acesso
+from fuzzywuzzy import fuzz
+from dotenv import load_dotenv
+from celery import shared_task, shared_task
 
 from django.core.cache import cache
 from django.utils import timezone
 from django.core.mail import get_connection, send_mail
 from django.conf import settings
+from django.http import StreamingHttpResponse
 
-from celery import shared_task, shared_task
 import shortuuid
-
-from .services import vincular_por_matricula
-from .models import Emails, Processamento, Usuario, Acesso
-from fuzzywuzzy import fuzz
-from dotenv import load_dotenv
+import tempfile
 import pandas as pd
 import time
 import threading
@@ -20,22 +20,15 @@ import pika
 import json
 import base64
 import os
+import redis
 
 load_dotenv()
+redis_client=redis.Redis(host="redis",port=6379,db=0,decode_responses=True)
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-FERIADOS_FIXOS = {
-    "01-01",
-    "04-21",
-    "05-01",
-    "09-07",
-    "10-12",
-    "11-02",
-    "11-15",
-    "12-25",
-}
+FERIADOS_FIXOS = {"01-01", "04-21", "05-01", "09-07", "10-12", "11-02", "11-15", "12-25",}
 
 def eh_fim_de_semana_ou_feriado(data):
     if not data:
@@ -55,7 +48,6 @@ def eh_fim_de_semana_ou_feriado(data):
 
 @shared_task(bind=True, queue="fila_rapida")
 def processar_xls(self, caminho_arquivo, task_id):
-
     corr_id = str(task_id)
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
     channel = connection.channel()
@@ -66,14 +58,11 @@ def processar_xls(self, caminho_arquivo, task_id):
     def on_response(ch, method, props, body):
         nonlocal resposta
 
-        print("Mensagem recebida!")
-
         if props.correlation_id == corr_id:
             resposta = json.loads(body)
             print("Resposta válida recebida!")
 
     channel.basic_consume(queue=callback_queue, on_message_callback=on_response, auto_ack=True)
-
     channel.basic_publish(exchange='', routing_key='usuarios_processados', properties=pika.BasicProperties(reply_to=callback_queue, correlation_id=corr_id,),
         body=json.dumps({
             "task_id": task_id
@@ -87,7 +76,6 @@ def processar_xls(self, caminho_arquivo, task_id):
         if time.time() - inicio > timeout:
             break
 
-    print("RESPOSTA:", resposta)
     connection.close()
 
     if resposta is None:
@@ -101,10 +89,6 @@ def processar_xls(self, caminho_arquivo, task_id):
   
     profiles = dados["profiles"]
     users = dados["users"]
-    
-    print("Dados recebidos!")
-    print(f"USERS: {len(users)}")
-    print(f"PROFILES: {len(profiles)}")
 
     df = pd.read_excel(caminho_arquivo)
 
@@ -140,9 +124,7 @@ def processar_xls(self, caminho_arquivo, task_id):
             nome_usuario = "Desconhecido"
             categoria = "OUTRO"
 
-        usuario, _ = Usuario.objects.get_or_create(matricula=matricula,defaults={
-            "nome_usuario": nome_usuario, "categoriaUsuario": categoria
-        })
+        usuario, _ = Usuario.objects.get_or_create(matricula=matricula,defaults={"nome_usuario": nome_usuario, "categoriaUsuario": categoria})
 
         if eh_aluno and apontamento == 0 and eh_fim_de_semana_ou_feriado(data) and ent_sai == "1":
             desc_evento = "Acesso de aluno em dias sem expediente"
@@ -164,32 +146,25 @@ def processar_xls(self, caminho_arquivo, task_id):
             """
             
             try:
-                send_mail(
-                    "Novo uso indevido do cartão detectado",
-                    mensagem,
-                    EMAIL_HOST_USER,
+                send_mail("Novo uso indevido do cartão detectado", mensagem, EMAIL_HOST_USER,
                     [email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list('email', flat=True)],
-                    connection=gmail,
-                    fail_silently=False,
+                    connection=gmail, fail_silently=False,
                 )
 
-                send_mail(
-                    "Novo uso indevido do cartao detectado",
-                    mensagem,
-                    EMAIL_HOST_USER,
+                send_mail("Novo uso indevido do cartao detectado", mensagem, EMAIL_HOST_USER,
                     [email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list('email', flat=True)],
-                    connection=mailhog,
-                    fail_silently=False,
+                    connection=mailhog, fail_silently=False,
                 )
+                
+                redis_client.publish("novos_emails", json.dumps({"assunto":"Novo uso indevido do cartão detectado","mensagem":mensagem}))
 
             except Exception as e:
                 print("ERRO:", repr(e))
                 raise
 
         obj, created = Acesso.objects.get_or_create(usuario=usuario, data_acesso=data, desc_evento=desc_evento,
-            desc_area=row.get("DESC_AREA", ""), ent_sai=row.get("ENT_SAI", ""), defaults={
-                "desc_leitor": row.get("DESC_LEITOR", ""), "apontamento": apontamento
-            })
+            desc_area=row.get("DESC_AREA", ""), ent_sai=row.get("ENT_SAI", ""), defaults={"desc_leitor": row.get("DESC_LEITOR", ""), "apontamento": apontamento} 
+        )
 
         if not created:
             obj.apontamento = apontamento
@@ -203,14 +178,9 @@ def processar_xls(self, caminho_arquivo, task_id):
         corrigir_entradas_saida_inconsistentes()
         
     Processamento.objects.filter(task_id=task_id).update(status="SUCCESS")
-    print("FINALIZAÇÃO DE PROCESSAMENTO DE XLS")
-    print("CACHE LIMPO")
-    print(cache.get("users_global"))
-    
     
 @shared_task(bind=True, queue="fila_rapida")
 def processar_csv(self, caminho_arquivo, task_id):
-
     corr_id = str(task_id)
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
     channel = connection.channel()
@@ -220,14 +190,11 @@ def processar_csv(self, caminho_arquivo, task_id):
 
     def on_response(ch, method, props, body):
         nonlocal resposta
-        print("Mensagem recebida!")
 
         if props.correlation_id == corr_id:
             resposta = json.loads(body)
-            print("Resposta válida recebida!")
 
     channel.basic_consume(queue=callback_queue, on_message_callback=on_response, auto_ack=True)
-
     channel.basic_publish(exchange='', routing_key='usuarios_processados', properties=pika.BasicProperties(
         reply_to=callback_queue, correlation_id=corr_id,), body=json.dumps({"task_id": task_id}))
 
@@ -240,7 +207,6 @@ def processar_csv(self, caminho_arquivo, task_id):
         if time.time() - inicio > timeout:
             break
 
-    print("RESPOSTA:", resposta)
     connection.close()
 
     if resposta is None:
@@ -250,19 +216,13 @@ def processar_csv(self, caminho_arquivo, task_id):
     dados = cache.get(f"users_global_{task_id}")
 
     if not dados:
-        print("CACHE NÃO ENCONTRADO")
         return False
 
     profiles = dados["profiles"]
     users = dados["users"]
 
-    print("Dados recebidos!")
-    print(f"USERS: {len(users)}")
-    print(f"PROFILES: {len(profiles)}")
-
     df = pd.read_csv(caminho_arquivo, sep=";", encoding="latin1")
     df.columns = df.columns.str.strip()
-    print(df.columns.tolist())
 
     for _, row in df.iterrows():
         matricula = str(row.get("Matrícula", "")).strip()
@@ -302,9 +262,7 @@ def processar_csv(self, caminho_arquivo, task_id):
             nome_usuario = "Desconhecido"
             categoria = "OUTRO"
 
-        usuario, _ = Usuario.objects.get_or_create(matricula=matricula,defaults={
-            "nome_usuario": nome_usuario, "categoriaUsuario": categoria,
-        })
+        usuario, _ = Usuario.objects.get_or_create(matricula=matricula,defaults={"nome_usuario": nome_usuario, "categoriaUsuario": categoria,})
 
         if eh_aluno and apontamento == 0 and eh_fim_de_semana_ou_feriado(data):
             desc_evento = "acesso de aluno em dias sem expediente"
@@ -313,6 +271,7 @@ def processar_csv(self, caminho_arquivo, task_id):
         if apontamento == 1 and data.date() == data_atual:            
             mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
             gmail = get_connection(host="smtp.gmail.com", port=587, username=EMAIL_HOST_USER, password=EMAIL_HOST_PASSWORD , use_tls=True)
+            
             mensagem = f"""
             Evento: {desc_evento}
             Usuario: {nome_usuario}
@@ -321,35 +280,27 @@ def processar_csv(self, caminho_arquivo, task_id):
             Area: {row.get('Área', '')}
             Leitor: {row.get('Leitor', '')}
             """
-            
+                        
             try:
-                send_mail(
-                    "Novo uso indevido do cartão detectado",
-                    mensagem,
-                    EMAIL_HOST_USER,
+                send_mail("Novo uso indevido do cartão detectado", mensagem, EMAIL_HOST_USER,
                     [email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list('email', flat=True)],
-                    connection=gmail,
-                    fail_silently=False,
+                    connection=gmail, fail_silently=False,
                 )
 
-                send_mail(
-                    "Novo uso indevido do cartao detectado",
-                    mensagem,
-                    EMAIL_HOST_USER,
+                send_mail("Novo uso indevido do cartao detectado", mensagem, EMAIL_HOST_USER,
                     [email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list('email', flat=True)], 
-                    connection=mailhog,
-                    fail_silently=False,
+                    connection=mailhog, fail_silently=False,
                 )
+                
+                redis_client.publish("novos_emails", json.dumps({"assunto":"Novo uso indevido do cartão detectado","mensagem":mensagem}))
 
             except Exception as e:
                 print("ERRO:", repr(e))
                 raise
 
         obj, created = Acesso.objects.get_or_create(usuario=usuario, data_acesso=data, desc_evento=desc_evento, desc_area=row.get("Área", ""), 
-            ent_sai=row.get("E/S", ""),  defaults={
-                "desc_leitor": row.get("Leitor", ""),
-                "apontamento": apontamento
-            })
+            ent_sai=row.get("E/S", ""),  defaults={"desc_leitor": row.get("Leitor", ""), "apontamento": apontamento}
+        )
 
         if not created:
             obj.apontamento = apontamento
@@ -358,15 +309,12 @@ def processar_csv(self, caminho_arquivo, task_id):
         if usuario.user_auth is None:
             tentar_vincular_user_auth.delay(usuario.id, task_id)
             print("PROCESSAMENTO FINALIZADO")
-
+            
     if Acesso.objects.filter(apontamento=0):
         corrigir_entradas_saida_inconsistentes()
 
     Processamento.objects.filter(task_id=task_id).update(status="SUCCESS")
-    print("FINALIZAÇÃO DE PROCESSAMENTO DE CSV")
     cache.delete("users_global")
-    print("CACHE LIMPO")
-    print(cache.get("users_global"))
 
 @shared_task(bind=True, queue="fila_media")
 def tentar_vincular_user_auth(self, usuario_id, task_id):
@@ -402,8 +350,6 @@ def tentar_vincular_user_auth(self, usuario_id, task_id):
 
 @shared_task(bind=True, queue="fila_pesada")
 def tentar_vincular_por_nome(self, usuario_id, task_id):
-
-    
     self.update_state(state="STARTED")
     dados = cache.get(f"users_global_{task_id}")
 
@@ -413,15 +359,12 @@ def tentar_vincular_por_nome(self, usuario_id, task_id):
 
     profiles = dados["profiles"]
     users = dados["users"]
-
-    print("TASK ID:", task_id)
     
     if not dados:
         print("CACHE NÃO ENCONTRADO")
         return False
   
     users = dados[f"users"]
-    
     usuario = Usuario.objects.filter(id=usuario_id, user_auth__isnull=True).first()
 
     if not usuario or not usuario.nome_usuario:
@@ -432,7 +375,6 @@ def tentar_vincular_por_nome(self, usuario_id, task_id):
     score_max = 0
 
     for user in users:
-
         nome_db = (user.get("full_name") or "").lower().strip()
 
         if not nome_db:
@@ -459,27 +401,39 @@ def marcar_apontamento2(acesso):
 
 
 def corrigir_entradas_saida_inconsistentes():
+    
     for usuario in Usuario.objects.all():
+        
         for area in Acesso.objects.filter(usuario=usuario).values_list('desc_area', flat=True).distinct():
             acessos = Acesso.objects.filter(usuario=usuario, desc_area=area).order_by('data_acesso')
             stack = None
+            
             for acesso in acessos:
+                
                 if acesso.ent_sai == '1':
+                    
                     if stack is not None:
                         marcar_apontamento2(acesso)
+                        
                     stack = acesso
+                    
                 else:  
+                    
                     if stack is None:  
                         marcar_apontamento2(acesso)
+                        
                     else:
+                        
                         if not mesmoDia(stack.data_acesso, acesso.data_acesso):
                             marcar_apontamento2(stack)
                         stack = None
+                        
             if stack:
                 marcar_apontamento2(stack)
 
 
 def mesmoDia(data1, data2):
+    
     if not data1 or not data2:
         return False
 
@@ -492,9 +446,11 @@ def iniciar_consumer_usuarios():
     connection = None
 
     while connection is None:
+        
         try:
             connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq"))
             print("Conectado RabbitMQ (Consumer)")
+            
         except Exception as e:
             print(f"Aguardando RabbitMQ... {e}")
             time.sleep(5)
@@ -503,6 +459,7 @@ def iniciar_consumer_usuarios():
     channel.queue_declare(queue="usuarios_resposta", durable=True)
 
     def callback(ch, method, properties, body):
+        
         try:
             data = json.loads(body)
             task_id = data["task_id"]
@@ -513,7 +470,6 @@ def iniciar_consumer_usuarios():
             print(f"ERRO ao processar resposta: {str(e)}")
 
     channel.basic_consume(queue="usuarios_resposta", on_message_callback=callback, auto_ack=True)
-    print("Aguardando respostas do users_service...")
     channel.start_consuming()
     
 def iniciar_consumer_csv():
@@ -525,6 +481,7 @@ def iniciar_consumer_csv():
     channel.start_consuming()
     
 def callback_csv(ch, method, properties, body):
+    
     try:
         dados = json.loads(body)
         nome = dados["nome"]
@@ -536,12 +493,10 @@ def callback_csv(ch, method, properties, body):
 
         task_id = shortuuid.uuid()
         Processamento.objects.create(task_id=task_id, status="PENDING")
-        print(f"CSV enviado para processamento: {nome}")
         processar_csv.delay(caminho_arquivo, task_id)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     except Exception as e:
-        print("Erro callback:", repr(e))
         ch.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
 
 try:
