@@ -74,5 +74,4 @@ def enviar_arquivo_rabbit(arquivo):
     }
 
     channel.basic_publish(exchange="", routing_key="csvs", body=json.dumps(mensagem))
-    print(f"Arquivo enviado: {mensagem['nome']}")
     connection.close()

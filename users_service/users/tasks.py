@@ -16,7 +16,6 @@ def iniciar_consumer():
     while connection is None:
         try:
             connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq"))
-            print("Conectado RabbitMQ")
 
         except Exception as e:
             print(f"Aguardando RabbitMQ... {e}")

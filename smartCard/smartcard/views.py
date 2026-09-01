@@ -57,7 +57,6 @@ def usuarios_ativos(request):
 @permission_classes([IsAuthenticated])
 def lista_emails(request):
     emails = Emails.objects.filter(esta_ativo=True).values('id', 'email', 'criado_em', 'ativado')
-    print(f"request.user.id: {request.user.id}") 
     return Response(list(emails), status=status.HTTP_200_OK)
 
 @api_view(['PATCH'])

@@ -50,15 +50,8 @@ def task_finalizada(sender=None, result=None, **kwargs):
     success = Processamento.objects.filter(user=user, status="SUCCESS").count()
     
     if total > 0 and total == success:
-        print("TODAS AS TASKS TERMINARAM!", flush=True)
-
         Processamento.objects.filter(user=user).delete()
-
-        print("TODAS AS TASKS APAGADAS DO BANCO", flush=True)
-
         redis_client.publish(f"task_completed:{user}", '{"status": "COMPLETED"}')
-
-        print("MENSAGEM ENVIADA PARA REDIS", flush=True)
 
 @task_failure.connect(weak=False)
 def task_erro(sender=None, task_id=None, exception=None, **kwargs):

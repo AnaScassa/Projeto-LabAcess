@@ -96,8 +96,6 @@ export default function Upload() {
 
         const response = await verificarId(usuario_id);
 
-        console.log("STATUS:", response.status);
-
         if (response.status === 200) {
           setMensagem("Já existe um arquivo sendo processado.");
           return;

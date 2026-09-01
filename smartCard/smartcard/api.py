@@ -64,7 +64,6 @@ class TaskCompleted(viewsets.ModelViewSet):
         def eventos():
             pubsub = redis_client.pubsub()
             pubsub.subscribe(f"task_completed:{usuario_id}")
-            print(f"SSE aguardando usuário {usuario_id}", flush=True)
 
             for mensagem in pubsub.listen():
 
@@ -131,10 +130,8 @@ def get_payload_from_request(self):
         header = auth.get_header(self.request)
         raw_token = auth.get_raw_token(header)
         validated_token = auth.get_validated_token(raw_token)
-        print("Payload do JWT:", validated_token.payload)  
         email = validated_token.payload.get("email")
         Emails.objects.get_or_create(email=email, defaults={"esta_ativo": True, "ativado": False})
         return validated_token.payload
     except Exception as e:
-        print("Erro ao ler JWT:", e)
         return {}

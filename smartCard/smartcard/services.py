@@ -37,7 +37,4 @@ def salvar_arquivo_temporario(arquivo):
         for chunk in arquivo.chunks():
             destino.write(chunk)
 
-    print("ARQUIVO SALVO EM:", caminho)
-    print("EXISTE?", os.path.exists(caminho))
-
     return caminho

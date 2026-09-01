@@ -28,8 +28,6 @@ def ouvir_fila():
     channel = connection.channel()
     channel.queue_declare(queue="buscar_concluido", durable=True)
     channel.basic_consume(queue="buscar_concluido", on_message_callback=callback, auto_ack=True)
-
-    print("Ouvindo fila buscar_concluido...")
     channel.start_consuming()
     
 consumer_thread = threading.Thread(target=ouvir_fila, daemon=True)

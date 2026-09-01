@@ -308,7 +308,6 @@ def processar_csv(self, caminho_arquivo, task_id):
 
         if usuario.user_auth is None:
             tentar_vincular_user_auth.delay(usuario.id, task_id)
-            print("PROCESSAMENTO FINALIZADO")
             
     if Acesso.objects.filter(apontamento=0):
         corrigir_entradas_saida_inconsistentes()
@@ -449,10 +448,8 @@ def iniciar_consumer_usuarios():
         
         try:
             connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq"))
-            print("Conectado RabbitMQ (Consumer)")
             
         except Exception as e:
-            print(f"Aguardando RabbitMQ... {e}")
             time.sleep(5)
 
     channel = connection.channel()
@@ -464,7 +461,6 @@ def iniciar_consumer_usuarios():
             data = json.loads(body)
             task_id = data["task_id"]
             cache.set(f"users_response_{task_id}", data, timeout=300)
-            print(f"Resposta salva no cache para task_id: {task_id}")
 
         except Exception as e:
             print(f"ERRO ao processar resposta: {str(e)}")
@@ -477,7 +473,6 @@ def iniciar_consumer_csv():
     channel = connection.channel()
     channel.queue_declare(queue="csvs", durable=True)
     channel.basic_consume(queue="csvs", on_message_callback=callback_csv)
-    print("Aguardando CSVs...")
     channel.start_consuming()
     
 def callback_csv(ch, method, properties, body):

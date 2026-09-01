@@ -18,10 +18,6 @@ export default function Login() {
 
       const data = await response.json();
 
-      console.log("DATA DO LOGIN:", data);
-      console.log("ID RECEBIDO:", data.id);
-      console.log("EMAIL RECEBIDO:", data.email);
-
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
       localStorage.setItem("id", String(data.id));

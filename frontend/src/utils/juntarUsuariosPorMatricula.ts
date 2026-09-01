@@ -9,8 +9,6 @@ export function juntarUsuariosPorMatricula(usuarioAtual: any, todosUsuarios: any
     return baseU === base;
   });
 
-  console.log("ENCONTRADOS:", usuariosRelacionados);
-
   let acessos: any[] = [];
 
   usuariosRelacionados.forEach((u) => {

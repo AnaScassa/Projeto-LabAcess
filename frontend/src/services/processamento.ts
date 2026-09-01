@@ -17,8 +17,6 @@ export const verificarProcessamento = async (onConcluido: () => void) => {
             },
 
             onmessage(event) {
-                console.log("Mensagem recebida do backend:", event.data);
-
                 const dados = JSON.parse(event.data);
 
                 if (dados.status === "COMPLETED") {
