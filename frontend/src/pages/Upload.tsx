@@ -2,6 +2,7 @@ import { TailSpin } from "react-loader-spinner";
 import { useState, useEffect } from "react";
 import { useTreinamento } from "../hooks/useTreinamento";
 import { buscarRegistro } from "../services/buscarRegistro";
+import { receberRespostas } from "../services/receberResposta";
 import GraficoAcessos from "../components/graficos/Acessos";
 import GraficosUsuariosAtivos from "../components/graficos/UsuariosAtivos";
 import UsoIndevidoCartao from "../components/relatorios/UsoIndevidoCartao";
@@ -18,18 +19,50 @@ import { verificarId } from "../services/conferirid";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
-  const [retorno] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
-  const [bloqueado] = useState(false);
+  const [statusBusca, setStatusBusca] = useState<string>("PENDING");
   const { treinamentos } = useTreinamento();
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [horaInicio, setHoraInicio] = useState("");
-  const [horaFim, setHoraFim] = useState(""); 
+  const [horaFim, setHoraFim] = useState("");
+  const buscarBloqueado = statusBusca.toLowerCase() !== "finalizado";
 
   useMailhogNotifications();
+
+    useEffect(() => {
+    const parar = receberRespostas((dados) => {
+
+      const status = String(dados?.status ?? "PENDING").toLowerCase();
+
+      setStatusBusca(status);
+
+      if (status === "finalizado") {
+        setMensagem(`Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`);
+        return;
+      }
+
+      if (status === "erro") {
+        setMensagem(`Busca com erro: ${dados.status ?? "Erro"}`);
+        return;
+      }
+
+      if (status === "pending") {
+        setMensagem("Aguardando resposta do RPA...");
+      } else if (dados?.status) {
+        setMensagem(`Status do RPA: ${dados.status}`);
+      }
+
+    }, () => {
+      setStatusBusca("PENDING");
+    });
+
+    return () => {
+      parar();
+    };
+  }, []);
   
   useEffect(() => {
       const storedToken = localStorage.getItem("access");
@@ -200,9 +233,13 @@ export default function Upload() {
                 </div>
 
                 <div className="card-footer footer-busca">
-                  <button className="btn btn-outline-secondary" onClick={() => {buscarRegistro(null, null, null, null);}} disabled={bloqueado}>
+                  <button className="btn btn-outline-secondary" onClick={async () => {
+                    setStatusBusca("PENDING");
+                    setMensagem("Enviando busca ao RPA...");
+                    await buscarRegistro(null, null, null, null);
+                  }} disabled={buscarBloqueado}>
                     <i className="fas fa-sync-alt me-2"></i>
-                    {bloqueado ? retorno : "Buscar registros dos últimos 5 minutos"}
+                    {buscarBloqueado ? "Aguardando finalizado..." : "Buscar registros dos últimos 5 minutos"}
                   </button>
 
                   <details className="details-custom">
@@ -247,10 +284,17 @@ export default function Upload() {
                         <hr/>
 
                         <div className="text-center">
-                          <button className="btn btn-outline-secondary" onClick={() => {
-                            if (validarBusca()) {buscarRegistro(dataInicio, horaInicio, dataFim, horaFim);}}} disabled={bloqueado}>
+                          <button className="btn btn-outline-secondary" onClick={async () => {
+                            if (!validarBusca()) {
+                              return;
+                            }
+
+                            setStatusBusca("PENDING");
+                            setMensagem("Enviando busca ao RPA...");
+                            await buscarRegistro(dataInicio, horaInicio, dataFim, horaFim);
+                          }} disabled={buscarBloqueado}>
                             <i className="fas fa-sync-alt me-2"></i>
-                            {bloqueado ? retorno : "Buscar registros"}
+                            {buscarBloqueado ? "Aguardando finalizado..." : "Buscar registros"}
                           </button>
                         </div>
 
