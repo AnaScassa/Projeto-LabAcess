@@ -5,7 +5,6 @@ import { API_HOST } from "../utils/static";
 
 export function useMailhogNotifications() {
   useEffect(() => {
-
     const token = localStorage.getItem("access");
 
     if (!token) {
@@ -15,38 +14,37 @@ export function useMailhogNotifications() {
     const controller = new AbortController();
 
     fetchEventSource(`http://${API_HOST}:8000/api/acesso/emails`, {
-        method: "GET",
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "text/event-stream",
+      },
+      signal: controller.signal,
+      onmessage(event) {
+        if (!event.data) {
+          return;
+        }
 
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "text/event-stream",
-        },
+        try {
+          const payload = JSON.parse(event.data);
+          const assunto = payload.assunto ?? payload.subject ?? "Novo aviso";
+          const mensagem = payload.mensagem ?? payload.message ?? "";
 
-        signal: controller.signal,
-
-        onmessage(event) {
-
-          if (!event.data) {
-            return;
+          if (assunto && mensagem) {
+            exibirNotificacao(assunto, mensagem);
           }
-
-          const email = JSON.parse(event.data);
-          const assunto = email.Content?.Headers?.Subject?.[0] ?? "Novo e-mail";
-          const mensagem = email.Content?.Body?.substring(0, 120) ?? "";
-
-          exibirNotificacao(assunto, mensagem);
-        },
-
-        onerror(error) {
-          console.error("Erro na conexão SSE:", error);
-          throw error;
-        },
-      }
-    );
+        } catch (error) {
+          console.error("Erro ao interpretar mensagem SSE:", error, event.data);
+        }
+      },
+      onerror(error) {
+        console.error("Erro na conexão SSE:", error);
+        throw error;
+      },
+    });
 
     return () => {
       controller.abort();
     };
-
   }, []);
 }
