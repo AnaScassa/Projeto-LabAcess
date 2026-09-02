@@ -18,12 +18,20 @@ import { verificarProcessamento } from "../services/processamento";
 import { verificarId } from "../services/conferirid";
 import { receberRespostas } from "../services/receberResposta";
 
+function registrarBuscaFinalizada(dados: any, setQuantidade: (quantidade: number) => void, setData: (data: string | null) => void) {
+  setQuantidade(dados.quantidade ?? 0);
+  setData(dados.criado_em ?? null);
+}
+
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
+  const [mensagem2, setMensagem2] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
   const [statusBusca, setStatusBusca] = useState<string | null>(null);  
+  const [quantidadeUltimaBusca, setQuantidadeUltimaBusca] = useState<number | null>(null);
+  const [dataUltimaBusca, setDataUltimaBusca] = useState<string | null>(null);
   const { treinamentos } = useTreinamento();
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
@@ -47,13 +55,11 @@ export default function Upload() {
         }
 
         const status = String(dados.status).toLowerCase();
-
         setStatusBusca(status);
 
         if (status === "finalizado") {
-          setMensagem(
-            `Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`
-          );
+          registrarBuscaFinalizada(dados, setQuantidadeUltimaBusca, setDataUltimaBusca);
+          setMensagem(`Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`);
           return;
         }
 
@@ -94,9 +100,8 @@ export default function Upload() {
       setStatusBusca(status);
 
       if (status === "finalizado") {
-        setMensagem(
-          `Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`
-        );
+        registrarBuscaFinalizada(dados, setQuantidadeUltimaBusca, setDataUltimaBusca);
+        setMensagem(`Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`);
         return;
       }
 
@@ -135,7 +140,7 @@ export default function Upload() {
     verificarProcessamento(() => {
       setLoading(false);
       setEstaBloqueado(false);
-      setMensagem("Processamento concluído!");
+      setMensagem2("Processamento concluído!");
     });
 
   }, []);
@@ -154,16 +159,16 @@ export default function Upload() {
         const response = await verificarId(usuario_id);
 
         if (response.status === 200) {
-          setMensagem("Já existe um arquivo sendo processado.");
+          setMensagem2("Já existe um arquivo sendo processado.");
           return;
         }
 
         if (response.status !== 200 && response.status !== 201) {
-          setMensagem("Erro ao verificar processamento.");
+          setMensagem2("Erro ao verificar processamento.");
           return;
         }
 
-        setMensagem("Processando arquivo");
+        setMensagem2("Processando arquivo");
 
     } catch (error) {
       console.error(error);
@@ -174,7 +179,7 @@ export default function Upload() {
     setEstaBloqueado(true);
 
     if (!token) {
-      setMensagem("Sessão expirada. Faça login novamente.");
+      setMensagem2("Sessão expirada. Faça login novamente.");
       window.location.replace("/login");
       return;
     }
@@ -182,7 +187,7 @@ export default function Upload() {
     const fileInput = document.getElementById("fileInput") as HTMLInputElement;
 
     if (!fileInput.files || !fileInput.files[0]) {
-      setMensagem("Selecione um arquivo primeiro!");
+      setMensagem2("Selecione um arquivo primeiro!");
       setEstaBloqueado(false);
       return;
     }
@@ -192,12 +197,12 @@ export default function Upload() {
       const resposta = await fazerUpload(file);
 
       if (!resposta) {
-        setMensagem("Erro no upload.");
+        setMensagem2("Erro no upload.");
         setEstaBloqueado(false);
         return;
       }
 
-      setMensagem("Processamento sendo feito...");
+      setMensagem2("Processamento sendo feito...");
       setLoading(true);
 
       verificarProcessamento(() => {
@@ -208,7 +213,7 @@ export default function Upload() {
 
     } catch (error) {
       console.error(error);
-      setMensagem("Erro no upload.");
+      setMensagem2("Erro no upload.");
       setEstaBloqueado(false);
     }
   };
@@ -283,10 +288,15 @@ export default function Upload() {
                       <TailSpin height="50" width="50" color="#007bff" />
                     </div>
                   )}
-                  
+
+                  {mensagem2 && <p className="mt-3 mb-0">{mensagem2}</p>}
                 </div>
 
                 <div className="card-footer footer-busca">
+                  <p className="mb-0 text-center" style={{ fontSize: "0.8rem" }}>
+                    Última busca finalizada: {quantidadeUltimaBusca === null ? "Nenhuma busca registrada" : `${quantidadeUltimaBusca} registro(s) em ${dataUltimaBusca ? 
+                    new Date(dataUltimaBusca).toLocaleString("pt-BR") : "data não informada"}`}
+                  </p>
                   <button className="btn btn-outline-secondary" onClick={async () => {
                     setStatusBusca("PENDING");
                     setMensagem("Enviando busca ao RPA...");
