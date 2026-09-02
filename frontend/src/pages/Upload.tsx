@@ -2,7 +2,7 @@ import { TailSpin } from "react-loader-spinner";
 import { useState, useEffect } from "react";
 import { useTreinamento } from "../hooks/useTreinamento";
 import { buscarRegistro } from "../services/buscarRegistro";
-import { receberRespostas } from "../services/receberResposta";
+import { buscarUltimaResposta } from "../services/buscarResposta";
 import GraficoAcessos from "../components/graficos/Acessos";
 import GraficosUsuariosAtivos from "../components/graficos/UsuariosAtivos";
 import UsoIndevidoCartao from "../components/relatorios/UsoIndevidoCartao";
@@ -22,47 +22,62 @@ export default function Upload() {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [estaBloqueado, setEstaBloqueado] = useState<boolean>(false);
-  const [statusBusca, setStatusBusca] = useState<string>("PENDING");
+  const [statusBusca, setStatusBusca] = useState<string | null>(null);  
   const { treinamentos } = useTreinamento();
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [horaInicio, setHoraInicio] = useState("");
   const [horaFim, setHoraFim] = useState("");
-  const buscarBloqueado = statusBusca.toLowerCase() !== "finalizado";
+  const buscarBloqueado = statusBusca !== null && statusBusca !== undefined && statusBusca !== "finalizado" && statusBusca !== "erro";
 
   useMailhogNotifications();
 
     useEffect(() => {
-    const parar = receberRespostas((dados) => {
 
-      const status = String(dados?.status ?? "PENDING").toLowerCase();
+      async function carregarUltimoStatus() {
+        try {
+          const dados = await buscarUltimaResposta();
 
-      setStatusBusca(status);
+          console.log("Última resposta do RPA:", dados);
 
-      if (status === "finalizado") {
-        setMensagem(`Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`);
-        return;
+          if (dados?.status === null || dados?.status === undefined) {
+            setStatusBusca(null);
+            setMensagem("Aguardando resposta do RPA...");
+            return;
+          }
+
+          const status = String(dados.status).toLowerCase();
+
+          setStatusBusca(status);
+
+          if (status === "finalizado") {
+            setMensagem(
+              `Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`
+            );
+            return;
+          }
+
+          if (status === "erro") {
+            setMensagem(`Busca com erro: ${dados.status}`);
+            return;
+          }
+
+          if (status === "pending") {
+            setMensagem("Aguardando resposta do RPA...");
+            return;
+          }
+
+          setMensagem(`Status do RPA: ${dados.status}`);
+
+        } catch (erro) {
+          console.error("Erro ao buscar último status:", erro);
+          setStatusBusca(null);
+        }
       }
 
-      if (status === "erro") {
-        setMensagem(`Busca com erro: ${dados.status ?? "Erro"}`);
-        return;
-      }
+      carregarUltimoStatus();
 
-      if (status === "pending") {
-        setMensagem("Aguardando resposta do RPA...");
-      } else if (dados?.status) {
-        setMensagem(`Status do RPA: ${dados.status}`);
-      }
-
-    }, () => {
-      setStatusBusca("PENDING");
-    });
-
-    return () => {
-      parar();
-    };
-  }, []);
+    }, []);
   
   useEffect(() => {
       const storedToken = localStorage.getItem("access");
@@ -227,7 +242,6 @@ export default function Upload() {
                     </div>
                   )}
                   
-                  {mensagem && <p className="mt-3 mb-0">{mensagem}</p>}
                 </div>
 
                 <div className="card-footer footer-busca">
@@ -237,7 +251,7 @@ export default function Upload() {
                     await buscarRegistro(null, null, null, null);
                   }} disabled={buscarBloqueado}>
                     <i className="fas fa-sync-alt me-2"></i>
-                    {buscarBloqueado ? "Aguardando finalizado..." : "Buscar registros dos últimos 5 minutos"}
+                    {buscarBloqueado ? mensagem : "Buscar registros dos últimos 5 minutos"}
                   </button>
 
                   <details className="details-custom">
@@ -292,7 +306,7 @@ export default function Upload() {
                             await buscarRegistro(dataInicio, horaInicio, dataFim, horaFim);
                           }} disabled={buscarBloqueado}>
                             <i className="fas fa-sync-alt me-2"></i>
-                            {buscarBloqueado ? "Aguardando finalizado..." : "Buscar registros"}
+                            {buscarBloqueado ? mensagem : "Buscar registros"}
                           </button>
                         </div>
 
