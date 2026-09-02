@@ -1,192 +1,250 @@
-# 👥 Users Service
+# Users Service
 
-**Microserviço de Gerenciamento de Usuários e Autenticação** - Responsável por autenticação JWT, gerenciamento de perfis de usuários, controle de treinamentos de segurança e cache distribuído.
+Microsservico Django responsavel pela identidade e pelos dados de usuarios do LabAcess. O servico gerencia autenticacao JWT, usuarios, perfis, areas de formacao, cargos e treinamentos de seguranca.
 
----
+Ele tambem fornece uma API interna para o `smartCard` consultar usuarios e perfis durante o processamento de arquivos, usando RabbitMQ para receber solicitacoes e Redis para compartilhar os dados da resposta.
 
-## 📋 Visão Geral
+## Responsabilidades
 
-O **users_service** é um microsserviço crítico que fornece:
-- 🔐 Autenticação JWT segura
-- 👤 Gerenciamento de perfis de usuários
-- 🎓 Rastreamento de treinamentos de segurança
-- 💾 Cache distribuído com Redis
-- 🔄 Processamento assíncrono com Celery
-- 🗣️ Comunicação inter-serviço via RabbitMQ
+- Autenticar usuarios e emitir tokens JWT.
+- Renovar access tokens por meio de refresh tokens.
+- Gerenciar usuarios, perfis e informacoes de contato.
+- Gerenciar areas de formacao e cargos.
+- Registrar treinamentos de seguranca e sessoes em grupo.
+- Expor APIs REST protegidas por autenticacao.
+- Fornecer endpoints internos para integracao com o `smartCard`.
+- Responder consultas do `smartCard` usando RabbitMQ e Redis.
+- Inicializar dados padrao por meio do comando `init_users`.
 
----
+## Tecnologias
 
-## 🚀 Tech Stack
+| Categoria | Tecnologias |
+| --- | --- |
+| Framework web | Django 5.2 |
+| APIs | Django REST Framework 3.16 |
+| Autenticacao | `djangorestframework-simplejwt`, PyJWT e API Keys |
+| Modelo de usuario | Django `AbstractUser` customizado |
+| Banco de dados | PostgreSQL via `psycopg2-binary` |
+| Cache e dados compartilhados | Redis via `django-redis` |
+| Mensageria | RabbitMQ via Pika e Kombu |
+| Tarefas e resultados | Celery, django-celery-beat e django-celery-results |
+| Autenticacao complementar | Django Allauth e `djangorestframework-sso` |
+| CORS | `django-cors-headers` |
+| Configuracao | `python-dotenv` e `python-decouple` |
+| Testes e dados | Faker e factory_boy |
+| Containerizacao | Docker e Python 3.12 |
 
-| Camada | Tecnologias |
-|--------|-------------|
-| **Framework** | Django 5.2 + Django REST Framework |
-| **Autenticação** | JWT (djangorestframework-simplejwt), Django Allauth |
-| **Database** | PostgreSQL 15+ |
-| **Cache** | Redis 7+ |
-| **Task Queue** | Celery 5.6.2 + Redis broker |
-| **Message Queue** | RabbitMQ + kombu |
-| **Scheduled Jobs** | Django Celery Beat |
-| **CORS** | django-cors-headers |
+## Estrutura
 
----
-
-## 📂 Estrutura de Pastas
-
-```
+```text
 users_service/
-├── users/                      # App principal
-│   ├── migrations/
-│   ├── management/
-│   ├── rabbitmq/
-│   ├── tests/
-│   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   ├── urls.py
-│   ├── api_internal.py
-│   ├── tasks.py
-│   └── ...
-├── users_service/             # Config Django
-│   ├── settings.py
-│   ├── urls.py
-│   ├── celery.py
-│   └── ...
-├── docker/                    # Dockerfiles
-├── fixtures/                  # Dados iniciais
+├── users/
+│   ├── migrations/           # Migracoes do banco
+│   ├── management/           # Comandos Django, incluindo init_users
+│   ├── models.py             # Modelos de usuario e treinamentos
+│   ├── serializers.py        # Serializadores da API
+│   ├── views.py              # ViewSets e autenticacao
+│   ├── urls.py               # Rotas da aplicacao
+│   ├── api_internal.py       # Endpoints para comunicacao entre servicos
+│   ├── tasks.py              # Consumer RabbitMQ em thread daemon
+│   ├── factories.py          # Factories para testes
+│   └── tests.py              # Testes
+├── users_service/
+│   ├── settings.py           # Django, PostgreSQL, Redis e JWT
+│   ├── urls.py               # Rotas principais
+│   ├── celery.py             # Configuracao do Celery
+│   ├── middleware.py         # Middleware de requisicoes internas
+│   ├── asgi.py               # Entrada ASGI
+│   └── wsgi.py               # Entrada WSGI
+├── docker/
+│   └── users.Dockerfile
+├── fixtures/                 # Dados iniciais
+├── init.sh                   # Inicializacao do container
+├── manage.py
 └── requirements.txt
 ```
 
----
+## Modelos de dados
 
-## 📊 Modelos de Dados
+- **User**: modelo customizado baseado em `AbstractUser`, com propriedades para nome completo, ultimo projeto, treinamento agendado e usuario MRBS.
+- **UserProfile**: perfil um-para-um com o usuario, area de formacao, matricula academica, telefone e contatos de emergencia.
+- **DegreeArea**: area de formacao associada ao perfil.
+- **Position**: cargo ou posicao do usuario.
+- **SafetyTraining**: treinamento individual, com datas de conclusao e expiracao.
+- **SafetyTrainingGroup**: sessao de treinamento para varios usuarios, com data, status e participantes.
 
-- **User** - Extended AbstractUser com full_name e dados de projeto
-- **UserProfile** - Perfil estendido com degree_area e dados de emergência
-- **SafetyTraining** - Registros de treinamento com datas de expiração
-- **SafetyTrainingGroup** - Sessões de treinamento em grupo
+O modelo configurado como usuario principal do Django e `users.User`, definido em `AUTH_USER_MODEL`.
 
----
+## API
 
-## 🔌 API Endpoints
+Todas as rotas da aplicacao ficam sob o prefixo `/api/users/`. A configuracao padrao do Django REST Framework exige autenticacao, exceto endpoints que tenham permissao especifica.
+
+### Autenticacao
+
+| Metodo | Rota | Finalidade |
+| --- | --- | --- |
+| `POST` | `/api/users/api/token/` | Obter access e refresh tokens |
+| `POST` | `/api/users/api/token/refresh/` | Renovar o access token |
+
+Use o access token nas chamadas protegidas:
 
 ```http
-POST   /api/token/               # Obter JWT token
-POST   /api/token/refresh/       # Renovar token
-GET    /user/                    # Listar usuários
-POST   /user/                    # Criar usuário
-GET    /safety-training/         # Listar treinamentos
-GET    /internal/users/          # APIs internas
+Authorization: Bearer <access-token>
 ```
 
----
+### ViewSets
 
-## 🔐 Autenticação JWT
+| Metodos | Rota | Finalidade |
+| --- | --- | --- |
+| `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | `/api/users/user/` | Gerenciar usuarios |
+| `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | `/api/users/user-profile/` | Gerenciar perfis |
+| `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | `/api/users/safety-training/` | Gerenciar treinamentos |
 
-- Access Token: 30 minutos
-- Refresh Token: 1 dia
-- Headers: `Authorization: Bearer <token>`
+Os ViewSets usam o router padrao do DRF, portanto tambem oferecem as rotas de detalhe com `/{id}/`.
 
----
+### Integracao interna
 
-## ⚙️ Celery & Async
+| Metodo | Rota | Finalidade |
+| --- | --- | --- |
+| `GET` | `/api/users/internal/users/` | Listar dados dos usuarios |
+| `GET` | `/api/users/internal/profiles/` | Listar dados dos perfis |
+| `GET` | `/api/users/internal/all-data/` | Retornar usuarios e perfis |
 
-- **Broker**: Redis
-- **Queue**: `fila_users`
-- **Task**: `processar_usuarios` - Processa requisições do smartCard e retorna dados de usuários
+O middleware `InternalRequestMiddleware` participa da protecao das requisicoes internas. Use essas rotas apenas entre servicos autorizados.
 
----
+O painel administrativo do Django fica em `/admin2/`.
 
-## 🔄 RabbitMQ Integration
+## Integracao com o SmartCard
 
-### Filas de Comunicação
-- **`usuarios_processados`** ← Recebe solicitações do smartCard
-- **`usuarios_resposta`** → Envia dados de usuários para smartCard
+O `smartCard` publica uma mensagem na fila `usuarios_processados` contendo o ID da tarefa:
 
-### Fluxo de Processamento
-
-```
-1. smartCard envia mensagem em 'usuarios_processados'
-   ↓
-2. Consumer thread em tasks.py dispara Celery
-   ↓
-3. processar_usuarios(task_id) executa:
-   - Lê User.objects.all()
-   - Lê UserProfile.objects.all()
-   - Publica resposta em 'usuarios_resposta'
-   ↓
-4. smartCard consome e salva no cache Redis
+```json
+{
+  "task_id": "id-da-tarefa"
+}
 ```
 
-### Consumer em Thread Background
+O consumer iniciado por `users/tasks.py`:
 
-O arquivo `users/tasks.py` inicia automaticamente uma thread daemon que:
-1. Conecta ao RabbitMQ
-2. Ouve a fila `usuarios_processados`
-3. Para cada mensagem recebida, dispara `processar_usuarios.delay(task_id)`
-4. A tarefa Celery executa assincronamente
+1. Conecta ao RabbitMQ e aguarda a fila `usuarios_processados`.
+2. Le os usuarios e perfis no banco.
+3. Salva os dados no Redis com a chave `users_global_{task_id}` durante uma hora.
+4. Publica uma resposta na `reply_to` informada na mensagem.
+5. Preserva o `correlation_id` para que o `smartCard` associe a resposta a tarefa correta.
 
-**Não bloqueia** a importação do módulo - usa threading!
+Resposta publicada:
 
----
+```json
+{
+  "users": "users_id-da-tarefa",
+  "profiles": "profiles_id-da-tarefa",
+  "status": "success"
+}
+```
 
-## 🧪 Instalação
+O `smartCard` usa a resposta correlacionada e os dados compartilhados no Redis para continuar o processamento do arquivo.
+
+## Celery
+
+O projeto possui configuracao Celery com Redis como broker e backend de resultados:
+
+```text
+Broker: redis://redis:6379/0
+Backend: redis://redis:6379/0
+```
+
+O container inicia um worker com:
 
 ```bash
-# Setup local
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# Variáveis de ambiente
-DEBUG=True
-SECRET_KEY=sua-chave-secreta
-DATABASE_URL=postgresql://user:pass@localhost/users_db
-REDIS_URL=redis://localhost:6379/0
-
-# Migrações
-python manage.py migrate
-
-# Criar superuser
-python manage.py createsuperuser
-
-# Rodar servidor
-python manage.py runserver 0.0.0.0:8001
-
-# Em outro terminal - Celery
-celery -A users_service worker -l info
-celery -A users_service beat -l info
+celery -A users_service worker --loglevel=info
 ```
 
-### 🐳 Docker
+A comunicacao especifica com o `smartCard` e feita pelo consumer RabbitMQ de `users/tasks.py`, que e iniciado em uma thread daemon durante a importacao do modulo.
 
-```bash
-docker build -f docker/users.Dockerfile -t labacess-users:latest .
-docker-compose up -d users
-```
+## Configuracao
 
----
+As configuracoes podem vir de variaveis de ambiente ou de arquivos Docker Secrets em `/run/secrets/`. Os principais valores sao:
 
-## 🛡️ Segurança
-
-✅ JWT com assinatura segura  
-✅ Senhas hasheadas (PBKDF2)  
-✅ CORS configurado  
-✅ Rate limiting  
-✅ SQL Injection prevention  
-
----
-
-## 🚀 Deployment
-
-Variáveis de produção em `.env`:
 ```env
-DEBUG=False
-ALLOWED_HOSTS=users.api.example.com
-SECRET_KEY=<gerado>
-DATABASE_URL=postgresql://prod:pass@prod_db:5432/users_db_prod
+DEBUG=True
+DB_HOST=postgres
+DB_PORT=5432
+DB_NAME=users_db
+DB_USER=postgres
+POSTGRES_PASSWORD=postgres
+JWT_ALGORITHM=HS256
 ```
 
----
+O JWT usa access token com duracao de 30 minutos e refresh token com duracao de 1 dia. O fuso horario configurado e `America/Sao_Paulo`.
 
-**Desenvolvido com ❤️ para autenticação segura em microsserviços**
+Nao versione secrets reais. Em ambiente Docker, as credenciais sao fornecidas pelo `docker-compose.yml` da raiz do repositorio.
+
+## Execucao local
+
+Na pasta `users_service`:
+
+```bash
+python -m venv venv
+venv\Scripts\activate       # Windows
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py init_users
+python manage.py runserver 0.0.0.0:8000
+```
+
+Em Linux ou macOS:
+
+```bash
+source venv/bin/activate
+```
+
+Para iniciar um worker Celery em outro terminal:
+
+```bash
+celery -A users_service worker --loglevel=info
+```
+
+A execucao local exige PostgreSQL, Redis e RabbitMQ acessiveis pelas configuracoes do ambiente.
+
+## Docker
+
+O `docker/users.Dockerfile` usa Python 3.12, instala as dependencias e copia o projeto para `/app`. O script `init.sh`:
+
+1. Aguarda o PostgreSQL e o RabbitMQ.
+2. Executa `makemigrations` e `migrate`.
+3. Executa o comando `init_users`.
+4. Inicia o Django em `0.0.0.0:8000`.
+5. Inicia o worker Celery.
+
+A partir da raiz do repositorio:
+
+```bash
+docker compose up --build users_service
+```
+
+Na composicao principal, o servico fica disponivel diretamente em `http://localhost:8001`, pois a porta `8001` do host e mapeada para a porta `8000` do container.
+
+Para subir todos os servicos:
+
+```bash
+docker compose up --build
+```
+
+## Testes
+
+Execute os testes Django com:
+
+```bash
+python manage.py test
+```
+
+Configure o banco e os servicos externos exigidos pelo ambiente antes da execucao.
+
+## Seguranca
+
+- Autenticacao JWT para endpoints protegidos.
+- Senhas gerenciadas pelo sistema de autenticacao do Django.
+- CORS configurado para as origens conhecidas do frontend.
+- Secrets lidos de arquivos Docker ou variaveis de ambiente.
+- Middleware dedicado para requisicoes internas.
+- Permissoes padrao do DRF configuradas como `IsAuthenticated`.

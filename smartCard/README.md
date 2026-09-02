@@ -1,204 +1,232 @@
-# 🔐 SmartCard Service (Acesso Service)
+# SmartCard Service
 
-**Microsserviço de Gerenciamento de Acesso por Smart Card** - Integração com leitores de cartão, processamento de eventos de acesso, validação de dados e automação RPA para extração de arquivos.
+Backend Django responsavel pelo gerenciamento e processamento de registros de acesso do LabAcess. O servico recebe arquivos XLS/CSV, identifica usuarios, valida eventos de entrada e saida, registra os acessos no PostgreSQL e disponibiliza APIs para o frontend.
 
----
+O SmartCard tambem coordena tarefas assincronas com Celery, consulta dados do `users_service` por RabbitMQ e Redis, publica eventos de processamento por Server-Sent Events (SSE) e envia notificacoes sobre usos indevidos de cartao.
 
-## 📋 Visão Geral
+## Responsabilidades
 
-O **smartCard service** é responsável por:
-- 🎫 Gerenciamento de eventos de acesso (smart card)
-- 📁 Upload e processamento de arquivos Excel
-- 🔍 Validação e detecção de inconsistências
-- 🤖 Automação RPA para extração de dados (SESClient)
-- 🔗 Sincronização com users_service via RabbitMQ
-- 📊 APIs REST para consulta de acessos
+- Expor a API REST de acessos, usuarios, apontamentos e processamento.
+- Receber e processar arquivos `.xls` e `.csv`.
+- Associar registros de acesso a usuarios por matricula.
+- Identificar inconsistencias em eventos de entrada e saida.
+- Aplicar regras para acessos de alunos fora do horario permitido, fins de semana e feriados.
+- Consultar perfis e usuarios no `users_service`.
+- Persistir acessos, usuarios, tarefas e e-mails no PostgreSQL.
+- Disponibilizar status de tarefas e eventos em tempo real.
+- Solicitar ao RPA a busca de registros no SESClient.
+- Notificar e-mails cadastrados quando um uso indevido e detectado.
 
----
+## Tecnologias
 
-## 🚀 Tech Stack
+| Categoria | Tecnologias |
+| --- | --- |
+| Framework web | Django 5.2 |
+| APIs | Django REST Framework 3.16 |
+| Autenticacao | JWT Stateless, Simple JWT, PyJWT e API Keys |
+| Banco de dados | PostgreSQL, `psycopg2-binary` |
+| Cache e eventos | Redis, `django-redis` e Redis Pub/Sub |
+| Tarefas assincronas | Celery, django-celery-beat e django-celery-results |
+| Mensageria | RabbitMQ via Pika e Kombu |
+| Planilhas | Pandas, OpenPyXL e xlrd |
+| Comparacao de texto | FuzzyWuzzy, TheFuzz, RapidFuzz e python-Levenshtein |
+| Configuracao | python-dotenv e python-decouple |
+| E-mail | SMTP Gmail e MailHog em desenvolvimento |
+| Containerizacao | Docker, Docker Compose e Python 3.12 |
 
-| Camada | Tecnologias |
-|--------|-------------|
-| **Framework** | Django 5.2 + Django REST Framework |
-| **Database** | PostgreSQL 15+ |
-| **Async Tasks** | Celery 5.6.2 + Redis |
-| **Message Queue** | RabbitMQ + kombu |
-| **File Processing** | pandas 2.3.3, openpyxl 3.1.5 |
-| **Fuzzy Matching** | fuzzywuzzy |
-| **RPA Automation** | PyAutoGUI |
+## Estrutura
 
----
-
-## 📂 Estrutura de Pastas
-
-```
+```text
 smartCard/
-├── rpa-pyauto/                # Automação RPA
-│   ├── main.py                # Orquestrador
-│   ├── desktop.py             # Automação SESClient
-│   ├── web.py                 # Automação web
-│   ├── static.py              # Credenciais
-│   └── rpa.jsonl              # Logs estruturados
-├── smartcard/                 # App Django
-│   ├── models.py
-│   ├── urlsapi.py
-│   ├── tasks.py
-│   ├── services.py
-│   └── ...
-├── core/                      # Config Django
-├── docker/                    # Dockerfiles
+├── core/
+│   ├── settings.py       # Configuracoes Django, banco, Redis e Celery
+│   ├── urls.py           # Rotas principais do projeto
+│   ├── celery.py         # Configuracao do Celery
+│   ├── asgi.py           # Entrada ASGI
+│   └── wsgi.py           # Entrada WSGI
+├── smartcard/
+│   ├── models.py         # Modelos de usuarios, acessos, tarefas e e-mails
+│   ├── serializers.py    # Serializadores da API
+│   ├── api.py            # ViewSets REST
+│   ├── views.py          # Views e endpoints adicionais
+│   ├── urlsapi.py        # Rotas da API de acesso
+│   ├── tasks.py          # Tarefas Celery de processamento
+│   ├── services.py       # Regras e servicos de dominio
+│   ├── auth.py           # Recursos de autenticacao
+│   ├── receber_resposta.py # Consumo de respostas do RPA
+│   ├── rabbitmq/         # Integracoes auxiliares com RabbitMQ
+│   ├── migrations/       # Migracoes do banco
+│   └── tests/            # Testes
+├── docker/
+│   └── backend.Dockerfile
+├── fixtures/              # Dados iniciais
+├── media/                 # Arquivos enviados
+├── init.sh                # Inicializacao do container
+├── manage.py
 └── requirements.txt
 ```
 
----
+O RPA Windows esta em `windows/rpa-pyauto/`, fora deste servico. Ele controla o SESClient e se comunica com o SmartCard por RabbitMQ.
 
-## 📊 Modelos de Dados
+## Modelos principais
 
-- **Usuario** - Usuários com matricula única
-- **Acesso** - Registros de eventos de acesso com status de validação
-- **Processamento** - Rastreamento de tarefas Celery
+- **Usuario**: matricula, nome, categoria e vinculo opcional com o usuario autenticado.
+- **Acesso**: usuario, data/hora, evento, area, leitor, entrada/saida e apontamento de validacao.
+- **Processamento**: task ID, status, usuario solicitante, tarefa pai e timestamps de criacao/atualizacao.
+- **Emails**: enderecos cadastrados para receber notificacoes, com controle de ativacao.
 
----
+Os status de `Processamento` incluem `PENDING`, `PROCESSANDO`, `SUCCESS` e `ERRO`.
 
-## 🔌 API Endpoints
+## API
 
-```http
-GET    /api/acesso/usuarios/               # Listar usuários
-GET    /api/acesso/apontamento/            # Listar acessos
-PATCH  /api/acesso/apontamento/{id}/       # Marcar revisado
-POST   /api/acesso/upload-xls/             # Upload de arquivo
-GET    /api/acesso/processamento/          # Status de tarefas
+As rotas abaixo sao expostas sob o prefixo `/api/acesso/` e exigem autenticacao JWT, salvo os casos previstos pela configuracao de API Key.
+
+### ViewSets REST
+
+| Metodo | Rota | Finalidade |
+| --- | --- | --- |
+| `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | `/groups/` | Grupos |
+| `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | `/acessos/` | Registros de acesso |
+| `GET` | `/usuarios/` | Usuarios |
+| `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | `/processamento/` | Tarefas de processamento |
+| `GET` | `/apontamento/` | Registros com apontamento |
+
+### Endpoints adicionais
+
+| Metodo | Rota | Finalidade |
+| --- | --- | --- |
+| `POST` | `/upload-xls/` | Receber arquivo XLS ou CSV |
+| `GET` | `/lista-usuarios/` | Listar usuarios |
+| `PATCH` | `/desativar-apontamento/{id}/` | Alterar apontamento |
+| `POST` | `/buscar-registro/` | Solicitar busca de registros |
+| `GET` | `/usuarios-ativos` | Listar usuarios ativos |
+| `GET` | `/emails` | Eventos de notificacao por SSE |
+| `GET` | `/lista-emails` | Listar e-mails cadastrados |
+| `PATCH` | `/desativar-emails/{id}/` | Desativar e-mail |
+| `POST` | `/cadastrar-email/` | Cadastrar e-mail |
+| `POST` | `/registrar-email/` | Registrar e-mail |
+| `GET` | `/receber-resposta/` | Eventos SSE das respostas do RPA |
+| `POST` | `/verificar-id/{id}/` | Verificar processamento do usuario |
+| `GET` | `/ultima-resposta/` | Consultar a ultima resposta do RPA |
+
+A rota `/authorize/` fica no projeto principal e e usada para autorizacao. O endpoint administrativo do Django fica em `/admin/`.
+
+## Fluxo de upload e processamento
+
+1. O frontend envia um arquivo para `/api/acesso/upload-xls/`.
+2. O backend cria um registro de `Processamento` e agenda uma tarefa Celery na fila `fila_rapida`.
+3. A tarefa solicita ao `users_service` os dados de usuarios e perfis pela fila `usuarios_processados`.
+4. O backend aguarda a resposta correlacionada por até 30 segundos.
+5. O arquivo e lido com Pandas: XLS com OpenPyXL ou CSV separado por `;`.
+6. Cada linha e associada a um usuario e transformada em um registro `Acesso`.
+7. Regras de horario, feriados, entrada/saida e inconsistencias atualizam o apontamento.
+8. Os dados sao salvos no PostgreSQL e o status da tarefa e atualizado.
+9. O frontend acompanha o processamento pelo endpoint SSE `/processamento/`.
+
+## Integracao com users_service
+
+A comunicacao usa RabbitMQ com correlation ID e reply queue temporaria:
+
+- `usuarios_processados`: solicitacao de usuarios e perfis para uma tarefa.
+- `usuarios_resposta`: resposta do `users_service` quando aplicavel.
+- `users_global_{task_id}`: dados compartilhados no Redis para a tarefa.
+- Timeout da consulta: 30 segundos.
+
+## Integracao com o RPA
+
+O endpoint `/buscar-registro/` solicita uma busca no RPA Windows. O RPA acessa o SESClient, exporta os registros e publica o resultado no RabbitMQ. O modulo `receber_resposta.py` registra a ultima resposta no Redis com status, quantidade e data de criacao.
+
+A resposta final normalmente possui este formato:
+
+```json
+{
+  "status": "finalizado",
+  "quantidade": 42,
+  "criado_em": "2026-09-02T12:00:00-03:00"
+}
 ```
 
----
+O frontend consulta essa resposta em `/ultima-resposta/` ou recebe a atualizacao pelo SSE `/receber-resposta/`.
 
-## 🤖 RPA Automation
+## Validacao de acessos
 
-- **desktop.py** - Extrai arquivos do SESClient (sistema legado)
-- **web.py** - Automação de login e upload web
-- **main.py** - Orquestrador principal
+O campo `apontamento` e usado para indicar o resultado da validacao. O valor padrao e `0`, e eventos fora das regras de acesso recebem `1`. Entre as verificacoes implementadas estao:
 
-Categorias suportadas:
-- Funcionários
-- Alunos
-- Prestadores
+- Evento diferente de `Apontamento Normal`.
+- Acesso ou saida de aluno fora do horario permitido.
+- Acesso de aluno em fim de semana ou feriado fixo.
+- Inconsistencias entre entradas e saidas.
 
----
+Quando um uso indevido ocorre na data atual, o servico envia uma notificacao para os e-mails ativos usando Gmail e MailHog e publica o evento no Redis.
 
-## 📥 Fluxo de Processamento com Integração
+## Configuracao
 
-```
-1. Frontend Upload XLS
-   ↓
-2. Celery: processar_xls(arquivo, task_id)
-   ↓
-3. Envia: RabbitMQ 'usuarios_processados' com task_id
-   ↓
-4. Aguarda: Redis Cache[users_response_{task_id}] (timeout 30s)
-   ↓
-5. users_service responde em 'usuarios_resposta'
-   ↓
-6. Consumer thread salva resposta no cache
-   ↓
-7. processar_xls continua - Parse XLS + Fuzzy Match
-   ↓
-8. Validação de dados e criação de registros
-   ↓
-9. Resposta via API para Frontend
-```
+O servico le configuracoes de variaveis de ambiente e, no Docker, de arquivos montados em `/run/secrets/`. Os principais valores sao:
 
-### Filas RabbitMQ
-- **`usuarios_processados`** → Solicitações para users_service
-- **`usuarios_resposta`** ← Respostas do users_service
-
-### Consumer Thread em Background
-
-O arquivo `smartcard/tasks.py` inicia automaticamente:
-1. Thread daemon que ouve `usuarios_resposta`
-2. Callback recebe dados do users_service
-3. Salva em Redis: `cache.set(f'users_response_{task_id}', data, timeout=300)`
-4. `processar_xls` lê do cache com polling (a cada 2s)
-
-**Timeout**: 30 segundos esperando resposta antes de falhar
-
----
-
-## 🧪 Instalação
-
-```bash
-# Setup local
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# Variáveis de ambiente
-DEBUG=True
-SECRET_KEY=sua-chave
-DATABASE_URL=postgresql://user:pass@localhost/smartcard_db
-REDIS_URL=redis://localhost:6379/0
-RABBITMQ_URL=amqp://guest:guest@localhost:5672//
-
-# Migrações
-python manage.py migrate
-
-# Criar superuser
-python manage.py createsuperuser
-
-# Rodar servidor
-python manage.py runserver 0.0.0.0:8000
-
-# Celery
-celery -A core worker -l info
-celery -A core beat -l info
-```
-
-### 🐳 Docker
-
-```bash
-docker build -f docker/backend.Dockerfile -t labacess-smartcard:latest .
-docker-compose -f docker/docker-compose.yml up -d
-```
-
----
-
-## 🔍 Validação de Acessos
-
-Status de apontamento:
-- **0** - Acesso válido
-- **1** - Inconsistência (ex: saída sem entrada)
-- **2** - Erro crítico
-- **3** - Revisado manualmente
-
-Fuzzy matching (80%+ similaridade):
-```python
-from fuzzywuzzy import fuzz
-score = fuzz.ratio(nome1, nome2)
-if score > 80:
-    match_found = True
-```
-
----
-
-## 🛡️ Segurança
-
-✅ JWT autenticação  
-✅ CORS configurado  
-✅ RabbitMQ encryption  
-✅ Rate limiting  
-
----
-
-## 🚀 Deployment
-
-Variáveis de produção:
 ```env
-DEBUG=False
-ALLOWED_HOSTS=acesso.api.example.com
-DATABASE_URL=postgresql://prod:pass@prod_db/smartcard_prod
-REDIS_URL=redis://redis:6379/0
+DEBUG=True
+DB_HOST=postgres
+DB_PORT=5432
+DB_NAME=postgres
+DB_USER=postgres
+POSTGRES_PASSWORD=postgres
+JWT_ALGORITHM=HS256
+EMAIL_HOST_USER=usuario@example.com
+EMAIL_HOST_PASSWORD=senha-de-aplicacao
 ```
 
----
+Nao versione secrets reais. Em ambiente Docker, o `docker-compose.yml` da raiz fornece PostgreSQL, Redis, RabbitMQ e MailHog.
 
-**Desenvolvido com ❤️ para controle seguro de acesso a laboratórios**
+## Execucao local
+
+Na pasta `smartCard`:
+
+```bash
+python -m venv venv
+venv\Scripts\activate       # Windows
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8080
+```
+
+Em Linux ou macOS, ative o ambiente com:
+
+```bash
+source venv/bin/activate
+```
+
+Para executar o worker Celery localmente:
+
+```bash
+celery -A core worker --pool=solo --concurrency=1 --loglevel=info -Q fila_rapida,fila_media,fila_pesada
+```
+
+A execucao local exige PostgreSQL, Redis e RabbitMQ acessiveis com os hosts e portas definidos nas variaveis de ambiente.
+
+## Docker
+
+O `docker/backend.Dockerfile` usa Python 3.12, instala `requirements.txt` e copia o projeto para `/app`. O script `init.sh` aguarda PostgreSQL, Redis e RabbitMQ, executa migrations, inicia o Django em `0.0.0.0:8080` e inicia o worker Celery.
+
+A partir da raiz do repositorio:
+
+```bash
+docker compose up --build backend
+```
+
+Para subir toda a plataforma, incluindo frontend, `users_service`, Kong e dependencias:
+
+```bash
+docker compose up --build
+```
+
+O backend fica exposto diretamente em `http://localhost:8080` e, na arquitetura completa, a API publica normalmente entra pelo Kong em `http://localhost:8000`.
+
+## Testes
+
+Execute os testes Django com:
+
+```bash
+python manage.py test
+```
+
+Antes de executar, configure o banco de dados e os servicos externos exigidos pelo ambiente de teste.
