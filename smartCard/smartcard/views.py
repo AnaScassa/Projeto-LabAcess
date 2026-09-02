@@ -226,7 +226,6 @@ def registrar_email(request):
     return Response({"message": "Email registrado com sucesso"})
 
 def receber_resposta(request):
-
     authenticator = JWTAuthentication()
 
     try:
@@ -239,8 +238,6 @@ def receber_resposta(request):
 
         if raw_token is None:
             return StreamingHttpResponse(json.dumps({"detail": "Token ausente"}), status=401, content_type="application/json")
-
-        validated_token = authenticator.get_validated_token(raw_token)
 
     except AuthenticationFailed as e:
         return StreamingHttpResponse(json.dumps({"detail": str(e.detail)}), status=401, content_type="application/json")
@@ -269,6 +266,19 @@ def receber_resposta(request):
     response["X-Accel-Buffering"] = "no"
 
     return response
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def ultima_resposta(request):
+    ultimo = redis_client.get("ultima_resposta_rpa")
+
+    if not ultimo:
+        return Response({"status": None, "quantidade": 0, "criado_em": None})
+
+    try:
+        return Response(json.loads(ultimo))
+    except (TypeError, ValueError):
+        return Response({"status": None, "quantidade": 0, "criado_em": None})
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
