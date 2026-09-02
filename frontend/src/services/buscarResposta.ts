@@ -7,12 +7,12 @@ export async function buscarUltimaResposta() {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          Accept: "application/json",
         },
     });
 
     if (!response.ok) {
-        throw new Error("Erro ao buscar última resposta");
+      throw new Error(`Erro HTTP: ${response.status}`);
     }
 
     return response.json();

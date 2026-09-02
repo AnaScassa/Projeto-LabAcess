@@ -16,6 +16,7 @@ import { useMailhogNotifications } from "../hooks/useMailhogNotifications";
 import { fazerUpload } from "../services/upload";
 import { verificarProcessamento } from "../services/processamento";
 import { verificarId } from "../services/conferirid";
+import { receberRespostas } from "../services/receberResposta";
 
 export default function Upload() {
   const [mensagem, setMensagem] = useState("");
@@ -32,52 +33,93 @@ export default function Upload() {
 
   useMailhogNotifications();
 
-    useEffect(() => {
+  useEffect(() => {
+    async function carregarUltimoStatus() {
+      try {
+        const dados = await buscarUltimaResposta();
 
-      async function carregarUltimoStatus() {
-        try {
-          const dados = await buscarUltimaResposta();
+        console.log("Última resposta do RPA:", dados);
 
-          console.log("Última resposta do RPA:", dados);
-
-          if (dados?.status === null || dados?.status === undefined) {
-            setStatusBusca(null);
-            setMensagem("Aguardando resposta do RPA...");
-            return;
-          }
-
-          const status = String(dados.status).toLowerCase();
-
-          setStatusBusca(status);
-
-          if (status === "finalizado") {
-            setMensagem(
-              `Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`
-            );
-            return;
-          }
-
-          if (status === "erro") {
-            setMensagem(`Busca com erro: ${dados.status}`);
-            return;
-          }
-
-          if (status === "pending") {
-            setMensagem("Aguardando resposta do RPA...");
-            return;
-          }
-
-          setMensagem(`Status do RPA: ${dados.status}`);
-
-        } catch (erro) {
-          console.error("Erro ao buscar último status:", erro);
+        if (!dados?.status) {
           setStatusBusca(null);
+          setMensagem("Aguardando resposta do RPA...");
+          return;
         }
+
+        const status = String(dados.status).toLowerCase();
+
+        setStatusBusca(status);
+
+        if (status === "finalizado") {
+          setMensagem(
+            `Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`
+          );
+          return;
+        }
+
+        if (status === "erro") {
+          setMensagem(`Busca com erro: ${dados.status}`);
+          return;
+        }
+
+        if (status === "pending") {
+          setMensagem("Aguardando resposta do RPA...");
+          return;
+        }
+
+        setMensagem(`Status do RPA: ${dados.status}`);
+
+      } catch (erro) {
+        console.error("Erro ao buscar último status:", erro);
+        setStatusBusca(null);
+      }
+    }
+
+    carregarUltimoStatus();
+  }, []);
+
+  useEffect(() => {
+    const parar = receberRespostas((dados) => {
+
+      console.log("Resposta recebida do RPA:", dados);
+
+      if (!dados?.status) {
+        setStatusBusca(null);
+        setMensagem("Aguardando resposta do RPA...");
+        return;
       }
 
-      carregarUltimoStatus();
+      const status = String(dados.status).toLowerCase();
 
-    }, []);
+      setStatusBusca(status);
+
+      if (status === "finalizado") {
+        setMensagem(
+          `Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`
+        );
+        return;
+      }
+
+      if (status === "erro") {
+        setMensagem(`Busca com erro: ${dados.status}`);
+        return;
+      }
+
+      if (status === "pending") {
+        setMensagem("Aguardando resposta do RPA...");
+        return;
+      }
+
+      setMensagem(`Status do RPA: ${dados.status}`);
+
+    }, () => {
+      setStatusBusca(null);
+    });
+
+    return () => {
+      parar();
+    };
+  }, []);
   
   useEffect(() => {
       const storedToken = localStorage.getItem("access");
