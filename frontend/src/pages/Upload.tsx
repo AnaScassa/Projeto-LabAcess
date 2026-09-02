@@ -297,7 +297,7 @@ export default function Upload() {
                     Última busca finalizada: {quantidadeUltimaBusca === null ? "Nenhuma busca registrada" : `${quantidadeUltimaBusca} registro(s) em ${dataUltimaBusca ? 
                     new Date(dataUltimaBusca).toLocaleString("pt-BR") : "data não informada"}`}
                   </p>
-                  <div className="d-flex flex-row align-items-center">
+                  <div className="d-flex flex-row align-items-center" style={{ gap: "10px" }}>
                     <button className="btn btn-outline-secondary" onClick={async () => {
                       setStatusBusca("PENDING");
                       setMensagem("Enviando busca ao RPA...");
@@ -362,7 +362,6 @@ export default function Upload() {
                               {buscarBloqueado ? mensagem : "Buscar registros"}
                             </button>
                           </div>
-
                         </div>
                       </div>
                     </details>

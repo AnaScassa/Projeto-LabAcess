@@ -202,7 +202,6 @@ CACHES = {
     }
 }
 
-print("SIGNING_KEY:", cache.get('SIGNING_KEY'))  # Debugging line to check the value of SIGNING_KEY
 SIMPLE_JWT = {
     "ALGORITHM": read_secret('jwt_algorithm', 'HS256'),
     "SIGNING_KEY": cache.get('SIGNING_KEY'),
