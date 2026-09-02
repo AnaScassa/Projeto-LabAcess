@@ -292,79 +292,81 @@ export default function Upload() {
                   {mensagem2 && <p className="mt-3 mb-0">{mensagem2}</p>}
                 </div>
 
-                <div className="card-footer footer-busca">
+                <div className="card-footer footer-busca d-flex flex-column">
                   <p className="mb-0 text-center" style={{ fontSize: "0.8rem" }}>
                     Última busca finalizada: {quantidadeUltimaBusca === null ? "Nenhuma busca registrada" : `${quantidadeUltimaBusca} registro(s) em ${dataUltimaBusca ? 
                     new Date(dataUltimaBusca).toLocaleString("pt-BR") : "data não informada"}`}
                   </p>
-                  <button className="btn btn-outline-secondary" onClick={async () => {
-                    setStatusBusca("PENDING");
-                    setMensagem("Enviando busca ao RPA...");
-                    await buscarRegistro(null, null, null, null);
-                  }} disabled={buscarBloqueado}>
-                    <i className="fas fa-sync-alt me-2"></i>
-                    {buscarBloqueado ? mensagem : "Buscar registros dos últimos 5 minutos"}
-                  </button>
+                  <div className="d-flex flex-row align-items-center">
+                    <button className="btn btn-outline-secondary" onClick={async () => {
+                      setStatusBusca("PENDING");
+                      setMensagem("Enviando busca ao RPA...");
+                      await buscarRegistro(null, null, null, null);
+                    }} disabled={buscarBloqueado}>
+                      <i className="fas fa-sync-alt me-2"></i>
+                      {buscarBloqueado ? mensagem : "Buscar registros dos últimos 5 minutos"}
+                    </button>
 
-                  <details className="details-custom">
-                    <summary className="btn btn-outline-secondary btn-sm">
-                      <div className="d-flex align-items-center justify-content-center w-100">
-                        <i className="fas fa-chevron-down"></i>
-                      </div>
-                    </summary>
+                    <details className="details-custom">
+                      <summary className="btn btn-outline-secondary btn-sm">
+                        <div className="d-flex align-items-center justify-content-center w-100">
+                          <i className="fas fa-chevron-down"></i>
+                        </div>
+                      </summary>
 
-                    <div className="details-content card shadow-sm mt-3">
-                      <div className="card-body ">
+                      <div className="details-content card shadow-sm mt-3">
+                        <div className="card-body ">
 
-                        <h6 className="mb-3 text-center">
-                          <i className="fas fa-search me-2"></i>
-                          Busca Avançada
-                        </h6>
+                          <h6 className="mb-3 text-center">
+                            <i className="fas fa-search me-2"></i>
+                            Busca Avançada
+                          </h6>
 
-                        <div className="row g-3">
+                          <div className="row g-3">
 
-                          <div className="col-md-6">
-                            <label className="form-label">Data inicial</label>
-                            <input type="date" className="form-control" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
+                            <div className="col-md-6">
+                              <label className="form-label">Data inicial</label>
+                              <input type="date" className="form-control" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
+                            </div>
+
+                            <div className="col-md-6">
+                              <label className="form-label">Data final</label>
+                              <input type="date" className="form-control" value={dataFim} onChange={(e) => setDataFim(e.target.value)} />
+                            </div>
+
+                            <div className="col-md-6">
+                              <label className="form-label">Hora inicial</label>
+                              <input type="time" className="form-control" value={horaInicio}  onChange={(e) => setHoraInicio(e.target.value)} />
+                            </div>
+
+                            <div className="col-md-6">
+                              <label className="form-label">Hora final</label>
+                              <input type="time" className="form-control" value={horaFim} onChange={(e) => setHoraFim(e.target.value)} />
+                            </div>
+
                           </div>
 
-                          <div className="col-md-6">
-                            <label className="form-label">Data final</label>
-                            <input type="date" className="form-control" value={dataFim} onChange={(e) => setDataFim(e.target.value)} />
-                          </div>
+                          <hr/>
 
-                          <div className="col-md-6">
-                            <label className="form-label">Hora inicial</label>
-                            <input type="time" className="form-control" value={horaInicio}  onChange={(e) => setHoraInicio(e.target.value)} />
-                          </div>
+                          <div className="text-center">
+                            <button className="btn btn-outline-secondary" onClick={async () => {
+                              if (!validarBusca()) {
+                                return;
+                              }
 
-                          <div className="col-md-6">
-                            <label className="form-label">Hora final</label>
-                            <input type="time" className="form-control" value={horaFim} onChange={(e) => setHoraFim(e.target.value)} />
+                              setStatusBusca("PENDING");
+                              setMensagem("Enviando busca ao RPA...");
+                              await buscarRegistro(dataInicio, horaInicio, dataFim, horaFim);
+                            }} disabled={buscarBloqueado}>
+                              <i className="fas fa-sync-alt me-2"></i>
+                              {buscarBloqueado ? mensagem : "Buscar registros"}
+                            </button>
                           </div>
 
                         </div>
-
-                        <hr/>
-
-                        <div className="text-center">
-                          <button className="btn btn-outline-secondary" onClick={async () => {
-                            if (!validarBusca()) {
-                              return;
-                            }
-
-                            setStatusBusca("PENDING");
-                            setMensagem("Enviando busca ao RPA...");
-                            await buscarRegistro(dataInicio, horaInicio, dataFim, horaFim);
-                          }} disabled={buscarBloqueado}>
-                            <i className="fas fa-sync-alt me-2"></i>
-                            {buscarBloqueado ? mensagem : "Buscar registros"}
-                          </button>
-                        </div>
-
                       </div>
-                    </div>
-                  </details>
+                    </details>
+                  </div>
                 </div>
 
               </div>
