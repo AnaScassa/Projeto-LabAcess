@@ -1,7 +1,13 @@
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { API_HOST } from "../utils/static";
 
-export function receberRespostas(onMensagem: (dados: any) => void, onErro: () => void) {
+export type RespostaRpa = {
+  status?: string;
+  quantidade?: number;
+  criado_em?: string | null;
+};
+
+export function receberRespostas(onMensagem: (dados: RespostaRpa) => void, onErro: () => void) {
     const token = localStorage.getItem("access");
 
     if (!token) {
@@ -24,7 +30,7 @@ export function receberRespostas(onMensagem: (dados: any) => void, onErro: () =>
         onmessage(event) {
                     
           try {
-            const dados = JSON.parse(event.data);
+            const dados = JSON.parse(event.data) as RespostaRpa;
 
             onMensagem(dados);
           } catch (erro) {
