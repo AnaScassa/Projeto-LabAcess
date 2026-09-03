@@ -46,8 +46,10 @@ export default function Upload() {
       try {
         const dados = await buscarUltimaResposta();
 
-        console.log("Última resposta do RPA:", dados);
-
+        if (!document.hidden) {
+          console.log("Última resposta do RPA:", dados);
+        }
+        //verificar se nao esta acontecendo polling e se a aba nao esta oculta, para evitar flood de logs
         if (!dados?.status) {
           setStatusBusca(null);
           setMensagem("Aguardando resposta do RPA...");
@@ -76,7 +78,9 @@ export default function Upload() {
         setMensagem(`Status do RPA: ${dados.status}`);
 
       } catch (erro) {
-        console.error("Erro ao buscar último status:", erro);
+        if (!document.hidden) {
+          console.error("Erro ao buscar último status:", erro);
+        }
         setStatusBusca(null);
       }
     }
@@ -87,7 +91,9 @@ export default function Upload() {
   useEffect(() => {
     const parar = receberRespostas((dados) => {
 
-      console.log("Resposta recebida do RPA:", dados);
+      if (!document.hidden) {
+        console.log("Resposta recebida do RPA:", dados);
+      }
 
       if (!dados?.status) {
         setStatusBusca(null);

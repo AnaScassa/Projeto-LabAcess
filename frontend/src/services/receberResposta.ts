@@ -19,6 +19,7 @@ export function receberRespostas(onMensagem: (dados: any) => void, onErro: () =>
         },
 
         signal: controller.signal,
+        openWhenHidden: true,
 
         onmessage(event) {
                     
@@ -32,7 +33,9 @@ export function receberRespostas(onMensagem: (dados: any) => void, onErro: () =>
         },
 
         onerror(error) {
-          console.error("Erro no SSE:", error);
+          if (!document.hidden) {
+            console.error("Erro no SSE:", error);
+          }
 
           onErro();
 
