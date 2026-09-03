@@ -1,8 +1,9 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from jsonFormatter import logger
 
-load_dotenv()
+load_dotenv(Path(__file__).with_name('.env'))
 
 def carregar_secrets_infisical():
     logger.info("Usando variáveis de ambiente para configuração")
@@ -14,7 +15,7 @@ RABBITMQ_HOST = os.getenv('RABBITMQ_HOST', 'localhost')
 RABBITMQ_PORT = int(os.getenv('RABBITMQ_PORT', 5672))
 RABBITMQ_USER = os.getenv('RABBITMQ_USER', 'guest')
 RABBITMQ_PASSWORD = os.getenv('RABBITMQ_PASSWORD', 'guest')
-RABBITMQ_QUEUE = os.getenv('RABBITMQ_QUEUE', 'rpa_executar')
+RABBITMQ_QUEUE = os.getenv('RABBITMQ_QUEUE', 'buscar')
 
 FLASK_HOST = os.getenv('FLASK_HOST', '0.0.0.0')
 FLASK_PORT = int(os.getenv('FLASK_PORT', 8006))
