@@ -9,6 +9,7 @@ flowchart LR
 	U[Usuario] --> F[Frontend React]
 
 	subgraph Docker[Docker-compose]
+	
 		F --> K[Kong API Gateway]
 
 		subgraph Servicos[Servicos de aplicacao]
