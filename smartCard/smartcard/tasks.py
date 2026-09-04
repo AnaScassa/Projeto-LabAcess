@@ -469,11 +469,27 @@ def iniciar_consumer_usuarios():
     channel.start_consuming()
     
 def iniciar_consumer_csv():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq", port=5672, credentials=pika.PlainCredentials("guest", "guest")))
-    channel = connection.channel()
-    channel.queue_declare(queue="csvs", durable=True)
-    channel.basic_consume(queue="csvs", on_message_callback=callback_csv)
-    channel.start_consuming()
+    while True:
+        connection = None
+        try:
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq", port=5672,
+                credentials=pika.PlainCredentials("guest", "guest"), heartbeat=60, blocked_connection_timeout=30,
+            ))
+            
+            channel = connection.channel()
+            channel.queue_declare(queue="csvs", durable=True)
+            channel.basic_qos(prefetch_count=1)
+            channel.basic_consume(queue="csvs", on_message_callback=callback_csv, auto_ack=False)
+            print("Consumidor da fila csvs conectado.", flush=True)
+            channel.start_consuming()
+            
+        except pika.exceptions.AMQPError as erro:
+            print(f"Consumidor csvs desconectado: {erro!r}; reconectando...", flush=True)
+            time.sleep(5)
+            
+        finally:
+            if connection and connection.is_open:
+                connection.close()
     
 def callback_csv(ch, method, properties, body):
     

@@ -2,6 +2,7 @@ import csv
 import json
 import os
 import base64
+import time
 import pika
 import static
 from jsonFormatter import logger
@@ -58,23 +59,34 @@ def contar_linhas_csv():
         return 0
     
 def enviar_arquivo_rabbit(arquivo):
-    
-    credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
-    parameters = pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT, credentials=credentials)
-    connection = pika.BlockingConnection(parameters)
-    channel = connection.channel()
-    channel.queue_declare(queue="csvs", durable=True)
-
     with open(arquivo, "rb") as f:
         conteudo = base64.b64encode(f.read()).decode("utf-8")
 
     mensagem = {
         "nome": os.path.basename(arquivo),
-        "conteudo": conteudo
+        "conteudo": conteudo,
     }
-
-    channel.basic_publish(exchange="", routing_key="csvs", body=json.dumps(mensagem),
-        properties=pika.BasicProperties(delivery_mode=pika.DeliveryMode.Persistent),
-    )
     
-    connection.close()
+    credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
+    parameters = pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT, credentials=credentials, blocked_connection_timeout=30)
+
+    for tentativa in range(1, 4):
+        connection = None
+        try:
+            connection = pika.BlockingConnection(parameters)
+            channel = connection.channel()
+            channel.queue_declare(queue="csvs", durable=True)
+            channel.confirm_delivery()
+            channel.basic_publish(exchange="", routing_key="csvs", body=json.dumps(mensagem), properties=pika.BasicProperties(delivery_mode=pika.DeliveryMode.Persistent))
+            logger.info(f"Arquivo confirmado no RabbitMQ: {arquivo}")
+            return
+        
+        except (pika.exceptions.AMQPError, OSError) as erro:
+            logger.error(f"Falha ao enviar {arquivo}, tentativa {tentativa}/3: {erro!r}")
+            if tentativa == 3:
+                raise
+            time.sleep(5)
+            
+        finally:
+            if connection and connection.is_open:
+                connection.close()
