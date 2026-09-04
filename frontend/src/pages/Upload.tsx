@@ -10,6 +10,7 @@ import AcessoIndevidos from "../components/relatorios/AcessosIndevidos";
 import UltimosAcessos from "../components/relatorios/UltimosAcessos";
 import StatusAluno from "../components/relatorios/StatusUsuario"
 import UploadControls from "../components/upload/UploadControls";
+import BuscaControls from "../components/upload/BuscaControls";
 import { solicitarPermissaoNotificacao } from "../utils/notificacoes";
 import { useMailhogNotifications } from "../hooks/useMailhogNotifications";
 import { useRpaStatus } from "../hooks/useRpaStatus";
@@ -86,9 +87,13 @@ export default function Upload() {
           <div className="row">
 
             <div className="col-md-6">
-              <UploadControls fileInputRef={fileInputRef} onUpload={handleUpload} estaBloqueado={estaBloqueado} loading={loading} mensagem2={mensagemUpload} quantidadeUltimaBusca={quantidadeUltimaBusca}
-                dataUltimaBusca={dataUltimaBusca} buscarBloqueado={buscarBloqueado} mensagem={mensagem} dataInicio={dataInicio} dataFim={dataFim} horaInicio={horaInicio}
-                horaFim={horaFim} onDataInicioChange={setDataInicio} onDataFimChange={setDataFim} onHoraInicioChange={setHoraInicio} onHoraFimChange={setHoraFim}
+              <UploadControls fileInputRef={fileInputRef} onUpload={handleUpload} estaBloqueado={estaBloqueado} loading={loading} mensagem2={mensagemUpload}/>
+            </div>
+
+            <div className="col-md-6">
+              <BuscaControls quantidadeUltimaBusca={quantidadeUltimaBusca} dataUltimaBusca={dataUltimaBusca} buscarBloqueado={buscarBloqueado}
+                mensagem={mensagem} dataInicio={dataInicio} dataFim={dataFim} horaInicio={horaInicio} horaFim={horaFim} onDataInicioChange={setDataInicio}
+                onDataFimChange={setDataFim} onHoraInicioChange={setHoraInicio} onHoraFimChange={setHoraFim}
                 onBuscaRapida={() => {
                   iniciarBusca();
                   void buscarRegistro(null, null, null, null);
@@ -102,6 +107,13 @@ export default function Upload() {
                 }}
               />
             </div>
+            
+          </div>
+        </section>
+
+        <section className="content px-4">
+          <div className="row">
+
             <div className="col-md-6">
               <div className="card" style={{ height: "400px" }}>
                 <div className="card-header">
@@ -110,17 +122,21 @@ export default function Upload() {
                   <UltimosAcessos />
               </div>
             </div>
-            
+            <UsoIndevidoCartao/> 
           </div>
         </section>
 
-        <section className="content px-4">
+         <section className="content px-4">
           <div className="row">
-
-            <UsoIndevidoCartao/>
-
             <AcessoIndevidos/>
-
+            <div className="col-md-6">
+              <div className="card" style={{ height: "400px" }}>
+                <div className="card-header">
+                <h3 className="card-title" style={{ fontWeight: 500 }}>MRBS agendamento aqui!</h3>
+              </div>
+                <p>teste2</p>
+              </div>
+            </div>
           </div>
         </section>
 
