@@ -26,6 +26,6 @@ export function exibirNotificacao(titulo: string, mensagem: string) {
 
   new Notification(titulo, {
     body: mensagem,
-    icon: "/favicon.ico",
+    icon: "/logo.png",
   });
 }
