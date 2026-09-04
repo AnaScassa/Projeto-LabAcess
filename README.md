@@ -8,17 +8,26 @@ O projeto e organizado como uma arquitetura distribuida:
 flowchart LR
 	U[Usuario] --> F[Frontend React]
 	F --> K[Kong API Gateway]
-	K --> S[SmartCard Backend]
-	K --> US[Users Service]
-	S --> DB[(PostgreSQL)]
-	US --> DB
-	S --> R[Redis]
-	US --> R
-	S --> Q[RabbitMQ]
-	US --> Q
-	
-	RPA[RPA Windows SESClient] --> Q
-	S --> M[MailHog / SMTP]
+
+	subgraph Servicos[Servicos de aplicacao]
+		K --> S[SmartCard Backend]
+		K --> US[Users Service]
+	end
+
+	subgraph Persistencia[Persistencia e mensageria]
+		DB[(PostgreSQL)]
+		R[(Redis)]
+		Q[[RabbitMQ]]
+	end
+
+	S -->|dados| DB
+	US -->|dados| DB
+	S -->|cache, SSE e pub/sub| R
+	US -->|cache e pub/sub| R
+	S -->|tarefas e respostas| Q
+	US -->|consultas internas| Q
+	RPA[RPA Windows SESClient] -->|buscas e CSVs| Q
+	S -->|notificacoes| M[MailHog / SMTP]
 ```
 
 ## Funcionalidades
