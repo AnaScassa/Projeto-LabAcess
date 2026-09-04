@@ -31,6 +31,9 @@ flowchart LR
 		US -->|consultas internas| Q
 		RPA[RPA Windows SESClient] -->|buscas e CSVs| Q
 	end
+
+	classDef docker fill:#e8f5e9,stroke:#43a047,stroke-width:2px,color:#1b5e20
+	class Docker docker
 ```
 
 ## Funcionalidades
