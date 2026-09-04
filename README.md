@@ -20,6 +20,7 @@ flowchart LR
 		Q[[RabbitMQ]]
 	end
 
+	S -->|notificacoes| M[MailHog / SMTP]
 	S -->|dados| DB
 	US -->|dados| DB
 	S -->|cache, SSE e pub/sub| R
@@ -27,7 +28,6 @@ flowchart LR
 	S -->|tarefas e respostas| Q
 	US -->|consultas internas| Q
 	RPA[RPA Windows SESClient] -->|buscas e CSVs| Q
-	S -->|notificacoes| M[MailHog / SMTP]
 ```
 
 ## Funcionalidades
