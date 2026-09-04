@@ -7,27 +7,30 @@ O projeto e organizado como uma arquitetura distribuida:
 ```mermaid
 flowchart LR
 	U[Usuario] --> F[Frontend React]
-	F --> K[Kong API Gateway]
 
-	subgraph Servicos[Servicos de aplicacao]
-		K --> S[SmartCard Backend]
-		K --> US[Users Service]
+	subgraph Docker[Docker-compose]
+		F --> K[Kong API Gateway]
+
+		subgraph Servicos[Servicos de aplicacao]
+			K --> S[SmartCard Backend]
+			K --> US[Users Service]
+		end
+
+		subgraph Persistencia[Persistencia e mensageria]
+			DB[(PostgreSQL)]
+			R[(Redis)]
+			Q[[RabbitMQ]]
+		end
+
+		S -->|notificacoes| M[MailHog / SMTP]
+		S -->|dados| DB
+		US -->|dados| DB
+		S -->|cache, SSE e pub/sub| R
+		US -->|cache e pub/sub| R
+		S -->|tarefas e respostas| Q
+		US -->|consultas internas| Q
+		RPA[RPA Windows SESClient] -->|buscas e CSVs| Q
 	end
-
-	subgraph Persistencia[Persistencia e mensageria]
-		DB[(PostgreSQL)]
-		R[(Redis)]
-		Q[[RabbitMQ]]
-	end
-
-	S -->|notificacoes| M[MailHog / SMTP]
-	S -->|dados| DB
-	US -->|dados| DB
-	S -->|cache, SSE e pub/sub| R
-	US -->|cache e pub/sub| R
-	S -->|tarefas e respostas| Q
-	US -->|consultas internas| Q
-	RPA[RPA Windows SESClient] -->|buscas e CSVs| Q
 ```
 
 ## Funcionalidades
