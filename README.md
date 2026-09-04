@@ -13,7 +13,10 @@ flowchart LR
 	S --> DB[(PostgreSQL)]
 	US --> DB
 	S --> R[Redis]
+	US --> R
 	S --> Q[RabbitMQ]
+	US --> Q
+	
 	RPA[RPA Windows SESClient] --> Q
 	S --> M[MailHog / SMTP]
 ```
