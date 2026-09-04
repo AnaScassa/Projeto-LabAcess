@@ -23,8 +23,6 @@ flowchart LR
 			Q[[RabbitMQ]]
 		end
 
-		<br />
-
 		S -->|notificacoes| M[MailHog / SMTP]
 		S -->|dados| DB
 		US -->|dados| DB
