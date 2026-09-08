@@ -30,7 +30,8 @@ export function useUpload(): UseUploadResult {
 
     const usuarioId = localStorage.getItem("id");
 
-    if (!usuarioId) {
+    if (!usuarioId || usuarioId === "undefined" || usuarioId === "null") {
+      localStorage.removeItem("id");
       window.location.replace("/login");
       return;
     }

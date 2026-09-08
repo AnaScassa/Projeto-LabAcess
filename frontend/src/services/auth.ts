@@ -1,5 +1,14 @@
 import { API_HOST } from "../utils/static";
 
+function getUserIdFromToken(token: string): string | null {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+    return payload.id ? String(payload.id) : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
   let token = localStorage.getItem("access");
 
@@ -48,10 +57,14 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
       throw new Error("Refresh inválido");
     }
 
-    const data: { access: string, id: string } = await refreshResponse.json();
+    const data: { access: string, id?: string } = await refreshResponse.json();
 
     localStorage.setItem("access", data.access);
-    localStorage.setItem("id", data.id);
+    const userId = data.id || getUserIdFromToken(data.access) || localStorage.getItem("id");
+
+    if (userId) {
+      localStorage.setItem("id", userId);
+    }
 
     token = data.access;
 
