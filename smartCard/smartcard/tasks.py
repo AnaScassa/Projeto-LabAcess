@@ -464,7 +464,7 @@ def iniciar_consumer_csv():
     while True:
         connection = None
         try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq", port=5672,
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq", port=5672, 
                 credentials=pika.PlainCredentials("guest", "guest"), heartbeat=60, blocked_connection_timeout=30,
             ))
             
@@ -496,14 +496,17 @@ def callback_csv(ch, method, properties, body):
 
         task_id = shortuuid.uuid()
         Processamento.objects.create(task_id=task_id, status="PENDING")
-        processar_csv.delay(caminho_arquivo, task_id)
+        processar_csv.apply_async(args=[caminho_arquivo, task_id], task_id=task_id)
+        
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     except Exception as e:
         ch.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
 
 try:
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq", port=5672, credentials=pika.PlainCredentials("guest", "guest")))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq", port=5672, credentials=pika.PlainCredentials("guest", "guest"), 
+        heartbeat=60, blocked_connection_timeout=30,))
+    
     print("Conectado ao RabbitMQ!")
 
 except Exception as e:

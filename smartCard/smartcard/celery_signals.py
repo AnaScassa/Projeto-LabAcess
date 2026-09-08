@@ -7,8 +7,10 @@ redis_client = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
 @after_task_publish.connect(weak=False)
 def task_enviada(sender=None, headers=None, **kwargs):
+    headers = headers or {}
     task_id = headers.get("id")
-    task_name = headers.get("task")
+    task_name = headers.get("task") or sender
+    parent_id = headers.get("parent_id")
 
     processo = Processamento.objects.filter(task_id=task_id).first()
 
@@ -17,7 +19,8 @@ def task_enviada(sender=None, headers=None, **kwargs):
         processo.status = "PENDING"
         processo.save()
     else:
-        print(f"PROCESSAMENTO NÃO ENCONTRADO AO ENVIAR TASK: {task_id}", flush=True)
+        processo_pai = Processamento.objects.filter(task_id=parent_id).first()
+        Processamento.objects.create(task_id=task_id, task_id_parent=parent_id, status="PENDING", user=processo_pai.user if processo_pai else None, task_name=task_name)
 
 @task_prerun.connect(weak=False)
 def task_iniciada(sender=None, task_id=None, task=None, **kwargs):

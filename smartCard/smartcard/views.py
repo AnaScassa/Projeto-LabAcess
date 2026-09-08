@@ -138,8 +138,6 @@ def carregar_acesso(request):
     with transaction.atomic():
         Processamento.objects.create(task_id=task_uuid, status="PENDING", user=str(user_id))
 
-    enviar_mensagem("usuarios_processados", {"task_id": task_uuid, "arquivo": caminho})
-
     if arquivo.name.endswith(".xls"):
         processar_xls.apply_async(args=[caminho, task_uuid], task_id=task_uuid)
     elif arquivo.name.endswith(".csv"):

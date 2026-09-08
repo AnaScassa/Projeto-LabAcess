@@ -40,15 +40,18 @@ def iniciar_consumer():
                 "status": "success"
             }
 
+            if not properties.reply_to:
+                ch.basic_ack(delivery_tag=method.delivery_tag)
+                print(f"Mensagem ignorada sem reply_to: {task_id}", flush=True)
+                return
+
             ch.basic_publish(exchange='', routing_key=properties.reply_to, properties=pika.BasicProperties
                 (correlation_id=properties.correlation_id), body=json.dumps(resposta, default=str))
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
         except Exception as e:
-            print(f"ERRO: {str(e)}")
-            resposta = {
-                "status": "error",
-            }
+            print(f"ERRO ao processar mensagem de usuarios_processados: {str(e)}", flush=True)
+            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
     channel.basic_consume(queue='usuarios_processados', on_message_callback=callback)
     channel.start_consuming()
