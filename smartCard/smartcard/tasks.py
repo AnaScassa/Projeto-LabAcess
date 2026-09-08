@@ -68,18 +68,10 @@ def processar_xls(self, caminho_arquivo, task_id):
             "task_id": task_id
         }))
 
-    timeout = 30
-    inicio = time.time()
-
     while resposta is None:
         connection.process_data_events(time_limit=1)
-        if time.time() - inicio > timeout:
-            break
 
     connection.close()
-
-    if resposta is None:
-        raise Exception("Timeout esperando users_service")
 
     dados = cache.get(f"users_global_{task_id}")
 
