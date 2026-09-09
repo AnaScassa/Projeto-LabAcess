@@ -29,7 +29,7 @@ def ouvir_fila():
             print(f"RabbitMQ desligado ({e}); tentando reconectar em 5 segundos...")
             time.sleep(5)
             
-        except pika.exceptions.AMQPConnectionError as e:
+        except (pika.exceptions.AMQPError, OSError) as e:
             print(f"Erro ao ouvir fila: {e!r}")
             time.sleep(5)
             
