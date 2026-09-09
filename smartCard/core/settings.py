@@ -128,12 +128,21 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv('DB_NAME', 'smartcard'),
-        "USER": os.getenv('DB_USER', 'jax'),
-        "PASSWORD": read_secret('postgres_password', 'postgres'),
-        "HOST": os.getenv('DB_HOST', 'postgres'),
-        "PORT": os.getenv('DB_PORT', '5432'),
-    }
+        "NAME": os.getenv("DB_NAME", "smartcard"),
+        "USER": os.getenv("DB_USER", "jax"),
+        "PASSWORD": read_secret("postgres_password", "postgres"),
+        "HOST": os.getenv("DB_HOST", "postgres"),
+        "PORT": os.getenv("DB_PORT", "5432"),
+    },
+
+    "mariadb": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "mrbs",
+        "USER": "root",
+        "PASSWORD": "123",
+        "HOST": "host.docker.internal",
+        "PORT": "3306",
+    },
 }
 
 
