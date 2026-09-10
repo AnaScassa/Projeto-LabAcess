@@ -3,7 +3,7 @@
     cd /d "%~dp0"
 
     set LOGFILE=C:\Users\Docker\Desktop\Shared\install_log.txt
-    set PASTA_RPA=C:\Users\Docker\Desktop\rpa-pyauto
+    set PASTA_RPA=C:\RPA
     set SHARED_FOLDER=C:\Users\Docker\Desktop\Shared
 
     echo [ %date% %time% ] Iniciando instalacao OEM > %LOGFILE%
@@ -69,10 +69,10 @@
         python -m pip install -r requirements.txt
     echo Dependencias instaladas >> %LOGFILE%
     echo Registrando RPA para iniciar com o Windows... >> %LOGFILE%
-    schtasks /Create /TN "LabAcess RPA" /SC ONLOGON /TR "cmd.exe /c C:\Users\Docker\Desktop\rpa-pyauto\start-rpa.bat" /RL HIGHEST /F >> %LOGFILE% 2>&1
+    schtasks /Create /TN "LabAcess RPA" /SC ONLOGON /TR "cmd.exe /c \"%PASTA_RPA%\start-rpa.bat\"" /RL HIGHEST /F >> %LOGFILE% 2>&1
     echo Exit code Agendador: %errorlevel% >> %LOGFILE%
     echo Iniciando RPA... >> %LOGFILE%
-    start "LabAcess RPA" /D "C:\Users\Docker\Desktop\rpa-pyauto" cmd.exe /c "C:\Users\Docker\Desktop\rpa-pyauto\start-rpa.bat"
+    start "LabAcess RPA" /D "%PASTA_RPA%" cmd.exe /c ""%PASTA_RPA%\start-rpa.bat""
     echo RPA iniciado >> %LOGFILE%
     echo Finalizado. >> %LOGFILE%
     echo "Instalacao completa!" 
