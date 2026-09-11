@@ -1,23 +1,32 @@
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
-from celery import shared_task, shared_task
-
+from celery import shared_task
+from .models import Usuario, Acesso, MrbsEntry, CruzamentoApi
 
 @shared_task(bind=True, name="smartcard.tasks.cruzamento_api")
 def cruzamento_api(self, user_id, username):
+    usuario = Usuario.objects.filter(user_auth=user_id, username_mrbs=username).first()
 
-    # usuario_id: ID do Usuario no SmartCard.
-    # user_auth_id: ID do usuario recebido do users_service.
-    #depois eu vou precisar 1- comparar o "name" do mrbs_users e do "username" do users_users, se tiverem iguais, eu vou pegar o "id" 
-    #do users_users e comparar com os dados do smartcard_usuarios, comparar com o user_auth
-    #se encontrar um "id" correspondente eu preciso verificar no usuario do  mrbs agendou no sistema
-    #se nao agentou retornar mensagem de erro, se agendou retornar mensagem de sucesso 
+    if not usuario:
+        return {"status": "erro", "mensagem": "Usuário não encontrado no SmartCard."}
+
+    if not usuario.username_mrbs:
+        return {"status": "erro", "mensagem": "Usuário não possui username cadastrado no MRBS."}
+
+    acessos = Acesso.objects.filter(usuario=usuario, desc_area="CCS_LAB", ent_sai="1").exclude(data_acesso=None)
+    resultados = []
+
+    for acesso in acessos:
+        acesso_timestamp = int(acesso.data_acesso.timestamp())
+        reserva = MrbsEntry.objects.using("mariadb").filter(created_by=usuario.username_mrbs, start_time__lte=acesso_timestamp, end_time__gte=acesso_timestamp).values(
+            "id", "created_by", "start_time", "end_time"
+        ).first()
+
+        if reserva:
+            resultados.append({"status": "sucesso", "mensagem": "Usuário entrou no CCS_LAB e possuía reserva.", "usuario": usuario.nome_usuario, "matricula": usuario.matricula, "data_acesso": acesso.data_acesso})
+        
+        else:
+            CruzamentoApi.objects.get_or_create(acesso=acesso, defaults={"usuario": usuario, "data_acesso": acesso.data_acesso, "porta": acesso.desc_leitor, "motivo": "Usuário entrou no CCS_LAB sem reserva no MRBS."})
+            resultados.append({"status": "erro", "mensagem": "Usuário entrou no CCS_LAB sem reserva no MRBS.", "usuario": usuario.nome_usuario, "matricula": usuario.matricula, "data_acesso": acesso.data_acesso})
+
+    resultado = {"status": "finalizado", "usuario": usuario.nome_usuario, "matricula": usuario.matricula, "resultados": resultados}
     
-    print(f"Executando cruzamento_api para user_id: {user_id}, username: {username}")
-
-    return {
-        "status": "recebido",
-        "user_id": user_id,
-        "username": username,
-    }
+    return resultado
