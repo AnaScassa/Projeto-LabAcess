@@ -16,7 +16,7 @@ from django.http import StreamingHttpResponse
 from .receber_resposta import REDIS_CANAL_RESPOSTA
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
-from .models import Emails, Usuario, Acesso, Processamento
+from .models import CruzamentoApi, Emails, Usuario, Acesso, Processamento
 from smartcard.rabbitmq.publisher import enviar_mensagem
 
 import shortuuid
@@ -292,3 +292,10 @@ def verificar_id(request, id):
         dados.append({"id": processo.id, "task_id": processo.task_id, "status": processo.status, "task_id_parent": processo.task_id_parent, "task_name": processo.task_name,})
 
     return Response({"MENSAGEM": "Processamentos encontrados", "user_id": id, "total": len(dados), "processamentos": dados}, status=200)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def cruzamentos_api(request):
+    cruzamentos = CruzamentoApi.objects.select_related("usuario", "acesso").order_by("-data_acesso")
+    return Response([{"id": c.id, "matricula": c.usuario.matricula, "usuario": c.usuario.nome_usuario, 
+        "data_acesso": c.data_acesso, "porta": c.porta, "motivo": c.motivo} for c in cruzamentos])
