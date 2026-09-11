@@ -5,6 +5,7 @@ class Usuario(models.Model):
     nome_usuario = models.CharField(max_length=100)
     categoriaUsuario = models.CharField(max_length=50, blank=True, null=True)
     user_auth = models.BigIntegerField(null=True, blank=True)
+    username_mrbs = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return f"{self.nome_usuario} ({self.matricula})"
