@@ -1,6 +1,7 @@
 import pika
 import threading
 import json
+import os
 from django.utils import timezone
 import redis
 
@@ -24,7 +25,8 @@ def callback(ch, method, properties, body):
     executar_agora.set()
     
 def ouvir_fila():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="143.106.5.41", port=5672))
+    credentials = pika.PlainCredentials(os.getenv("RABBITMQ_USER", "guest"), os.getenv("RABBITMQ_PASSWORD", "guest"),)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=os.getenv("RABBITMQ_HOST", "rabbitmq"), port=int(os.getenv("RABBITMQ_PORT", "5672")), credentials=credentials,))
     channel = connection.channel()
     channel.queue_declare(queue="buscar_concluido", durable=True)
     channel.basic_consume(queue="buscar_concluido", on_message_callback=callback, auto_ack=True)
