@@ -16,16 +16,19 @@ app.conf.task_queues = (
     Queue("fila_rapida", routing_key="rapida.#"),
     Queue("fila_pesada", routing_key="pesada.#"),
     Queue("fila_media", routing_key="media.#"),
+    Queue("fila_cruzamento", routing_key="cruzamento.#"),
 )
 
 # Defaults 
 app.conf.task_default_queue = "fila_rapida"
 app.conf.task_default_exchange = "default"
 app.conf.task_default_routing_key = "rapida.default"
+app.conf.task_default_delivery_mode = "persistent"
 
 # Rotas
 app.conf.task_routes = {
     "smartcard.tasks.processar_xls": {"queue": "fila_pesada"},
     "smartcard.tasks.tentar_vincular_user_auth": {"queue": "fila_rapida"},
     "smartcard.tasks.tentar_vincular_por_nome": {"queue": "fila_media"},
+    "smartcard.tasks.cruzamento_api": {"queue": "fila_cruzamento"},
 }
