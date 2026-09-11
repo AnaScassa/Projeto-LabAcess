@@ -53,3 +53,35 @@ class Emails(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
     esta_ativo = models.BooleanField(default=True)
     ativado = models.BooleanField(default=True)
+    
+class CruzamentoApi(models.Model):
+    usuario = models.ForeignKey(Usuario, to_field="matricula", on_delete=models.CASCADE, related_name="cruzamentos")
+    acesso = models.OneToOneField(Acesso, on_delete=models.CASCADE, related_name="cruzamento")
+    data_acesso = models.DateTimeField()
+    porta = models.CharField(max_length=100)
+    motivo = models.CharField(max_length=255)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "cruzamento_api"
+    
+class MrbsEntry(models.Model):
+    id = models.IntegerField(primary_key=True)
+    start_time = models.IntegerField()
+    end_time = models.IntegerField()
+    repeat_id = models.IntegerField(null=True, blank=True)
+    timestamp = models.IntegerField()
+    created_by = models.CharField(max_length=80, db_column="create_by")
+    modified_by = models.CharField(max_length=80)
+    name = models.CharField(max_length=80)
+    type = models.IntegerField()
+    description = models.TextField()
+    status = models.IntegerField()
+    reminded = models.IntegerField()
+    info_time = models.IntegerField()
+    info_user = models.CharField(max_length=80)
+    info_text = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = "mrbs_entry"
