@@ -3,7 +3,8 @@ from .services import vincular_por_matricula
 from .models import Emails, Processamento, Usuario, Acesso
 from fuzzywuzzy import fuzz
 from dotenv import load_dotenv
-from celery import shared_task, shared_task
+from celery import shared_task
+from .cruzamento import cruzamento_api
 
 from django.core.cache import cache
 from django.utils import timezone
@@ -240,7 +241,7 @@ def processar_csv(self, caminho_arquivo, task_id):
                 apontamento = 1
 
             nome_usuario = row.get("Aluno", "")
-            categoria = matricula[:3]
+            categoria = matricula[:3]            
 
         elif "Prestador" in df.columns:
             nome_usuario = row.get("Prestador", "")

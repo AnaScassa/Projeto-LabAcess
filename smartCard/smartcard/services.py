@@ -1,4 +1,5 @@
 from django.conf import settings
+from .cruzamento import cruzamento_api
 
 import os
 import shortuuid
@@ -20,9 +21,15 @@ def vincular_por_matricula(usuario, profiles):
 
         if academic_id_norm == matricula_id:
             user_id = profile.get("user_id")
+            username = profile.get("username")
+            
             if user_id:
                 usuario.user_auth = user_id
                 usuario.save(update_fields=["user_auth"])
+                usuario.username_mrbs = username
+                usuario.save(update_fields=["username_mrbs"])
+                cruzamento_api.delay(user_id, username)
+                
                 return True
 
     return False

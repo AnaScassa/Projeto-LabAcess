@@ -32,6 +32,13 @@ def iniciar_consumer():
             
             users = list(User.objects.all().values())
             profiles = list(UserProfile.objects.all().values())
+
+            usernames_by_id = {
+                user["id"]: user.get("username")
+                for user in users
+            }
+            for profile in profiles:
+                profile["username"] = usernames_by_id.get(profile.get("user_id"))
             
             cache.set(f"users_global_{task_id}",{"users": users,"profiles": profiles},timeout=3600)
             resposta = {
