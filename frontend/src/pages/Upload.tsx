@@ -8,6 +8,7 @@ import ContagemTreinamento from "../components/style/ContagemTreinamento";
 import Menu from "../components/style/Menu";
 import AcessoIndevidos from "../components/relatorios/AcessosIndevidos";
 import UltimosAcessos from "../components/relatorios/UltimosAcessos";
+import Cruzamentos from "../components/relatorios/Cruzamentos";
 import StatusAluno from "../components/relatorios/StatusUsuario"
 import UploadControls from "../components/upload/UploadControls";
 import BuscaControls from "../components/upload/BuscaControls";
@@ -132,9 +133,9 @@ export default function Upload() {
             <div className="col-md-6">
               <div className="card" style={{ height: "400px" }}>
                 <div className="card-header">
-                <h3 className="card-title" style={{ fontWeight: 500 }}>MRBS agendamento aqui!</h3>
+                <h3 className="card-title" style={{ fontWeight: 500 }}>Acessos sem Registro</h3>
               </div>
-                <p>teste2</p>
+                <Cruzamentos />
               </div>
             </div>
           </div>
