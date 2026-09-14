@@ -16,12 +16,13 @@ export default function UploadControls({
   fileInputRef,
 }: UploadControlsProps) {
   return (
-    <div className="card" style={{ height: "400px" }}>
+    
+    <div className="card" style={{ height: "250px" }}>
       <div className="card-header">
         <h3 className="card-title" style={{ fontWeight: 500 }}>Upload de Arquivos</h3>
       </div>
 
-      <div className="card-body d-flex flex-column justify-content-center align-items-center" style={{ height: "100%", gap: "20px" }}>
+      <div className="card-body d-flex flex-column justify-content-center align-items-center" style={{ flex: 1, gap: "12px" }}>
         <form onSubmit={onUpload}>
           <div className="d-flex flex-column" style={{ gap: "30px" }}>
               <input ref={fileInputRef} type="file" id="fileInput" accept=".xls,.csv" />

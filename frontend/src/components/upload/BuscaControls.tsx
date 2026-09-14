@@ -1,6 +1,4 @@
 type BuscaControlsProps = {
-  quantidadeUltimaBusca: number | null;
-  dataUltimaBusca: string | null;
   buscarBloqueado: boolean;
   mensagem: string;
   dataInicio: string;
@@ -16,8 +14,6 @@ type BuscaControlsProps = {
 };
 
 export default function BuscaControls({
-  quantidadeUltimaBusca,
-  dataUltimaBusca,
   buscarBloqueado,
   mensagem,
   dataInicio,
@@ -32,59 +28,57 @@ export default function BuscaControls({
   onBuscaAvancada,
 }: BuscaControlsProps) {
   return (
-    <div className="card" style={{ height: "400px" }}>
+
+    <div className="card" style={{height: "360px", overflow: "hidden"}}>
       <div className="card-header">
-        <h3 className="card-title" style={{ fontWeight: 500 }}>Buscar registros</h3>
+        <h3 className="card-title mb-0" style={{ fontWeight: 500 }}>
+          <i className="fas fa-search me-2"></i>
+          Busca avançada
+        </h3>
       </div>
 
-      <div className="card-body d-flex flex-column justify-content-center align-items-center" style={{ height: "100%", gap: "20px" }}>
-        <p className="mb-0 text-center" style={{ fontSize: "0.8rem" }}> Última busca finalizada: {quantidadeUltimaBusca === null ? "Nenhuma busca registrada"
-            : `${quantidadeUltimaBusca} registro(s) em ${dataUltimaBusca ? new Date(dataUltimaBusca).toLocaleString("pt-BR") : "data não informada"}`}
-        </p>
+      <div className="card-body p-3">
+        <div className="row g-2">
+          <div className="col-md-6">
+            <label className="form-label mb-1">Data inicial</label>
+            <input type="date" className="form-control busca-input" value={dataInicio} onChange={(event) => onDataInicioChange(event.target.value)}/>
+          </div>
 
-        <div className="d-flex flex-column align-items-center w-100" style={{ gap: "16px" }}>
-          <button className="btn btn-outline-secondary" onClick={onBuscaRapida} disabled={buscarBloqueado}>
-            <i className="fas fa-sync-alt me-2"></i>
-            {buscarBloqueado ? mensagem : "Buscar registros dos últimos 5 minutos"}
-          </button>
+          <div className="col-md-6">
+            <label className="form-label mb-1">Data final</label>
+            <input type="date" className="form-control busca-input input-busca" value={dataFim} onChange={(event) => onDataFimChange(event.target.value)}/>
+          </div>
 
-          <hr className="w-100 my-2" />
+          <div className="col-md-6">
+            <label className="form-label mb-1">Hora inicial</label>
+            <input type="time" className="form-control busca-input input-busca" value={horaInicio} onChange={(event) => onHoraInicioChange(event.target.value)}/>
+          </div>
 
-          <div className="busca-avancada-content w-100">
-            <h6 className="mb-3 text-center">
-              <i className="fas fa-search me-2"></i>
-              Busca Avançada
-            </h6>
-
-            <div className="row g-3">
-              <div className="col-md-6">
-                <label className="form-label">Data inicial</label>
-                <input type="date" className="form-control busca-input" value={dataInicio} onChange={(event) => onDataInicioChange(event.target.value)} />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Data final</label>
-                <input type="date" className="form-control busca-input input-busca" value={dataFim} onChange={(event) => onDataFimChange(event.target.value)} />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Hora inicial</label>
-                <input type="time" className="form-control busca-input input-busca" value={horaInicio} onChange={(event) => onHoraInicioChange(event.target.value)} />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Hora final</label>
-                <input type="time" className="form-control busca-input input-busca" value={horaFim} onChange={(event) => onHoraFimChange(event.target.value)} />
-              </div>
-            </div>
-
-            <hr />
-
-            <div className="text-center">
-              <button className="btn btn-outline-secondary" onClick={onBuscaAvancada} disabled={buscarBloqueado}>
-                <i className="fas fa-sync-alt me-2"></i>
-                {buscarBloqueado ? mensagem : "Buscar registros"}
-              </button>
-            </div>
+          <div className="col-md-6">
+            <label className="form-label mb-1">Hora final</label>
+            <input type="time" className="form-control busca-input input-busca" value={horaFim} onChange={(event) => onHoraFimChange(event.target.value)}/>
           </div>
         </div>
+
+        <div className="d-flex flex-column align-items-center mt-3">
+            <button className="btn btn-outline-secondary" style={{ width: "230px" }} onClick={onBuscaAvancada} disabled={buscarBloqueado}>
+                <i className="fas fa-sync-alt me-2"></i>
+                {buscarBloqueado ? mensagem : "Buscar registros"}
+            </button>
+
+            <hr style={{ width: "230px", margin: "15px 0", border: "0", borderTop: "1px solid #dee2e6", opacity: 1 }} />
+
+            <div className="d-flex align-items-center position-relative">
+                <button className="btn btn-outline-secondary" style={{ width: "230px" }} onClick={onBuscaRapida} disabled={buscarBloqueado}>
+                    <i className="fas fa-sync-alt me-2"></i>
+                    {buscarBloqueado ? mensagem : "Buscar últimos 5 minutos"}
+                </button>
+                <i className="fas fa-info-circle text-muted" aria-label="O que é RPA?"
+                    title="A busca automática é realizada por um robô (RPA), portanto pode haver uma demora para o retorno dos registros. "
+                    style={{ cursor: "help", position: "absolute", left: "245px" }}>
+                </i>
+            </div>
+            </div>
       </div>
     </div>
   );

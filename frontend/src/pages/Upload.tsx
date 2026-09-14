@@ -1,26 +1,18 @@
-import { useState, useEffect } from "react";
-import { useTreinamento } from "../hooks/useTreinamento";
+import { useEffect, useState } from "react";
 import { buscarRegistro } from "../services/buscarRegistro";
 import GraficoAcessos from "../components/graficos/Acessos";
 import GraficosUsuariosAtivos from "../components/graficos/UsuariosAtivos";
-import UsoIndevidoCartao from "../components/relatorios/UsoIndevidoCartao";
-import ContagemTreinamento from "../components/style/ContagemTreinamento";
 import Menu from "../components/style/Menu";
-import AcessoIndevidos from "../components/relatorios/AcessosIndevidos";
-import UltimosAcessos from "../components/relatorios/UltimosAcessos";
-import Cruzamentos from "../components/relatorios/Cruzamentos";
-import StatusAluno from "../components/relatorios/StatusUsuario"
 import UploadControls from "../components/upload/UploadControls";
-import BuscaControls from "../components/upload/BuscaControls";
 import { solicitarPermissaoNotificacao } from "../utils/notificacoes";
 import { useMailhogNotifications } from "../hooks/useMailhogNotifications";
 import { useRpaStatus } from "../hooks/useRpaStatus";
 import { useUpload } from "../hooks/useUpload";
+import BuscaControls from "../components/upload/BuscaControls";
 
 export default function Upload() {
-  const { statusBusca, mensagem, quantidadeUltimaBusca, dataUltimaBusca, iniciarBusca } = useRpaStatus();
+  const { statusBusca, mensagem, iniciarBusca } = useRpaStatus();
   const { mensagem: mensagemUpload, loading, estaBloqueado, fileInputRef, handleUpload } = useUpload();
-  const { treinamentos } = useTreinamento();
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [horaInicio, setHoraInicio] = useState("");
@@ -78,21 +70,16 @@ export default function Upload() {
 
       <div className="content-wrapper">
 
-        <h2 className="px-4 pt-2">Dashboard Controle do Laboratório</h2>
+        <h2 className="px-4 pt-2">Upload de Planilhas</h2>
 
         <section className="content px-4 pt-4">
-          <ContagemTreinamento treinamentos={treinamentos} />
-        </section>
-
-        <section className="content px-4">
-          <div className="row">
-
-            <div className="col-md-6">
+          <div className="row gy-4" style={{ rowGap: "5px" }}>
+            <div className="col-12">
               <UploadControls fileInputRef={fileInputRef} onUpload={handleUpload} estaBloqueado={estaBloqueado} loading={loading} mensagem2={mensagemUpload}/>
             </div>
 
-            <div className="col-md-6">
-              <BuscaControls quantidadeUltimaBusca={quantidadeUltimaBusca} dataUltimaBusca={dataUltimaBusca} buscarBloqueado={buscarBloqueado}
+            <div className="col-12">
+              <BuscaControls buscarBloqueado={buscarBloqueado}
                 mensagem={mensagem} dataInicio={dataInicio} dataFim={dataFim} horaInicio={horaInicio} horaFim={horaFim} onDataInicioChange={setDataInicio}
                 onDataFimChange={setDataFim} onHoraInicioChange={setHoraInicio} onHoraFimChange={setHoraFim}
                 onBuscaRapida={() => {
@@ -114,65 +101,28 @@ export default function Upload() {
 
         <section className="content px-4">
           <div className="row">
-
             <div className="col-md-6">
-              <div className="card" style={{ height: "400px" }}>
-                <div className="card-header">
-                  <h3 className="card-title" style={{ fontWeight: 500 }}>Últimos Acessos (24 horas)</h3>
+              <div className="card">
+                <div className="card-header" style={{ backgroundColor: "#17a2b8" }}>
+                  <h3 className="card-title" style={{ fontWeight: 500 }}>Acessos do último ano 2025</h3>
                 </div>
-                  <UltimosAcessos />
+                <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <GraficoAcessos />
+                </div>
               </div>
             </div>
-            <UsoIndevidoCartao/> 
-          </div>
-        </section>
 
-         <section className="content px-4">
-          <div className="row">
-            <AcessoIndevidos/>
             <div className="col-md-6">
-              <div className="card" style={{ height: "400px" }}>
-                <div className="card-header">
-                <h3 className="card-title" style={{ fontWeight: 500 }}>Acessos sem Registro</h3>
-              </div>
-                <Cruzamentos />
+              <div className="card">
+                <div className="card-header" style={{ backgroundColor: "#ffc107" }}>
+                  <h3 className="card-title" style={{ fontWeight: 500 }}>Usuários que mais acessam o lab</h3>
+                </div>
+                <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <GraficosUsuariosAtivos />
+                </div>
               </div>
             </div>
           </div>
-        </section>
-
-        <section className="content px-4">
-            <StatusAluno/>      
-        </section>
-
-        <section className="content px-4">
-            <div className="row">
-
-              <div className="col-md-6">
-                <div className="card" >
-                  <div className="card-header" style={{ backgroundColor: '#17a2b8' }}>
-                    <h3 className="card-title" style={{ fontWeight: 500 }}>Acessos do último ano {new Date().getFullYear() - 1}</h3>
-                  </div>
-
-                  <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <GraficoAcessos />
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-6">
-                <div className="card">
-                  <div className="card-header" style={{ backgroundColor: "#ffc107"}}>
-                    <h3 className="card-title" style={{ fontWeight: 500 }}>Usuários que mais acessam o lab</h3>
-                  </div>
-
-                  <div className="card-body" style={{ height: "400px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <GraficosUsuariosAtivos />
-                  </div>
-                </div>
-              </div>
-
-            </div>
         </section>
 
       </div>

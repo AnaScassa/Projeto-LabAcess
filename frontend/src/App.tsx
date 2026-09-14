@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Upload from "./pages/Upload";
+import Dashboard from "./pages/Dashboard";
 import TempoPermanencia from "./pages/relatorios/TempoPermanencia";
 import NaoAcessantes from "./pages/relatorios/NaoAcessantesLab";
 import RelatorioTempo from "./pages/relatorios/PermanenciaTotalLab";
@@ -16,6 +17,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<PrivateRoute><Upload /></PrivateRoute>} />
+      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
       <Route path="/relatorioTempo" element={<PrivateRoute><RelatorioTempo /></PrivateRoute>} />
       <Route path="/tempoPermanencia" element={<PrivateRoute><TempoPermanencia /></PrivateRoute>} />
       <Route path="/naoAcessantes" element={<PrivateRoute><NaoAcessantes/></PrivateRoute>}/>
