@@ -29,7 +29,7 @@ export default function BuscaControls({
 }: BuscaControlsProps) {
   return (
 
-    <div className="card" style={{height: "360px", overflow: "hidden"}}>
+    <div className="card" style={{minHeight: "250px", height: "auto"}}>
       <div className="card-header">
         <h3 className="card-title mb-0" style={{ fontWeight: 500 }}>
           <i className="fas fa-search me-2"></i>

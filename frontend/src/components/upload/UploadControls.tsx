@@ -17,7 +17,7 @@ export default function UploadControls({
 }: UploadControlsProps) {
   return (
     
-    <div className="card" style={{ height: "250px" }}>
+    <div className="card" style={{minHeight: "250px", height: "auto"}} >
       <div className="card-header">
         <h3 className="card-title" style={{ fontWeight: 500 }}>Upload de Arquivos</h3>
       </div>
