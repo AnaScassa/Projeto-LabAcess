@@ -48,11 +48,20 @@ export function useUpload(): UseUploadResult {
 
       if (response.status !== 201) {
         setMensagem("Erro ao verificar processamento.");
+        localStorage.removeItem("access");
+        localStorage.removeItem("id");
+        window.location.replace("/login");
         return;
       }
     } catch (error) {
       console.error("Erro ao verificar processamento:", error);
       setMensagem("Erro ao verificar processamento.");
+      const response = await verificarId(usuarioId);
+      if (response && response.status === 401) {
+        localStorage.removeItem("access");
+        localStorage.removeItem("id");
+        window.location.replace("/login");
+      }
       return;
     }
 
@@ -78,6 +87,11 @@ export function useUpload(): UseUploadResult {
       if (!resposta) {
         setMensagem("Erro no upload.");
         setEstaBloqueado(false);
+        if (resposta && resposta.status === 401) {
+          localStorage.removeItem("access");
+          localStorage.removeItem("id");
+          window.location.replace("/login");
+        }
         return;
       }
 

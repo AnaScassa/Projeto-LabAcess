@@ -73,7 +73,7 @@ export default function Upload() {
         <h2 className="px-4 pt-2">Upload de Planilhas</h2>
 
         <section className="content px-4 pt-4">
-          <div className="row gy-4" style={{ rowGap: "5px" }}>
+          <div className="row gy-4">
             <div className="col-12">
               <UploadControls fileInputRef={fileInputRef} onUpload={handleUpload} estaBloqueado={estaBloqueado} loading={loading} mensagem2={mensagemUpload}/>
             </div>
