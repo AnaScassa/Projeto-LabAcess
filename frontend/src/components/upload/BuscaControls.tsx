@@ -29,7 +29,7 @@ export default function BuscaControls({
 }: BuscaControlsProps) {
   return (
 
-    <div className="card" style={{minHeight: "250px", height: "auto"}}>
+    <div className="card">
       <div className="card-header">
         <h3 className="card-title mb-0" style={{ fontWeight: 500 }}>
           <i className="fas fa-search me-2"></i>
@@ -68,7 +68,7 @@ export default function BuscaControls({
 
             <hr style={{ width: "230px", margin: "15px 0", border: "0", borderTop: "1px solid #dee2e6", opacity: 1 }} />
 
-            <div className="d-flex align-items-center position-relative">
+            <div className="d-flex align-items-center position-relative mb-3">
                 <button className="btn btn-outline-secondary" style={{ width: "230px" }} onClick={onBuscaRapida} disabled={buscarBloqueado}>
                     <i className="fas fa-sync-alt me-2"></i>
                     {buscarBloqueado ? mensagem : "Buscar últimos 5 minutos"}

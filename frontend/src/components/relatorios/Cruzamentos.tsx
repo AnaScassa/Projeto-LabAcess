@@ -7,15 +7,13 @@ export default function Cruzamentos() {
   useEffect(() => {
     let ativo = true;
 
-    carregarCruzamentos()
-      .then((dados) => {
-        if (ativo) {
-          setCruzamentos(dados);
-        }
-      })
-      .catch((error) => {
-        console.error("Erro ao carregar cruzamentos:", error);
-      });
+    carregarCruzamentos().then((dados) => {
+      if (ativo) {
+        setCruzamentos(dados);
+      }
+    }).catch((error) => {
+      console.error("Erro ao carregar cruzamentos:", error);
+    });
 
     return () => {
       ativo = false;

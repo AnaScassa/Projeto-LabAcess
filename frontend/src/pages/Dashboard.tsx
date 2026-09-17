@@ -17,7 +17,7 @@ export default function Dashboard() {
       <div className="content-wrapper">
         <h2 className="px-4 pt-2">Dashboard Controle do Laboratório</h2>
 
-        <section className="content px-4 pt-4">
+        <section className="content px-4 pt-4 pb-4">
           <ContagemTreinamento treinamentos={treinamentos} />
         </section>
 
