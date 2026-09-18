@@ -38,7 +38,6 @@ export default function Dashboard() {
 
         <section className="content px-4">
           <div className="row">
-            <AcessoIndevidos />
             <div className="col-md-6">
               <div className="card" style={{ height: "400px" }}>
                 <div className="card-header">
@@ -47,6 +46,7 @@ export default function Dashboard() {
                 <Cruzamentos />
               </div>
             </div>
+            <AcessoIndevidos />
           </div>
         </section>
 
