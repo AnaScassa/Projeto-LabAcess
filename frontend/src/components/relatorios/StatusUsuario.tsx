@@ -8,7 +8,7 @@ type UsuarioAtivo = {
   desc_area: string;
   ent_sai: string;
   data_acesso: string;
-}
+};
 
 type UsuarioComNome = UsuarioAtivo & {
   nome_usuario: string;
@@ -49,94 +49,113 @@ export default function StatusAluno() {
   }, []);
 
   return (
-   <div className="row">
-    <div className="col-md-6">
-      <div className="card card-primary card-outline">
-        <div className="card-header">
-          <h3 className="card-title" style={{ fontWeight: 500 }}>
-            <i className="fas fa-building mr-2"></i>
-            Usuários Ativos no CCS
-          </h3>
-        </div>
+    <div className="row g-4">
+      <div className="col-12 col-lg-6 pb-4">
+        <div className="card h-100 shadow-sm border-0 border-top border-primary rounded-3 overflow-hidden">
 
-        <div className="card-body p-0" style={{ height: "350px", overflowY: "auto"}}>
-          <table className="table table-hover table-striped mb-0">
-            <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 1 }}>
-              <tr>
-                <th>Usuário</th>
-                <th>Última Entrada</th>
-              </tr>
-            </thead>
+          <div className="card-header bg-white border-bottom px-4 py-3">
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="d-flex align-items-center gap-2">
+                <i className="fas fa-building text-primary"></i>
+                <h5 className="mb-0 fw-semibold text-dark">Usuários Ativos no CCS</h5>
+              </div>
 
-            <tbody>
-              {usuariosCCS.map((usuario) => (
-                <tr key={usuario.usuario_id}>
-                  <td>
-                    <strong>{usuario.nome_usuario}</strong>
-                  </td>
+            </div>
+          </div>
 
-                  <td className="text-nowrap align-middle">
-                    {new Date(usuario.data_acesso).toLocaleTimeString("pt-BR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    })}
-                  </td>
+
+          <div className="card-body p-0 overflow-auto" style={{ height: "350px" }}>
+            <table className="table table-hover mb-0">
+              <thead className="table-light sticky-top" style={{ zIndex: 1 }}>
+                <tr>
+                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
+                    Usuário
+                  </th>
+                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold text-end">
+                    Última Entrada
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {usuariosCCS.map((usuario) => (
+                  <tr key={usuario.usuario_id}>
+                    <td className="px-4 py-3 align-middle">
+                      <span className="fw-semibold text-dark">
+                        {usuario.nome_usuario}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 align-middle text-end text-secondary text-nowrap">
+                      {new Date(usuario.data_acesso).toLocaleTimeString("pt-BR", {hour: "2-digit", minute: "2-digit", second: "2-digit"})}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        <div className="card-footer text-muted">
-          Total: {usuariosCCS.length}
+
+          <div className="card-footer bg-light border-0 px-4 py-3">
+            <span className="text-secondary small">
+              <i className="fas fa-users me-2"></i>
+              {usuariosCCS.length} usuários ativos
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+      <div className="col-12 col-lg-6 pb-4">
+        <div className="card h-100 shadow-sm border-0 border-top border-success rounded-3 overflow-hidden">
+
+          <div className="card-header bg-white border-bottom px-4 py-3">
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="d-flex align-items-center gap-2">
+                <i className="fas fa-flask text-success"></i>
+                <h5 className="mb-0 fw-semibold text-dark">Usuários Ativos no Laboratório</h5>
+              </div>
+            </div>
+          </div>
+
+          <div className="card-body p-0 overflow-auto" style={{ height: "350px" }}>
+            <table className="table table-hover mb-0">
+              <thead className="table-light sticky-top" style={{ zIndex: 1 }}>
+                <tr>
+                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
+                    Usuário
+                  </th>
+                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold text-end">
+                    Última Entrada
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {usuariosLab.map((usuario) => (
+                  <tr key={usuario.usuario_id}>
+                    <td className="px-4 py-3 align-middle">
+                      <span className="fw-semibold text-dark">
+                        {usuario.nome_usuario}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 align-middle text-end text-secondary text-nowrap">
+                      {new Date(usuario.data_acesso).toLocaleTimeString("pt-BR", {hour: "2-digit", minute: "2-digit", second: "2-digit"})}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+
+          <div className="card-footer bg-light border-0 px-4 py-3">
+            <span className="text-secondary small">
+              <i className="fas fa-users me-2"></i>
+              {usuariosLab.length} usuários ativos
+            </span>
+          </div>
+
         </div>
       </div>
     </div>
-
-    <div className="col-md-6">
-      <div className="card card-success card-outline">
-        <div className="card-header">
-          <h3 className="card-title" style={{ fontWeight: 500 }}>
-            <i className="fas fa-flask mr-2"></i>
-            Usuários Ativos no Laboratório
-          </h3>
-        </div>
-
-        <div className="card-body p-0" style={{ height: "350px", overflowY: "auto" }}>
-          <table className="table table-hover table-striped mb-0">
-            <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 1 }}>
-              <tr>
-                <th>Usuário</th>
-                <th>Última Entrada</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {usuariosLab.map((usuario) => (
-                <tr key={usuario.usuario_id}>
-                  <td>
-                    <strong>{usuario.nome_usuario}</strong>
-                  </td>
-
-                  <td className="text-nowrap align-middle">
-                    {new Date(usuario.data_acesso).toLocaleTimeString("pt-BR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    })}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="card-footer text-muted">
-          Total: {usuariosLab.length}
-        </div>
-      </div>
-    </div>
-  </div>
-    );
+  );
 }

@@ -42,7 +42,7 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
                 <span>Treinamentos Expirados</span>
               </div>
 
-              <div className="training-card-number">
+              <div className="training-card-number pl-2">
                 {datasExpiradas}
               </div>
 
@@ -69,7 +69,7 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
                 <span>Treinamentos Pendentes</span>
               </div>
 
-              <div className="training-card-number">
+              <div className="training-card-number pl-2">
                 {datasSemData}
               </div>
 
@@ -96,7 +96,7 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
                   <span>Treinamentos Ativos</span>
                 </div>
 
-                <div className="training-card-number">
+                <div className="training-card-number pl-2">
                   {datasAtivas}
                 </div>
 

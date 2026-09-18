@@ -37,7 +37,7 @@ export default function UploadControls({
 
         {loading && (
           <div className="mt-3">
-            <TailSpin height="50" width="50" color="#007bff" />
+            <TailSpin height="50" width="50" color="#17a2b8" />
           </div>
         )}
 

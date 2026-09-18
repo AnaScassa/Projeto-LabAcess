@@ -15,7 +15,7 @@ export default function Dashboard() {
       <Menu />
 
       <div className="content-wrapper">
-        <h2 className="px-4 pt-2">Dashboard Controle do Laboratório</h2>
+        <h2 className="px-4 pt-2 mb-0">Dashboard Controle do Laboratório</h2>
 
         <section className="content px-4 pt-4 pb-4">
           <ContagemTreinamento treinamentos={treinamentos} />
