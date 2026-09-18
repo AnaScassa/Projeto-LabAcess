@@ -27,11 +27,8 @@ export default function Dashboard() {
 
         <section className="content px-4">
           <div className="row">
-            <div className="col-md-6">
-              <div className="card" style={{ height: "400px" }}>
-                <div className="card-header">
-                  <h3 className="card-title" style={{ fontWeight: 500 }}>Últimos Acessos (24 horas)</h3>
-                </div>
+            <div className="col-md-6 pb-4">
+              <div className="card m-0" style={{ height: "400px" }}>
                 <UltimosAcessos />
               </div>
             </div>
