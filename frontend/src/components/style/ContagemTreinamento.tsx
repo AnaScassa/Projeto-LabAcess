@@ -30,7 +30,8 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
   });
   return (
     <div className="row">
-      <div className="col-12 col-md-4">
+
+      <div className="col-12 col-md-4 pt-2">
         <div className="training-card training-card-danger">
           <div className="training-card-body">
             <div>
@@ -57,7 +58,7 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
         </div>
       </div>
 
-      <div className="col-12 col-md-4">
+      <div className="col-12 col-md-4 pt-2">
         <div className="training-card training-card-warning">
           <div className="training-card-body ">
             <div>
@@ -84,7 +85,7 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
           </div>
         </div>
 
-        <div className="col-12 col-md-4">
+        <div className="col-12 col-md-4 pt-2">
           <div className="training-card training-card-info">
             <div className="training-card-body">
               <div>

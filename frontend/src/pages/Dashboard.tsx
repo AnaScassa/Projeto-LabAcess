@@ -14,11 +14,19 @@ export default function Dashboard() {
     <div className="wrapper">
       <Menu />
 
-      <div className="content-wrapper">
-        <h2 className="px-4 pt-2 mb-0">Dashboard Controle do Laboratório</h2>
+    <div className="content-wrapper">
+        <div className="px-4 pt-3 pb-2">
+            <div className="icon-dashboard d-flex align-items-center">
+                <i className="fas fa-chart-line text-primary me-2" style={{ fontSize: "35px" }} ></i>
+                <h2 className="mb-0 fw-semibold text-dark">Dashboard</h2>
+            </div>
+            <small className="text-secondary">
+                Controle e acompanhamento dos acessos ao laboratório
+            </small>
+        </div>
 
-        <section className="content px-4 pt-4 pb-4">
-          <ContagemTreinamento treinamentos={treinamentos} />
+        <section className="content px-4 pt-2 pb-4">
+            <ContagemTreinamento treinamentos={treinamentos} />
         </section>
 
         <section className="content px-4">
