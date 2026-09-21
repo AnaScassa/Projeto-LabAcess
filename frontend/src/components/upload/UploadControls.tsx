@@ -29,7 +29,7 @@ export default function UploadControls({
 
       <div className="card-body px-4 py-4">
         <form onSubmit={onUpload}>
-          <div className="row g-3">
+          <div className="row g-1.5">
           <div className="col-12 col-md-9">
             <label htmlFor="fileInput" className="form-label small fw-semibold text-secondary mb-2">Arquivo</label>
             <input ref={fileInputRef} type="file" id="fileInput" accept=".xls,.csv" className="form-control" style={{ padding: "3px" }}/>
