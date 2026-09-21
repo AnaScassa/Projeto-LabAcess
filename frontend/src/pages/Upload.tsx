@@ -75,16 +75,16 @@ export default function Upload() {
       </div>
       <small className="text-secondary px-4 pt-0 pb-2">Envie uma planilha para processamento</small>
 
-        <section className="content px-4 pt-2">
-          <div className="row gy-4">
+      <section className="content px-4 pt-2">
+        <div className="row gy-4">
             <div className="col-12 pt-3">
-              <UploadControls fileInputRef={fileInputRef} onUpload={handleUpload} estaBloqueado={estaBloqueado} loading={loading} mensagem2={mensagemUpload}/>
+                <UploadControls fileInputRef={fileInputRef} onUpload={handleUpload} estaBloqueado={estaBloqueado} loading={loading} mensagem2={mensagemUpload} />
             </div>
 
-            <div className="col-12">
-              <BuscaControls buscarBloqueado={buscarBloqueado}
-                mensagem={mensagem} dataInicio={dataInicio} dataFim={dataFim} horaInicio={horaInicio} horaFim={horaFim} onDataInicioChange={setDataInicio}
-                onDataFimChange={setDataFim} onHoraInicioChange={setHoraInicio} onHoraFimChange={setHoraFim}
+            <div className="col-12 pt-2 pb-4">
+              <BuscaControls buscarBloqueado={buscarBloqueado} mensagem={mensagem} dataInicio={dataInicio} dataFim={dataFim}
+                horaInicio={horaInicio} horaFim={horaFim} onDataInicioChange={setDataInicio} onDataFimChange={setDataFim}
+                onHoraInicioChange={setHoraInicio} onHoraFimChange={setHoraFim}
                 onBuscaRapida={() => {
                   iniciarBusca();
                   void buscarRegistro(null, null, null, null);
@@ -98,9 +98,8 @@ export default function Upload() {
                 }}
               />
             </div>
-            
-          </div>
-        </section>
+        </div>
+    </section>
 
         <section className="content px-4">
           <div className="row">
