@@ -69,12 +69,15 @@ export default function Upload() {
       <Menu/>
 
       <div className="content-wrapper">
+        <div className="icon-dashboard d-flex align-items-center px-4 pt-3 pb-0">
+          <i className="fas fa-upload text-primary me-2" style={{ fontSize: "35px" }} ></i>
+          <h2 className="mb-0 fw-semibold text-dark">Upload de Planilhas</h2>
+      </div>
+      <small className="text-secondary px-4 pt-0 pb-2">Envie uma planilha para processamento</small>
 
-        <h2 className="px-4 pt-2">Upload de Planilhas</h2>
-
-        <section className="content px-4 pt-4">
+        <section className="content px-4 pt-2">
           <div className="row gy-4">
-            <div className="col-12">
+            <div className="col-12 pt-3">
               <UploadControls fileInputRef={fileInputRef} onUpload={handleUpload} estaBloqueado={estaBloqueado} loading={loading} mensagem2={mensagemUpload}/>
             </div>
 

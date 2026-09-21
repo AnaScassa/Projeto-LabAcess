@@ -24,7 +24,6 @@ export default function UploadControls({
             <i className="fas fa-file-upload text-primary me-2"></i>
             <h5 className="mb-0 fw-semibold text-dark">Upload de Arquivos</h5>
           </div>
-          <small className="text-secondary">Envie uma planilha para processamento</small>
         </div>
       </div>
 
