@@ -9,7 +9,6 @@ x-kong-config: &kong-env
   KONG_PG_HOST: kong-ee-database
 
 services:
-
   backend:
     build:
       context: ./smartcard
