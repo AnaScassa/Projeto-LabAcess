@@ -20,15 +20,15 @@ export default function Filtrotempo({ onChange }: FiltroTempoProps){
   }
 
   return (
-    <div className="row justify-content-center g-3">
-      <div className="col-md-6">
+    <div className="row g-3">
+      <div className="col-12 col-md-6">
         <label className="form-label mb-1 fw-semibold text-secondary">Data início</label>
-        <input type="date" className="form-control" value={inicio} onChange={(e) => handleInicio(e.target.value)}/>
+        <input type="date" className="form-control w-100" value={inicio} onChange={(e) => handleInicio(e.target.value)}/>
       </div>
 
-      <div className="col-md-6">
+      <div className="col-12 col-md-6">
         <label className="form-label mb-1 fw-semibold text-secondary">Data fim</label>
-        <input type="date" className="form-control" value={fim} onChange={(e) => handleFim(e.target.value)}/>
+        <input type="date" className="form-control w-100" value={fim} onChange={(e) => handleFim(e.target.value)}/>
       </div>
     </div>
   );
