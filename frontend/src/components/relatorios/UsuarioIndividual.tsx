@@ -55,16 +55,12 @@ export default function CalculadorTempo({
         case "usuario":
           aValue = a.usuario;
           bValue = b.usuario;
-          return sortAsc
-            ? aValue.localeCompare(bValue, "pt", { sensitivity: "base" })
-            : bValue.localeCompare(aValue, "pt", { sensitivity: "base" });
+          return sortAsc ? aValue.localeCompare(bValue, "pt", { sensitivity: "base" }) : bValue.localeCompare(aValue, "pt", { sensitivity: "base" });
 
         case "porta":
           aValue = a.porta;
           bValue = b.porta;
-          return sortAsc
-            ? aValue.localeCompare(bValue, "pt", { sensitivity: "base" })
-            : bValue.localeCompare(aValue, "pt", { sensitivity: "base" });
+          return sortAsc ? aValue.localeCompare(bValue, "pt", { sensitivity: "base" }) : bValue.localeCompare(aValue, "pt", { sensitivity: "base" });
 
         case "entrada":
           aValue = a.entradaTimestamp;
@@ -161,15 +157,7 @@ export default function CalculadorTempo({
       if (tipo === "ENTRADA") {
         if (stack !== null) {
           contagemErro++;
-          out.push(
-            entradaSemSaida({
-              user,
-              usuarios,
-              stack,
-              area,
-              getNomeUsuario
-            })
-          );
+          out.push(entradaSemSaida({user, usuarios, stack, area, getNomeUsuario}));
         }
         stacks[area] = dataHora;
         return;
@@ -183,41 +171,21 @@ export default function CalculadorTempo({
             contagemAcessos++;
             totalGeral += totalMinutos;
 
-            out.push({
-              usuario: getNomeUsuario(user.matricula, usuarios),
-              entrada: stack.toLocaleString(),
-              saida: dataHoraStr,
-              permanencia: `${horas2}h ${minutos2}min`,
-              porta: area,
-              entradaTimestamp: stack.getTime(),
-              saidaTimestamp: dataHora.getTime()
+            out.push({usuario: getNomeUsuario(user.matricula, usuarios), entrada: stack.toLocaleString(), saida: dataHoraStr,
+              permanencia: `${horas2}h ${minutos2}min`, porta: area, entradaTimestamp: stack.getTime(), saidaTimestamp: dataHora.getTime()
             });
 
           } else {
             contagemErro++;
-            out.push(
-              entradaSemSaida({
-                user,
-                usuarios,
-                stack,
-                area,
-                getNomeUsuario
-              })
-            );
+            out.push(entradaSemSaida({user, usuarios, stack, area, getNomeUsuario}));
           }
 
           stacks[area] = null;
 
         } else {
           contagemErro++;
-          out.push({
-            usuario: getNomeUsuario(user.matricula, usuarios),
-            entrada: "Saída sem entrada",
-            saida: dataHoraStr,
-            permanencia: "Indisponível",
-            porta: area,
-            entradaTimestamp: 0,
-            saidaTimestamp: dataHora.getTime()
+          out.push({usuario: getNomeUsuario(user.matricula, usuarios), entrada: "Saída sem entrada", saida: dataHoraStr,
+            permanencia: "Indisponível", porta: area, entradaTimestamp: 0, saidaTimestamp: dataHora.getTime()
           });
         }
       }
@@ -228,15 +196,7 @@ export default function CalculadorTempo({
 
       if (st) {
         contagemErro++;
-        out.push(
-          entradaSemSaida({
-            user,
-            usuarios,
-            stack: st,
-            area,
-            getNomeUsuario
-          })
-        );
+        out.push(entradaSemSaida({user, usuarios, stack: st, area, getNomeUsuario}));
       }
     });
 
@@ -251,164 +211,175 @@ export default function CalculadorTempo({
   }
 
   return (
-    <div className="card-body">
+    <div className="card-body px-4 py-4">
       <div className="dataTables_wrapper dt-bootstrap4">
 
-        <div className="row">
-          <div className="col-sm-12">
-            <div className="table-responsive">
-              <table className="table table-bordered table-hover dataTable text-left">
-                <thead>
-                  <tr>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        if (sortField === "usuario") {
-                          setSortAsc((prev) => !prev);
-                        } else {
-                          setSortField("usuario");
-                          setSortAsc(true);
-                        }
-                        setPage(0);
-                      }}>Usuário {sortField === "usuario" ? (sortAsc ? "▲" : "▼") : ""}
-                    </th>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        if (sortField === "entrada") {
-                          setSortAsc((prev) => !prev);
-                        } else {
-                          setSortField("entrada");
-                          setSortAsc(true);
-                        }
-                        setPage(0);
-                      }}>Entrada {sortField === "entrada" ? (sortAsc ? "▲" : "▼") : ""}
-                    </th>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        if (sortField === "saida") {
-                          setSortAsc((prev) => !prev);
-                        } else {
-                          setSortField("saida");
-                          setSortAsc(true);
-                        }
-                        setPage(0);
-                      }}>Saída {sortField === "saida" ? (sortAsc ? "▲" : "▼") : ""}
-                    </th>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        if (sortField === "porta") {
-                          setSortAsc((prev) => !prev);
-                        } else {
-                          setSortField("porta");
-                          setSortAsc(true);
-                        }
-                        setPage(0);
-                      }}>Porta {sortField === "porta" ? (sortAsc ? "▲" : "▼") : ""}
-                    </th>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        if (sortField === "permanencia") {
-                          setSortAsc((prev) => !prev);
-                        } else {
-                          setSortField("permanencia");
-                          setSortAsc(true);
-                        }
-                        setPage(0);
-                      }}>Tempo Permanência {sortField === "permanencia" ? (sortAsc ? "▲" : "▼") : ""}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginaVisivel.length === 0 ? (
-                    <tr>
-                      <td colSpan={5}>
-                        Nenhum resultado encontrado.
-                      </td>
-                    </tr>
-                  ) : (
-                    paginaVisivel.map((r, i) => (
-                      <tr key={i}>
-                        <td>{r.usuario}</td>
-                        <td>{r.entrada}</td>
-                        <td>{r.saida}</td>
-                        <td>{r.porta}</td>
-                        <td>{r.permanencia}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <div className="d-flex flex-row align-items-center">
+          <i className="fas fa-table text-primary me-2"></i>
+          <h5 className="mb-0 fw-semibold text-dark">Resultados da consulta</h5>
+        </div>
+        <div>
+          <small className="text-secondary">Registros de entrada, saída e tempo de permanência</small>
         </div>
 
-        <div className="row">
+        <div className="table-responsive">
+          <table className="table table-hover mb-0">
+            <thead className="table-light">
+              <tr>
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {
+                  if (sortField === "usuario") {
+                    setSortAsc((prev) => !prev);
+                  } else {
+                    setSortField("usuario");
+                    setSortAsc(true);
+                  }
+                  setPage(0);
+                }}>
+                  Usuário {sortField === "usuario" ? (sortAsc ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {
+                  if (sortField === "entrada") {
+                    setSortAsc((prev) => !prev);
+                  } else {
+                    setSortField("entrada");
+                    setSortAsc(true);
+                  }
+                  setPage(0);}}>
+                    Entrada {sortField === "entrada" ? (sortAsc ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {
+                  if (sortField === "saida") {
+                    setSortAsc((prev) => !prev);
+                  } else {
+                    setSortField("saida");
+                    setSortAsc(true);
+                  }
+                  setPage(0);}}>
+                    Saída {sortField === "saida" ? (sortAsc ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {
+                  if (sortField === "porta") {
+                    setSortAsc((prev) => !prev);
+                  } else {
+                    setSortField("porta");
+                    setSortAsc(true);
+                  }
+                  setPage(0);}}>
+                    Porta {sortField === "porta" ? (sortAsc ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {
+                  if (sortField === "permanencia") {
+                    setSortAsc((prev) => !prev);
+                  } else {
+                    setSortField("permanencia");
+                    setSortAsc(true);
+                  }
+                  setPage(0);}}>
+                  Tempo Permanência {sortField === "permanencia" ? (sortAsc ? "▲" : "▼") : ""}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {paginaVisivel.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-4 text-secondary">Nenhum resultado encontrado.</td>
+                </tr>
+              ) : (
+                paginaVisivel.map((r, i) => (
+                  <tr key={i}>
+                    <td className="px-4 py-3 align-middle">{r.usuario}</td>
+                    <td className="px-4 py-3 align-middle">{r.entrada}</td>
+                    <td className="px-4 py-3 align-middle">{r.saida}</td>
+                    <td className="px-4 py-3 align-middle">{r.porta}</td>
+                    <td className="px-4 py-3 align-middle fw-semibold">{r.permanencia}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="row align-items-center mt-4">
           <div className="col-sm-12 col-md-5">
-            <div className="dataTables_info text-left">
+            <div className="text-secondary small">
               Mostrando {resultadosOrdenados.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
               {Math.min((page + 1) * rowsPerPage, resultadosOrdenados.length)} de{" "}
               {resultadosOrdenados.length} registros
             </div>
           </div>
 
-          <div className="col-sm-12 col-md-7 d-flex justify-content-md-end justify-content-start">
-            <div style={{ maxWidth: "90%", overflowX: "auto" }}>
-              <div className="dataTables_paginate paging_simple_numbers">
-                <ul className="pagination flex-wrap">
+          <div className="col-sm-12 col-md-7 d-flex justify-content-md-end justify-content-start mt-3 mt-md-0">
+            <div style={{maxWidth: "100%", overflowX: "auto"}}>
+              <ul className="pagination mb-0 flex-wrap">
 
-                  <li className={`paginate_button page-item ${page === 0 && "disabled"}`}>
-                    <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
-                  </li>
+                <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
+                </li>
 
-                  {visiblePages.map((item, idx) => {
-                    if (item === '...') {
-                      return (
-                        <li key={idx} className="paginate_button page-item disabled">
-                          <span className="page-link">...</span>
-                        </li>
-                      );
-                    }
-                    const pageNum = item as number;
+                {visiblePages.map((item, idx) => {
+                  if (item === "...") {
                     return (
-                      <li
-                        key={idx}
-                        className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}
-                      >
-                        <button className="page-link" onClick={() => setPage(pageNum)}>
-                          {pageNum + 1}
-                        </button>
+                      <li key={idx} className="page-item disabled">
+                        <span className="page-link">...</span>
                       </li>
                     );
-                  })}
+                  }
 
-                  <li className={`paginate_button page-item ${page === totalPaginas - 1 && "disabled"}`}>
-                    <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
-                  </li>
+                  const pageNum = item as number;
 
-                </ul>
-              </div>
+                  return (
+                    <li key={idx} className={`page-item ${page === pageNum ? "active" : ""}`}>
+                      <button className="page-link" onClick={() => setPage(pageNum)}>
+                        {pageNum + 1}
+                      </button>
+                    </li>
+                  );
+                })}
+
+                <li className={`page-item ${page === totalPaginas - 1 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
+                </li>
+
+              </ul>
             </div>
           </div>
         </div>
 
-        <div className="mt-3 text-left">
-          <p className="mb-1">
-            <strong>Total de acessos com entrada e saída:</strong> {totalAcessos}
-          </p>
-          <p className="mb-1">
-            <strong>Total de acessos com erro:</strong> {totalAcessosErro}
-          </p>
-          <p className="mb-1">
-            <strong>Total de Tempo Permanência:</strong> {totalSistema}
-          </p>
-          <p className="mb-0">
-            <strong>Média de Tempo Permanência:</strong> {mediaTempo}
-          </p>
+        <div className="row g-3 mt-3">
+          <div className="col-md-6 col-lg-3">
+            <div className="border rounded-3 p-3 h-100">
+              <small className="text-secondary d-block mb-1">Acessos com entrada e saída</small>
+              <span className="fs-5 fw-semibold text-dark">{totalAcessos}</span>
+            </div>
+          </div>
+
+          <div className="col-md-6 col-lg-3">
+            <div className="border rounded-3 p-3 h-100">
+              <small className="text-secondary d-block mb-1">Acessos com erro</small>
+              <span className="fs-5 fw-semibold text-dark">{totalAcessosErro}</span>
+            </div>
+          </div>
+
+          <div className="col-md-6 col-lg-3">
+            <div className="border rounded-3 p-3 h-100">
+              <small className="text-secondary d-block mb-1">Tempo total de permanência</small>
+              <span className="fs-5 fw-semibold text-dark">{totalSistema}</span>
+            </div>
+          </div>
+
+          <div className="col-md-6 col-lg-3">
+            <div className="border rounded-3 p-3 h-100">
+              <small className="text-secondary d-block mb-1">Média de permanência</small>
+              <span className="fs-5 fw-semibold text-dark">{mediaTempo}</span>
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
   );
