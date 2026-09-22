@@ -40,22 +40,39 @@ export default function FiltroCategoriaCheckbox({
   }
 
   return (
-    <div className="d-flex justify-content-center align-items-center flex-wrap" style={{ gap: "15px" }}>
-      <label className="mb-0">Filtrar Categoria:</label>
+    <div className="w-100">
+      <label className="form-label mb-1 fw-semibold text-secondary">Filtrar Categoria:</label>
 
-      <div className="form-check m-0">
-        <input className="form-check-input" type="checkbox" checked={selecionadas.includes("todas")} onChange={() => toggle("todas")} id="todasCategorias"/>
-        <label className="form-check-label" htmlFor="todasCategorias">Todas</label>
-      </div>
+      <div className="d-flex align-items-center flex-nowrap w-100" style={{gap: "8px", whiteSpace: "nowrap", overflowX: "auto"}}>
+        <label className="d-flex align-items-center m-0 px-2 py-1 border rounded-2 bg-white flex-shrink-0" style={{cursor: "pointer", gap: "6px"}}>
+          <input type="checkbox" checked={selecionadas.includes("todas")} onChange={() => toggle("todas")} style={{display: "none"}}/>
+          <i style={{display: "inline-block", width: "42px", height: "28px", borderRadius: "19px", position: "relative", background: selecionadas.includes("todas") 
+            ? "#0d6efd" : "#dee2e6", transition: "0.2s", cursor: "pointer"}}>
+            <span style={{display: "block", width: "22px", height: "22px", top: "3px", left: selecionadas.includes("todas") ? "17px" : "3px", 
+              borderRadius: "50%", background: "#fff", position: "absolute", boxShadow: "0 1px 3px rgba(0,0,0,0.2)", transition: "0.2s"}}/>
+          </i>
+          <span className="small fw-semibold text-secondary">Todas</span>
+        </label>
 
-      <div className="form-check m-0">
-        <input className="form-check-input" type="checkbox" checked={selecionadas.includes("ALUNO")} onChange={() => toggle("ALUNO")} id="aluno"/>
-        <label className="form-check-label" htmlFor="aluno">Aluno</label>
-      </div>
+        <label className="d-flex align-items-center m-0 px-2 py-1 border rounded-2 bg-white flex-shrink-0" style={{cursor: "pointer", gap: "6px"}}>
+          <input type="checkbox" checked={selecionadas.includes("ALUNO")} onChange={() => toggle("ALUNO")} style={{display: "none"}}/>
+          <i style={{display: "inline-block", width: "42px", height: "28px", borderRadius: "19px", position: "relative", background: selecionadas.includes("ALUNO") 
+            ? "#0d6efd" : "#dee2e6", transition: "0.2s", cursor: "pointer"}}>
+            <span style={{display: "block", width: "22px", height: "22px", top: "3px", left: selecionadas.includes("ALUNO") ? "17px" : "3px", 
+              borderRadius: "50%", background: "#fff", position: "absolute", boxShadow: "0 1px 3px rgba(0,0,0,0.2)", transition: "0.2s"}}/>
+          </i>
+          <span className="small fw-semibold text-secondary">Aluno</span>
+        </label>
 
-      <div className="form-check m-0">
-        <input className="form-check-input" type="checkbox" checked={selecionadas.includes("FUNCIONARIO")} onChange={() => toggle("FUNCIONARIO")} id="funcionario"/>
-        <label className="form-check-label" htmlFor="funcionario">Funcionário</label>
+        <label className="d-flex align-items-center m-0 px-2 py-1 border rounded-2 bg-white flex-shrink-0" style={{cursor: "pointer", gap: "6px"}}>
+          <input type="checkbox" checked={selecionadas.includes("FUNCIONARIO")} onChange={() => toggle("FUNCIONARIO")} style={{display: "none"}}/>
+          <i style={{display: "inline-block", width: "42px", height: "28px", borderRadius: "19px", position: "relative", background: selecionadas.includes("FUNCIONARIO")
+            ? "#0d6efd" : "#dee2e6", transition: "0.2s", cursor: "pointer"}}>
+            <span style={{display: "block", width: "22px", height: "22px", top: "3px", left: selecionadas.includes("FUNCIONARIO") ? "17px" : "3px", 
+              borderRadius: "50%", background: "#fff", position: "absolute", boxShadow: "0 1px 3px rgba(0,0,0,0.2)", transition: "0.2s"}}/>
+          </i>
+          <span className="small fw-semibold text-secondary">Funcionário</span>
+        </label>
       </div>
     </div>
   );
