@@ -136,11 +136,13 @@ export default function CalculadorLab({
         <table className="table table-hover mb-0">
           <thead className="table-light">
             <tr>
-              <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortField === "usuario") {setSortAsc((prev) => !prev);} else {setSortField("usuario"); setSortAsc(true);} setPage(0);}}>
+              <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortField === "usuario") 
+                {setSortAsc((prev) => !prev);} else {setSortField("usuario"); setSortAsc(true);} setPage(0);}}>
                 Usuário {sortField === "usuario" ? (sortAsc ? "▲" : "▼") : ""}
               </th>
 
-              <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortField === "tempoTotal") {setSortAsc((prev) => !prev);} else {setSortField("tempoTotal"); setSortAsc(false);} setPage(0);}}>
+              <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortField === "tempoTotal") 
+                {setSortAsc((prev) => !prev);} else {setSortField("tempoTotal"); setSortAsc(false);} setPage(0);}}>
                 Tempo total {sortField === "tempoTotal" ? (sortAsc ? "▲" : "▼") : ""}
               </th>
             </tr>
@@ -149,9 +151,7 @@ export default function CalculadorLab({
           <tbody>
             {relatorioOrdenado.length === 0 ? (
               <tr>
-                <td colSpan={2} className="px-4 py-4 text-center text-secondary">
-                  Nenhum resultado encontrado.
-                </td>
+                <td colSpan={2} className="px-4 py-4 text-center text-secondary">Nenhum resultado encontrado.</td>
               </tr>
             ) : (
               paginaVisivel.map((r, i) => (
@@ -167,9 +167,8 @@ export default function CalculadorLab({
 
       <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 px-4 py-3 border-top">
         <div className="text-secondary small">
-          Mostrando {relatorioOrdenado.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
-          {Math.min((page + 1) * rowsPerPage, relatorioOrdenado.length)} de{" "}
-          {relatorioOrdenado.length} registros
+          Mostrando {relatorioOrdenado.length === 0 ? 0 : page * rowsPerPage + 1} a{" "} {Math.min((page + 1) * rowsPerPage, 
+          relatorioOrdenado.length)} de{" "} {relatorioOrdenado.length} registros
         </div>
 
         <div className="d-flex justify-content-end" style={{maxWidth: "100%", overflowX: "auto"}}>
@@ -177,9 +176,7 @@ export default function CalculadorLab({
             <ul className="pagination mb-0 flex-wrap">
 
               <li className={`paginate_button page-item ${page === 0 ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setPage(page - 1)}>
-                  Anterior
-                </button>
+                <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
               </li>
 
               {visiblePages.map((item, idx) => {
@@ -195,17 +192,13 @@ export default function CalculadorLab({
 
                 return (
                   <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
-                    <button className="page-link" onClick={() => setPage(pageNum)}>
-                      {pageNum + 1}
-                    </button>
+                    <button className="page-link" onClick={() => setPage(pageNum)}>{pageNum + 1}</button>
                   </li>
                 );
               })}
 
               <li className={`paginate_button page-item ${page === totalPaginas - 1 ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setPage(page + 1)}>
-                  Próximo
-                </button>
+                <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
               </li>
 
             </ul>
