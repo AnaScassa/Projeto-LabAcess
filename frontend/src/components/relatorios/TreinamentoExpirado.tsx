@@ -19,13 +19,7 @@ interface Props {
   portasSelecionadas: string[];
 }
 
-export default function RelatorioTreinamento({
-  users,
-  usuarios,
-  treinamentos,
-  portasSelecionadas
-}: Props) {
-
+export default function RelatorioTreinamento({users, usuarios, treinamentos, portasSelecionadas}: Props) {
   const [page, setPage] = useState(0);
   const [sortField, setSortField] = useState<"nome" | "dataExp" | "acessos">("nome");
   const [sortAsc, setSortAsc] = useState(true);
@@ -43,55 +37,36 @@ export default function RelatorioTreinamento({
     if (!usuario?.acessos) return 0;
 
     const dataExpiracao = new Date(dataExp);
-
     let acessos = usuario.acessos.filter(a => new Date(a.data_acesso) > dataExpiracao && a.ent_sai === "1");
 
-    if (portasSelecionadas.length > 0 && !portasSelecionadas.includes("todas")) {
-      acessos = acessos.filter(a => portasSelecionadas.includes(a.desc_area));
-    }
+    if (portasSelecionadas.length > 0 && !portasSelecionadas.includes("todas")) acessos = acessos.filter(a => portasSelecionadas.includes(a.desc_area));
+    
     return acessos.length;
-
 };
 
   const dadosTabela = useMemo<TreinamentoExpiradoRow[]>(() => {
-  const hoje = new Date();
+    const hoje = new Date();
 
-  return treinamentos
-    .filter(t => {
+    return treinamentos.filter(t => {
       if (!t.expiration_date) return false;
-
       const dataExp = new Date(t.expiration_date);
       return dataExp < hoje;
-    })
-    .map(t => {
+    }).map(t => {
+
       const user = usersMap[Number(t.user_id)];
       const usuarioAcesso = usuariosMap[Number(t.user_id)];
 
-      if (!usuarioAcesso?.acessos || usuarioAcesso.acessos.length === 0) {
-        return null;
-      }
+      if (!usuarioAcesso?.acessos || usuarioAcesso.acessos.length === 0) return null;
 
       const dataExpRaw = new Date(t.expiration_date);
       return {
-        nome: user ? getUserFullName(user) : "Usuário não encontrado",
-        dataExp: dataExpRaw.toLocaleDateString("pt-BR"),
-        dataExpRaw,
-        acessos: contarAcessos(usuarioAcesso, t.expiration_date, portasSelecionadas)
+        nome: user ? getUserFullName(user) : "Usuário não encontrado", dataExp: dataExpRaw.toLocaleDateString("pt-BR"),
+        dataExpRaw, acessos: contarAcessos(usuarioAcesso, t.expiration_date, portasSelecionadas)
       };
-    })
-    .filter((item): item is TreinamentoExpiradoRow => item !== null)
-    .sort((a, b) => {
-      if (sortField === "nome") {
-        return sortAsc
-          ? a.nome.localeCompare(b.nome, "pt", { sensitivity: "base" })
-          : b.nome.localeCompare(a.nome, "pt", { sensitivity: "base" });
-      }
+    }).filter((item): item is TreinamentoExpiradoRow => item !== null).sort((a, b) => {
 
-      if (sortField === "dataExp") {
-        return sortAsc
-          ? a.dataExpRaw.getTime() - b.dataExpRaw.getTime()
-          : b.dataExpRaw.getTime() - a.dataExpRaw.getTime();
-      }
+      if (sortField === "nome") return sortAsc ? a.nome.localeCompare(b.nome, "pt", { sensitivity: "base" }) : b.nome.localeCompare(a.nome, "pt", { sensitivity: "base" });
+      if (sortField === "dataExp") return sortAsc ? a.dataExpRaw.getTime() - b.dataExpRaw.getTime() : b.dataExpRaw.getTime() - a.dataExpRaw.getTime();
 
       return sortAsc ? a.acessos - b.acessos : b.acessos - a.acessos;
     });
@@ -122,121 +97,86 @@ export default function RelatorioTreinamento({
   }, [dadosTabela]);
 
   return (
-    <div className="card-body">
-      <div className="dataTables_wrapper dt-bootstrap4">
+    <div className="card-body p-0">
+      <div className="table-responsive">
+        <table className="table table-hover mb-0">
+          <thead className="table-light">
+            <tr>
+              <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortField === "nome") 
+                {setSortAsc((prev) => !prev);} else {setSortField("nome"); setSortAsc(true);} setPage(0);}}>
+                Usuário {sortField === "nome" ? (sortAsc ? "▲" : "▼") : ""}
+              </th>
 
-        <div className="row">
-          <div className="col-sm-12">
-            <div className="table-responsive">
-              <table className="table table-bordered table-hover dataTable text-left">
-                <thead>
-                  <tr>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        if (sortField === "nome") {
-                          setSortAsc((prev) => !prev);
-                        } else {
-                          setSortField("nome");
-                          setSortAsc(true);
-                        }
-                        setPage(0);
-                      }}
-                    >
-                      Usuário {sortField === "nome" ? (sortAsc ? "▲" : "▼") : ""}
-                    </th>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        if (sortField === "dataExp") {
-                          setSortAsc((prev) => !prev);
-                        } else {
-                          setSortField("dataExp");
-                          setSortAsc(false);
-                        }
-                        setPage(0);
-                      }}
-                    >
-                      Data de Expiração {sortField === "dataExp" ? (sortAsc ? "▲" : "▼") : ""}
-                    </th>
-                    <th
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        if (sortField === "acessos") {
-                          setSortAsc((prev) => !prev);
-                        } else {
-                          setSortField("acessos");
-                          setSortAsc(false);
-                        }
-                        setPage(0);
-                      }}
-                    >
-                      Acessos após expiração {sortField === "acessos" ? (sortAsc ? "▲" : "▼") : ""}
-                    </th>
-                  </tr>
-                </thead>
+              <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortField === "dataExp") 
+                {setSortAsc((prev) => !prev);} else {setSortField("dataExp"); setSortAsc(false);} setPage(0);}}>
+                Data de Expiração {sortField === "dataExp" ? (sortAsc ? "▲" : "▼") : ""}
+              </th>
 
-                <tbody>
-                  {dadosTabela.length === 0 ? (
-                    <tr>
-                      <td colSpan={3}>Nenhum resultado encontrado.</td>
-                    </tr>
-                  ) : (
-                    paginaVisivel.map((item, i) => (
-                      <tr key={i}>
-                        <td>{item.nome}</td>
-                        <td>{item.dataExp}</td>
-                        <td>{item.acessos}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+              <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortField === "acessos") 
+                {setSortAsc((prev) => !prev);} else {setSortField("acessos"); setSortAsc(false);} setPage(0);}}>
+                Acessos após expiração {sortField === "acessos" ? (sortAsc ? "▲" : "▼") : ""}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {dadosTabela.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="px-4 py-4 text-center text-secondary">Nenhum resultado encontrado.</td>
+              </tr>
+            ) : (
+              paginaVisivel.map((item, i) => (
+                <tr key={i}>
+                  <td className="px-4 py-3 align-middle">{item.nome}</td>
+                  <td className="px-4 py-3 align-middle">{item.dataExp}</td>
+                  <td className="px-4 py-3 align-middle">{item.acessos}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 px-4 py-3 border-top">
+        <div className="text-secondary small">
+          Mostrando {dadosTabela.length === 0 ? 0 : page * rowsPerPage + 1}{" "}
+          a {Math.min((page + 1) * rowsPerPage, dadosTabela.length)}{" "}
+          de {dadosTabela.length} registros
         </div>
 
-        <div className="row">
-          <div className="col-sm-12 col-md-5">
-            <div className="dataTables_info text-left">
-              Mostrando {dadosTabela.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
-              {Math.min((page + 1) * rowsPerPage, dadosTabela.length)} de{" "}
-              {dadosTabela.length} registros
-            </div>
-          </div>
+        <div className="d-flex justify-content-end" style={{maxWidth: "100%", overflowX: "auto"}}>
+          <div className="dataTables_paginate paging_simple_numbers">
+            <ul className="pagination mb-0 flex-wrap">
 
-          <div className="col-sm-12 col-md-7 d-flex justify-content-md-end justify-content-start">
-            <div style={{ maxWidth: "90%", overflowX: "auto" }}>
-              <div className="dataTables_paginate paging_simple_numbers">
-                <ul className="pagination flex-wrap">
+              <li className={`paginate_button page-item ${page === 0 ? "disabled" : ""}`}>
+                <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
+              </li>
 
-                  <li className={`paginate_button page-item ${page === 0 && "disabled"}`}>
-                    <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
+              {visiblePages.map((item, idx) => {
+                if (item === "...") {
+                  return (
+                    <li key={idx} className="paginate_button page-item disabled">
+                      <span className="page-link">...</span>
+                    </li>
+                  );
+                }
+
+                const pageNum = item as number;
+
+                return (
+                  <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
+                    <button className="page-link" onClick={() => setPage(pageNum)}>
+                      {pageNum + 1}
+                    </button>
                   </li>
+                );
+              })}
 
-                  {visiblePages.map((item, idx) => {
-                    if (item === '...') {
-                      return (
-                        <li key={idx} className="paginate_button page-item disabled">
-                          <span className="page-link">...</span>
-                        </li>
-                      );
-                    }
-                    const pageNum = item as number;
-                    return (
-                      <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
-                        <button className="page-link" onClick={() => setPage(pageNum)}>{pageNum + 1}</button>
-                      </li>
-                    );
-                  })}
+              <li className={`paginate_button page-item ${page === totalPaginas - 1 ? "disabled" : ""}`}>
+                <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
+              </li>
 
-                  <li className={`paginate_button page-item ${page === totalPaginas - 1 && "disabled"}`}>
-                    <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
-                  </li>
-
-                </ul>
-              </div>
-            </div>
+            </ul>
           </div>
         </div>
       </div>

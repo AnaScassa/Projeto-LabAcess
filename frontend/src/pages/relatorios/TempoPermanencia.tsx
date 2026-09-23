@@ -32,7 +32,7 @@ export default function TempoPermanencia() {
       <div className="content-wrapper">
         <div className="icon-dashboard d-flex align-items-center px-4 pt-3 pb-0">
           <i className="fas fa-clock text-primary me-2" style={{fontSize: "35px"}}></i>
-          <h2 className="mb-0 fw-semibold text-dark">Tempo de Permanência</h2>
+          <h2 className="mb-0 fw-semibold text-dark">Relatório de tempo de Permanência</h2>
         </div>
 
         <small className="text-secondary px-4 pt-0 pb-2">Consulte o tempo de permanência dos usuários no laboratório</small>

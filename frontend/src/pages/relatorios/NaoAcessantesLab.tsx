@@ -18,7 +18,7 @@ export default function NaoAcessantes(){
         <div className="content-wrapper">
         <div className="icon-dashboard d-flex align-items-center px-4 pt-3 pb-0">
             <i className="fas fa-user-clock text-primary me-2" style={{fontSize: "35px"}}></i>
-            <h2 className="mb-0 fw-semibold text-dark">Usuários sem acesso</h2>
+            <h2 className="mb-0 fw-semibold text-dark">Relatório de usuários sem acesso</h2>
         </div>
 
         <small className="text-secondary px-4 pt-0 pb-2">Consulte os usuários que não acessaram o laboratório no período selecionado</small>

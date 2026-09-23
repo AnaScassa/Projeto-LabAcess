@@ -238,275 +238,213 @@ export default function CalculadorNaoExpirados({
   }, [dadosTabelaPoucoAcesso, dadosTabelaMuitoAcesso]);
 
   return (
-    <div>
-      <div className="mb-5 py-4">
-        <h4 className="mb-3">Usuários com Pouco Acesso</h4>
-        <div className="card-body">
-          <div className="dataTables_wrapper dt-bootstrap4">
-            <div className="row">
-              <div className="col-sm-12">
-                <div className="table-responsive">
-                  <table className="table table-bordered table-hover dataTable text-left">
-                    <thead>
-                      <tr>
-                        <th style={{ cursor: "pointer" }} onClick={() => {
-                          if (sortFieldPouco === "nome") {
-                            setSortAscPouco((prev) => !prev);
-                          } else {
-                            setSortFieldPouco("nome");
-                            setSortAscPouco(true);
-                          }
-                          setPage(0);
-                          }}>
-                          Usuário {sortFieldPouco === "nome" ? (sortAscPouco ? "▲" : "▼") : ""}
-                        </th>
-                        <th style={{ cursor: "pointer" }} onClick={() => {
-                          if (sortFieldPouco === "dataExp") {
-                            setSortAscPouco((prev) => !prev);
-                          } else {
-                            setSortFieldPouco("dataExp");
-                            setSortAscPouco(false);
-                          }
-                          setPage(0);
-                          }}>
-                          Data de Expiração {sortFieldPouco === "dataExp" ? (sortAscPouco ? "▲" : "▼") : ""}
-                        </th>
-                        <th style={{ cursor: "pointer" }} onClick={() => {
-                          if (sortFieldPouco === "ultimoAcesso") {
-                            setSortAscPouco((prev) => !prev);
-                          } else {
-                            setSortFieldPouco("ultimoAcesso");
-                            setSortAscPouco(false);
-                          }
-                          setPage(0);
-                          }}>
-                          Último acesso {sortFieldPouco === "ultimoAcesso" ? (sortAscPouco ? "▲" : "▼") : ""}
-                        </th>
-                        <th style={{ cursor: "pointer" }} onClick={() => {
-                          if (sortFieldPouco === "tempoSemEntrar") {
-                            setSortAscPouco((prev) => !prev);
-                          } else {
-                            setSortFieldPouco("tempoSemEntrar");
-                            setSortAscPouco(false);
-                          }
-                          setPage(0);
-                          }}>
-                          Tempo sem entrar {sortFieldPouco === "tempoSemEntrar" ? (sortAscPouco ? "▲" : "▼") : ""}
-                        </th>
-                        <th style={{ cursor: "pointer" }} onClick={() => {
-                          if (sortFieldPouco === "acessos") {
-                            setSortAscPouco((prev) => !prev);
-                          } else {
-                            setSortFieldPouco("acessos");
-                            setSortAscPouco(false);
-                          }
-                          setPage(0);
-                          }}>
-                          Acessos antes da expiração {sortFieldPouco === "acessos" ? (sortAscPouco ? "▲" : "▼") : ""}
-                        </th>
-                        <th style={{ cursor: "pointer" }} onClick={() => {
-                          if (sortFieldPouco === "acessosUltimos10Meses") {
-                            setSortAscPouco((prev) => !prev);
-                          } else {
-                            setSortFieldPouco("acessosUltimos10Meses");
-                            setSortAscPouco(false);
-                          }
-                          setPage(0);
-                          }}>
-                          Acessos últimos 10 meses {sortFieldPouco === "acessosUltimos10Meses" ? (sortAscPouco ? "▲" : "▼") : ""}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {dadosTabelaPoucoAcesso.length === 0 ? (
-                        <tr>
-                          <td colSpan={6}>Nenhum resultado encontrado.</td>
-                        </tr>
-                      ) : (
-                        paginaVisivelPoucoAcesso.map((item: any, idx: number) => (
-                          <tr key={idx}>
-                            <td>{item!.nome}</td>
-                            <td>{item!.dataExp}</td>
-                            <td>{item!.ultimoAcesso}</td>
-                            <td>{item!.tempoSemEntrar}</td>
-                            <td>{item!.acessos}</td>
-                            <td>{item!.acessosUltimos10Meses}</td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+    <div className="card-body p-0">
 
-            <div className="row">
-              <div className="col-sm-12 col-md-5">
-                <div className="dataTables_info text-left">
-                  Mostrando {dadosTabelaPoucoAcesso.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
-                  {Math.min((page + 1) * rowsPerPage, dadosTabelaPoucoAcesso.length)} de{" "}
-                  {dadosTabelaPoucoAcesso.length} registros
-                </div>
-              </div>
+      <div className="px-4 py-4 border-top">
+        <div className="d-flex align-items-center mb-3">
+          <i className="fas fa-user-clock text-primary me-2"></i>
+          <h5 className="mb-0 fw-semibold text-dark">Usuários com Pouco Acesso</h5>
+        </div>
 
-              <div className="col-sm-12 col-md-7 d-flex justify-content-md-end justify-content-start">
-                <div style={{ maxWidth: "90%", overflowX: "auto" }}>
-                  <div className="dataTables_paginate paging_simple_numbers">
-                    <ul className="pagination flex-wrap">
-                      <li className={`paginate_button page-item ${page === 0 && "disabled"}`}>
-                        <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
+        <div className="table-responsive">
+          <table className="table table-hover mb-0">
+            <thead className="table-light">
+              <tr>
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortFieldPouco === "nome") 
+                  {setSortAscPouco((prev) => !prev);} else {setSortFieldPouco("nome"); setSortAscPouco(true);} setPage(0);}}>
+                  Usuário {sortFieldPouco === "nome" ? (sortAscPouco ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortFieldPouco === "dataExp") 
+                  {setSortAscPouco((prev) => !prev);} else {setSortFieldPouco("dataExp"); setSortAscPouco(false);} setPage(0);}}>
+                  Data de Expiração {sortFieldPouco === "dataExp" ? (sortAscPouco ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortFieldPouco === "ultimoAcesso") 
+                  {setSortAscPouco((prev) => !prev);} else {setSortFieldPouco("ultimoAcesso"); setSortAscPouco(false);} setPage(0);}}>
+                  Último acesso {sortFieldPouco === "ultimoAcesso" ? (sortAscPouco ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortFieldPouco === "tempoSemEntrar") 
+                  {setSortAscPouco((prev) => !prev);} else {setSortFieldPouco("tempoSemEntrar"); setSortAscPouco(false);} setPage(0);}}>
+                  Tempo sem entrar {sortFieldPouco === "tempoSemEntrar" ? (sortAscPouco ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortFieldPouco === "acessos") 
+                  {setSortAscPouco((prev) => !prev);} else {setSortFieldPouco("acessos"); setSortAscPouco(false);} setPage(0);}}>
+                  Acessos antes da expiração {sortFieldPouco === "acessos" ? (sortAscPouco ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => 
+                  {if (sortFieldPouco === "acessosUltimos10Meses") {setSortAscPouco((prev) => !prev);} else {setSortFieldPouco("acessosUltimos10Meses"); 
+                  setSortAscPouco(false);} setPage(0);}}>
+                  Acessos últimos 10 meses {sortFieldPouco === "acessosUltimos10Meses" ? (sortAscPouco ? "▲" : "▼") : ""}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {dadosTabelaPoucoAcesso.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-4 text-center text-secondary">Nenhum resultado encontrado.</td>
+                </tr>
+              ) : (
+                paginaVisivelPoucoAcesso.map((item: any, idx: number) => (
+                  <tr key={idx}>
+                    <td className="px-4 py-3 align-middle">{item!.nome}</td>
+                    <td className="px-4 py-3 align-middle">{item!.dataExp}</td>
+                    <td className="px-4 py-3 align-middle">{item!.ultimoAcesso}</td>
+                    <td className="px-4 py-3 align-middle">{item!.tempoSemEntrar}</td>
+                    <td className="px-4 py-3 align-middle">{item!.acessos}</td>
+                    <td className="px-4 py-3 align-middle">{item!.acessosUltimos10Meses}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-3">
+          <div className="text-secondary small">
+            Mostrando {dadosTabelaPoucoAcesso.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
+            {Math.min((page + 1) * rowsPerPage, dadosTabelaPoucoAcesso.length)} de{" "}
+            {dadosTabelaPoucoAcesso.length} registros
+          </div>
+
+          <div className="d-flex justify-content-end" style={{maxWidth: "100%", overflowX: "auto"}}>
+            <div className="dataTables_paginate paging_simple_numbers">
+              <ul className="pagination mb-0 flex-wrap">
+                <li className={`paginate_button page-item ${page === 0 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
+                </li>
+
+                {visiblePagesPoucoAcesso.map((item: number | string, idx: number) => {
+                  if (item === "...") {
+                    return (
+                      <li key={idx} className="paginate_button page-item disabled">
+                        <span className="page-link">...</span>
                       </li>
+                    );
+                  }
 
-                      {visiblePagesPoucoAcesso.map((item: number | string, idx: number) => {
-                        if (item === '...') {
-                          return (
-                            <li key={idx} className="paginate_button page-item disabled">
-                              <span className="page-link">...</span>
-                            </li>
-                          );
-                        }
-                        const pageNum = item as number;
-                        return (
-                          <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
-                            <button className="page-link" onClick={() => setPage(pageNum)}>{pageNum + 1}</button>
-                          </li>
-                        );
-                      })}
+                  const pageNum = item as number;
 
-                      <li className={`paginate_button page-item ${page === totalPaginasPoucoAcesso - 1 && "disabled"}`}>
-                        <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+                  return (
+                    <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
+                      <button className="page-link" onClick={() => setPage(pageNum)}>
+                        {pageNum + 1}
+                      </button>
+                    </li>
+                  );
+                })}
+
+                <li className={`paginate_button page-item ${page === totalPaginasPoucoAcesso - 1 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
 
-      <div>
-        <h4 className="mb-3">Usuários com Muito Acesso</h4>
-        <div className="card-body">
-          <div className="dataTables_wrapper dt-bootstrap4">
-            <div className="row">
-              <div className="col-sm-12">
-                <div className="table-responsive">
-                  <table className="table table-bordered table-hover dataTable text-left">
-                    <thead>
-                      <tr>
-                        <th
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            if (sortFieldMuito === "nome") {
-                              setSortAscMuito((prev) => !prev);
-                            } else {
-                              setSortFieldMuito("nome");
-                              setSortAscMuito(true);
-                            }
-                            setPage(0);
-                          }}> Usuário {sortFieldMuito === "nome" ? (sortAscMuito ? "▲" : "▼") : ""}
-                        </th>
-                        <th style={{ cursor: "pointer" }} onClick={() => {
-                          if (sortFieldMuito === "ultimoAcesso") {
-                            setSortAscMuito((prev) => !prev);
-                          } else {
-                            setSortFieldMuito("ultimoAcesso");
-                            setSortAscMuito(false);
-                          }
-                          setPage(0);
-                          }}> 
-                          Último acesso {sortFieldMuito === "ultimoAcesso" ? (sortAscMuito ? "▲" : "▼") : ""}
-                        </th>
-                        <th style={{ cursor: "pointer" }} onClick={() => {
-                          if (sortFieldMuito === "tempoSemEntrar") {
-                            setSortAscMuito((prev) => !prev);
-                          } else {
-                            setSortFieldMuito("tempoSemEntrar");
-                            setSortAscMuito(false);
-                          }
-                          setPage(0);
-                          }}> 
-                          Tempo sem entrar {sortFieldMuito === "tempoSemEntrar" ? (sortAscMuito ? "▲" : "▼") : ""}
-                        </th>
-                        <th style={{ cursor: "pointer" }} onClick={() => {
-                          if (sortFieldMuito === "acessosUltimos10Meses") {
-                            setSortAscMuito((prev) => !prev);
-                          } else {
-                            setSortFieldMuito("acessosUltimos10Meses");
-                            setSortAscMuito(false);
-                          }
-                          setPage(0);
-                          }}> 
-                          Acessos últimos 10 meses {sortFieldMuito === "acessosUltimos10Meses" ? (sortAscMuito ? "▲" : "▼") : ""}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {dadosTabelaMuitoAcesso.length === 0 ? (
-                        <tr>
-                          <td colSpan={4}>Nenhum resultado encontrado.</td>
-                        </tr>
-                      ) : (
-                        paginaVisivelMuitoAcesso.map((item: any, idx: number) => (
-                          <tr key={idx}>
-                            <td>{item!.nome}</td>
-                            <td>{item!.ultimoAcesso}</td>
-                            <td>{item!.tempoSemEntrar}</td>
-                            <td>{item!.acessosUltimos10Meses}</td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
 
-            <div className="row">
-              <div className="col-sm-12 col-md-5">
-                <div className="dataTables_info text-left">
-                  Mostrando {dadosTabelaMuitoAcesso.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
-                  {Math.min((page + 1) * rowsPerPage, dadosTabelaMuitoAcesso.length)} de{" "}
-                  {dadosTabelaMuitoAcesso.length} registros
-                </div>
-              </div>
+      <div className="px-4 py-4 border-top">
+        <div className="d-flex align-items-center mb-3">
+          <i className="fas fa-user-check text-primary me-2"></i>
+          <h5 className="mb-0 fw-semibold text-dark">Usuários com Muito Acesso</h5>
+        </div>
 
-              <div className="col-sm-12 col-md-7 d-flex justify-content-md-end justify-content-start">
-                <div style={{ maxWidth: "90%", overflowX: "auto" }}>
-                  <div className="dataTables_paginate paging_simple_numbers">
-                    <ul className="pagination flex-wrap">
-                      <li className={`paginate_button page-item ${page === 0 && "disabled"}`}>
-                        <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
+        <div className="table-responsive">
+          <table className="table table-hover mb-0">
+            <thead className="table-light">
+              <tr>
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortFieldMuito === "nome") 
+                  {setSortAscMuito((prev) => !prev);} else {setSortFieldMuito("nome"); setSortAscMuito(true);} setPage(0);}}>
+                  Usuário {sortFieldMuito === "nome" ? (sortAscMuito ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortFieldMuito === "ultimoAcesso") 
+                  {setSortAscMuito((prev) => !prev);} else {setSortFieldMuito("ultimoAcesso"); setSortAscMuito(false);} setPage(0);}}>
+                  Último acesso {sortFieldMuito === "ultimoAcesso" ? (sortAscMuito ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => {if (sortFieldMuito === "tempoSemEntrar") 
+                  {setSortAscMuito((prev) => !prev);} else {setSortFieldMuito("tempoSemEntrar"); setSortAscMuito(false);} setPage(0);}}>
+                  Tempo sem entrar {sortFieldMuito === "tempoSemEntrar" ? (sortAscMuito ? "▲" : "▼") : ""}
+                </th>
+
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{cursor: "pointer"}} onClick={() => 
+                  {if (sortFieldMuito === "acessosUltimos10Meses") {setSortAscMuito((prev) => !prev);} else {setSortFieldMuito("acessosUltimos10Meses"); 
+                  setSortAscMuito(false);} setPage(0);}}>
+                  Acessos últimos 10 meses {sortFieldMuito === "acessosUltimos10Meses" ? (sortAscMuito ? "▲" : "▼") : ""}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {dadosTabelaMuitoAcesso.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-4 py-4 text-center text-secondary">
+                    Nenhum resultado encontrado.
+                  </td>
+                </tr>
+              ) : (
+                paginaVisivelMuitoAcesso.map((item: any, idx: number) => (
+                  <tr key={idx}>
+                    <td className="px-4 py-3 align-middle">{item!.nome}</td>
+                    <td className="px-4 py-3 align-middle">{item!.ultimoAcesso}</td>
+                    <td className="px-4 py-3 align-middle">{item!.tempoSemEntrar}</td>
+                    <td className="px-4 py-3 align-middle">{item!.acessosUltimos10Meses}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-3">
+          <div className="text-secondary small">
+            Mostrando {dadosTabelaMuitoAcesso.length === 0 ? 0 : page * rowsPerPage + 1} a{" "}
+            {Math.min((page + 1) * rowsPerPage, dadosTabelaMuitoAcesso.length)} de{" "}
+            {dadosTabelaMuitoAcesso.length} registros
+          </div>
+
+          <div className="d-flex justify-content-end" style={{maxWidth: "100%", overflowX: "auto"}}>
+            <div className="dataTables_paginate paging_simple_numbers">
+              <ul className="pagination mb-0 flex-wrap">
+                <li className={`paginate_button page-item ${page === 0 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => setPage(page - 1)}>Anterior</button>
+                </li>
+
+                {visiblePagesMuitoAcesso.map((item: number | string, idx: number) => {
+                  if (item === "...") {
+                    return (
+                      <li key={idx} className="paginate_button page-item disabled">
+                        <span className="page-link">...</span>
                       </li>
+                    );
+                  }
 
-                      {visiblePagesMuitoAcesso.map((item: number | string, idx: number) => {
-                        if (item === '...') {
-                          return (
-                            <li key={idx} className="paginate_button page-item disabled">
-                              <span className="page-link">...</span>
-                            </li>
-                          );
-                        }
-                        const pageNum = item as number;
-                        return (
-                          <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
-                            <button className="page-link" onClick={() => setPage(pageNum)}>{pageNum + 1}</button>
-                          </li>
-                        );
-                      })}
+                  const pageNum = item as number;
 
-                      <li className={`paginate_button page-item ${page === totalPaginasMuitoAcesso - 1 && "disabled"}`}>
-                        <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+                  return (
+                    <li key={idx} className={`paginate_button page-item ${page === pageNum ? "active" : ""}`}>
+                      <button className="page-link" onClick={() => setPage(pageNum)}>
+                        {pageNum + 1}
+                      </button>
+                    </li>
+                  );
+                })}
+
+                <li className={`paginate_button page-item ${page === totalPaginasMuitoAcesso - 1 ? "disabled" : ""}`}>
+                  <button className="page-link" onClick={() => setPage(page + 1)}>Próximo</button>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   );
 }
