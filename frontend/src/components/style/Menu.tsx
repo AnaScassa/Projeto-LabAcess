@@ -8,7 +8,7 @@ export default function BotaoVoltar() {
     const [relatoriosAberto, setRelatoriosAberto] = useState(true);
     const [treinamentoAberto, setTreinamentoAberto] = useState(true);
     const location = useLocation();
-    const [notificacoesAtivas, setNotificacoesAtivas] = useState(true);
+    const [notificacoesAbertas, setNotificacoesAbertas] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
 
@@ -26,18 +26,36 @@ export default function BotaoVoltar() {
             </span>
 
             <ul className="navbar-nav ml-auto">
-                <li className="nav-item">
-                    <button className="nav-link border-0 bg-primary d-flex align-items-center justify-content-center" onClick={() => 
-                        setNotificacoesAtivas(!notificacoesAtivas)} title={notificacoesAtivas ? "Desativar notificações" : "Ativar notificações"} 
-                        style={{width: "40px", height: "40px", borderRadius: "6px"}}>
-                            <span style={{position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center"}}>
-                                <i className="fas fa-bell text-white mr-0" style={{fontSize: "18px"}}></i>
-                                <span style={{position: "absolute", width: "24px", height: "3px", background: "#fff", border: "1px solid #757575", borderRadius: "2px", 
-                                    transform: "rotate(-45deg) scaleX(1)", transformOrigin: "center", opacity: notificacoesAtivas ? 0 : 1, 
-                                    transition: "opacity 0.25s ease"}}>
-                                </span>
-                            </span>
+                <li className="nav-item position-relative">
+                    <button className="nav-link border-0 bg-primary d-flex align-items-center justify-content-center" 
+                        onClick={() => setNotificacoesAbertas(!notificacoesAbertas)} style={{width: "40px", height: "40px", borderRadius: "6px"}}>
+                            <i className="fas fa-bell text-white mr-0" style={{fontSize: "18px"}}></i>
                     </button>
+
+                    {notificacoesAbertas && (
+                        <div className="position-absolute bg-white border rounded-3 shadow" style={{width: "430px", right: 0, top: "48px", zIndex: 1050}}>
+                            <div className="px-3 py-3 border-bottom">
+                                <h6 className="mb-0 fw-semibold text-dark">Notificações</h6>
+                            </div>
+
+                            <div style={{maxHeight: "400px", overflowY: "auto"}}>
+                                <div className="d-flex align-items-start gap-3 px-3 py-3 border-bottom">
+                                    <div className="bg-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 mr-1" 
+                                        style={{width: "26px", height: "26px"}}>
+                                        <i className="fas fa-exclamation text-white mr-0"></i>
+                                    </div>
+                                    <div>
+                                        <div className="fw-semibold text-dark">Atenção</div>
+                                        <small className="text-secondary">Existem acessos que precisam ser verificados.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="text-center px-3 py-2">
+                                <button className="btn btn-link text-primary text-decoration-none fw-semibold">Ver todas as notificações</button>
+                            </div>
+                        </div>
+                    )}
                 </li>
             </ul>
         </nav>
