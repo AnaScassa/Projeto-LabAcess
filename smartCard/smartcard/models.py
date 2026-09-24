@@ -27,12 +27,7 @@ class Acesso(models.Model):
 
 
 class Processamento(models.Model):
-    STATUS_CHOICES = [
-        ("PENDING", "Pendente"),
-        ("PROCESSANDO", "Processando"),
-        ("SUCCESS", "Sucesso"),
-        ("ERRO", "Erro"),
-    ]
+    STATUS_CHOICES = [("PENDING", "Pendente"), ("PROCESSANDO", "Processando"), ("SUCCESS", "Sucesso"), ("ERRO", "Erro"),]
 
     task_id = models.CharField(max_length=255, unique=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
@@ -85,3 +80,28 @@ class MrbsEntry(models.Model):
     class Meta:
         managed = False
         db_table = "mrbs_entry"
+        
+class Notificacao(models.Model):
+    TIPO_CHOICES = [("USO_INDEVIDO", "Uso Indevido do Cartão"),]
+
+    tipo = models.CharField(max_length=100, choices=TIPO_CHOICES)
+    titulo = models.CharField(max_length=200)
+    mensagem = models.TextField()
+    acesso = models.OneToOneField(Acesso, null=True, blank=True, on_delete=models.CASCADE, related_name="notificacao")
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.titulo} - {self.criado_em}"
+
+
+class NotificacaoUsuario(models.Model):
+    notificacao = models.ForeignKey(Notificacao, on_delete=models.CASCADE, related_name="usuarios")
+    usuario = models.ForeignKey(Usuario, to_field="matricula", on_delete=models.CASCADE, related_name="notificacoes")
+    lida = models.BooleanField(default=False)
+    lida_em = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["notificacao", "usuario"], name="unique_notificacao_usuario")]
+
+    def __str__(self):
+        return f"{self.usuario.nome_usuario} - {self.notificacao.titulo}"
