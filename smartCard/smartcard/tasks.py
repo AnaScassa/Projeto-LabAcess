@@ -1,6 +1,6 @@
 from datetime import date
 from .services import vincular_por_matricula
-from .models import Emails, Processamento, Usuario, Acesso, Notificacao
+from .models import Emails, Processamento, Usuario, Acesso
 from fuzzywuzzy import fuzz
 from dotenv import load_dotenv
 from celery import shared_task
@@ -135,6 +135,8 @@ def processar_xls(self, caminho_arquivo, task_id):
             obj.save()
 
         if apontamento == 1 and data.date() == data_atual:
+            mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
+            gmail = get_connection(host="smtp.gmail.com", port=587, username=EMAIL_HOST_USER, password=EMAIL_HOST_PASSWORD , use_tls=True)
             mensagem = f"""
             Evento: {desc_evento}
             Usuario: {nome_usuario}
@@ -143,27 +145,50 @@ def processar_xls(self, caminho_arquivo, task_id):
             Area: {row.get('DESC_AREA', '')}
             Leitor: {row.get('DESC_LEITOR', '')}
             """
+            chave = f"uso_indebido:{obj.id}"
 
-            notificacao, notificacao_criada = Notificacao.objects.get_or_create(acesso=obj, defaults={
-                "tipo": "USO_INDEVIDO", "titulo": "Uso indevido do cartão", "mensagem": mensagem
-            })
-
-            if notificacao_criada:
-                mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
-                gmail = get_connection(host="smtp.gmail.com", port=587, username=EMAIL_HOST_USER, password=EMAIL_HOST_PASSWORD, use_tls=True)
+            if not redis_client.exists(chave):
+                redis_client.set(chave, "1", ex=86400)
+                mensagem = f"""
+                Evento: {desc_evento}
+                Usuario: {nome_usuario}
+                Matricula: {matricula}
+                Data/Hora: {data}
+                Area: {row.get('DESC_AREA', '')}
+                Leitor: {row.get('DESC_LEITOR', '')}
+                """
 
                 try:
-                    emails = Emails.objects.filter(esta_ativo=True, ativado=True).values_list("email", flat=True)
+                    send_mail("Novo uso indevido do cartão detectado", mensagem, EMAIL_HOST_USER,[
+                        email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list("email", flat=True)
+                    ], connection=gmail, fail_silently=False)
 
-                    send_mail("Novo uso indevido do cartão detectado", mensagem, EMAIL_HOST_USER, emails, connection=gmail, fail_silently=False)
-                    send_mail("Novo uso indevido do cartao detectado", mensagem, EMAIL_HOST_USER, emails, connection=mailhog, fail_silently=False)
+                    send_mail("Novo uso indevido do cartao detectado", mensagem, EMAIL_HOST_USER,[
+                        email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list("email", flat=True)
+                    ], connection=mailhog, fail_silently=False)
 
                     redis_client.publish("novos_emails", json.dumps({"assunto": "Novo uso indevido do cartão detectado", "mensagem": mensagem}))
 
                 except Exception as e:
                     print("ERRO:", repr(e))
                     raise
+                
+                dados = cache.get(f"users_global_{task_id}")
 
+                if not dados:
+                    print("CACHE NÃO ENCONTRADO")
+                    return False
+
+                profiles = dados["profiles"]
+                users = dados["users"]
+
+                usuarios_adm = [
+                    user for user in users
+                    if user.get("is_superuser") is True
+                ]
+
+                print(f"Administradores encontrados: {len(usuarios_adm)}")
+             
         if usuario.user_auth is None:
             tentar_vincular_user_auth.delay(usuario.id, task_id)
             print("PROCESSAMENTO FINALIZADO")
@@ -273,28 +298,30 @@ def processar_csv(self, caminho_arquivo, task_id):
             obj.save()
 
         if apontamento == 1 and data.date() == data_atual:
-            mensagem = f"""
-            Evento: {desc_evento}
-            Usuario: {nome_usuario}
-            Matricula: {matricula}
-            Data/Hora: {data}
-            Area: {row.get('DESC_AREA', '')}
-            Leitor: {row.get('DESC_LEITOR', '')}
-            """
+            chave = f"uso_indebido:{obj.id}"
 
-            notificacao, notificacao_criada = Notificacao.objects.get_or_create(acesso=obj, defaults={
-                "tipo": "USO_INDEVIDO", "titulo": "Uso indevido do cartão", "mensagem": mensagem
-            })
-
-            if notificacao_criada:
+            if not redis_client.exists(chave):
+                redis_client.set(chave, "1", ex=86400)
                 mailhog = get_connection(host="mailhog", port=1025, use_tls=False)
                 gmail = get_connection(host="smtp.gmail.com", port=587, username=EMAIL_HOST_USER, password=EMAIL_HOST_PASSWORD, use_tls=True)
 
-                try:
-                    emails = Emails.objects.filter(esta_ativo=True, ativado=True).values_list("email", flat=True)
+                mensagem = f"""
+                Evento: {desc_evento}
+                Usuario: {nome_usuario}
+                Matricula: {matricula}
+                Data/Hora: {data}
+                Area: {row.get('Área', '')}
+                Leitor: {row.get('Leitor', '')}
+                """
 
-                    send_mail("Novo uso indevido do cartão detectado", mensagem, EMAIL_HOST_USER, emails, connection=gmail, fail_silently=False)
-                    send_mail("Novo uso indevido do cartao detectado", mensagem, EMAIL_HOST_USER, emails, connection=mailhog, fail_silently=False)
+                try:
+                    send_mail("Novo uso indevido do cartão detectado", mensagem, EMAIL_HOST_USER,[
+                        email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list("email", flat=True)
+                    ], connection=gmail, fail_silently=False)
+
+                    send_mail("Novo uso indevido do cartao detectado", mensagem, EMAIL_HOST_USER,[
+                        email for email in Emails.objects.filter(esta_ativo=True, ativado=True).values_list("email", flat=True)
+                    ], connection=mailhog, fail_silently=False)
 
                     redis_client.publish("novos_emails", json.dumps({"assunto": "Novo uso indevido do cartão detectado", "mensagem": mensagem}))
 
