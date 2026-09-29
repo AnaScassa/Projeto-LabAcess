@@ -22,9 +22,16 @@ services:
     restart: always
 
     volumes:
-      - ./smartcard:/app
       - media_volume:/app/media
       - C:/Users/anacha/Desktop/pasta:/testeshared
+
+    develop:
+      watch: 
+        - action: sync
+          path: ./smartcard
+          target: /app
+          ignore: 
+            - ./smartcard/venv/
 
     environment:
       JWT_SECRET_FILE: /run/secrets/jwt_secret
@@ -50,7 +57,7 @@ services:
       - kong-ee-net
 
     command: ./init.sh
-      
+    
     depends_on:
       - postgres
       - redis
