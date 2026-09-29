@@ -12,11 +12,12 @@ from django.core.cache import cache
 from django.db import transaction
 from django_celery_results.models import TaskResult
 from django.http import StreamingHttpResponse
+from django.utils import timezone
 
 from .receber_resposta import REDIS_CANAL_RESPOSTA
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
-from .models import CruzamentoApi, Emails, Usuario, Acesso, Processamento
+from .models import CruzamentoApi, Emails, Usuario, Acesso, Processamento, NotificacaoUsuario
 from smartcard.rabbitmq.publisher import enviar_mensagem
 
 import shortuuid
@@ -299,3 +300,12 @@ def cruzamentos_api(request):
     cruzamentos = CruzamentoApi.objects.select_related("usuario", "acesso").order_by("-data_acesso")
     return Response([{"id": c.id, "matricula": c.usuario.matricula, "usuario": c.usuario.nome_usuario, 
         "data_acesso": c.data_acesso, "porta": c.porta, "motivo": c.motivo} for c in cruzamentos])
+    
+#@api_view(["PATCH"])
+#@permission_classes([IsAuthenticated])
+#def vizualizacao_notificacoes(request):
+#    usuario_id = request.user.id
+#
+#    NotificacaoUsuario.objects.filter(usuario_id=usuario_id, lida=False).update(lida=True, lida_em=timezone.now())
+#
+#    return Response({"mensagem": "Notificações marcadas como lidas."})

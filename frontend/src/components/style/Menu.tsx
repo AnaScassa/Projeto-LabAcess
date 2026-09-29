@@ -33,7 +33,7 @@ export default function BotaoVoltar() {
                     </button>
 
                     {notificacoesAbertas && (
-                        <div className="position-absolute bg-white border rounded-3 shadow" style={{width: "430px", right: 0, top: "48px", zIndex: 1050}}>
+                        <div className="position-absolute bg-white border rounded-3 shadow" style={{width: "390px", right: 0, top: "48px", zIndex: 1050, maxHeight: "400px"}}>
                             <div className="px-3 py-3 border-bottom">
                                 <h6 className="mb-0 fw-semibold text-dark">Notificações</h6>
                             </div>

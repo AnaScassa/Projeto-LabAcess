@@ -82,13 +82,7 @@ class MrbsEntry(models.Model):
         db_table = "mrbs_entry"
 
 class NotificacaoUsuario(models.Model):
-    usuario =    models.ForeignKey(Usuario, to_field="matricula", on_delete=models.CASCADE, related_name="notificacoes")
-    acesso = models.OneToOneField(Acesso, null=True, blank=True, on_delete=models.CASCADE, related_name="notificacao")
+    usuario_id = models.BigIntegerField()
+    acesso = models.ForeignKey(Acesso, null=True, blank=True, on_delete=models.CASCADE, related_name="notificacoes")
     lida = models.BooleanField(default=False)
     lida_em = models.DateTimeField(null=True, blank=True)
-
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=["notificacao", "usuario"], name="unique_notificacao_usuario")]
-
-    def __str__(self):
-        return f"{self.usuario.nome_usuario} - {self.notificacao.titulo}"
