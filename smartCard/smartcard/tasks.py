@@ -1,6 +1,6 @@
 from datetime import date
 from .services import vincular_por_matricula
-from .models import Emails, Processamento, Usuario, Acesso
+from .models import Emails, Processamento, Usuario, Acesso, NotificacaoUsuario
 from fuzzywuzzy import fuzz
 from dotenv import load_dotenv
 from celery import shared_task
@@ -173,22 +173,30 @@ def processar_xls(self, caminho_arquivo, task_id):
                     print("ERRO:", repr(e))
                     raise
                 
-                dados = cache.get(f"users_global_{task_id}")
-
-                if not dados:
-                    print("CACHE NÃO ENCONTRADO")
-                    return False
-
-                profiles = dados["profiles"]
-                users = dados["users"]
-
                 usuarios_adm = [
                     user for user in users
                     if user.get("is_superuser") is True
                 ]
 
                 print(f"Administradores encontrados: {len(usuarios_adm)}")
-             
+                
+                for adm in usuarios_adm:
+                    id_adm = adm.get("id")
+
+                    if not adm:
+                        print(f"Usuario local não encontrado para user_auth={id_adm}")
+                        continue
+                    
+                    print(f"Administradores encontrados2: {len(usuarios_adm)}")
+                    
+                    try:
+                        NotificacaoUsuario.objects.get_or_create(usuario_id=id_adm, acesso=obj, defaults={"lida": False})
+                        print("foi as notificações")
+                    except Exception as e:
+                        print(f"ERRO NAS NOTIFICAÇÕES: {repr(e)}")
+                        raise
+                     
+                    
         if usuario.user_auth is None:
             tentar_vincular_user_auth.delay(usuario.id, task_id)
             print("PROCESSAMENTO FINALIZADO")
