@@ -6,6 +6,7 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
+  const [isEntrando, setIsEntrando] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -56,16 +57,23 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isEntrando) return;
 
-    const loginSucesso = await handleLogin();
+    setIsEntrando(true);
+    setMensagem("");
 
-    if (!loginSucesso) {
-      return;
+    try {
+      const loginSucesso = await handleLogin();
+
+      if (!loginSucesso) {
+        return;
+      }
+
+      await handleEmail();
+      window.location.replace("/");
+    } finally {
+      setIsEntrando(false);
     }
-
-    await handleEmail();
-
-    window.location.replace("/");
   };
 
   return (
@@ -110,7 +118,9 @@ export default function Login() {
 
               <div className="row">
                 <div className="col-12">
-                  <button type="submit" className="btn btn-primary btn-block">Entrar</button>
+                  <button type="submit" className="btn btn-primary btn-block" disabled={isEntrando}>
+                    {isEntrando ? "Entrando..." : "Entrar"}
+                  </button>
                 </div>
               </div>
 
