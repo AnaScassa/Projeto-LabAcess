@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from threading import Thread, Lock
 from datetime import datetime, timedelta
 from publisher import enviar_mensagem
-from desktop import entrarSes, excluir_csvs
+from desktop import entrarSes, excluir_csvs, verificar_ses
 from csv_utils import obter_ultimos_csvs, enviar_arquivo_rabbit
 from buscar_registro import fila_busca, ouvir_fila
 
@@ -25,6 +25,7 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
     try:
         print(f"\n========== INICIANDO RPA ({motivo}) ==========")
 
+        verificar_ses()
         entrarSes(dados_busca)
         arquivos, total_linhas = obter_ultimos_csvs(quantidade=3)
 

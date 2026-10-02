@@ -240,4 +240,23 @@ def excluir_csvs():
     except Exception as e:
         logger.error(f"Erro ao excluir CSVs: {e}")
             
-    
+def verificar_ses():
+    try:
+        sesclient = pyautogui.locateCenterOnScreen('./img/sesclient.PNG', minSearchTime=5 ,confidence=0.7)
+        if sesclient is not None:
+            logger.info("SESClient está aberto.")
+            try:
+                sair = pyautogui.locateCenterOnScreen('./img/sair2.png', confidence=0.5)
+                pyautogui.click(sair)
+                time.sleep(1)
+                logger.info("SESClient fechou com sucesso.")
+            except Exception as e:
+                logger.error(f"Erro ao fechar SESClient: {e}")
+                
+            return 
+        else:
+            logger.info("SESClient não está aberto.")
+            return True
+    except Exception as e:
+        logger.error(f"Erro ao verificar SESClient: {e}")
+        return False
