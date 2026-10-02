@@ -301,11 +301,35 @@ def cruzamentos_api(request):
     return Response([{"id": c.id, "matricula": c.usuario.matricula, "usuario": c.usuario.nome_usuario, 
         "data_acesso": c.data_acesso, "porta": c.porta, "motivo": c.motivo} for c in cruzamentos])
     
-#@api_view(["PATCH"])
-#@permission_classes([IsAuthenticated])
-#def vizualizacao_notificacoes(request):
-#    usuario_id = request.user.id
-#
-#    NotificacaoUsuario.objects.filter(usuario_id=usuario_id, lida=False).update(lida=True, lida_em=timezone.now())
-#
-#    return Response({"mensagem": "Notificações marcadas como lidas."})
+@api_view(["GET", "DELETE"])
+@permission_classes([IsAuthenticated])
+def notificacoes_usuario(request):
+    usuario_id = request.user.id
+
+    if request.method == "DELETE":
+        apagadas, _ = NotificacaoUsuario.objects.filter(usuario_id=usuario_id).delete()
+        return Response({"apagadas": apagadas})
+
+    notificacoes = NotificacaoUsuario.objects.filter(usuario_id=usuario_id, lida=False).select_related("acesso__usuario")
+    acesso_ids = [notificacao.acesso_id for notificacao in notificacoes if notificacao.acesso_id]
+    mensagens_por_acesso = dict(CruzamentoApi.objects.filter(acesso_id__in=acesso_ids).values_list("acesso_id", "motivo"))
+
+    dados = [
+        {
+            "id": n.id,
+            "lida": n.lida,
+            "data_lida": n.lida_em,
+            "acesso": {
+                "id": n.acesso.id,
+                "nome_usuario": n.acesso.usuario.nome_usuario,
+                "matricula": n.acesso.usuario.matricula,
+                "data": n.acesso.data_acesso.date() if n.acesso.data_acesso else None,
+                "hora": n.acesso.data_acesso.time() if n.acesso.data_acesso else None,
+                "porta": n.acesso.desc_leitor,
+                "mensagem": mensagens_por_acesso.get(n.acesso_id, n.acesso.desc_evento),
+            } if n.acesso else None,
+        }
+        for n in notificacoes
+    ]
+
+    return Response(dados)
