@@ -1,7 +1,23 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { buscarNotificacoesUsuario } from "../../services/buscarNotificacoesUsuario";
+import { apagarNotificacoesUsuario } from "../../services/apagarNotificacoesUsuario";
 import logo from "../../../public/logo2.png";
+
+type NotificacaoUsuario = {
+    id: number;
+    lida: boolean;
+    acesso: {
+        id: number;
+        nome_usuario: string;
+        matricula: string;
+        data: string;
+        hora: string;
+        porta: string;
+        mensagem: string;
+    } | null;
+};
 
 export default function BotaoVoltar() {
     const { username } = useAuth();
@@ -9,8 +25,65 @@ export default function BotaoVoltar() {
     const [treinamentoAberto, setTreinamentoAberto] = useState(true);
     const location = useLocation();
     const [notificacoesAbertas, setNotificacoesAbertas] = useState(false);
+    const [notificacoes, setNotificacoes] = useState<NotificacaoUsuario[]>([]);
+    const [carregandoNotificacoes, setCarregandoNotificacoes] = useState(false);
+    const [apagandoNotificacoes, setApagandoNotificacoes] = useState(false);
+    const [erroNotificacoes, setErroNotificacoes] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
+    const notificacoesNaoLidas = notificacoes.filter((notificacao) => !notificacao.lida).length;
+
+    useEffect(() => {
+        let ativo = true;
+
+        buscarNotificacoesUsuario().then((resultado: NotificacaoUsuario[]) => {
+            if (ativo) setNotificacoes(resultado);
+        }).catch(() => {
+            if (ativo) setNotificacoes([]);
+        });
+
+        return () => {
+            ativo = false;
+        };
+    }, []);
+
+    const apagarNotificacoes = async () => {
+        if (notificacoes.length === 0 || !window.confirm("Tem certeza que deseja apagar todas as notificações?")) {
+            return;
+        }
+
+        setApagandoNotificacoes(true);
+        setErroNotificacoes(false);
+
+        try {
+            await apagarNotificacoesUsuario();
+            setNotificacoes([]);
+        } catch {
+            setErroNotificacoes(true);
+        } finally {
+            setApagandoNotificacoes(false);
+        }
+    };
+
+    const alternarNotificacoes = async () => {
+        if (notificacoesAbertas) {
+            setNotificacoesAbertas(false);
+            return;
+        }
+
+        setNotificacoesAbertas(true);
+        setCarregandoNotificacoes(true);
+        setErroNotificacoes(false);
+
+        try {
+            const resultado = await buscarNotificacoesUsuario();
+            setNotificacoes(resultado);
+        } catch {
+            setErroNotificacoes(true);
+        } finally {
+            setCarregandoNotificacoes(false);
+        }
+    };
 
     return (
     <div>
@@ -27,32 +100,74 @@ export default function BotaoVoltar() {
 
             <ul className="navbar-nav ml-auto">
                 <li className="nav-item position-relative">
-                    <button className="nav-link border-0 bg-primary d-flex align-items-center justify-content-center" 
-                        onClick={() => setNotificacoesAbertas(!notificacoesAbertas)} style={{width: "40px", height: "40px", borderRadius: "6px"}}>
+                    <button className="nav-link border-0 bg-primary d-flex align-items-center justify-content-center notification-trigger" 
+                        onClick={alternarNotificacoes} aria-expanded={notificacoesAbertas}
+                        aria-label="Abrir notificações" title="Notificações">
                             <i className="fas fa-bell text-white mr-0" style={{fontSize: "18px"}}></i>
+                            {notificacoesNaoLidas > 0 && (
+                                <span className="notification-badge" aria-label={`${notificacoesNaoLidas} não lidas`}>
+                                    {notificacoesNaoLidas}
+                                </span>
+                            )}
                     </button>
 
                     {notificacoesAbertas && (
-                        <div className="position-absolute bg-white border rounded-3 shadow" style={{width: "390px", right: 0, top: "48px", zIndex: 1050, maxHeight: "400px"}}>
-                            <div className="px-3 py-3 border-bottom">
-                                <h6 className="mb-0 fw-semibold text-dark">Notificações</h6>
+                        <div className="notification-popover">
+                            <div className="notification-popover-header">
+                                <h6>Notificações</h6>
+                                <button type="button" aria-label="Fechar notificações" onClick={() => setNotificacoesAbertas(false)}>
+                                    <i className="fas fa-times" aria-hidden="true"></i>
+                                </button>
                             </div>
 
-                            <div style={{maxHeight: "400px", overflowY: "auto"}}>
-                                <div className="d-flex align-items-start gap-3 px-3 py-3 border-bottom">
-                                    <div className="bg-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 mr-1" 
-                                        style={{width: "26px", height: "26px"}}>
-                                        <i className="fas fa-exclamation text-white mr-0"></i>
+                            <div className="notification-list">
+                                {carregandoNotificacoes ? (
+                                    <div className="notification-message">
+                                        <span>Carregando notificações...</span>
                                     </div>
-                                    <div>
-                                        <div className="fw-semibold text-dark">Atenção</div>
-                                        <small className="text-secondary">Existem acessos que precisam ser verificados.</small>
+                                ) : erroNotificacoes ? (
+                                    <div className="notification-message">
+                                        <span>Não foi possível carregar as notificações.</span>
                                     </div>
-                                </div>
+                                ) : notificacoes.length === 0 ? (
+                                    <div className="notification-message">
+                                        <span>Nenhuma notificação.</span>
+                                    </div>
+                                ) : notificacoes.map((notificacao) => (
+                                    <article key={notificacao.id} className={`notification-row ${notificacao.lida ? "" : "notification-row-unread"}`}>
+                                        <div className="notification-avatar">
+                                            <i className="fas fa-exclamation" aria-hidden="true"></i>
+                                        </div>
+                                        <div className="notification-row-content">
+                                            <p className="notification-row-title">
+                                                {notificacao.acesso?.mensagem || "Acesso para verificação"}
+                                            </p>
+                                            {notificacao.acesso ? (
+                                                <>
+                                                    <p className="notification-row-detail">
+                                                        {notificacao.acesso.nome_usuario} (matrícula {notificacao.acesso.matricula})
+                                                    </p>
+                                                    <p className="notification-row-detail">
+                                                        {notificacao.acesso.data} às {notificacao.acesso.hora} · Porta {notificacao.acesso.porta}
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                <p className="notification-row-detail">Acesso relacionado indisponível.</p>
+                                            )}
+                                        </div>
+                                        {!notificacao.lida && <span className="notification-unread-dot" aria-label="Não lida" />}
+                                    </article>
+                                ))}
                             </div>
-
-                            <div className="text-center px-3 py-2">
-                                <button className="btn btn-link text-primary text-decoration-none fw-semibold">Ver todas as notificações</button>
+                            <div className="notification-popover-footer">
+                                <button
+                                    type="button"
+                                    onClick={apagarNotificacoes}
+                                    disabled={notificacoes.length === 0 || carregandoNotificacoes || apagandoNotificacoes}
+                                >
+                                    <i className={`fas ${apagandoNotificacoes ? "fa-spinner fa-spin" : "fa-trash-alt"}`} aria-hidden="true"></i>
+                                    {apagandoNotificacoes ? "Apagando..." : "Apagar notificações"}
+                                </button>
                             </div>
                         </div>
                     )}
