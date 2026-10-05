@@ -1,6 +1,6 @@
 import json
 import time
-
+import pyautogui
 from apscheduler.schedulers.background import BackgroundScheduler
 from threading import Thread, Lock
 from datetime import datetime, timedelta
@@ -13,10 +13,16 @@ execucao_em_andamento = Lock()
 
 scheduler = None
 scheduled_job = None
-
+primeira_execucao = True
 
 def executar_rpa(motivo="agendamento", dados_busca=None):
     global scheduled_job
+    global primeira_execucao
+
+    if primeira_execucao:
+        pyautogui.click(1244, 178)
+        pyautogui.click(1148, 123)
+        primeira_execucao = False
 
     if not execucao_em_andamento.acquire(blocking=False):
         print("RPA já está em execução.")
