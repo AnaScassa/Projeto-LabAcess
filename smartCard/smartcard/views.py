@@ -17,7 +17,7 @@ from django.utils import timezone
 from .receber_resposta import REDIS_CANAL_RESPOSTA
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
-from .models import CruzamentoApi, Emails, Usuario, Acesso, Processamento, NotificacaoUsuario
+from .models import Emails, Usuario, Acesso, Processamento, NotificacaoUsuario
 from smartcard.rabbitmq.publisher import enviar_mensagem
 
 import shortuuid
@@ -297,7 +297,7 @@ def verificar_id(request, id):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def cruzamentos_api(request):
-    cruzamentos = CruzamentoApi.objects.select_related("usuario", "acesso").order_by("-data_acesso")
+    cruzamentos = Acesso.objects.select_related("usuario", "acesso").order_by("-data_acesso")
     return Response([{"id": c.id, "matricula": c.usuario.matricula, "usuario": c.usuario.nome_usuario, 
         "data_acesso": c.data_acesso, "porta": c.porta, "motivo": c.motivo} for c in cruzamentos])
     
@@ -312,13 +312,11 @@ def notificacoes_usuario(request):
 
     notificacoes = NotificacaoUsuario.objects.filter(usuario_id=usuario_id, lida=False).select_related("acesso__usuario")
     acesso_ids = [notificacao.acesso_id for notificacao in notificacoes if notificacao.acesso_id]
-    mensagens_por_acesso = dict(CruzamentoApi.objects.filter(acesso_id__in=acesso_ids).values_list("acesso_id", "motivo"))
+    mensagens_por_acesso = dict(Acesso.objects.filter(id__in=acesso_ids).values_list("id", "desc_evento"))
 
     dados = [
         {
             "id": n.id,
-            "lida": n.lida,
-            "data_lida": n.lida_em,
             "acesso": {
                 "id": n.acesso.id,
                 "nome_usuario": n.acesso.usuario.nome_usuario,

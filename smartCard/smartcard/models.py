@@ -17,7 +17,8 @@ class Acesso(models.Model):
     desc_area = models.CharField(max_length=100) 
     desc_leitor = models.CharField(max_length=100) 
     ent_sai = models.CharField(max_length=10) 
-    apontamento = models.IntegerField(default=0)    
+    apontamento = models.IntegerField(default=0) 
+    eh_agendado = models.BooleanField(default=True) 
     
     class Meta: 
         unique_together = ('usuario', 'data_acesso', 'desc_evento', 'desc_area', 'ent_sai') 
@@ -49,17 +50,6 @@ class Emails(models.Model):
     esta_ativo = models.BooleanField(default=True)
     ativado = models.BooleanField(default=True)
     
-class CruzamentoApi(models.Model):
-    usuario = models.ForeignKey(Usuario, to_field="matricula", on_delete=models.CASCADE, related_name="cruzamentos")
-    acesso = models.OneToOneField(Acesso, on_delete=models.CASCADE, related_name="cruzamento")
-    data_acesso = models.DateTimeField()
-    porta = models.CharField(max_length=100)
-    motivo = models.CharField(max_length=255)
-    criado_em = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = "cruzamento_api"
-    
 class MrbsEntry(models.Model):
     id = models.IntegerField(primary_key=True)
     start_time = models.IntegerField()
@@ -84,5 +74,3 @@ class MrbsEntry(models.Model):
 class NotificacaoUsuario(models.Model):
     usuario_id = models.BigIntegerField()
     acesso = models.ForeignKey(Acesso, null=True, blank=True, on_delete=models.CASCADE, related_name="notificacoes")
-    lida = models.BooleanField(default=False)
-    lida_em = models.DateTimeField(null=True, blank=True)

@@ -1,5 +1,5 @@
 from celery import shared_task
-from .models import Usuario, Acesso, MrbsEntry, CruzamentoApi
+from .models import Usuario, Acesso, MrbsEntry, Acesso
 
 @shared_task(bind=True, name="smartcard.tasks.cruzamento_api")
 def cruzamento_api(self, user_id, username):
@@ -24,7 +24,7 @@ def cruzamento_api(self, user_id, username):
             resultados.append({"status": "sucesso", "mensagem": "Usuário entrou no CCS_LAB e possuía reserva.", "usuario": usuario.nome_usuario, "matricula": usuario.matricula, "data_acesso": acesso.data_acesso})
         
         else:
-            CruzamentoApi.objects.get_or_create(acesso=acesso, defaults={"usuario": usuario, "data_acesso": acesso.data_acesso, "porta": acesso.desc_leitor, "motivo": "Usuário entrou no CCS_LAB sem reserva no MRBS."})
+            Acesso.objects.filter(pk=acesso.pk).update(eh_agendado=False)
             resultados.append({"status": "erro", "mensagem": "Usuário entrou no CCS_LAB sem reserva no MRBS.", "usuario": usuario.nome_usuario, "matricula": usuario.matricula, "data_acesso": acesso.data_acesso})
 
     resultado = {"status": "finalizado", "usuario": usuario.nome_usuario, "matricula": usuario.matricula, "resultados": resultados}
