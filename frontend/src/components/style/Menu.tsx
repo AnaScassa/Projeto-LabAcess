@@ -207,6 +207,12 @@ export default function BotaoVoltar() {
                                 <p className="ml-1">Controle de Emails</p>
                             </Link>
                         </li>
+                        <li className="nav-item">
+                            <Link to="/agendamento" className={`nav-link ${isActive("/agendamento") ? "active bg-white text-dark" : ""}`}>
+                                <i className="fas fa-calendar-alt mr-0 ml-1"></i>
+                                <p className="ml-1">Agendamento</p>
+                            </Link>
+                        </li>
                         <li className={`nav-item ${relatoriosAberto ? "menu-open" : ""}`}>
                             <a href="#" className="nav-link active" onClick={(e) =>{e.preventDefault(); setRelatoriosAberto(!relatoriosAberto);}}>
                                 <i className="nav-icon fas fa-file-alt"></i>
@@ -218,28 +224,28 @@ export default function BotaoVoltar() {
 
                             <ul className={`nav nav-treeview ${relatoriosAberto ? "submenu-open" : ""}`} style={{display: "block"}}>
                                 <li className="nav-item">
-                                    <Link to="/tempoPermanencia" className={`nav-link ${isActive("/tempoPermanencia") ? "active bg-white text-dark" : ""}`}>
+                                    <Link to="/tempo-permanencia" className={`nav-link ${isActive("/tempo-permanencia") ? "active bg-white text-dark" : ""}`}>
                                         <i className="far fa-circle nav-icon"></i>
                                         <p>Tempo de Permanência</p>
                                     </Link>
                                 </li>
 
                                 <li className="nav-item">
-                                    <Link to="/naoAcessantes" className={`nav-link ${isActive("/naoAcessantes") ? "active bg-white text-dark" : ""}`}>
+                                    <Link to="/nao-acessantes" className={`nav-link ${isActive("/nao-acessantes") ? "active bg-white text-dark" : ""}`}>
                                         <i className="far fa-circle nav-icon"></i>
                                         <p>Não Acessantes Lab</p>
                                     </Link>
                                 </li>
 
                                 <li className="nav-item">
-                                    <Link to="/RelatorioTempo" className={`nav-link ${isActive("/RelatorioTempo") ? "active bg-white text-dark" : ""}`}>
+                                    <Link to="/relatorio-tempo" className={`nav-link ${isActive("/relatorio-tempo") ? "active bg-white text-dark" : ""}`}>
                                         <i className="far fa-circle nav-icon"></i>
                                         <p>Tempo de Acesso Total</p>
                                     </Link>
                                 </li>
 
                                 <li className="nav-item">
-                                    <Link to="/relatorioRecente" className={`nav-link ${isActive("/relatorioRecente") ? "active bg-white text-dark" : ""}`}>
+                                    <Link to="/relatorio-recente" className={`nav-link ${isActive("/relatorio-recente") ? "active bg-white text-dark" : ""}`}>
                                         <i className="far fa-circle nav-icon"></i>
                                         <p>Último Mês Lab</p>
                                     </Link>
@@ -258,28 +264,28 @@ export default function BotaoVoltar() {
 
                             <ul className={`nav nav-treeview ${treinamentoAberto ? "submenu-open" : ""}`} style={{display: "block"}}>
                             <li className="nav-item">
-                                    <Link to="/relatorioTreinamento" className={`nav-link ${isActive("/relatorioTreinamento") ? "active bg-white text-dark" : ""}`}>
+                                    <Link to="/relatorio-treinamento" className={`nav-link ${isActive("/relatorio-treinamento") ? "active bg-white text-dark" : ""}`}>
                                         <i className="far fa-circle nav-icon"></i>
                                         <p>Expirados</p>
                                     </Link>
                                 </li>
 
                                 <li className="nav-item">
-                                    <Link to="/relatorioNaoExpirados" className={`nav-link ${isActive("/relatorioNaoExpirados") ? "active bg-white text-dark" : ""}`}>
+                                    <Link to="/relatorio-nao-expirados" className={`nav-link ${isActive("/relatorio-nao-expirados") ? "active bg-white text-dark" : ""}`}>
                                         <i className="far fa-circle nav-icon"></i>
                                         <p>Ativos</p>
                                     </Link>
                                 </li>
 
                                 <li className="nav-item">
-                                    <Link to="/relatorioTreinamentoPendente" className={`nav-link ${isActive("/relatorioTreinamentoPendente") ? "active bg-white text-dark" : ""}`}>
+                                    <Link to="/relatorio-treinamento-pendente" className={`nav-link ${isActive("/relatorio-treinamento-pendente") ? "active bg-white text-dark" : ""}`}>
                                         <i className="far fa-circle nav-icon"></i>
                                         <p>Pendentes Treinados</p>
                                     </Link>
                                 </li>
 
                                 <li className="nav-item">
-                                    <Link to="/TreinamentosPendentesNaoTreinados" className={`nav-link ${isActive("/TreinamentosPendentesNaoTreinados") ? "active bg-white text-dark" : ""}`}>
+                                    <Link to="/relatorio-treinamentos-pendentes-nao-treinados" className={`nav-link ${isActive("/relatorio-treinamentos-pendentes-nao-treinados") ? "active bg-white text-dark" : ""}`}>
                                         <i className="far fa-circle nav-icon"></i>
                                         <p>Alunos Não Treinados</p>
                                     </Link>
