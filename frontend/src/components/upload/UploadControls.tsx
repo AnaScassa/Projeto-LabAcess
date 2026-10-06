@@ -32,7 +32,7 @@ export default function UploadControls({
           <div className="row g-1.5">
           <div className="col-12 col-md-9">
             <label htmlFor="fileInput" className="form-label small fw-semibold text-secondary mb-2">Arquivo</label>
-            <input ref={fileInputRef} type="file" id="fileInput" accept=".xls,.csv" className="form-control" style={{ padding: "3px" }}/>
+            <input ref={fileInputRef} type="file" id="fileInput" accept=".xls,.csv" className="form-control" style={{ padding: "3px" }} />
             <div className="form-text">Formatos aceitos: .xls e .csv</div>
           </div>
             <div className="col-12 col-md-3 d-flex align-items-center justify-content-center">

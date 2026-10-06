@@ -5,8 +5,6 @@ export async function solicitarPermissaoNotificacao() {
     return;
   }
 
-  console.log("Permissão atual:", Notification.permission);
-
   if (Notification.permission === "granted") {
     return;
   }

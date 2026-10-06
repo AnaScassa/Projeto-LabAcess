@@ -12,8 +12,7 @@ type StatusRpaState = {
 function converterResposta(dados: RespostaRpa): Partial<StatusRpaState> {
   if (!dados.status) {
     return {
-      statusBusca: null,
-      mensagem: "Aguardando resposta do RPA...",
+      statusBusca: null, mensagem: "Aguardando resposta do RPA...",
     };
   }
 
@@ -21,23 +20,19 @@ function converterResposta(dados: RespostaRpa): Partial<StatusRpaState> {
 
   if (statusBusca === "finalizado") {
     return {
-      statusBusca,
-      mensagem: `Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`,
-      quantidadeUltimaBusca: dados.quantidade ?? 0,
-      dataUltimaBusca: dados.criado_em ?? null,
+      statusBusca, mensagem: `Busca finalizada. Quantidade: ${dados.quantidade ?? 0}`,
+      quantidadeUltimaBusca: dados.quantidade ?? 0, dataUltimaBusca: dados.criado_em ?? null,
     };
   }
 
   if (statusBusca === "erro") {
     return {
-      statusBusca,
-      mensagem: `Busca com erro: ${dados.status}`,
+      statusBusca, mensagem: `Busca com erro: ${dados.status}`,
     };
   }
 
   return {
-    statusBusca,
-    mensagem: statusBusca === "pending" ? "Aguardando resposta do RPA..." : `Status do RPA: ${dados.status}`,
+    statusBusca, mensagem: statusBusca === "pending" ? "Aguardando resposta do RPA..." : `Status do RPA: ${dados.status}`,
   };
 }
 
@@ -69,21 +64,16 @@ export function useRpaStatus() {
       }));
     };
 
-    buscarUltimaResposta()
-      .then((dados) => {
-        if (!document.hidden) {
-          console.log("Última resposta do RPA:", dados);
-        }
-        processarResposta(dados);
-      })
-      .catch((erro) => {
-        if (!document.hidden) {
-          console.error("Erro ao buscar último status:", erro);
-        }
-        if (ativo) {
-          setEstado((estadoAtual) => ({ ...estadoAtual, statusBusca: null }));
-        }
-      });
+    buscarUltimaResposta().then((dados) => {
+      processarResposta(dados);
+    }).catch((erro) => {
+      if (!document.hidden) {
+        console.error("Erro ao buscar último status:", erro);
+      }
+      if (ativo) {
+        setEstado((estadoAtual) => ({ ...estadoAtual, statusBusca: null }));
+      }
+    });
 
     const parar = receberRespostas(processarResposta, () => {
       if (ativo) {
@@ -100,8 +90,7 @@ export function useRpaStatus() {
   const iniciarBusca = () => {
     setEstado((estadoAtual) => ({
       ...estadoAtual,
-      statusBusca: "pending",
-      mensagem: "Enviando busca ao RPA...",
+      statusBusca: "pending", mensagem: "Enviando busca ao RPA...",
     }));
   };
 

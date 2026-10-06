@@ -21,6 +21,14 @@ export default function Upload() {
 
   useMailhogNotifications();
 
+  const onUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+    await handleUpload(e);
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 2 * 60 * 1000);
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem("access");
     solicitarPermissaoNotificacao();
@@ -78,7 +86,7 @@ export default function Upload() {
         <section className="content px-4 pt-2">
           <div className="row gy-4">
               <div className="col-12 pt-3">
-                  <UploadControls fileInputRef={fileInputRef} onUpload={handleUpload} estaBloqueado={estaBloqueado} loading={loading} mensagem2={mensagemUpload} />
+                  <UploadControls fileInputRef={fileInputRef} onUpload={onUpload} estaBloqueado={estaBloqueado} loading={loading} mensagem2={mensagemUpload} />
               </div>
 
               <div className="col-12 pt-2 pb-4">
