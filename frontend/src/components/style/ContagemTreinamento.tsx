@@ -50,7 +50,7 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
             </div>
           </div>
 
-          <Link to="/relatorioTreinamento" className="training-card-footer">
+          <Link to="/relatorio-treinamento" className="training-card-footer">
             <span>Ver relatório</span>
             <i className="fas fa-arrow-right"></i>
           </Link>
@@ -77,7 +77,7 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
             </div>
           </div>
 
-          <Link to="/relatorioTreinamentoPendente" className="training-card-footer">
+          <Link to="/relatorio-treinamento-pendente" className="training-card-footer">
             <span>Ver relatório</span>
             <i className="fas fa-arrow-right"></i>
           </Link>
@@ -104,7 +104,7 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
               </div>
             </div>
 
-            <Link to="/relatorioNaoExpirados" className="training-card-footer">
+            <Link to="/relatorio-treinamento-nao-expirados" className="training-card-footer">
               <span>Ver relatório</span>
               <i className="fas fa-arrow-right"></i>
             </Link>
