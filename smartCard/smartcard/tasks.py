@@ -67,7 +67,8 @@ def processar_xls(self, caminho_arquivo, task_id):
     channel.basic_publish(exchange='', routing_key='usuarios_processados', properties=pika.BasicProperties(reply_to=callback_queue, correlation_id=corr_id,),
         body=json.dumps({
             "task_id": task_id
-        }))
+        })
+    )
 
     while resposta is None:
         connection.process_data_events(time_limit=1)
@@ -177,8 +178,6 @@ def processar_xls(self, caminho_arquivo, task_id):
                     user for user in users
                     if user.get("is_superuser") is True
                 ]
-
-                print(f"Administradores encontrados: {len(usuarios_adm)}")
                 
                 for adm in usuarios_adm:
                     id_adm = adm.get("id")
@@ -186,9 +185,7 @@ def processar_xls(self, caminho_arquivo, task_id):
                     if not adm:
                         print(f"Usuario local não encontrado para user_auth={id_adm}")
                         continue
-                    
-                    print(f"Administradores encontrados2: {len(usuarios_adm)}")
-                    
+                                        
                     try:
                         NotificacaoUsuario.objects.get_or_create(usuario_id=id_adm, acesso=obj, defaults={"lida": False})
                         print("foi as notificações")

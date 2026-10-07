@@ -16,16 +16,19 @@ def cruzamento_api(self, user_id, username):
 
     for acesso in acessos:
         acesso_timestamp = int(acesso.data_acesso.timestamp())
-        reserva = MrbsEntry.objects.using("mariadb").filter(created_by=usuario.username_mrbs, start_time__lte=acesso_timestamp, end_time__gte=acesso_timestamp).values(
-            "id", "created_by", "start_time", "end_time"
-        ).first()
+        reserva = MrbsEntry.objects.using("mariadb").filter(created_by=usuario.username_mrbs, start_time__lte=acesso_timestamp, 
+            end_time__gte=acesso_timestamp).values("id", "created_by", "start_time", "end_time").first()
 
         if reserva:
-            resultados.append({"status": "sucesso", "mensagem": "Usuário entrou no CCS_LAB e possuía reserva.", "usuario": usuario.nome_usuario, "matricula": usuario.matricula, "data_acesso": acesso.data_acesso})
+            resultados.append({"status": "sucesso", "mensagem": "Usuário entrou no CCS_LAB e possuía reserva.", "usuario": usuario.nome_usuario, 
+                "matricula": usuario.matricula, "data_acesso": acesso.data_acesso
+            })
         
         else:
             Acesso.objects.filter(pk=acesso.pk).update(eh_agendado=False)
-            resultados.append({"status": "erro", "mensagem": "Usuário entrou no CCS_LAB sem reserva no MRBS.", "usuario": usuario.nome_usuario, "matricula": usuario.matricula, "data_acesso": acesso.data_acesso})
+            resultados.append({"status": "erro", "mensagem": "Usuário entrou no CCS_LAB sem reserva no MRBS.", "usuario": usuario.nome_usuario, 
+                "matricula": usuario.matricula, "data_acesso": acesso.data_acesso
+            })
 
     resultado = {"status": "finalizado", "usuario": usuario.nome_usuario, "matricula": usuario.matricula, "resultados": resultados}
     

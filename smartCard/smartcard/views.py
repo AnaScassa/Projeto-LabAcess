@@ -297,9 +297,17 @@ def verificar_id(request, id):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def cruzamentos_api(request):
-    cruzamentos = Acesso.objects.select_related("usuario", "acesso").order_by("-data_acesso")
-    return Response([{"id": c.id, "matricula": c.usuario.matricula, "usuario": c.usuario.nome_usuario, 
-        "data_acesso": c.data_acesso, "porta": c.porta, "motivo": c.motivo} for c in cruzamentos])
+    cruzamentos = Acesso.objects.select_related("usuario").filter(eh_agendado=False).order_by("-data_acesso")
+
+    return Response([
+        {
+            "id": c.id,
+            "matricula": c.usuario.matricula,
+            "usuario": c.usuario.nome_usuario,
+            "data_acesso": c.data_acesso,
+        }
+        for c in cruzamentos
+    ])
     
 @api_view(["GET", "DELETE"])
 @permission_classes([IsAuthenticated])
