@@ -1,4 +1,4 @@
-from smartcard.views import buscar_registro, carregar_acesso, lista_usuarios, mudar_apontamento, receber_resposta, ultima_resposta, usuarios_ativos, emails, lista_emails, desativar_email, cadastrar_email, registrar_email, verificar_id, cruzamentos_api, notificacoes_usuario
+from smartcard.views import buscar_registro, carregar_acesso, lista_usuarios, mudar_apontamento, receber_resposta, ultima_resposta, usuarios_ativos, emails, lista_emails, desativar_email, cadastrar_email, registrar_email, verificar_id, cruzamentos_api, notificacoes_usuario, agendamentos_nao_utilizados, acessos_agendados
 from smartcard.api import AcessoViewSet, GroupViewSet, UsuarioViewSet, TaskCompleted, ApontamentoViewSet
 
 from django.urls import include, path
@@ -30,4 +30,6 @@ urlpatterns = [
     path("ultima-resposta/", ultima_resposta),
     path("cruzamentos/", cruzamentos_api, name="cruzamentos_api"),
     path("notificacoes/", notificacoes_usuario, name="notificacoes_usuario"),
+    path("agendamentos-nao-utilizados/", agendamentos_nao_utilizados, name="agendamentos_nao_utilizados"),
+    path("acessos-agendados/", acessos_agendados, name="acessos_agendados"),
 ]

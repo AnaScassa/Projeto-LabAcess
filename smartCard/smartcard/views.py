@@ -7,6 +7,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
+from django.db.models.aggregates import Count
 from django.http import JsonResponse
 from django.core.cache import cache
 from django.db import transaction
@@ -17,13 +18,14 @@ from django.utils import timezone
 from .receber_resposta import REDIS_CANAL_RESPOSTA
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
-from .models import Emails, Usuario, Acesso, Processamento, NotificacaoUsuario
+from .models import Emails, Usuario, Acesso, Processamento, NotificacaoUsuario, MrbsEntry
 from smartcard.rabbitmq.publisher import enviar_mensagem
 
 import shortuuid
 import redis, json
 
 from datetime import datetime, timedelta, date
+from collections import defaultdict
 
 redis_client = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
@@ -309,6 +311,20 @@ def cruzamentos_api(request):
         for c in cruzamentos
     ])
     
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def acessos_agendados(request):
+    acessos = (Acesso.objects.filter(eh_agendado=True).values("usuario__matricula", "usuario__nome_usuario").annotate(quantidade=Count("id")).order_by("-quantidade"))
+
+    return Response([
+        {
+            "matricula": a["usuario__matricula"],
+            "usuario": a["usuario__nome_usuario"],
+            "quantidade": a["quantidade"],
+        }
+        for a in acessos
+    ])
+    
 @api_view(["GET", "DELETE"])
 @permission_classes([IsAuthenticated])
 def notificacoes_usuario(request):
@@ -318,7 +334,7 @@ def notificacoes_usuario(request):
         apagadas, _ = NotificacaoUsuario.objects.filter(usuario_id=usuario_id).delete()
         return Response({"apagadas": apagadas})
 
-    notificacoes = NotificacaoUsuario.objects.filter(usuario_id=usuario_id, lida=False).select_related("acesso__usuario")
+    notificacoes = NotificacaoUsuario.objects.filter(usuario_id=usuario_id).select_related("acesso__usuario")
     acesso_ids = [notificacao.acesso_id for notificacao in notificacoes if notificacao.acesso_id]
     mensagens_por_acesso = dict(Acesso.objects.filter(id__in=acesso_ids).values_list("id", "desc_evento"))
 
@@ -339,3 +355,54 @@ def notificacoes_usuario(request):
     ]
 
     return Response(dados)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def agendamentos_nao_utilizados(request):
+
+    agendamentos = MrbsEntry.objects.using("mariadb").all()
+
+    usuarios = Usuario.objects.exclude(username_mrbs__isnull=True).exclude(username_mrbs="")
+
+    usuarios_por_username = {
+        usuario.username_mrbs: usuario
+        for usuario in usuarios
+    }
+
+    acessos = (Acesso.objects.select_related("usuario").filter(desc_area="CCS_LAB", ent_sai="1", data_acesso__isnull=False))
+    acessos_por_usuario = defaultdict(list)
+
+    for acesso in acessos:
+        username = acesso.usuario.username_mrbs
+
+        if username:
+            acessos_por_usuario[username].append(acesso.data_acesso.timestamp())
+
+    faltas = defaultdict(int)
+
+    for agendamento in agendamentos:
+        username = agendamento.created_by
+
+        if username not in usuarios_por_username:
+            continue
+
+        entrou = False
+
+        for acesso_timestamp in acessos_por_usuario.get(username, []):
+
+            if (agendamento.start_time <= acesso_timestamp <= agendamento.end_time):
+                entrou = True
+                break
+
+        if not entrou:
+            faltas[username] += 1
+
+    resultado = []
+
+    for username, quantidade in faltas.items():
+        usuario = usuarios_por_username[username]
+        resultado.append({"matricula": usuario.matricula, "usuario": usuario.nome_usuario, "quantidade": quantidade,})
+
+    resultado.sort(key=lambda x: x["quantidade"], reverse=True)
+
+    return Response(resultado)
