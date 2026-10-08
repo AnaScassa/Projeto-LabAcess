@@ -8,7 +8,7 @@ export interface AgendamentoNaoUtilizado {
 }
 
 export const buscarAgendamentosNaoUtilizados = async (): Promise<AgendamentoNaoUtilizado[]> => {
-    const response = await authFetch(`http://${API_HOST}:8000/api/acesso/agendamentos_nao_utilizados/`, {
+    const response = await authFetch(`http://${API_HOST}:8000/api/acesso/agendamentos-nao-utilizados/`, {
         method: "GET",
     });
 

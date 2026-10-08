@@ -7,7 +7,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
-from django.db.models.aggregates import Count
+from django.db.models import Count
 from django.http import JsonResponse
 from django.core.cache import cache
 from django.db import transaction
@@ -314,17 +314,20 @@ def cruzamentos_api(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def acessos_agendados(request):
-    acessos = (Acesso.objects.filter(eh_agendado=True).values("usuario__matricula", "usuario__nome_usuario").annotate(quantidade=Count("id")).order_by("-quantidade"))
+
+    acessos = (Acesso.objects .filter(eh_agendado=True, ent_sai="1").exclude( usuario__categoriaUsuario="FUNCIONARIO") 
+        .values("usuario__matricula", "usuario__nome_usuario") .annotate( quantidade=Count("id")).order_by("-quantidade")
+    )
 
     return Response([
         {
-            "matricula": a["usuario__matricula"],
-            "usuario": a["usuario__nome_usuario"],
-            "quantidade": a["quantidade"],
+            "matricula": acesso["usuario__matricula"],
+            "usuario": acesso["usuario__nome_usuario"],
+            "quantidade": acesso["quantidade"],
         }
-        for a in acessos
+        for acesso in acessos
     ])
-    
+
 @api_view(["GET", "DELETE"])
 @permission_classes([IsAuthenticated])
 def notificacoes_usuario(request):
