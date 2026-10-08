@@ -82,7 +82,7 @@ export default function Emails() {
                 </div>
                 <small className="text-secondary px-4 pt-0 pb-2">Gerencie os emails autorizados a receber notificações</small>
 
-                <section className="content px-4 pt-3">
+                <section className="content px-4 pt-4">
                     <div className="card border-0 border-top border-primary rounded-3 shadow-sm overflow-hidden m-0">
                         <div className="card-header bg-white border-bottom px-4 py-3">
                             <div className="d-flex flex-row align-items-center">

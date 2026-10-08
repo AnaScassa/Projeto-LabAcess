@@ -15,16 +15,16 @@ export default function Agendamento() {
             </div>
             <small className="text-secondary px-4 pt-0 pb-2">Relatórios de Agendamentos feitos na plataforma MRBS</small>
 
-            <section className="content px-4 pt-2">
-              <div className="row gy-4">
-                  <div className="col-12 pt-3">
-                    <AcessosAgendados/>
-                  </div>
-                  <div className="col-12 pt-3">
-                    <AgendamentosNaoUtilizados/>
-                  </div>
-              </div>
-          </section>
+            <section className="content px-4 pt-4">
+                <div className="row g-4">
+                    <div className="col-md-6">
+                        <AcessosAgendados />
+                    </div>
+                    <div className="col-md-6">
+                        <AgendamentosNaoUtilizados />
+                    </div>
+                </div>
+            </section>
         </div>
       </div>
   )
