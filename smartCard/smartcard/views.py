@@ -315,8 +315,8 @@ def cruzamentos_api(request):
 @permission_classes([IsAuthenticated])
 def acessos_agendados(request):
 
-    acessos = (Acesso.objects .filter(eh_agendado=True, ent_sai="1").exclude( usuario__categoriaUsuario="FUNCIONARIO") 
-        .values("usuario__matricula", "usuario__nome_usuario") .annotate( quantidade=Count("id")).order_by("-quantidade")
+    acessos = (Acesso.objects.filter(eh_agendado=True, ent_sai="1").exclude(usuario__categoriaUsuario="FUNCIONARIO") 
+        .values("usuario__matricula", "usuario__nome_usuario").annotate( quantidade=Count("id")).order_by("-quantidade")
     )
 
     return Response([
@@ -362,22 +362,17 @@ def notificacoes_usuario(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def agendamentos_nao_utilizados(request):
-
     agendamentos = MrbsEntry.objects.using("mariadb").all()
 
-    usuarios = Usuario.objects.exclude(username_mrbs__isnull=True).exclude(username_mrbs="")
+    usuarios = Usuario.objects.exclude(username_mrbs__isnull=True).exclude(username_mrbs="").exclude(categoriaUsuario="FUNCIONARIO")
 
-    usuarios_por_username = {
-        usuario.username_mrbs: usuario
-        for usuario in usuarios
-    }
+    usuarios_por_username = {usuario.username_mrbs: usuario for usuario in usuarios}
 
-    acessos = (Acesso.objects.select_related("usuario").filter(desc_area="CCS_LAB", ent_sai="1", data_acesso__isnull=False))
+    acessos = Acesso.objects.select_related("usuario").filter(desc_area="CCS_LAB", ent_sai="1", data_acesso__isnull=False)
     acessos_por_usuario = defaultdict(list)
 
     for acesso in acessos:
         username = acesso.usuario.username_mrbs
-
         if username:
             acessos_por_usuario[username].append(acesso.data_acesso.timestamp())
 
@@ -385,15 +380,13 @@ def agendamentos_nao_utilizados(request):
 
     for agendamento in agendamentos:
         username = agendamento.created_by
-
         if username not in usuarios_por_username:
             continue
 
         entrou = False
 
         for acesso_timestamp in acessos_por_usuario.get(username, []):
-
-            if (agendamento.start_time <= acesso_timestamp <= agendamento.end_time):
+            if agendamento.start_time <= acesso_timestamp <= agendamento.end_time:
                 entrou = True
                 break
 
@@ -404,7 +397,7 @@ def agendamentos_nao_utilizados(request):
 
     for username, quantidade in faltas.items():
         usuario = usuarios_por_username[username]
-        resultado.append({"matricula": usuario.matricula, "usuario": usuario.nome_usuario, "quantidade": quantidade,})
+        resultado.append({"matricula": usuario.matricula, "usuario": usuario.nome_usuario, "quantidade": quantidade})
 
     resultado.sort(key=lambda x: x["quantidade"], reverse=True)
 
