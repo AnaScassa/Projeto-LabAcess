@@ -34,6 +34,17 @@ export default function Agendamento() {
           </div>
         </section>
 
+        <select className="content px-4">
+          <div className="row">
+            <div className="col-md-6 pb-3">
+              <AcessosAgendados />
+            </div>
+            <div className="col-md-6 pb-3">
+              <AgendamentosNaoUtilizados />
+            </div>
+          </div>
+        </select>
+
       </div>
     </div>
   );

@@ -24,105 +24,105 @@ export default function UltimosAcessos() {
     });
 
     return (
-        <div className="card border-0 border-top border-primary rounded-3 shadow-sm overflow-hidden m-0">
+        <div className="card border-0 border-top border-primary rounded-3 shadow-sm overflow-hidden m-0 d-flex flex-column" style={{ minHeight: "477px", maxHeight: "477px" }}>
 
-            <div className="card-header bg-white border-bottom px-4 py-3">
-                <div>
-                    <div className="d-flex align-items-center">
-                        <i className="fas fa-clock text-primary me-2"></i>
+                <div className="card-header bg-white border-bottom px-4 py-3">
+                    <div>
+                        <div className="d-flex align-items-center">
+                            <i className="fas fa-clock text-primary me-2"></i>
 
-                        <h5 className="mb-0 fw-semibold text-dark">
-                            Últimos Acessos
-                        </h5>
+                            <h5 className="mb-0 fw-semibold text-dark">
+                                Últimos Acessos
+                            </h5>
+                        </div>
+
+                        <small className="text-secondary">
+                            Acessos realizados nas últimas 24 horas
+                        </small>
                     </div>
-
-                    <small className="text-secondary">
-                        Acessos realizados nas últimas 24 horas
-                    </small>
                 </div>
-            </div>
 
-            <div className="card-body p-0 overflow-auto m-0" style={{ maxHeight: "340px" }}>
+                <div className="card-body p-0 overflow-auto m-0" style={{ minHeight: 0, flex: 1 }}>
 
-                <table className="table table-hover mb-0">
-                    <thead className="table-light sticky-top" style={{ zIndex: 1 }}>
-                        <tr>
-                            <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
-                                Usuário
-                            </th>
-                            <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
-                                Data
-                            </th>
-                            <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold text-center">
-                                Tipo
-                            </th>
-                            <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
-                                Porta
-                            </th>
-                        </tr>
-                    </thead>
+                    <table className="table table-hover mb-0">
+                        <thead className="table-light sticky-top" style={{ zIndex: 1 }}>
+                            <tr>
+                                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
+                                    Usuário
+                                </th>
+                                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
+                                    Data
+                                </th>
+                                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold text-center">
+                                    Tipo
+                                </th>
+                                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
+                                    Porta
+                                </th>
+                            </tr>
+                        </thead>
 
 
-                    <tbody>
-                        {acessosOrdenados.map((acesso, index) => {
-                            const entrada = acesso.ent_sai === "1";
-                            const data = new Date(acesso.data_acesso);
-                            return (
+                        <tbody>
+                            {acessosOrdenados.map((acesso, index) => {
+                                const entrada = acesso.ent_sai === "1";
+                                const data = new Date(acesso.data_acesso);
+                                return (
 
-                                <tr key={index}>
-                                    <td className="px-4 py-3 align-middle">
-                                        <span className="fw-semibold text-dark">
-                                            {acesso.usuario}
-                                        </span>
-                                    </td>
-
-                                    <td className="px-4 py-3 align-middle text-nowrap">
-                                        <div className="d-flex flex-column">
-                                            <span className="text-dark">
-                                                {data.toLocaleDateString("pt-BR")}
+                                    <tr key={index}>
+                                        <td className="px-4 py-3 align-middle">
+                                            <span className="fw-semibold text-dark">
+                                                {acesso.usuario}
                                             </span>
-                                            <small className="text-secondary">
-                                                {data.toLocaleTimeString("pt-BR", {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    second: "2-digit",
-                                                })}
-                                            </small>
-                                        </div>
-                                    </td>
+                                        </td>
 
-                                    <td className="px-4 py-3 align-middle text-center">
-                                        {entrada ? (
-                                            <span className="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-2">
-                                                <i className="fas fa-sign-in-alt me-1"></i>
-                                                Entrada
+                                        <td className="px-4 py-3 align-middle text-nowrap">
+                                            <div className="d-flex flex-column">
+                                                <span className="text-dark">
+                                                    {data.toLocaleDateString("pt-BR")}
+                                                </span>
+                                                <small className="text-secondary">
+                                                    {data.toLocaleTimeString("pt-BR", {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                        second: "2-digit",
+                                                    })}
+                                                </small>
+                                            </div>
+                                        </td>
+
+                                        <td className="px-4 py-3 align-middle text-center">
+                                            {entrada ? (
+                                                <span className="badge bg-success-subtle text-success-emphasis rounded-pill px-3 py-2">
+                                                    <i className="fas fa-sign-in-alt me-1"></i>
+                                                    Entrada
+                                                </span>
+                                            ) : (
+                                                <span className="badge bg-secondary-subtle text-secondary-emphasis rounded-pill px-3 py-2">
+                                                    <i className="fas fa-sign-out-alt me-1"></i>
+                                                    Saída
+                                                </span>
+                                            )}
+                                        </td>
+
+                                        <td className="px-4 py-3 align-middle">
+                                            <span className="text-secondary">
+                                                {acesso.desc_area}
                                             </span>
-                                        ) : (
-                                            <span className="badge bg-secondary-subtle text-secondary-emphasis rounded-pill px-3 py-2">
-                                                <i className="fas fa-sign-out-alt me-1"></i>
-                                                Saída
-                                            </span>
-                                        )}
-                                    </td>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
 
-                                    <td className="px-4 py-3 align-middle">
-                                        <span className="text-secondary">
-                                            {acesso.desc_area}
-                                        </span>
-                                    </td>
-                                </tr>
-                            );
-                        })}
+                        </tbody>
+                    </table>
+                </div>
 
-                    </tbody>
-                </table>
-            </div>
-
-            <div className="card-footer bg-light border-0 px-4 py-3">
-                <span className="text-secondary small">
-                    <i className="fas fa-history me-2"></i>
-                    {acessosOrdenados.length} acessos nas últimas 24 horas
-                </span>
+                <div className="card-footer bg-light border-0 px-4 py-3">
+                    <span className="text-secondary small">
+                        <i className="fas fa-history me-2"></i>
+                        {acessosOrdenados.length} acessos nas últimas 24 horas
+                    </span>
             </div>
         </div>
     );

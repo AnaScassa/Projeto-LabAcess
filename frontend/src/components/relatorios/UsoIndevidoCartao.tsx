@@ -25,9 +25,7 @@ export default function UsoIndevidoCartao() {
   };
 
   return (
-    <div className="col-md-6 pb-4">
-      <div className="card mb-0">
-        <div className="card border-0 border-top border-primary rounded-3 shadow-sm overflow-hidden m-0" style={{ height: "400px" }}>
+        <div className="card border-0 border-top border-primary rounded-3 shadow-sm overflow-hidden m-0 d-flex flex-column" style={{ minHeight: "477px", maxHeight: "477px" }}>
 
           <div className="card-header bg-white border-bottom px-4 py-3">
             <div className="d-flex align-items-center justify-content-between gap-3">
@@ -48,7 +46,7 @@ export default function UsoIndevidoCartao() {
             </div>
           </div>
 
-          <div className="card-body p-0 overflow-auto m-0" style={{ maxHeight: "340px" }}>
+          <div className="card-body p-0 overflow-auto m-0" style={{ minHeight: 0, flex: 1 }}>
             <table className="table table-hover mb-0">
               <thead className="table-light sticky-top" style={{ zIndex: 1 }}>
                 <tr>
@@ -120,7 +118,5 @@ export default function UsoIndevidoCartao() {
           </div>
 
         </div>
-      </div>
-    </div>
   );
 }

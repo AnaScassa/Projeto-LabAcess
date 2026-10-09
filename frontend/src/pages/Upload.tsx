@@ -123,7 +123,7 @@ export default function Upload() {
                 </div>
               </div>
 
-              <div className="card-body p-3" style={{height: "400px", display: "flex", alignItems: "center", justifyContent: "center"}}>
+              <div className="card-body p-3" style={{height: "477px", display: "flex", alignItems: "center", justifyContent: "center"}}>
                 <GraficoAcessos />
               </div>
             </div>
@@ -141,7 +141,7 @@ export default function Upload() {
                 </div>
               </div>
 
-              <div className="card-body p-3" style={{height: "400px", display: "flex", alignItems: "center", justifyContent: "center"}}>
+              <div className="card-body p-3" style={{height: "477px", display: "flex", alignItems: "center", justifyContent: "center"}}>
                 <GraficosUsuariosAtivos />
               </div>
             </div>

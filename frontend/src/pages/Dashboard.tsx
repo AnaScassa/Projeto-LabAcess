@@ -37,34 +37,32 @@ export default function Dashboard() {
         <section className="content px-4">
           <div className="row">
             <div className="col-md-6 pb-4">
-              <div className="card m-0" style={{ height: "400px" }}>
-                <UltimosAcessos />
-              </div>
+              <UltimosAcessos />
             </div>
-            <UsoIndevidoCartao />
+            <div className="col-md-6 pb-4">
+              <UsoIndevidoCartao />
+            </div>
           </div>
         </section>
 
         <section className="content px-4">
             <div className="row">
                 <div className="col-md-6 pb-4">
-                  <div className="card">
-                    <div className="card border-0 border-top border-primary rounded-3 shadow-sm overflow-hidden m-0" style={{ height: "400px" }}>
-                      <div className="card-header bg-white border-bottom px-4 py-3">
-                        <div>
-                          <div className="d-flex align-items-center">
-                            <i className="fas fa-unlink text-primary me-2"></i>
-                            <h5 className="mb-0 fw-semibold text-dark">Acessos sem Agendamento</h5>
-                          </div>
-                          <small className="text-secondary">Acessos identificados sem registro no agendamento MRBS</small>
+                  <div className="card border-0 border-top border-primary rounded-3 shadow-sm overflow-hidden m-0" style={{ minHeight: "477px", maxHeight: "477px" }}>
+                    <div className="card-header bg-white border-bottom px-4 py-3">
+                      <div>
+                        <div className="d-flex align-items-center">
+                          <i className="fas fa-unlink text-primary me-2"></i>
+                          <h5 className="mb-0 fw-semibold text-dark">Acessos sem Agendamento</h5>
                         </div>
+                        <small className="text-secondary">Acessos identificados sem registro no agendamento MRBS</small>
                       </div>
-                      <Cruzamentos />
-                      <div className="card-footer bg-light border-0 px-4 py-3 d-flex justify-content-end align-items-center">
-                        <Link to="/agendamento" className="text-decoration-none">
-                          <p className="text-primary small mb-0" style={{ cursor: "pointer" }}>Ver mais <i className="fas fa-arrow-right ms-1"></i></p>
-                        </Link>
-                      </div>
+                    </div>
+                    <Cruzamentos />
+                    <div className="card-footer bg-light border-0 px-4 py-3 d-flex justify-content-end align-items-center">
+                      <Link to="/agendamento" className="text-decoration-none">
+                        <p className="text-primary small mb-0" style={{ cursor: "pointer" }}>Ver mais <i className="fas fa-arrow-right ms-1"></i></p>
+                      </Link>
                     </div>
                   </div>
                 </div>
