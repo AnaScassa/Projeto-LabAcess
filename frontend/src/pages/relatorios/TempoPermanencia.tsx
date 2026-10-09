@@ -5,6 +5,7 @@ import type { Usuario } from "../../types/Usuario";
 import CalculadorTempo from "../../components/relatorios/UsuarioIndividual";
 import FiltroPortasCheckbox from "../../components/filtros/Checkbox";
 import Filtrotempo from "../../components/filtros/FiltroTempo";
+import FiltroUsuario from "../../components/filtros/FiltroUsuario";
 import Menu from "../../components/style/Menu";
 
 
@@ -57,13 +58,7 @@ export default function TempoPermanencia() {
                       <label className="form-label mb-1 fw-semibold text-secondary">Usuário</label>
 
                       <div className="input-group w-100 flex-nowrap">
-                        <select className="form-control" value={usuarioSelecionado} onChange={(e) => filtrarUsuario(e.target.value)}>
-                          <option value="">-- Selecione --</option>
-                          {[...usuariosUnicos].sort((a, b) => a.nome_usuario.localeCompare(b.nome_usuario)).map((u) => (
-                            <option key={u.matricula} value={u.matricula}>{u.nome_usuario}</option>
-                          ))}
-                        </select>
-
+                        <FiltroUsuario usuarios={usuariosUnicos} usuarioSelecionado={usuarioSelecionado} onChange={filtrarUsuario}/>
                         <div className="input-group-text bg-white">
                           <i className="fas fa-user text-primary"></i>
                         </div>
@@ -85,4 +80,3 @@ export default function TempoPermanencia() {
     </div>
   );
 }
-

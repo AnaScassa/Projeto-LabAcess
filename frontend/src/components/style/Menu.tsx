@@ -101,8 +101,7 @@ export default function BotaoVoltar() {
             <ul className="navbar-nav ml-auto">
                 <li className="nav-item position-relative">
                     <button className="nav-link border-0 bg-primary d-flex align-items-center justify-content-center notification-trigger" 
-                        onClick={alternarNotificacoes} aria-expanded={notificacoesAbertas}
-                        aria-label="Abrir notificações" title="Notificações">
+                        onClick={alternarNotificacoes} aria-expanded={notificacoesAbertas} aria-label="Abrir notificações" title="Notificações">
                             <i className="fas fa-bell text-white mr-0" style={{fontSize: "18px"}}></i>
                             {notificacoesNaoLidas > 0 && (
                                 <span className="notification-badge" aria-label={`${notificacoesNaoLidas} não lidas`}>
@@ -160,11 +159,7 @@ export default function BotaoVoltar() {
                                 ))}
                             </div>
                             <div className="notification-popover-footer">
-                                <button
-                                    type="button"
-                                    onClick={apagarNotificacoes}
-                                    disabled={notificacoes.length === 0 || carregandoNotificacoes || apagandoNotificacoes}
-                                >
+                                <button type="button" onClick={apagarNotificacoes} disabled={notificacoes.length === 0 || carregandoNotificacoes || apagandoNotificacoes}>
                                     <i className={`fas ${apagandoNotificacoes ? "fa-spinner fa-spin" : "fa-trash-alt"}`} aria-hidden="true"></i>
                                     {apagandoNotificacoes ? "Apagando..." : "Apagar notificações"}
                                 </button>
@@ -177,9 +172,7 @@ export default function BotaoVoltar() {
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
             <div className="brand-link d-flex align-items-center px-3" style={{minHeight: "70px", position: "relative"}}>
                 <img src={logo} alt="Logo CCS" style={{width: "40px", height: "40px", objectFit: "contain", flexShrink: 0}} />
-                <span className="brand-text font-weight-light tituloMenu ml-1" style={{whiteSpace: "nowrap"}}>
-                    ControleLab
-                </span>
+                <span className="brand-text font-weight-light tituloMenu ml-1" style={{whiteSpace: "nowrap"}}>ControleLab</span>
                 <button className="btn btn-link p-0 text-white d-lg-none position-absolute" data-widget="pushmenu" 
                     style={{fontSize: "18px", right: "15px", top: "50%", transform: "translateY(-50%)"}}>
                         ✕

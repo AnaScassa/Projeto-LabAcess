@@ -80,7 +80,7 @@ const AgendamentosNaoUtilizados = () => {
       <div className="card-body p-0 d-flex flex-column" style={{ minHeight: 0, flex: 1 }}>
         <div className="table-responsive" style={{ flex: 1, overflowY: "auto" }}>
           <table className="table table-hover mb-0">
-            <thead className="table-light">
+            <thead className="table-light sticky-top">
               <tr>
                 <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{ cursor: "pointer" }} 
                   onClick={() => { setSortAsc((prev) => !prev); setPage(0); }}>Usuário {sortAsc ? "▲" : "▼"}
