@@ -47,6 +47,9 @@ class Processamento(models.Model):
 class Emails(models.Model):
     email = models.EmailField(unique=False)
     criado_em = models.DateTimeField(auto_now_add=True)
+    criado_por = models.CharField(max_length=100, null=True, unique=False)
+    modificado_em = models.DateTimeField(auto_now=True)
+    modificado_por = models.CharField(max_length=100, null=True, unique=False)
     esta_ativo = models.BooleanField(default=True)
     ativado = models.BooleanField(default=True)
     
