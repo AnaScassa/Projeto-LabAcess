@@ -25,7 +25,8 @@ const AcessosAgendados = () => {
   }, []);
 
   const dadosOrdenados = useMemo(() => {
-    return [...dados].sort((a, b) => sortAsc ? a.usuario.localeCompare(b.usuario, "pt", { sensitivity: "base" }) : b.usuario.localeCompare(a.usuario, "pt", { sensitivity: "base" }));
+    return [...dados].sort((a, b) => sortAsc ? a.usuario.localeCompare(b.usuario, "pt", { sensitivity: "base" }) : 
+      b.usuario.localeCompare(a.usuario, "pt", { sensitivity: "base" }));
   }, [dados, sortAsc]);
 
   const totalMes = useMemo(() => dados.reduce((total, item) => total + item.quantidade, 0), [dados]);
@@ -58,7 +59,7 @@ const AcessosAgendados = () => {
   const visiblePages = getVisiblePages(page, totalPaginas);
 
   return (
-    <div className="card border-0 border-top border-primary rounded-3 shadow-sm overflow-hidden" style={{ height: "450px" }}>
+    <div className="card rounded-3 shadow-sm overflow-hidden" style={{ height: "450px",  borderTop: "4px solid #28a745" }}>
       <div className="card-header bg-white border-bottom px-4 py-3">
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
           <div>
@@ -81,7 +82,8 @@ const AcessosAgendados = () => {
           <table className="table table-hover mb-0">
             <thead className="table-light">
               <tr>
-                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{ cursor: "pointer" }} onClick={() => { setSortAsc((prev) => !prev); setPage(0); }}>Usuário {sortAsc ? "▲" : "▼"}</th>
+                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold" style={{ cursor: "pointer" }} 
+                  onClick={() => { setSortAsc((prev) => !prev); setPage(0); }}>Usuário {sortAsc ? "▲" : "▼"}</th>
                 <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold text-center">Agendou e entrou</th>
               </tr>
             </thead>
@@ -90,7 +92,7 @@ const AcessosAgendados = () => {
               {carregando ? (
                 <tr>
                   <td colSpan={2} className="px-4 py-4 text-center text-secondary">
-                    <div className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
+                    <div className="spinner-border spinner-border-sm me-2 mr-1" role="status" aria-hidden="true"></div>
                     Carregando dados...
                   </td>
                 </tr>
@@ -102,7 +104,9 @@ const AcessosAgendados = () => {
                 paginaVisivel.map((item, i) => (
                   <tr key={item.matricula || i}>
                     <td className="px-4 py-3 align-middle">{item.usuario}</td>
-                    <td className="px-4 py-3 align-middle text-center"><span className="badge bg-success-subtle text-success rounded-pill px-3 py-2">{item.quantidade}</span></td>
+                    <td className="px-4 py-3 align-middle text-center">
+                      <span className="badge bg-success-subtle text-secondary rounded-pill px-3 py-2">{item.quantidade}</span>
+                    </td>
                   </tr>
                 ))
               )}
@@ -110,8 +114,7 @@ const AcessosAgendados = () => {
           </table>
         </div>
 
-        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 px-4 py-3 border-top bg-white">
-          <div className="text-secondary small"><span className="fw-semibold text-dark">Total:</span> {totalMes}</div>
+        <div className="d-flex flex-wrap align-items-center justify-content-end gap-3 px-4 py-3 border-top bg-white">
 
           <div className="d-flex justify-content-end" style={{ maxWidth: "100%", overflowX: "auto" }}>
             <div className="dataTables_paginate paging_simple_numbers">
@@ -139,7 +142,9 @@ const AcessosAgendados = () => {
                 })}
 
                 <li className={`paginate_button page-item ${page === totalPaginas - 1 || totalPaginas === 0 ? "disabled" : ""}`}>
-                  <button className="page-link" onClick={() => setPage(page + 1)} disabled={page === totalPaginas - 1 || totalPaginas === 0}>Próximo</button>
+                  <button className="page-link" onClick={() => setPage(page + 1)} disabled={page === totalPaginas - 1 || totalPaginas === 0}>
+                    Próximo
+                  </button>
                 </li>
               </ul>
             </div>
