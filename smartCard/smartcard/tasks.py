@@ -197,7 +197,7 @@ def processar_xls(self, caminho_arquivo, task_id):
         if usuario.user_auth is None:
             tentar_vincular_user_auth.delay(usuario.id, task_id)
             print("PROCESSAMENTO FINALIZADO")
-        elif usuario.username_mrbs:
+        elif usuario.username_mrbs and usuario.categoriaUsuario != "FUNCIONARIO":
             cruzamento_api.delay(usuario.user_auth, usuario.username_mrbs)
 
     if Acesso.objects.filter(apontamento=0):
@@ -336,7 +336,7 @@ def processar_csv(self, caminho_arquivo, task_id):
 
         if usuario.user_auth is None:
             tentar_vincular_user_auth.delay(usuario.id, task_id)
-        elif usuario.username_mrbs:
+        elif usuario.username_mrbs and usuario.categoriaUsuario != "FUNCIONARIO":
             cruzamento_api.delay(usuario.user_auth, usuario.username_mrbs)
             
     if Acesso.objects.filter(apontamento=0):

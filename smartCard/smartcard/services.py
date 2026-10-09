@@ -22,8 +22,9 @@ def vincular_por_matricula(usuario, profiles):
         if academic_id_norm == matricula_id:
             user_id = profile.get("user_id")
             username = profile.get("username")
-            
-            if user_id:
+            categoriaUsuario = profile.get("categoriaUsuario")
+
+            if user_id and categoriaUsuario != "FUNCIONARIO":
                 usuario.user_auth = user_id
                 usuario.save(update_fields=["user_auth"])
                 usuario.username_mrbs = username
