@@ -3,9 +3,10 @@ import type { Treinamento } from "../../types/Treinamento";
 
 interface Props {
   treinamentos: Treinamento[];
+  loading?: boolean;
 }
 
-export default function ContagemTreinamento({ treinamentos }: Props) {
+export default function ContagemTreinamento({ treinamentos, loading = false }: Props) {
   const dataHoje = new Date();
 
   let datasExpiradas = 0;
@@ -44,7 +45,9 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
               </div>
 
               <div className="training-card-number pl-2">
-                {datasExpiradas}
+                {loading ? (
+                  <div className="spinner-border spinner-border-sm me-2 mr-1" role="status" aria-hidden="true"></div>
+                ) : datasExpiradas}
               </div>
 
             </div>
@@ -71,7 +74,9 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
               </div>
 
               <div className="training-card-number pl-2">
-                {datasSemData}
+                {loading ? (
+                  <div className="spinner-border spinner-border-sm me-2 mr-1" role="status" aria-hidden="true"></div>
+                ) : datasSemData}
               </div>
 
             </div>
@@ -98,7 +103,9 @@ export default function ContagemTreinamento({ treinamentos }: Props) {
                 </div>
 
                 <div className="training-card-number pl-2">
-                  {datasAtivas}
+                  {loading ? (
+                    <div className="spinner-border spinner-border-sm me-2 mr-1" role="status" aria-hidden="true"></div>
+                  ) : datasAtivas}
                 </div>
 
               </div>
