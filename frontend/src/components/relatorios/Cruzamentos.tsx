@@ -129,7 +129,10 @@ export default function Cruzamentos({ paginacao = false, mostrarCabecalho = fals
         </div>
 
         {paginacao && (
-          <div className="d-flex flex-wrap align-items-center justify-content-end gap-3 px-4 py-3 border-top bg-white">
+          <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 px-4 py-3 border-top bg-white">
+            <div className="text-secondary small text-uppercase fw-semibold">
+              TOTAL: <span className="text-primary">{dadosOrdenados.length}</span>
+            </div>
             <div className="d-flex justify-content-end" style={{ maxWidth: "100%", overflowX: "auto" }}>
               <div className="dataTables_paginate paging_simple_numbers">
                 <ul className="pagination mb-0 flex-wrap">
