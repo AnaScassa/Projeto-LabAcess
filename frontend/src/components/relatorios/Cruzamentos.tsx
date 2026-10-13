@@ -73,7 +73,7 @@ export default function Cruzamentos({ paginacao = false, mostrarCabecalho = fals
   const visiblePages = getVisiblePages(page, totalPaginas);
 
   return (
-    <div className="card border-0 rounded-3 shadow-sm overflow-hidden d-flex flex-column mb-0" style={{ height: "477px", borderTop: "4px solid #ffc107" }}>
+    <div className="card border-0 rounded-3 overflow-hidden d-flex flex-column mb-0 shadow-none" style={{ height: "477px", borderTop: "4px solid #ffc107" }}>
       {mostrarCabecalho && (
         <div className="card-header bg-white border-bottom px-4 py-3">
           <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
@@ -95,13 +95,13 @@ export default function Cruzamentos({ paginacao = false, mostrarCabecalho = fals
         </div>
       )}
 
-      <div className="card-body p-0 overflow-auto m-0" style={{ minHeight: 0, flex: 1 }}>
-        <div className="table-responsive" style={{ flex: 1, overflowY: "auto" }}>
+      <div className="card-body p-0 overflow-hidden m-0 d-flex flex-column" style={{ minHeight: 0, flex: 1 }}>
+        <div className="table-responsive" style={{ minHeight: 0, flex: 1, overflowY: "auto" }}>
           <table className="table table-hover mb-0">
-            <thead className="table-light sticky-top">
+            <thead className="table-light">
               <tr>
-                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">Usuário</th>
-                <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold text-center">Data do acesso</th>
+                <th className="sticky-top bg-light px-4 py-3 text-secondary small text-uppercase fw-semibold">Usuário</th>
+                <th className="sticky-top bg-light px-4 py-3 text-secondary small text-uppercase fw-semibold text-center">Data do acesso</th>
               </tr>
             </thead>
 

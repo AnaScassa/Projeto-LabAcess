@@ -48,7 +48,7 @@ export default function Dashboard() {
         <section className="content px-4">
             <div className="row">
                 <div className="col-md-6 pb-4">
-                  <div className="card border-0 border-top border-primary rounded-3 shadow-sm overflow-hidden m-0" style={{ minHeight: "477px", maxHeight: "477px" }}>
+                  <div className="card border-0 border-top border-primary rounded-3 overflow-hidden m-0" style={{ minHeight: "477px", maxHeight: "477px" }}>
                     <div className="card-header bg-white border-bottom px-4 py-3">
                       <div>
                         <div className="d-flex align-items-center">
