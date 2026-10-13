@@ -4,6 +4,7 @@ import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
 import { minutosParaHoras } from "../../utils/horasMinutos";
 import { getNomeUsuario } from "../../utils/getNomeUsuario";
 import type { Relatorio } from "../../types/Relatorio";
+import TableBody from "../style/TableBody";
 
 type SortFieldPouco = "nome" | "tempoTotal";
 
@@ -145,20 +146,14 @@ export default function CalculadorLab({
             </tr>
           </thead>
 
-          <tbody>
-            {relatorio.length === 0 ? (
-              <tr>
-                <td colSpan={2} className="px-4 py-4 text-center text-secondary">Nenhum resultado encontrado.</td>
+          <TableBody data={paginaVisivel} hasData={relatorio.length > 0} colSpan={2}
+            emptyMessage="Nenhum resultado encontrado." renderRow={(r, i) => (
+              <tr key={i}>
+                <td className="px-4 py-3 align-middle">{r.usuario}</td>
+                <td className="px-4 py-3 align-middle">{r.tempoTotal}</td>
               </tr>
-            ) : (
-              paginaVisivel.map((r, i) => (
-                <tr key={i}>
-                  <td className="px-4 py-3 align-middle">{r.usuario}</td>
-                  <td className="px-4 py-3 align-middle">{r.tempoTotal}</td>
-                </tr>
-              ))
             )}
-          </tbody>
+          />
         </table>
       </div>
 

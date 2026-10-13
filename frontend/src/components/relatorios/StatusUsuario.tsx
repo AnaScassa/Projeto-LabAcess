@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { carregarUsuarios } from "../../services/usuarios";
 import { getUsuariosAtivos } from "../../services/usuariosAtivos";
 import type { Usuario } from "../../types/Usuario";
+import TableBody from "../style/TableBody";
 
 type UsuarioAtivo = {
   usuario_id: string;
@@ -17,6 +18,7 @@ type UsuarioComNome = UsuarioAtivo & {
 export default function StatusAluno() {
   const [usuariosCCS, setUsuariosCCS] = useState<UsuarioComNome[]>([]);
   const [usuariosLab, setUsuariosLab] = useState<UsuarioComNome[]>([]);
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
     async function carregar() {
@@ -42,6 +44,8 @@ export default function StatusAluno() {
 
       } catch (error) {
         console.error(error);
+      } finally {
+        setCarregando(false);
       }
     }
 
@@ -76,20 +80,22 @@ export default function StatusAluno() {
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                {usuariosCCS.map((usuario) => (
+              <TableBody data={usuariosCCS} colSpan={2} loading={carregando}
+                emptyMessage="Nenhum usuário ativo no CCS." renderRow={(usuario) => (
                   <tr key={usuario.usuario_id}>
                     <td className="px-4 py-3 align-middle">
-                      <span className="fw-semibold text-dark">
-                        {usuario.nome_usuario}
-                      </span>
+                      <span className="fw-semibold text-dark">{usuario.nome_usuario}</span>
                     </td>
                     <td className="px-4 py-3 align-middle text-end text-secondary text-nowrap">
-                      {new Date(usuario.data_acesso).toLocaleTimeString("pt-BR", {hour: "2-digit", minute: "2-digit", second: "2-digit"})}
+                      {new Date(usuario.data_acesso).toLocaleTimeString("pt-BR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })}
                     </td>
                   </tr>
-                ))}
-              </tbody>
+                )}
+              />
             </table>
           </div>
 
@@ -129,8 +135,8 @@ export default function StatusAluno() {
                 </tr>
               </thead>
 
-              <tbody>
-                {usuariosLab.map((usuario) => (
+              <TableBody data={usuariosLab} colSpan={2} loading={carregando}
+                emptyMessage="Nenhum usuário ativo no laboratório." renderRow={(usuario) => (
                   <tr key={usuario.usuario_id}>
                     <td className="px-4 py-3 align-middle">
                       <span className="fw-semibold text-dark">
@@ -141,8 +147,8 @@ export default function StatusAluno() {
                       {new Date(usuario.data_acesso).toLocaleTimeString("pt-BR", {hour: "2-digit", minute: "2-digit", second: "2-digit"})}
                     </td>
                   </tr>
-                ))}
-              </tbody>
+                )}
+              />
             </table>
           </div>
 

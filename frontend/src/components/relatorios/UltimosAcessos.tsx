@@ -1,8 +1,9 @@
 import { useUsuarios } from "../../hooks/useUsuarios";
 import type { Usuario } from "../../types/Usuario";
+import TableBody from "../style/TableBody";
 
 export default function UltimosAcessos() {
-    const { usuarios } = useUsuarios();
+    const { usuarios, loading } = useUsuarios();
     const dataAtual = Date.now();
 
     const acessos24Horas = usuarios.flatMap((usuario: Usuario) => {
@@ -63,8 +64,8 @@ export default function UltimosAcessos() {
                         </thead>
 
 
-                        <tbody>
-                            {acessosOrdenados.map((acesso, index) => {
+                        <TableBody data={acessosOrdenados} colSpan={4} loading={loading}
+                            emptyMessage="Nenhum acesso nas últimas 24 horas." renderRow={(acesso, index) => {
                                 const entrada = acesso.ent_sai === "1";
                                 const data = new Date(acesso.data_acesso);
                                 return (
@@ -82,11 +83,7 @@ export default function UltimosAcessos() {
                                                     {data.toLocaleDateString("pt-BR")}
                                                 </span>
                                                 <small className="text-secondary">
-                                                    {data.toLocaleTimeString("pt-BR", {
-                                                        hour: "2-digit",
-                                                        minute: "2-digit",
-                                                        second: "2-digit",
-                                                    })}
+                                                    {data.toLocaleTimeString("pt-BR", {hour: "2-digit", minute: "2-digit", second: "2-digit"})}
                                                 </small>
                                             </div>
                                         </td>
@@ -112,9 +109,8 @@ export default function UltimosAcessos() {
                                         </td>
                                     </tr>
                                 );
-                            })}
-
-                        </tbody>
+                            }}
+                        />
                     </table>
                 </div>
 

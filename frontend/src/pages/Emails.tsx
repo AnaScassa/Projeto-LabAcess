@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import Menu from "../components/style/Menu";
+import TableBody from "../components/style/TableBody";
 import {listaEmails, cadastrarEmail, desativarEmail} from "../services/email";
 import type { Email } from "../types/Email";
 
 export default function Emails() {
     const [emails, setEmails] = useState<Email[]>([]);
     const [email, setEmail] = useState("");
+    const [carregando, setCarregando] = useState(true);
 
     const carregarEmails = async () => {
+        setCarregando(true);
         try {
             const res = await listaEmails();
             if (!res) return;
@@ -16,8 +19,12 @@ export default function Emails() {
             setEmails(data);
         } catch (error) {
             console.error(error);
+        } finally {
+            setCarregando(false);
         }
     };
+
+    const emailsAtivos = emails.filter((item) => item.ativado);
 
     useEffect(() => {
         carregarEmails();
@@ -134,8 +141,8 @@ export default function Emails() {
                                         </tr>
                                     </thead>
 
-                                    <tbody>
-                                        {emails.filter((item) => item.ativado).map((item) => (
+                                    <TableBody data={emailsAtivos} colSpan={3} loading={carregando}
+                                        emptyMessage="Nenhum e-mail ativo cadastrado." renderRow={(item) => (
                                             <tr key={item.id}>
                                                 <td className="px-4 py-3 align-middle">{item.email}</td>
 
@@ -151,16 +158,8 @@ export default function Emails() {
                                                     </button>
                                                 </td>
                                             </tr>
-                                        ))}
-
-                                        {emails.length === 0 && (
-                                            <tr>
-                                                <td colSpan={3} className="text-center py-4 text-secondary">
-                                                    Nenhum e-mail cadastrado.
-                                                </td>
-                                            </tr>
                                         )}
-                                    </tbody>
+                                    />
                                 </table>
                             </div>
                         </div>

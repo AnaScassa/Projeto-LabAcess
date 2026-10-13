@@ -9,7 +9,7 @@ import { useTreinamento } from "../hooks/useTreinamento";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {
-  const { treinamentos } = useTreinamento();  
+  const { treinamentos, loading: carregandoTreinamentos } = useTreinamento();
 
   return (
     <div className="wrapper">
@@ -27,7 +27,7 @@ export default function Dashboard() {
         </div>
 
         <section className="content px-4 pt-2 pb-4">
-            <ContagemTreinamento treinamentos={treinamentos} />
+            <ContagemTreinamento treinamentos={treinamentos} loading={carregandoTreinamentos} />
         </section>
 
         <section className="content px-4">

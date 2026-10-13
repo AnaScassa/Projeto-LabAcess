@@ -3,6 +3,7 @@ import { useUsuarios } from "../../hooks/useUsuarios";
 import { useApontamentoActions } from "../../hooks/useDesativamento";
 import type { Apontamento } from "../../types/Apontamento";
 import type { Usuario } from "../../types/Usuario";
+import TableBody from "../style/TableBody";
 
 export default function UsoIndevidoCartao() {
   const { usuarios } = useUsuarios();
@@ -50,23 +51,15 @@ export default function UsoIndevidoCartao() {
             <table className="table table-hover mb-0">
               <thead className="table-light sticky-top" style={{ zIndex: 1 }}>
                 <tr>
-                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
-                      Usuário
-                  </th>
-                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
-                      Data
-                  </th>
-                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">
-                      Evento
-                  </th>
-                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold text-center" style={{ width: "70px" }}>
-                      Ação
-                  </th>
+                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">Usuário</th>
+                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">Data</th>
+                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">Evento</th>
+                  <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold text-center" style={{ width: "70px" }}>Ação</th>
                 </tr>
               </thead>
 
-              <tbody>
-                {filteredApontamentos.map((ap: Apontamento) => {
+              <TableBody data={filteredApontamentos} colSpan={4}
+                emptyMessage="Nenhuma ocorrência de uso indevido encontrada." renderRow={(ap: Apontamento) => {
                   const usuario = usuarios.find((u: Usuario) => u.matricula === ap.usuario_id);
                   const data = new Date(ap.data_acesso);
 
@@ -103,8 +96,8 @@ export default function UsoIndevidoCartao() {
                     </tr>
 
                   );
-                })}
-              </tbody>
+                }}
+              />
             </table>
           </div>
 

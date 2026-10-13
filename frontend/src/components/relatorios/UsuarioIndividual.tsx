@@ -7,6 +7,7 @@ import { minutosParaHoras } from "../../utils/horasMinutos";
 import { mediaHorasMinutos } from "../../utils/mediaHorasMinutos";
 import { entradaSemSaida } from "../../utils/entradaSemSaida";
 import { mesmoDia } from "../../utils/mesmoDia";
+import TableBody from "../style/TableBody";
 
 interface CalculadorTempoProps {
   usuario: any;
@@ -284,13 +285,8 @@ export default function CalculadorTempo({
               </tr>
             </thead>
 
-            <tbody>
-              {paginaVisivel.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="text-center py-4 text-secondary">Nenhum resultado encontrado.</td>
-                </tr>
-              ) : (
-                paginaVisivel.map((r, i) => (
+            <TableBody data={paginaVisivel} colSpan={5}
+              emptyMessage="Nenhum resultado encontrado." renderRow={(r, i) => (
                   <tr key={i}>
                     <td className="px-4 py-3 align-middle">{r.usuario}</td>
                     <td className="px-4 py-3 align-middle">{r.entrada}</td>
@@ -298,9 +294,8 @@ export default function CalculadorTempo({
                     <td className="px-4 py-3 align-middle">{r.porta}</td>
                     <td className="px-4 py-3 align-middle fw-semibold">{r.permanencia}</td>
                   </tr>
-                ))
               )}
-            </tbody>
+            />
           </table>
         </div>
 

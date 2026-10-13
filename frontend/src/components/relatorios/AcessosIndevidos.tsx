@@ -3,6 +3,7 @@ import { useUsuarios } from "../../hooks/useUsuarios";
 import { useApontamentoActions } from "../../hooks/useDesativamento";
 import type { Apontamento } from "../../types/Apontamento";
 import type { Usuario } from "../../types/Usuario";
+import TableBody from "../style/TableBody";
 
 export default function AcessoIndevidos() {
   const { usuarios } = useUsuarios();
@@ -74,8 +75,8 @@ export default function AcessoIndevidos() {
               </tr>
             </thead>
 
-            <tbody>
-              {filteredApontamentos.map((ap: Apontamento) => {
+            <TableBody data={filteredApontamentos} colSpan={4} emptyMessage="Nenhuma ocorrência inconsistente encontrada na última semana."
+              renderRow={(ap: Apontamento) => {
                 const usuario = usuarios.find((u: Usuario) => u.matricula === ap.usuario_id);
                 const data = new Date(ap.data_acesso);
 
@@ -113,8 +114,8 @@ export default function AcessoIndevidos() {
                     </td>
                   </tr>
                 );
-              })}
-            </tbody>
+              }}
+            />
           </table>
         </div>
 

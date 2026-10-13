@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { calcularTempoUsuario } from "../../utils/calcularTempoUsuario";
 import { getMatriculaBase } from "../../utils/getMatriculaBase";
+import TableBody from "../style/TableBody";
 
 interface SemAcessoProps {
   usuarios: any[];
@@ -120,19 +121,13 @@ export default function SemAcesso({
             </tr>
           </thead>
 
-          <tbody>
-            {semAcessoOrdenado.length === 0 ? (
-              <tr>
-                <td className="px-4 py-4 text-center text-secondary">Todos os usuários acessaram o laboratório.</td>
+          <TableBody data={paginaVisivel} hasData={semAcessoOrdenado.length > 0} colSpan={1}
+            emptyMessage="Todos os usuários acessaram o laboratório." renderRow={(u, i) => (
+              <tr key={i}>
+                <td className="px-4 py-3 align-middle">{u.usuario}</td>
               </tr>
-            ) : (
-              paginaVisivel.map((u, i) => (
-                <tr key={i}>
-                  <td className="px-4 py-3 align-middle">{u.usuario}</td>
-                </tr>
-              ))
             )}
-          </tbody>
+          />
         </table>
       </div>
 

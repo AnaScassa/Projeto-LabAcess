@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { buscarAcessosAgendados, type AcessoAgendado } from "../../services/acessosAgendados";
+import TableBody from "../style/TableBody";
 
 const AcessosAgendados = () => {
   const [dados, setDados] = useState<AcessoAgendado[]>([]);
@@ -88,29 +89,16 @@ const AcessosAgendados = () => {
               </tr>
             </thead>
 
-            <tbody>
-              {carregando ? (
-                <tr>
-                  <td colSpan={2} className="px-4 py-4 text-center text-secondary">
-                    <div className="spinner-border spinner-border-sm me-2 mr-1" role="status" aria-hidden="true"></div>
-                    Carregando dados...
+            <TableBody data={paginaVisivel} hasData={dadosOrdenados.length > 0} colSpan={2} loading={carregando}
+              emptyMessage="Nenhum acesso agendado encontrado." renderRow={(item, i) => (
+                <tr key={item.matricula || i}>
+                  <td className="px-4 py-3 align-middle">{item.usuario}</td>
+                  <td className="px-4 py-3 align-middle text-center">
+                    <span className="badge bg-success-subtle text-secondary rounded-pill px-3 py-2">{item.quantidade}</span>
                   </td>
                 </tr>
-              ) : dadosOrdenados.length === 0 ? (
-                <tr>
-                  <td colSpan={2} className="px-4 py-4 text-center text-secondary">Nenhum acesso agendado encontrado.</td>
-                </tr>
-              ) : (
-                paginaVisivel.map((item, i) => (
-                  <tr key={item.matricula || i}>
-                    <td className="px-4 py-3 align-middle">{item.usuario}</td>
-                    <td className="px-4 py-3 align-middle text-center">
-                      <span className="badge bg-success-subtle text-secondary rounded-pill px-3 py-2">{item.quantidade}</span>
-                    </td>
-                  </tr>
-                ))
               )}
-            </tbody>
+            />
           </table>
         </div>
 

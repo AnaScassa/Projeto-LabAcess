@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { carregarCruzamentos, type Cruzamento } from "../../services/cruzamento";
 import FiltroUsuario from "../../components/filtros/FiltroUsuario";
+import TableBody from "../style/TableBody";
 
 interface CruzamentosProps {
   paginacao?: boolean;
@@ -105,38 +106,25 @@ export default function Cruzamentos({ paginacao = false, mostrarCabecalho = fals
               </tr>
             </thead>
 
-            <tbody>
-              {carregando ? (
-                <tr>
-                  <td colSpan={2} className="px-4 py-4 text-center text-secondary">
-                    <div className="spinner-border spinner-border-sm me-2 mr-1  " role="status" aria-hidden="true"></div>
-                    Carregando dados...
-                  </td>
-                </tr>
-              ) : dadosOrdenados.length === 0 ? (
-                <tr>
-                  <td colSpan={2} className="px-4 py-4 text-center text-secondary">Nenhum acesso sem agendamento encontrado.</td>
-                </tr>
-              ) : (
-                paginaVisivel.map((cruzamento) => {
-                  const data = new Date(cruzamento.data_acesso);
+            <TableBody data={paginaVisivel} hasData={dadosOrdenados.length > 0} colSpan={2} loading={carregando}
+              emptyMessage="Nenhum acesso sem agendamento encontrado." renderRow={(cruzamento) => {
+                const data = new Date(cruzamento.data_acesso);
 
-                  return (
-                    <tr key={cruzamento.id}>
-                      <td className="px-4 py-3 align-middle">{cruzamento.usuario}</td>
-                      <td className="px-4 py-3 align-middle text-center">
-                        <div className="d-flex flex-column align-items-center">
-                          <span className="text-dark">{data.toLocaleDateString("pt-BR")}</span>
-                          <small className="text-secondary">
-                            {data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-                          </small>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
+                return (
+                  <tr key={cruzamento.id}>
+                    <td className="px-4 py-3 align-middle">{cruzamento.usuario}</td>
+                    <td className="px-4 py-3 align-middle text-center">
+                      <div className="d-flex flex-column align-items-center">
+                        <span className="text-dark">{data.toLocaleDateString("pt-BR")}</span>
+                        <small className="text-secondary">
+                          {data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                        </small>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              }}
+            />
           </table>
         </div>
 
