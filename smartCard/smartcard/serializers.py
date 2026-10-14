@@ -34,6 +34,7 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
                 "data_acesso": localtime(acesso.data_acesso),
                 "desc_area": acesso.desc_area,
                 "ent_sai": acesso.ent_sai,
+                "eh_agendado": acesso.eh_agendado,
                 "apontamento": acesso.apontamento,
             }
             for acesso in acessos
@@ -61,6 +62,7 @@ class AcessoSerializer(serializers.HyperlinkedModelSerializer):
             'desc_area',
             'desc_leitor',
             'ent_sai',
+            'eh_agendado',
             'username_auth',
             'categoriaUsuario',
             'email_auth',
@@ -73,6 +75,24 @@ class AcessoSerializer(serializers.HyperlinkedModelSerializer):
     def get_email_auth(self, obj):
         perfil = self._get_perfil(obj.usuario.matricula)
         return perfil.user.email if perfil else None
+
+
+class AcessoListSerializer(serializers.ModelSerializer):
+    usuario = serializers.SlugRelatedField(slug_field='matricula', read_only=True)
+
+    class Meta:
+        model = Acesso
+        fields = [
+            'id',
+            'usuario',
+            'data_acesso',
+            'desc_evento',
+            'desc_area',
+            'desc_leitor',
+            'ent_sai',
+            'eh_agendado',
+        ]
+
 
 class UploadAcessoSerializer(serializers.Serializer):
     arquivo = serializers.FileField()

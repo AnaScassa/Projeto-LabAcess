@@ -1,6 +1,6 @@
 import redis
 
-from smartcard.serializers import (GroupSerializer, AcessoSerializer, UsuarioSerializer, ProcessamentoSerializer, ApontamentoSerializer)
+from smartcard.serializers import (GroupSerializer, AcessoSerializer, AcessoListSerializer, UsuarioSerializer, ProcessamentoSerializer, ApontamentoSerializer)
 from smartcard.models import Acesso, Usuario, Processamento
 
 from django.http import StreamingHttpResponse
@@ -28,6 +28,11 @@ class AcessoViewSet(viewsets.ModelViewSet):
     queryset = Acesso.objects.all() 
     serializer_class = AcessoSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return AcessoListSerializer
+        return super().get_serializer_class()
 
 class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Usuario.objects.all().order_by("nome_usuario")
