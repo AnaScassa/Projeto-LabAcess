@@ -212,7 +212,7 @@ export default function BotaoVoltar() {
                 </button>
             </div>
 
-            <div className="sidebar">
+            <div className="sidebar d-flex flex-column">
                 <nav className="mt-2">
                     <ul className="nav nav-pills nav-sidebar flex-column">
                         <li className="nav-item">
@@ -317,6 +317,16 @@ export default function BotaoVoltar() {
                                     </Link>
                                 </li>
                             </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <nav className="mt-auto">
+                    <ul className="nav nav-pills nav-sidebar flex-column">
+                        <li className="nav-item align-items-end d-flex justify-content-between">
+                            <Link to="/adm" className={`nav-link ${isActive("/adm") ? "active bg-white text-dark" : ""}`}>
+                                <i className="fas fa-cogs mr-0 ml-1"></i>
+                                <p className="ml-1">Administração</p>
+                            </Link>
                         </li>
                     </ul>
                 </nav>
