@@ -2,6 +2,7 @@ import Menu from "../components/style/Menu";
 import AcessosAgendados from "../components/relatorios/AcessosAgendados";
 import AgendamentosNaoUtilizados from "../components/relatorios/AgendamentosNaoUtilizados";
 import Cruzamentos from "../components/relatorios/Cruzamentos";
+import GraficosAgendamentoAno from "../components/graficos/GraficosAgendamentoAno";
 
 export default function Agendamento() {
   return (
@@ -32,6 +33,10 @@ export default function Agendamento() {
               <Cruzamentos paginacao mostrarCabecalho />
             </div>
           </div>
+        </section>
+
+        <section className="content px-4 pb-4">
+          <GraficosAgendamentoAno />
         </section>
 
       </div>

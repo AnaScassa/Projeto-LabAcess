@@ -8,6 +8,7 @@ export type Usuario = {
     desc_area: string;
     data_acesso: string;
     ent_sai: string;
+    eh_agendado: boolean;
     apontamento?: number; 
   }[];
 };
