@@ -1,23 +1,34 @@
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { buscarNotificacoesUsuario } from "../../services/buscarNotificacoesUsuario";
 import { apagarNotificacoesUsuario } from "../../services/apagarNotificacoesUsuario";
+import { escutarNotificacoesUsuario } from "../../services/notificacoesStream";
 import logo from "../../../public/logo2.png";
 
 type NotificacaoUsuario = {
     id: number;
-    lida: boolean;
+    lida?: boolean;
     acesso: {
         id: number;
         nome_usuario: string;
         matricula: string;
-        data: string;
+        data: string | null;
         hora: string;
         porta: string;
         mensagem: string;
     } | null;
 };
+
+function formatarData(data: string | null): string {
+    if (!data) return "—";
+
+    const correspondencia = /^(\d{4})-(\d{2})-(\d{2})$/.exec(data);
+    if (!correspondencia) return data;
+
+    const [, ano, mes, dia] = correspondencia;
+    return `${dia}/${mes}/${ano}`;
+}
 
 export default function BotaoVoltar() {
     const { username } = useAuth();
@@ -26,25 +37,45 @@ export default function BotaoVoltar() {
     const location = useLocation();
     const [notificacoesAbertas, setNotificacoesAbertas] = useState(false);
     const [notificacoes, setNotificacoes] = useState<NotificacaoUsuario[]>([]);
+    const [quantidadeNaoLidas, setQuantidadeNaoLidas] = useState(0);
     const [carregandoNotificacoes, setCarregandoNotificacoes] = useState(false);
     const [apagandoNotificacoes, setApagandoNotificacoes] = useState(false);
     const [erroNotificacoes, setErroNotificacoes] = useState(false);
+    const idsNotificacoesConhecidos = useRef(new Set<number>());
 
     const isActive = (path: string) => location.pathname === path;
-    const notificacoesNaoLidas = notificacoes.filter((notificacao) => !notificacao.lida).length;
+
+    const atualizarNotificacoes = (resultado: NotificacaoUsuario[]) => {
+        setNotificacoes(resultado);
+        idsNotificacoesConhecidos.current = new Set(resultado.map((notificacao) => notificacao.id));
+        setQuantidadeNaoLidas(resultado.filter((notificacao) => !notificacao.lida).length);
+    };
 
     useEffect(() => {
-        let ativo = true;
+        const carregarNotificacoes = () => {
+            buscarNotificacoesUsuario().then((resultado: NotificacaoUsuario[]) => {
+                atualizarNotificacoes(resultado);
+                setErroNotificacoes(false);
+            }).catch(() => setErroNotificacoes(true));
+        };
 
-        buscarNotificacoesUsuario().then((resultado: NotificacaoUsuario[]) => {
-            if (ativo) setNotificacoes(resultado);
-        }).catch(() => {
-            if (ativo) setNotificacoes([]);
+        const pararDeEscutar = escutarNotificacoesUsuario({
+            aoConectar: () => {
+                carregarNotificacoes();
+            },
+            aoReceberNotificacao: (id) => {
+                if (idsNotificacoesConhecidos.current.has(id)) return;
+                idsNotificacoesConhecidos.current.add(id);
+                setQuantidadeNaoLidas((quantidade) => quantidade + 1);
+            },
+            aoErro: (erro) => {
+                console.error("Erro na conexão de notificações:", erro);
+                setErroNotificacoes(true);
+            },
         });
 
-        return () => {
-            ativo = false;
-        };
+        carregarNotificacoes();
+        return pararDeEscutar;
     }, []);
 
     const apagarNotificacoes = async () => {
@@ -58,6 +89,8 @@ export default function BotaoVoltar() {
         try {
             await apagarNotificacoesUsuario();
             setNotificacoes([]);
+            idsNotificacoesConhecidos.current.clear();
+            setQuantidadeNaoLidas(0);
         } catch {
             setErroNotificacoes(true);
         } finally {
@@ -77,7 +110,7 @@ export default function BotaoVoltar() {
 
         try {
             const resultado = await buscarNotificacoesUsuario();
-            setNotificacoes(resultado);
+            atualizarNotificacoes(resultado);
         } catch {
             setErroNotificacoes(true);
         } finally {
@@ -103,9 +136,9 @@ export default function BotaoVoltar() {
                     <button className="nav-link border-0 bg-primary d-flex align-items-center justify-content-center notification-trigger" 
                         onClick={alternarNotificacoes} aria-expanded={notificacoesAbertas} aria-label="Abrir notificações" title="Notificações">
                             <i className="fas fa-bell text-white mr-0" style={{fontSize: "18px"}}></i>
-                            {notificacoesNaoLidas > 0 && (
-                                <span className="notification-badge" aria-label={`${notificacoesNaoLidas} não lidas`}>
-                                    {notificacoesNaoLidas}
+                            {quantidadeNaoLidas > 0 && (
+                                <span className="notification-badge" aria-label={`${quantidadeNaoLidas} não lidas`}>
+                                    {quantidadeNaoLidas}
                                 </span>
                             )}
                     </button>
@@ -138,7 +171,7 @@ export default function BotaoVoltar() {
                                             <i className="fas fa-exclamation" aria-hidden="true"></i>
                                         </div>
                                         <div className="notification-row-content">
-                                            <p className="notification-row-title">
+                                            <p className="notification-row-title mb-0">
                                                 {notificacao.acesso?.mensagem || "Acesso para verificação"}
                                             </p>
                                             {notificacao.acesso ? (
@@ -147,7 +180,7 @@ export default function BotaoVoltar() {
                                                         {notificacao.acesso.nome_usuario} (matrícula {notificacao.acesso.matricula})
                                                     </p>
                                                     <p className="notification-row-detail">
-                                                        {notificacao.acesso.data} às {notificacao.acesso.hora} · Porta {notificacao.acesso.porta}
+                                                        {formatarData(notificacao.acesso.data)} às {notificacao.acesso.hora} · Porta {notificacao.acesso.porta}
                                                     </p>
                                                 </>
                                             ) : (

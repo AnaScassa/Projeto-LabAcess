@@ -1,4 +1,6 @@
 from datetime import date
+from typing import Any
+
 from .services import vincular_por_matricula
 from .models import Emails, Processamento, Usuario, Acesso, NotificacaoUsuario
 from fuzzywuzzy import fuzz
@@ -25,6 +27,26 @@ import redis
 
 load_dotenv()
 redis_client=redis.Redis(host="redis",port=6379,db=0,decode_responses=True)
+
+
+def criar_notificacoes_administradores(users: list[dict[str, Any]], acesso: Acesso) -> None:
+    for user in users:
+        if user.get("is_superuser") is not True:
+            continue
+
+        usuario_id = user.get("id")
+        if usuario_id is None:
+            continue
+
+        notificacao, criada = NotificacaoUsuario.objects.get_or_create(
+            usuario_id=usuario_id,
+            acesso=acesso,
+        )
+        if criada:
+            redis_client.publish(
+                f"notificacoes_usuario:{usuario_id}",
+                json.dumps({"tipo": "nova_notificacao", "id": notificacao.id}),
+            )
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
@@ -147,6 +169,7 @@ def processar_xls(self, caminho_arquivo, task_id):
             Leitor: {row.get('DESC_LEITOR', '')}
             """
             chave = f"uso_indebido:{obj.id}"
+            criar_notificacoes_administradores(users, obj)
 
             if not redis_client.exists(chave):
                 redis_client.set(chave, "1", ex=86400)
@@ -173,27 +196,7 @@ def processar_xls(self, caminho_arquivo, task_id):
                 except Exception as e:
                     print("ERRO:", repr(e))
                     raise
-                
-                usuarios_adm = [
-                    user for user in users
-                    if user.get("is_superuser") is True
-                ]
-                
-                for adm in usuarios_adm:
-                    id_adm = adm.get("id")
 
-                    if not adm:
-                        print(f"Usuario local não encontrado para user_auth={id_adm}")
-                        continue
-                                        
-                    try:
-                        NotificacaoUsuario.objects.get_or_create(usuario_id=id_adm, acesso=obj, defaults={"lida": False})
-                        print("foi as notificações")
-                    except Exception as e:
-                        print(f"ERRO NAS NOTIFICAÇÕES: {repr(e)}")
-                        raise
-                     
-                    
         if usuario.user_auth is None:
             tentar_vincular_user_auth.delay(usuario.id, task_id)
             print("PROCESSAMENTO FINALIZADO")
@@ -304,6 +307,7 @@ def processar_csv(self, caminho_arquivo, task_id):
 
         if apontamento == 1 and data.date() == data_atual:
             chave = f"uso_indebido:{obj.id}"
+            criar_notificacoes_administradores(users, obj)
 
             if not redis_client.exists(chave):
                 redis_client.set(chave, "1", ex=86400)

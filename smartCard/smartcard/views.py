@@ -344,23 +344,56 @@ def notificacoes_usuario(request):
     acesso_ids = [notificacao.acesso_id for notificacao in notificacoes if notificacao.acesso_id]
     mensagens_por_acesso = dict(Acesso.objects.filter(id__in=acesso_ids).values_list("id", "desc_evento"))
 
-    dados = [
-        {
-            "id": n.id,
+    dados = []
+    for notificacao in notificacoes:
+        acesso = notificacao.acesso
+        data_hora = (
+            timezone.localtime(acesso.data_acesso)
+            if acesso and acesso.data_acesso
+            else None
+        )
+        dados.append({
+            "id": notificacao.id,
             "acesso": {
-                "id": n.acesso.id,
-                "nome_usuario": n.acesso.usuario.nome_usuario,
-                "matricula": n.acesso.usuario.matricula,
-                "data": n.acesso.data_acesso.date() if n.acesso.data_acesso else None,
-                "hora": n.acesso.data_acesso.time() if n.acesso.data_acesso else None,
-                "porta": n.acesso.desc_leitor,
-                "mensagem": mensagens_por_acesso.get(n.acesso_id, n.acesso.desc_evento),
-            } if n.acesso else None,
-        }
-        for n in notificacoes
-    ]
+                "id": acesso.id,
+                "nome_usuario": acesso.usuario.nome_usuario,
+                "matricula": acesso.usuario.matricula,
+                "data": data_hora.date() if data_hora else None,
+                "hora": data_hora.time() if data_hora else None,
+                "porta": acesso.desc_leitor,
+                "mensagem": mensagens_por_acesso.get(notificacao.acesso_id, acesso.desc_evento),
+            } if acesso else None,
+        })
 
     return Response(dados)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+@renderer_classes([EventStreamRenderer])
+def notificacoes_usuario_stream(request):
+    usuario_id = request.user.id
+    canal = f"notificacoes_usuario:{usuario_id}"
+
+    def eventos():
+        pubsub = redis_client.pubsub()
+        pubsub.subscribe(canal)
+
+        try:
+            for mensagem in pubsub.listen():
+                if mensagem["type"] != "message":
+                    continue
+
+                yield f"data: {mensagem['data']}\n\n"
+        finally:
+            pubsub.unsubscribe(canal)
+            pubsub.close()
+
+    response = StreamingHttpResponse(eventos(), content_type="text/event-stream")
+    response["Cache-Control"] = "no-cache"
+    response["X-Accel-Buffering"] = "no"
+    return response
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
