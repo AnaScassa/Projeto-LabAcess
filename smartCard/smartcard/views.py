@@ -69,6 +69,8 @@ def desativar_email(request, id):
         email_obj = Emails.objects.get(id=id)
         email_obj.esta_ativo = False
         email_obj.ativado = False
+        email_obj.modificado_em = datetime.now()
+        email_obj.modificado_por = str(request.user.id)
         email_obj.save()
         return Response({"msg": "Email desativado com sucesso"})
     
@@ -90,10 +92,11 @@ def cadastrar_email(request):
             existing_email.esta_ativo = True
             existing_email.ativado = True
             existing_email.criado_em = datetime.now()
+            existing_email.criado_por = str(request.user.id)
             existing_email.save()
             return Response({"msg": "Email reativado com sucesso"}, status=200)
 
-    Emails.objects.create(email=email, ativado=True, esta_ativo=True, criado_em=datetime.now())    
+    Emails.objects.create(email=email, ativado=True, esta_ativo=True, criado_em=datetime.now(), criado_por=str(request.user.id))    
     
     return Response({"msg": "Email cadastrado com sucesso"}, status=201)
 
@@ -222,7 +225,7 @@ def emails(request):
 @permission_classes([IsAuthenticated])
 def registrar_email(request):
 
-    Emails.objects.get_or_create(email=request.user.email, defaults={"esta_ativo": True, "ativado": False, "criado_em": datetime.now()})
+    Emails.objects.get_or_create(email=request.user.email, criado_por=str(request.user.id), defaults={"esta_ativo": True, "ativado": False, "criado_em": datetime.now()})
 
     return Response({"message": "Email registrado com sucesso"})
 
