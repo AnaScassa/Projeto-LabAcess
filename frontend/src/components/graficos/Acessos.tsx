@@ -22,17 +22,18 @@ const MONTH_NAMES = [
   "Dez",
 ];
 
-function formatMonthLabel(monthKey: string) {
-  const [year, month] = monthKey.split("-").map(Number);
-  if (!year || !month) return monthKey;
-  return `${MONTH_NAMES[month - 1]}`;
+interface GraficoAcessosProps {
+  selectedYear: number | null;
+  onYearsAvailable: (years: number[], initialYear: number | null) => void;
 }
 
-export default function GraficoAcessos() {
+export default function GraficoAcessos({
+  selectedYear,
+  onYearsAvailable,
+}: GraficoAcessosProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [labels, setLabels] = useState<string[]>([]);
-  const [values, setValues] = useState<number[]>([]);
+  const [monthMinutes, setMonthMinutes] = useState<Map<string, number>>(new Map());
 
   useEffect(() => {
     async function loadChart() {
@@ -71,15 +72,13 @@ export default function GraficoAcessos() {
           });
         });
 
-        const anoAtual = new Date().getFullYear();
-        const anoDesejado = anoAtual - 1;
-        const filteredMonthKeys = Array.from(monthMinutes.keys()).filter((key) => {
-          const [year] = key.split("-").map(Number);
-          return year === anoDesejado;
-        }).sort();
+        const years = [...new Set(
+          Array.from(monthMinutes.keys(), (key) => Number(key.split("-")[0])),
+        )].sort((a, b) => b - a);
+        const previousYear = new Date().getFullYear() - 1;
 
-        setLabels(filteredMonthKeys.map(formatMonthLabel));
-        setValues(filteredMonthKeys.map((key) =>(monthMinutes.get(key) ?? 0) / 60));
+        setMonthMinutes(monthMinutes);
+        onYearsAvailable(years, years.includes(previousYear) ? previousYear : (years[0] ?? null));
 
       } catch (err) {
         console.error(err);
@@ -90,10 +89,16 @@ export default function GraficoAcessos() {
     }
 
     loadChart();
-  }, []);
+  }, [onYearsAvailable]);
 
-  if (loading) return <div>Carregando gráfico dos acessos do último ano</div>;
+  if (loading) return <div>Carregando gráfico dos acessos...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
+
+  const labels = MONTH_NAMES;
+  const values = MONTH_NAMES.map((_, index) => {
+    const monthKey = `${selectedYear}-${String(index + 1).padStart(2, "0")}`;
+    return (monthMinutes.get(monthKey) ?? 0) / 60;
+  });
 
   const data = {
     labels,
@@ -126,7 +131,7 @@ export default function GraficoAcessos() {
       },
       title: {
         display: true,
-        text: "Horas no CCS_LAB por mês",
+        text: `Horas no CCS_LAB por mês${selectedYear === null ? "" : ` - ${selectedYear}`}`,
       },
     },
     scales: {
@@ -140,8 +145,16 @@ export default function GraficoAcessos() {
   };
 
   return (
-    <div style={{ width: "100%", height: "100%", padding: 8 }}>
-      <Bar data={data} options={options} />
+    <div style={{ width: "100%", height: "100%", padding: 8, display: "flex", flexDirection: "column" }}>
+      {selectedYear === null ? (
+        <div className="d-flex flex-grow-1 justify-content-center align-items-center text-muted text-center">
+          Não há dados de acessos ao CCS_LAB para exibir.
+        </div>
+      ) : (
+        <div style={{ flex: 1, minHeight: 0 }}>
+          <Bar data={data} options={options} />
+        </div>
+      )}
     </div>
   );
 }

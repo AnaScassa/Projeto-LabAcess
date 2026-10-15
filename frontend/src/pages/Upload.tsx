@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { buscarRegistro } from "../services/buscarRegistro";
 import GraficoAcessos from "../components/graficos/Acessos";
 import GraficosUsuariosAtivos from "../components/graficos/UsuariosAtivos";
@@ -17,9 +17,16 @@ export default function Upload() {
   const [dataFim, setDataFim] = useState("");
   const [horaInicio, setHoraInicio] = useState("");
   const [horaFim, setHoraFim] = useState("");
+  const [anosAcessosDisponiveis, setAnosAcessosDisponiveis] = useState<number[]>([]);
+  const [anoAcessosSelecionado, setAnoAcessosSelecionado] = useState<number | null>(null);
   const buscarBloqueado = statusBusca !== null && statusBusca !== "finalizado" && statusBusca !== "erro";
 
   useMailhogNotifications();
+
+  const atualizarAnosAcessos = useCallback((anos: number[], anoInicial: number | null) => {
+    setAnosAcessosDisponiveis(anos);
+    setAnoAcessosSelecionado(anoInicial);
+  }, []);
 
   const onUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     await handleUpload(e);
@@ -114,17 +121,25 @@ export default function Upload() {
           <div className="col-md-6 pb-4">
             <div className="card rounded-3 shadow-sm overflow-hidden m-0" style={{ borderTop: "4px solid #17a2b8" }}>
               <div className="card-header bg-white border-bottom px-4 py-3">
-                <div className="d-flex flex-row align-items-center">
-                  <i className="fas fa-chart-bar text-primary me-2 pt-1"></i>
-                  <h5 className="mb-0 fw-semibold text-dark">Acessos do último ano 2025</h5>
+                <div className="d-flex align-items-center justify-content-between flex-wrap">
+                  <div className="d-flex flex-row align-items-center mr-2 mb-2 mb-sm-0">
+                    <i className="fas fa-chart-bar text-primary me-2 pt-1"></i>
+                    <h5 className="mb-0 fw-semibold text-dark">Horas de acesso ao CCS_LAB</h5>
+                  </div>
+                  <select className="form-control form-control-sm" style={{ width: "100px", height: "38px" }} value={anoAcessosSelecionado ?? ""}
+                    onChange={(event) => setAnoAcessosSelecionado(Number(event.target.value))} disabled={anosAcessosDisponiveis.length === 0}
+                    aria-label="Ano dos acessos ao CCS_LAB"
+                  >
+                    {anosAcessosDisponiveis.map((ano) => <option key={ano} value={ano}>{ano}</option>)}
+                  </select>
                 </div>
                 <div>
-                  <small className="text-secondary">Quantidade de acessos registrados ao longo do ano</small>
+                  <small className="text-secondary">Tempo de permanência mensal por ano selecionado</small>
                 </div>
               </div>
 
               <div className="card-body p-3" style={{height: "477px", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                <GraficoAcessos />
+                <GraficoAcessos selectedYear={anoAcessosSelecionado} onYearsAvailable={atualizarAnosAcessos} />
               </div>
             </div>
           </div>

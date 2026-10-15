@@ -79,12 +79,13 @@ export default function GraficosAgendamentoAno() {
 
   return (
     <div className="row w-100 mx-0">
-      <div className="col-12 col-xl-6 mb-4 px-2">
+      <div className="col-12 col-xl-6 mb-4">
         <div className="card border-0 rounded-lg shadow-sm h-100 overflow-hidden">
           <div className="card-header bg-white border-bottom px-3 py-3">
             <div className="d-flex align-items-center justify-content-between flex-wrap">
               <div className="d-flex align-items-center mr-2 mb-2 mb-sm-0">
-                <div className="d-flex align-items-center justify-content-center mr-3 flex-shrink-0" style={{ width: "42px", height: "42px", backgroundColor: "rgba(40, 167, 69, 0.12)", borderRadius: "8px" }}>
+                <div className="d-flex align-items-center justify-content-center mr-3 flex-shrink-0" style={{ width: "42px", height: "42px", 
+                  backgroundColor: "rgba(40, 167, 69, 0.12)", borderRadius: "8px" }}>
                   <i className="fas fa-calendar-check mr-0" style={{ color: "#28a745", fontSize: "18px" }}></i>
                 </div>
                 <div>
@@ -115,18 +116,19 @@ export default function GraficosAgendamentoAno() {
                 Não há acessos com data válida para exibir.
               </div>
             ) : (
-              <AcessosAgendadosAno labels={labels} valores={contagensAgendados.agendados} escalaMaxima={escalaMaxima}/>
+              <AcessosAgendadosAno labels={labels} valores={contagensAgendados.agendados} escalaMaxima={escalaMaxima + 30}/>
             )}
           </div>
         </div>
       </div>
 
-      <div className="col-12 col-xl-6 mb-4 px-2">
+      <div className="col-12 col-xl-6 mb-4">
         <div className="card border-0 rounded-lg shadow-sm h-100 overflow-hidden">
           <div className="card-header bg-white border-bottom px-3 py-3">
             <div className="d-flex align-items-center justify-content-between flex-wrap">
               <div className="d-flex align-items-center mr-2 mb-2 mb-sm-0">
-                <div className="d-flex align-items-center justify-content-center mr-3 flex-shrink-0" style={{ width: "42px", height: "42px", backgroundColor: "rgba(220, 53, 69, 0.12)", borderRadius: "8px" }}>
+                <div className="d-flex align-items-center justify-content-center mr-3 flex-shrink-0" style={{ width: "42px", height: "42px", 
+                  backgroundColor: "rgba(220, 53, 69, 0.12)", borderRadius: "8px" }}>
                   <i className="fas fa-calendar-times mr-0" style={{ color: "#dc3545", fontSize: "18px" }}></i>
                 </div>
                 <div>
@@ -156,7 +158,7 @@ export default function GraficosAgendamentoAno() {
                 Não há acessos com data válida para exibir.
               </div>
             ) : (
-              <AcessosNaoAgendadosAno labels={labels} valores={contagensNaoAgendados.naoAgendados} escalaMaxima={escalaMaxima}/>
+              <AcessosNaoAgendadosAno labels={labels} valores={contagensNaoAgendados.naoAgendados} escalaMaxima={escalaMaxima + 30}/>
             )}
           </div>
         </div>
