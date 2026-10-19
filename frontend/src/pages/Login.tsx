@@ -7,6 +7,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [isEntrando, setIsEntrando] = useState(false);
+  const valor = import.meta.env.VITE_FRONTEND_URL;
+  console.log(valor);
 
   const handleLogin = async () => {
     try {
