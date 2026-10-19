@@ -67,6 +67,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://ana.ccs.unicamp.br:3000",
     "http://ccspc-041.ccs.unicamp.br:3000",
+    "http://dev.ccs.unicamp.br:3000"
 ]
 
 # APPLICATIONS
