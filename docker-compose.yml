@@ -102,7 +102,7 @@ services:
     container_name: frontend_react
     
     environment:
-      VITE_FRONTEND_URL: dev.ccs.unicamp.br
+      VITE_FRONTEND_URL: ana.ccs.unicamp.br
 
     ports:
       - "3000:80"
@@ -122,6 +122,26 @@ services:
       - "6379:6379"
 
     restart: always
+
+  mrbs_mariadb:
+    image: mariadb:10.11
+
+    container_name: mrbs_mariadb
+
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: mrbs
+      MYSQL_USER: mrbsuser
+      MYSQL_PASSWORD: 123
+
+    ports:
+      - "3306:3306"
+
+    restart: always
+
+    volumes:
+      - mrbs_mariadb_data:/var/lib/mysql
+      - ./mrbs/mrbs.sql:/docker-entrypoint-initdb.d/mrbs_init.sql
 
   postgres:
     image: postgres:15
@@ -206,7 +226,8 @@ services:
 
     environment:
       <<: *kong-env
-
+      #KONG_DATABASE: "off"
+      #KONG_DECLARATIVE_CONFIG: /kong/declarative/kong-dbless.yaml
       KONG_ADMIN_LISTEN: 0.0.0.0:8081, 0.0.0.0:8444 ssl
       KONG_ADMIN_GUI_LISTEN: 0.0.0.0:8082, 0.0.0.0:8445 ssl
       KONG_ADMIN_GUI_URL: http://${GW_HOST:-localhost}:8082
@@ -215,6 +236,7 @@ services:
       KONG_PLUGINS: bundled,admin-only
 
     volumes:
+      - ./kong/declarative:/kong/declarative/
       - ./kong/plugins/admin-only:/usr/local/share/lua/5.1/kong/plugins/admin-only
 
     depends_on:
@@ -246,3 +268,4 @@ volumes:
   media_volume:
   postgres_smartcard:
   kong_db_data:
+  mrbs_mariadb_data:

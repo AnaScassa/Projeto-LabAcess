@@ -141,7 +141,7 @@ DATABASES = {
         "NAME": "mrbs",
         "USER": "root",
         "PASSWORD": "123",
-        "HOST": "host.docker.internal",
+        "HOST": "mrbs_mariadb",
         "PORT": "3306",
     },
 }

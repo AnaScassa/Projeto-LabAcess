@@ -105,12 +105,14 @@ ENV/
 
 # mkdocs documentation
 /site
+/mrbs
 
 # mypy
 .mypy_cache/
 
 .DS_Store
 *.sqlite3
+*.mrbs.sql
 media/
 *.pyc
 *.db
