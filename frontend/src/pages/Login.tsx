@@ -1,14 +1,12 @@
-import { useState } from "react";
 import { fazerLogin } from "../services/login";
 import { registrarEmail } from "../services/email";
+import { useState } from "react";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [isEntrando, setIsEntrando] = useState(false);
-  const valor = import.meta.env.VITE_FRONTEND_URL;
-  console.log(valor);
 
   const handleLogin = async () => {
     try {

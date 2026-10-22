@@ -1,4 +1,4 @@
-_format_version: "3.0"
+_format_version: '3.0'
 consumers:
 - jwt_secrets:
   - algorithm: HS256
@@ -49,7 +49,7 @@ services:
         - TRACE
         - CONNECT
         origins:
-        - http://ana.ccs.unicamp.br:3000
+        - http://dev.ccs.unicamp.br:3000
         preflight_continue: false
         private_network: true
       enabled: true
@@ -149,7 +149,7 @@ services:
         - POST
         - OPTIONS
         origins:
-        - http://ana.ccs.unicamp.br:3000
+        - http://dev.ccs.unicamp.br:3000
         preflight_continue: false
         private_network: false
       enabled: true
