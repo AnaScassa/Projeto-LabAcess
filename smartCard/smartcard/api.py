@@ -29,6 +29,9 @@ class AcessoViewSet(viewsets.ModelViewSet):
     serializer_class = AcessoSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("usuario")
+
     def get_serializer_class(self):
         if self.action == "list":
             return AcessoListSerializer

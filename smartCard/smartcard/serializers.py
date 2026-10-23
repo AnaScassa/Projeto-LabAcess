@@ -79,6 +79,7 @@ class AcessoSerializer(serializers.HyperlinkedModelSerializer):
 
 class AcessoListSerializer(serializers.ModelSerializer):
     usuario = serializers.SlugRelatedField(slug_field='matricula', read_only=True)
+    categoriaUsuario = serializers.CharField(source='usuario.categoriaUsuario', read_only=True, allow_null=True)
 
     class Meta:
         model = Acesso
@@ -91,6 +92,7 @@ class AcessoListSerializer(serializers.ModelSerializer):
             'desc_leitor',
             'ent_sai',
             'eh_agendado',
+            'categoriaUsuario',
         ]
 
 

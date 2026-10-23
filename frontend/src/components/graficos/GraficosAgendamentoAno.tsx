@@ -51,8 +51,9 @@ export default function GraficosAgendamentoAno() {
       try {
         const dados = await carregarAcessos();
         if (ativo) {
-          setAcessos(dados);
-          const anos = obterAnosDisponiveis(dados);
+          const acessosElegiveis = dados.filter((acesso) => acesso.desc_area === "CCS_LAB" && acesso.ent_sai === "1" && acesso.categoriaUsuario !== "FUNCIONARIO");
+          setAcessos(acessosElegiveis);
+          const anos = obterAnosDisponiveis(acessosElegiveis);
           const anoAtual = new Date().getFullYear();
           const anoInicial = anos.includes(anoAtual) ? anoAtual : (anos[0] ?? null);
           setAnoAgendados(anoInicial);

@@ -10,6 +10,7 @@ export interface Acesso {
   desc_leitor: string;
   ent_sai: string;
   eh_agendado: boolean;
+  categoriaUsuario: string | null;
 }
 
 export async function carregarAcessos(): Promise<Acesso[]> {
