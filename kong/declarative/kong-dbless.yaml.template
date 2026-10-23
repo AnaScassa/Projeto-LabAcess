@@ -49,11 +49,7 @@ services:
         - TRACE
         - CONNECT
         origins:
-<<<<<<<< HEAD:kong/declarative/kong-dbless.yaml.template
         - ${FRONTEND_HOST}
-========
-        - http://dev.ccs.unicamp.br:3000
->>>>>>>> b4709df2e228e1ad2d4fc23c1c9adcef1db32d35:kong/declarative/kong-dbless.yaml
         preflight_continue: false
         private_network: true
       enabled: true
@@ -153,11 +149,7 @@ services:
         - POST
         - OPTIONS
         origins:
-<<<<<<<< HEAD:kong/declarative/kong-dbless.yaml.template
         - ${FRONTEND_HOST}
-========
-        - http://dev.ccs.unicamp.br:3000
->>>>>>>> b4709df2e228e1ad2d4fc23c1c9adcef1db32d35:kong/declarative/kong-dbless.yaml
         preflight_continue: false
         private_network: false
       enabled: true
