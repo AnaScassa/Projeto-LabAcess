@@ -47,6 +47,7 @@ ALLOWED_HOSTS = [
     "users_service:8000",
     "localhost",
     "127.0.0.1",
+    "143.106.5.41",
     "*"
 ]
 
@@ -55,6 +56,7 @@ SECURE_PROXY_SSL_HEADER = None
 
 CSRF_TRUSTED_ORIGINS = [
     "http://users_service:8000",
+    f"http://{os.getenv('GW_HOST', 'localhost')}:8000",
 ]
 
 # USER MODEL
@@ -62,12 +64,10 @@ AUTH_USER_MODEL = 'users.User'
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://143.106.5.41:5173",
-    "http://localhost:3000",
-    "http://ana.ccs.unicamp.br:3000",
-    "http://ccspc-041.ccs.unicamp.br:3000",
-    "http://dev.ccs.unicamp.br:3000"
+    #"http://ana.ccs.unicamp.br:3000",
+    #"http://ccspc-041.ccs.unicamp.br:3000",
+    #"http://dev.ccs.unicamp.br:3000"
+    os.getenv("FRONTEND_HOST", "http://localhost:3000"),  # Use the environment variable or default to localhost
 ]
 
 # APPLICATIONS
