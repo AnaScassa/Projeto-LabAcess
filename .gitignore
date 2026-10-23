@@ -106,7 +106,7 @@ ENV/
 # mkdocs documentation
 /site
 /mrbs
-
+/secrets
 # mypy
 .mypy_cache/
 
