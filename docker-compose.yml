@@ -228,8 +228,8 @@ services:
 
     environment:
       <<: *kong-env
-      KONG_DATABASE: "off"
-      KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong-dbless.yaml
+      #KONG_DATABASE: "off"
+      #KONG_DECLARATIVE_CONFIG: /kong/declarative/kong-dbless.yaml
       KONG_ADMIN_LISTEN: 0.0.0.0:8081, 0.0.0.0:8444 ssl
       KONG_ADMIN_GUI_LISTEN: 0.0.0.0:8082, 0.0.0.0:8445 ssl
       KONG_ADMIN_GUI_URL: http://${GW_HOST:-localhost}:8082
@@ -242,10 +242,6 @@ services:
     volumes:
       - ./kong/declarative:/kong/declarative/
       - ./kong/plugins/admin-only:/usr/local/share/lua/5.1/kong/plugins/admin-only
-
-    command: >
-      sh -c "eval \"echo \\\"$(cat /kong/declarative/kong-dbless.yaml.template)\\\"\" > /usr/local/kong/kong-dbless.yaml
-      && /docker-entrypoint.sh kong docker-start"
 
     depends_on:
       kong-bootstrap:
