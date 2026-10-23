@@ -6,9 +6,14 @@ import TableBody from "../style/TableBody";
 interface CruzamentosProps {
   paginacao?: boolean;
   mostrarCabecalho?: boolean;
+  filtrarUltimaSemana?: boolean;
 }
 
-export default function Cruzamentos({ paginacao = false, mostrarCabecalho = false }: CruzamentosProps) {
+export default function Cruzamentos({
+  paginacao = false,
+  mostrarCabecalho = false,
+  filtrarUltimaSemana = false,
+}: CruzamentosProps) {
   const [cruzamentos, setCruzamentos] = useState<Cruzamento[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [page, setPage] = useState(0);
@@ -30,10 +35,24 @@ export default function Cruzamentos({ paginacao = false, mostrarCabecalho = fals
     };
   }, []);
 
+  const dadosExibidos = useMemo(() => {
+    if (!filtrarUltimaSemana) return cruzamentos;
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const umaSemanaAtras = new Date(hoje);
+    umaSemanaAtras.setDate(hoje.getDate() - 7);
+
+    return cruzamentos.filter((cruzamento) => {
+      const dataAcesso = new Date(cruzamento.data_acesso);
+      return dataAcesso >= umaSemanaAtras && dataAcesso < hoje;
+    });
+  }, [cruzamentos, filtrarUltimaSemana]);
+
   const usuariosUnicos = useMemo(() => {
     const usuariosPorMatricula = new Map<string, string>();
 
-    cruzamentos.forEach(({ matricula, usuario }) => {
+    dadosExibidos.forEach(({ matricula, usuario }) => {
       usuariosPorMatricula.set(matricula, usuario);
     });
 
@@ -41,12 +60,12 @@ export default function Cruzamentos({ paginacao = false, mostrarCabecalho = fals
       matricula,
       nome_usuario,
     }));
-  }, [cruzamentos]);
+  }, [dadosExibidos]);
 
   const dadosOrdenados = useMemo(() => {
-    return cruzamentos.filter((cruzamento) => !usuarioSelecionado || cruzamento.matricula === usuarioSelecionado)
+    return dadosExibidos.filter((cruzamento) => !usuarioSelecionado || cruzamento.matricula === usuarioSelecionado)
         .sort((a, b) => new Date(b.data_acesso).getTime() - new Date(a.data_acesso).getTime());
-  }, [cruzamentos, usuarioSelecionado]);
+  }, [dadosExibidos, usuarioSelecionado]);
 
   useEffect(() => {
     setPage(0);
@@ -107,7 +126,8 @@ export default function Cruzamentos({ paginacao = false, mostrarCabecalho = fals
             </thead>
 
             <TableBody data={paginaVisivel} hasData={dadosOrdenados.length > 0} colSpan={2} loading={carregando}
-              emptyMessage="Nenhum acesso sem agendamento encontrado." renderRow={(cruzamento) => {
+              emptyMessage={filtrarUltimaSemana ? "Nenhum acesso sem agendamento encontrado na última semana."
+                : "Nenhum acesso sem agendamento encontrado."} renderRow={(cruzamento) => {
                 const data = new Date(cruzamento.data_acesso);
 
                 return (

@@ -55,10 +55,10 @@ export default function Dashboard() {
                           <i className="fas fa-unlink text-primary me-2"></i>
                           <h5 className="mb-0 fw-semibold text-dark">Acessos sem Agendamento</h5>
                         </div>
-                        <small className="text-secondary">Acessos identificados sem registro no agendamento MRBS</small>
+                        <small className="text-secondary">Acessos identificados sem registro no agendamento MRBS na última semana</small>
                       </div>
                     </div>
-                    <Cruzamentos />
+                    <Cruzamentos filtrarUltimaSemana />
                     <div className="card-footer bg-light border-0 px-4 py-3 d-flex justify-content-end align-items-center">
                       <Link to="/agendamento" className="text-decoration-none">
                         <p className="text-primary small mb-0" style={{ cursor: "pointer" }}>Ver mais <i className="fas fa-arrow-right ms-1"></i></p>
