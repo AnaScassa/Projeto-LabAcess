@@ -37,7 +37,7 @@ export default function RelatorioTreinamento({users, usuarios, treinamentos, por
     if (!usuario?.acessos) return 0;
 
     const dataExpiracao = new Date(dataExp);
-    let acessos = usuario.acessos.filter(a => new Date(a.data_acesso) > dataExpiracao && a.ent_sai === "1");
+    let acessos = usuario.acessos.filter(a => a.data_acesso !== null && new Date(a.data_acesso) > dataExpiracao && a.ent_sai === "1");
 
     if (portasSelecionadas.length > 0 && !portasSelecionadas.includes("todas")) acessos = acessos.filter(a => portasSelecionadas.includes(a.desc_area));
     

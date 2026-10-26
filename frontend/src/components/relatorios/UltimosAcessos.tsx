@@ -7,17 +7,17 @@ export default function UltimosAcessos() {
     const dataAtual = Date.now();
 
     const acessos24Horas = usuarios.flatMap((usuario: Usuario) => {
-        return (usuario.acessos || []).filter((acesso) => {
+        return (usuario.acessos || []).flatMap((acesso) => {
+            if (acesso.data_acesso === null) return [];
             const dataAcesso = new Date(acesso.data_acesso).getTime();
             const diffHoras = (dataAtual - dataAcesso) / (1000 * 60 * 60);
-            return diffHoras <= 24;
-
-        }).map((acesso) => ({
-            usuario: usuario.nome_usuario,
-            data_acesso: acesso.data_acesso,
-            ent_sai: acesso.ent_sai,
-            desc_area: acesso.desc_area,
-        }));
+            return diffHoras <= 24 ? [{
+                usuario: usuario.nome_usuario,
+                data_acesso: acesso.data_acesso,
+                ent_sai: acesso.ent_sai,
+                desc_area: acesso.desc_area,
+            }] : [];
+        });
     });
 
     const acessosOrdenados = acessos24Horas.sort((a, b) => {

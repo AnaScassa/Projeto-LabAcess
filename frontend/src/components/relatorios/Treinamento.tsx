@@ -46,7 +46,7 @@ const getNomeHelper = (u: Users) => {
 const contarAcessosHelper = (usuario: Usuario, dataExp: string, portasSelecionadas: string[]) => {
   if (!usuario?.acessos) return 0;
   const dataExpiracao = new Date(dataExp);
-  let acessos = usuario.acessos.filter((a) => new Date(a.data_acesso) <= dataExpiracao && a.ent_sai === "1");
+  let acessos = usuario.acessos.filter((a) => a.data_acesso !== null && new Date(a.data_acesso) <= dataExpiracao && a.ent_sai === "1");
   if (portasSelecionadas.length > 0 && !portasSelecionadas.includes("todas")) {
     acessos = acessos.filter((a) => portasSelecionadas.includes(a.desc_area));
   }
@@ -55,11 +55,14 @@ const contarAcessosHelper = (usuario: Usuario, dataExp: string, portasSelecionad
 
 const getUltimoAcessoHelper = (usuario: Usuario, portasSelecionadas: string[]) => {
   if (!usuario?.acessos?.length) return null;
-  let acessos = usuario.acessos.filter((a) => a.ent_sai === "1");
+  let acessos = usuario.acessos.filter((a) => a.ent_sai === "1" && a.data_acesso !== null);
   if (portasSelecionadas.length > 0 && !portasSelecionadas.includes("todas")) {
     acessos = acessos.filter((a) => portasSelecionadas.includes(a.desc_area));
   }
-  const ultimo = acessos.map((a) => new Date(a.data_acesso)).filter((dt) => !Number.isNaN(dt.getTime())).sort((a, b) => b.getTime() - a.getTime())[0];
+  const ultimo = acessos
+    .flatMap((acesso) => acesso.data_acesso ? [new Date(acesso.data_acesso)] : [])
+    .filter((dt) => !Number.isNaN(dt.getTime()))
+    .sort((a, b) => b.getTime() - a.getTime())[0];
   return ultimo || null;
 };
 
@@ -84,7 +87,7 @@ const contarAcessosUltimos10MesesHelper = (usuario: Usuario, portasSelecionadas:
   if (!usuario?.acessos) return 0;
   const dezMesesAtras = new Date();
   dezMesesAtras.setMonth(dezMesesAtras.getMonth() - 10);
-  let acessos = usuario.acessos.filter((a) => new Date(a.data_acesso) >= dezMesesAtras && a.ent_sai === "1");
+  let acessos = usuario.acessos.filter((a) => a.data_acesso !== null && new Date(a.data_acesso) >= dezMesesAtras && a.ent_sai === "1");
   if (portasSelecionadas.length > 0 && !portasSelecionadas.includes("todas")) {
     acessos = acessos.filter((a) => portasSelecionadas.includes(a.desc_area));
   }

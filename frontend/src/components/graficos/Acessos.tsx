@@ -49,7 +49,7 @@ export default function GraficoAcessos({
         usuarios.forEach((user: Usuario) => {
           const acessosLab = (user.acessos ?? [])
             .filter((acesso) => acesso.desc_area === PORTA_LAB)
-            .map((acesso) => ({ ...acesso, dataHora: new Date(acesso.data_acesso), }))
+            .flatMap((acesso) => acesso.data_acesso ? [{ ...acesso, dataHora: new Date(acesso.data_acesso) }] : [])
             .filter((acesso) => !Number.isNaN(acesso.dataHora.getTime()))
             .sort((a, b) => a.dataHora.getTime() - b.dataHora.getTime());
 

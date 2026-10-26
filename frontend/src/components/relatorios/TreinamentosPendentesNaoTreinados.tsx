@@ -28,7 +28,8 @@ const usuariosComTreinamento = useMemo(() => {
   return new Set(treinamentos.map((t) => String(t.user_id)));
 }, [treinamentos]);
 
-const isAluno = (categoria: string) => {
+const isAluno = (categoria: string | null) => {
+  if (categoria === null) return false;
   return !isNaN(Number(categoria));
 };
 
@@ -46,8 +47,13 @@ const usuariosSemTreinamento = useMemo(() => {
 
       const acessos = usuarioRelacionado.acessos ?? [];
 
-      const ultimoAcesso = acessos.length > 0 ? acessos.reduce((maisRecente, atual) => 
-        new Date(atual.data_acesso) > new Date(maisRecente.data_acesso) ? atual : maisRecente).data_acesso : null;
+      const acessosComData = acessos.filter(
+        (acesso): acesso is typeof acesso & { data_acesso: string } => acesso.data_acesso !== null,
+      );
+      const ultimoAcesso = acessosComData.length > 0
+        ? acessosComData.reduce((maisRecente, atual) =>
+          new Date(atual.data_acesso) > new Date(maisRecente.data_acesso) ? atual : maisRecente).data_acesso
+        : null;
 
       return {
         nome: user.full_name, totalAcessos: acessos.length, ultimoAcesso,
