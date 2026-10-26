@@ -5,6 +5,10 @@ export const listaEmails = async () => {
     return await authFetch(`http://${API_HOST}:8000/api/acesso/lista-emails`);
 };
 
+export const registroEmails = async () => {
+    return await authFetch(`http://${API_HOST}:8000/api/acesso/registro-emails/`);
+};
+
 export const cadastrarEmail = async (email: string) => {
     return await authFetch(`http://${API_HOST}:8000/api/acesso/cadastrar-email/`, {
       method: "POST",

@@ -11,7 +11,7 @@ class ProcessamentoSerializer(serializers.ModelSerializer):
 
 class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
     acessos = serializers.SerializerMethodField()
-    user_auth_id = serializers.SerializerMethodField() 
+    user_auth_id = serializers.IntegerField(source="user_auth", required=False, allow_null=True)
 
     class Meta:
         model = Usuario 
@@ -22,6 +22,7 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
             'matricula',
             'nome_usuario',
             'categoriaUsuario',
+            'username_mrbs',
             'acessos',
         ]
 
@@ -31,7 +32,7 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
         return [
             {
                 "id": acesso.id,
-                "data_acesso": localtime(acesso.data_acesso),
+                "data_acesso": localtime(acesso.data_acesso) if acesso.data_acesso else None,
                 "desc_area": acesso.desc_area,
                 "ent_sai": acesso.ent_sai,
                 "eh_agendado": acesso.eh_agendado,
@@ -39,11 +40,6 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
             }
             for acesso in acessos
         ]
-
-    def get_user_auth_id(self, obj):
-        return obj.user_auth if obj.user_auth is not None else None
-
-
 
 class AcessoSerializer(serializers.HyperlinkedModelSerializer):
     usuario = serializers.SlugRelatedField(slug_field='matricula', queryset=Usuario.objects.all())
