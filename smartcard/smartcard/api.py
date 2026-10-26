@@ -9,8 +9,9 @@ from django.utils.translation import gettext as _
 
 from .models import Emails
 
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework import serializers, viewsets
 from rest_framework_sso.views import ObtainAuthorizationTokenView
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -37,13 +38,18 @@ class AcessoViewSet(viewsets.ModelViewSet):
             return AcessoListSerializer
         return super().get_serializer_class()
 
-class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
+class UsuarioViewSet(ListModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     queryset = Usuario.objects.all().order_by("nome_usuario")
     serializer_class = UsuarioSerializer 
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return super().get_queryset()
+
+    def get_permissions(self):
+        if self.action in ("update", "partial_update"):
+            return [IsAdminUser()]
+        return super().get_permissions()
 
 class EventStreamRenderer(BaseRenderer):
     media_type = "text/event-stream"
