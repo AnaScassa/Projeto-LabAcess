@@ -438,3 +438,9 @@ def agendamentos_nao_utilizados(request):
     resultado.sort(key=lambda x: x["quantidade"], reverse=True)
 
     return Response(resultado)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def registro_emails(request):
+    emails = Emails.objects.values()
+    return Response(list(emails), status=status.HTTP_200_OK)
