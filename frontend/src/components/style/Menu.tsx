@@ -31,7 +31,7 @@ function formatarData(data: string | null): string {
 }
 
 export default function BotaoVoltar() {
-    const { username } = useAuth();
+    const { username, isAdmin } = useAuth();
     const [relatoriosAberto, setRelatoriosAberto] = useState(true);
     const [treinamentoAberto, setTreinamentoAberto] = useState(true);
     const location = useLocation();
@@ -322,12 +322,14 @@ export default function BotaoVoltar() {
                 </nav>
                 <nav className="mt-auto">
                     <ul className="nav nav-pills nav-sidebar flex-column">
-                        <li className="nav-item align-items-end d-flex justify-content-between">
-                            <Link to="/adm" className={`nav-link ${isActive("/adm") ? "active bg-white text-dark" : ""}`}>
-                                <i className="fas fa-cogs mr-0 ml-1"></i>
-                                <p className="ml-1">Administração</p>
-                            </Link>
-                        </li>
+                        {isAdmin && (
+                            <li className="nav-item align-items-end d-flex justify-content-between">
+                                <Link to="/adm" className={`nav-link ${isActive("/adm") ? "active bg-white text-dark" : ""}`}>
+                                    <i className="fas fa-cogs mr-0 ml-1"></i>
+                                    <p className="ml-1">Administração</p>
+                                </Link>
+                            </li>
+                        )}
                     </ul>
                 </nav>
             </div>

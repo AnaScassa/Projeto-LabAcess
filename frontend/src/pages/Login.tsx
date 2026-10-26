@@ -1,5 +1,6 @@
 import { fazerLogin } from "../services/login";
 import { registrarEmail } from "../services/email";
+import { getTokenUserData, storeUserPermissions } from "../services/auth";
 import { useState } from "react";
 
 export default function Login() {
@@ -21,8 +22,13 @@ export default function Login() {
 
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
-      localStorage.setItem("id", String(data.id));
+      const tokenUserData = getTokenUserData(data.access);
+      const userId = data.id ? String(data.id) : tokenUserData.id;
+      if (userId) {
+        localStorage.setItem("id", userId);
+      }
       localStorage.setItem("username", username);
+      storeUserPermissions(data, data.access);
 
       if (data.email) {
         localStorage.setItem("email", data.email);
