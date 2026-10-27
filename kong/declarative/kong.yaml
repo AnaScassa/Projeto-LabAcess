@@ -148,6 +148,7 @@ services:
         methods:
         - GET
         - POST
+        - PATCH
         - OPTIONS
         origins:
         - http://localhost:3000
