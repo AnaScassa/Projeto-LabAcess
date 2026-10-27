@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { buscarStatusRpa, type StatusRpa } from "../../services/statusRpa";
 import { atualizarPermissaoSuperusuario, buscarUsuariosPrivilegiados } from "../../services/users";
 import type { UsuarioPrivilegiado } from "../../types/Users";
+import ErrosRpaAdmin from "./ErrosRpaAdmin";
 
 const INTERVALO_STATUS_MS = 15_000;
 
@@ -227,6 +228,8 @@ export default function ConfiguracoesAdmin() {
           </section>
         </div>
       </div>
+
+      <ErrosRpaAdmin />
 
       {usuarioEditando && (
         <div className="position-fixed d-flex align-items-center justify-content-center p-3" 
