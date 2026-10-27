@@ -20,6 +20,11 @@ export default function Login() {
 
       const data = await response.json();
 
+      if (data.is_superuser !== true) {
+        setMensagem("Apenas usuários superusuários podem acessar o sistema");
+        return false;
+      }
+
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
       const tokenUserData = getTokenUserData(data.access);

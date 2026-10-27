@@ -2,6 +2,7 @@ import logging
 
 from django.core.cache import cache
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import UserProfile, DegreeArea, User, SafetyTraining
 
@@ -111,6 +112,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
+        if not self.user.is_superuser:
+            raise AuthenticationFailed("Apenas usuários superusuários podem acessar o sistema.")
+
         data["id"] = self.user.id
         data["email"] = self.user.email
         data["username"] = self.user.username

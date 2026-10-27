@@ -3,22 +3,17 @@ import { Navigate } from "react-router-dom";
 
 type PrivateRouteProps = {
   children: ReactNode;
-  requireAdmin?: boolean;
 };
 
-export default function PrivateRoute({ children, requireAdmin = false }: PrivateRouteProps) {
+export default function PrivateRoute({ children }: PrivateRouteProps) {
   const token = localStorage.getItem("access");
 
-  if (!token) {
+  if (!token || localStorage.getItem("is_superuser") !== "true") {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("is_staff");
+    localStorage.removeItem("is_superuser");
     return <Navigate to="/login" replace />;
-  }
-
-  if (
-    requireAdmin &&
-    (localStorage.getItem("is_staff") !== "true" ||
-      localStorage.getItem("is_superuser") !== "true")
-  ) {
-    return <Navigate to="/" replace />;
   }
 
   return children;

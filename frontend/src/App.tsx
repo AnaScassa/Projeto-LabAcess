@@ -31,7 +31,7 @@ export default function App() {
       <Route path="/login" element={<Login/>} />
       <Route path="/relatorio-treinamentos-pendentes-nao-treinados" element={<PrivateRoute><TreinamentosPendentesNaoTreinados/></PrivateRoute>}/>
       <Route path="/agendamento" element={<PrivateRoute><Agendamento/></PrivateRoute>}/>
-      <Route path="/adm" element={<PrivateRoute requireAdmin><Adm/></PrivateRoute>} />
+      <Route path="/adm" element={<PrivateRoute><Adm/></PrivateRoute>} />
     </Routes>
   );
 }

@@ -181,14 +181,9 @@ export default function UsuariosUsersServiceAdmin() {
                 </td>
                 {podeEditarUsuarios && (
                   <td className="px-4 py-3 align-middle">
-                    <button
-                      type="button"
-                      className="btn btn-outline-secondary btn-sm"
-                      aria-label={`Editar usuário ${usuario.username}`}
-                      title="Editar usuário"
-                      onClick={() => abrirEdicao(usuario)}
-                    >
-                      <i className="fas fa-edit" aria-hidden="true"></i>
+                    <button type="button" className="btn btn-outline-secondary btn-sm" aria-label={`Editar usuário ${usuario.username}`}
+                      title="Editar usuário" onClick={() => abrirEdicao(usuario)}>
+                      <i className="fas fa-edit mr-0" aria-hidden="true"></i>
                     </button>
                   </td>
                 )}
@@ -210,12 +205,8 @@ export default function UsuariosUsersServiceAdmin() {
             <div className="dataTables_paginate paging_simple_numbers">
               <ul className="pagination mb-0 flex-wrap">
                 <li className={`paginate_button page-item ${pagina === 0 ? "disabled" : ""}`}>
-                  <button
-                    type="button"
-                    className="page-link"
-                    onClick={() => setPagina((atual) => Math.max(0, atual - 1))}
-                    disabled={pagina === 0}
-                  >
+                  <button type="button" className="page-link" onClick={() => setPagina((atual) => Math.max(0, atual - 1))}
+                    disabled={pagina === 0}>
                     Anterior
                   </button>
                 </li>
@@ -233,12 +224,8 @@ export default function UsuariosUsersServiceAdmin() {
                 ))}
 
                 <li className={`paginate_button page-item ${pagina >= totalPaginas - 1 ? "disabled" : ""}`}>
-                  <button
-                    type="button"
-                    className="page-link"
-                    onClick={() => setPagina((atual) => Math.min(totalPaginas - 1, atual + 1))}
-                    disabled={pagina >= totalPaginas - 1}
-                  >
+                  <button type="button" className="page-link" onClick={() => setPagina((atual) => Math.min(totalPaginas - 1, atual + 1))}
+                    disabled={pagina >= totalPaginas - 1}>
                     Próximo
                   </button>
                 </li>
@@ -249,32 +236,19 @@ export default function UsuariosUsersServiceAdmin() {
       )}
 
       {usuarioEditando && (
-        <div
-          className="position-fixed d-flex align-items-center justify-content-center p-3"
-          style={{ inset: 0, zIndex: 1050, backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        <div className="position-fixed d-flex align-items-center justify-content-center p-3" style={{ inset: 0, zIndex: 1050, backgroundColor: "rgba(0, 0, 0, 0.5)" }}
           onClick={() => !salvando && setUsuarioEditando(null)}
         >
-          <section
-            className="card border-0 rounded-lg shadow-lg w-100 mb-0"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="editar-usuario-users-service-titulo"
-            style={{ maxWidth: "560px" }}
-            onClick={(event) => event.stopPropagation()}
+          <section className="card border-0 rounded-lg shadow-lg w-100 mb-0" role="dialog" aria-modal="true"
+            aria-labelledby="editar-usuario-users-service-titulo" style={{ maxWidth: "560px" }} onClick={(event) => event.stopPropagation()}
           >
             <header className="card-header bg-white border-bottom px-4 py-3 d-flex align-items-center">
               <div className="flex-grow-1">
-                <h5 id="editar-usuario-users-service-titulo" className="font-weight-bold text-dark mb-1">
-                  Editar usuário
-                </h5>
+                <h5 id="editar-usuario-users-service-titulo" className="font-weight-bold text-dark mb-1">Editar usuário</h5>
                 <small className="text-secondary">ID {usuarioEditando.id}</small>
               </div>
-              <button
-                type="button"
-                className="btn btn-outline-secondary btn-sm ml-auto"
-                aria-label="Fechar"
-                disabled={salvando}
-                onClick={() => setUsuarioEditando(null)}
+              <button type="button" className="btn btn-outline-secondary btn-sm ml-auto" aria-label="Fechar"
+                disabled={salvando} onClick={() => setUsuarioEditando(null)}
               >
                 <i className="fas fa-times" aria-hidden="true"></i>
               </button>
@@ -284,74 +258,44 @@ export default function UsuariosUsersServiceAdmin() {
                 {erroEdicao && <div className="alert alert-danger" role="alert">{erroEdicao}</div>}
                 <div className="form-group">
                   <label htmlFor="users-service-username">Nome de usuário</label>
-                  <input
-                    id="users-service-username"
-                    className="form-control"
-                    required
-                    value={formulario.username}
-                    onChange={(event) => setFormulario((atual) => ({ ...atual, username: event.target.value }))}
-                    disabled={salvando}
+                  <input id="users-service-username" className="form-control" required value={formulario.username}
+                    onChange={(event) => setFormulario((atual) => ({ ...atual, username: event.target.value }))} disabled={salvando}
                   />
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-6">
                     <label htmlFor="users-service-first-name">Nome</label>
-                    <input
-                      id="users-service-first-name"
-                      className="form-control"
-                      value={formulario.first_name}
-                      onChange={(event) => setFormulario((atual) => ({ ...atual, first_name: event.target.value }))}
-                      disabled={salvando}
+                    <input id="users-service-first-name" className="form-control" value={formulario.first_name}
+                      onChange={(event) => setFormulario((atual) => ({ ...atual, first_name: event.target.value }))} disabled={salvando}
                     />
                   </div>
                   <div className="form-group col-md-6">
                     <label htmlFor="users-service-last-name">Sobrenome</label>
-                    <input
-                      id="users-service-last-name"
-                      className="form-control"
-                      value={formulario.last_name}
-                      onChange={(event) => setFormulario((atual) => ({ ...atual, last_name: event.target.value }))}
-                      disabled={salvando}
+                    <input id="users-service-last-name" className="form-control" value={formulario.last_name}
+                      onChange={(event) => setFormulario((atual) => ({ ...atual, last_name: event.target.value }))} disabled={salvando}
                     />
                   </div>
                 </div>
                 <div className="form-group">
                   <label htmlFor="users-service-email">E-mail</label>
-                  <input
-                    id="users-service-email"
-                    type="email"
-                    className="form-control"
-                    value={formulario.email}
-                    onChange={(event) => setFormulario((atual) => ({ ...atual, email: event.target.value }))}
-                    disabled={salvando}
+                  <input id="users-service-email" type="email" className="form-control" value={formulario.email}
+                    onChange={(event) => setFormulario((atual) => ({ ...atual, email: event.target.value }))} disabled={salvando}
                   />
                 </div>
                 <div className="border rounded p-3 bg-light">
                   <div className="custom-control custom-switch">
-                    <input
-                      id="users-service-superuser"
-                      type="checkbox"
-                      className="custom-control-input"
-                      checked={formulario.is_superuser}
-                      onChange={(event) => setFormulario((atual) => ({ ...atual, is_superuser: event.target.checked }))}
-                      disabled={salvando}
+                    <input id="users-service-superuser" type="checkbox" className="custom-control-input" checked={formulario.is_superuser}
+                      onChange={(event) => setFormulario((atual) => ({ ...atual, is_superuser: event.target.checked }))} disabled={salvando}
                     />
                     <label className="custom-control-label font-weight-bold text-dark" htmlFor="users-service-superuser">
                       Superusuário
                     </label>
                   </div>
-                  <small className="d-block text-secondary mt-2">
-                    O acesso de equipe (is_staff) não é alterado por este formulário.
-                  </small>
+                  <small className="d-block text-secondary mt-2">O acesso de equipe (is_staff) não é alterado por este formulário.</small>
                 </div>
               </div>
               <footer className="card-footer bg-white d-flex justify-content-end px-4 py-3" style={{ gap: "8px" }}>
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  disabled={salvando}
-                  onClick={() => setUsuarioEditando(null)}
-                >
+                <button type="button" className="btn btn-outline-secondary" disabled={salvando} onClick={() => setUsuarioEditando(null)}>
                   Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={salvando}>
