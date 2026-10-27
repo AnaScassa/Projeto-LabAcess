@@ -1,9 +1,10 @@
 import json
 import time
+from datetime import datetime, timedelta, timezone
+import pika
 import pyautogui
 from apscheduler.schedulers.background import BackgroundScheduler
 from threading import Thread, Lock
-from datetime import datetime, timedelta
 from publisher import enviar_mensagem
 from desktop import entrarSes, excluir_csvs, verificar_ses
 from csv_utils import obter_ultimos_csvs, enviar_arquivo_rabbit
@@ -80,6 +81,13 @@ def process_queue():
         finally:
             fila_busca.task_done()
 
+def publicar_heartbeat():
+    while True:
+        try:
+            enviar_mensagem({"enviado_em": datetime.now(timezone.utc).isoformat()}, "rpa_heartbeat")
+        except (pika.exceptions.AMQPError, OSError) as erro:
+            print(f"Não foi possível enviar heartbeat do RPA: {erro!r}")
+        time.sleep(25)
 
 def agendar_execucoes():
     global scheduler
@@ -97,12 +105,16 @@ def main():
 
     thread_fila = Thread(target=ouvir_fila, daemon=True)
     thread_processamento = Thread(target=process_queue, daemon=True)
+    thread_heartbeat = Thread(target=publicar_heartbeat, daemon=True)
 
     thread_fila.start()
     print("Thread Rabbit iniciada.")
 
     thread_processamento.start()
     print("Thread process_queue iniciada.")
+
+    thread_heartbeat.start()
+    print("Thread de heartbeat do RPA iniciada.")
 
     while True:
         time.sleep(1)
