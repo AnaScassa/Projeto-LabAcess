@@ -181,13 +181,8 @@ export default function UsuariosAdmin() {
               <div className="input-group-prepend">
                 <span className="input-group-text"><i className="fas fa-search"></i></span>
               </div>
-              <input
-                id="busca-usuarios-smartcard"
-                type="search"
-                className="form-control"
-                placeholder="Digite nome ou matrícula"
-                value={busca}
-                onChange={(event) => setBusca(event.target.value)}
+              <input id="busca-usuarios-smartcard" type="search" className="form-control" placeholder="Digite nome ou matrícula"
+                value={busca} onChange={(event) => setBusca(event.target.value)}
               />
             </div>
           </div>

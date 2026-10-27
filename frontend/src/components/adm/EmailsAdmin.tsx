@@ -54,9 +54,6 @@ export default function EmailsAdmin() {
     <>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h5 className="font-weight-bold text-dark mb-0">Registros de e-mails</h5>
-        <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => void carregarRegistros()} disabled={carregando}>
-          <i className="fas fa-sync-alt mr-1"></i> Atualizar
-        </button>
       </div>
 
       {erro && <div className="alert alert-danger" role="alert">{erro}</div>}
