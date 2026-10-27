@@ -44,6 +44,17 @@ class Processamento(models.Model):
     def __str__(self):
         return f"{self.task_id} - {self.status}"
 
+class LoggerErro(models.Model):
+    mensagem = models.TextField()
+    data = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "logger_erro"
+        ordering = ["-data", "-id"]
+
+    def __str__(self):
+        return f"Erro RPA {self.id} em {self.data}"
+
 class Emails(models.Model):
     email = models.EmailField(unique=False)
     criado_em = models.DateTimeField(auto_now_add=True)
