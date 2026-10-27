@@ -35,9 +35,7 @@ def entrarSes(dados_busca=None):
     time.sleep(5)
     
     try:
-        pyautogui.press('win')
-        pyautogui.write('SESClient')
-        pyautogui.press('enter')
+        os.startfile(r"C:\Sualtech\SESClient\ses_client.exe")
         time.sleep(5) 
         logger.info("SESClient aberto com sucesso")
         time.sleep(5)

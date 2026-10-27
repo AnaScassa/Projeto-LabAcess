@@ -1,10 +1,11 @@
 import json
 import time
-from datetime import datetime, timedelta, timezone
-import pika
+from datetime import datetime, timezone
 import pyautogui
 from apscheduler.schedulers.background import BackgroundScheduler
 from threading import Thread, Lock
+from datetime import datetime, timedelta
+from jsonFormatter import logger
 from publisher import enviar_mensagem
 from desktop import entrarSes, excluir_csvs, verificar_ses
 from csv_utils import obter_ultimos_csvs, enviar_arquivo_rabbit
@@ -22,7 +23,9 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
 
     if primeira_execucao:
         pyautogui.click(1244, 178)
+        time.sleep(2)
         pyautogui.click(1148, 123)
+        time.sleep(2)
         primeira_execucao = False
 
     if not execucao_em_andamento.acquire(blocking=False):
@@ -33,22 +36,26 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
         print(f"\n========== INICIANDO RPA ({motivo}) ==========")
 
         verificar_ses()
+        time.sleep(2)
         entrarSes(dados_busca)
+        time.sleep(3)
         arquivos, total_linhas = obter_ultimos_csvs(quantidade=3)
 
         for arquivo in arquivos:
             enviar_arquivo_rabbit(arquivo)
+            time.sleep(2)
             if arquivo is None:
                 enviar_mensagem({"status": "nenhum arquivo foi enviado", "total_linhas": None}, "buscar_concluido")
 
         enviar_mensagem({"status": "finalizado", "total_linhas": total_linhas}, "buscar_concluido")
+        time.sleep(2)
 
         excluir_csvs()
 
         print("========== RPA FINALIZADO ==========\n")
 
     except Exception as e:
-        print("Erro durante execução:", e)
+        logger.error("Erro durante execução: %s", e)
 
     finally:
         execucao_em_andamento.release()
@@ -85,8 +92,8 @@ def publicar_heartbeat():
     while True:
         try:
             enviar_mensagem({"enviado_em": datetime.now(timezone.utc).isoformat()}, "rpa_heartbeat")
-        except (pika.exceptions.AMQPError, OSError) as erro:
-            print(f"Não foi possível enviar heartbeat do RPA: {erro!r}")
+        except Exception as erro:
+            logger.error("Não foi possível enviar heartbeat do RPA: %r", erro)
         time.sleep(25)
 
 def agendar_execucoes():
@@ -117,7 +124,7 @@ def main():
     print("Thread de heartbeat do RPA iniciada.")
 
     while True:
-        time.sleep(1)
+        time.sleep(2)
 
 
 if __name__ == "__main__":

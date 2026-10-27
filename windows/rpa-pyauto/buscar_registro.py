@@ -3,6 +3,7 @@ import time
 from queue import Queue
 import pika
 
+from jsonFormatter import logger
 from config import (RABBITMQ_HOST, RABBITMQ_PASSWORD, RABBITMQ_PORT, RABBITMQ_QUEUE, RABBITMQ_USER,)
 
 fila_busca = Queue()
@@ -26,11 +27,11 @@ def ouvir_fila():
             channel.start_consuming()
             
         except pika.exceptions.ConnectionClosedByBroker as e:
-            print(f"RabbitMQ desligado ({e}); tentando reconectar em 5 segundos...")
+            logger.error("RabbitMQ desligado (%s); tentando reconectar em 5 segundos...", e)
             time.sleep(5)
             
         except (pika.exceptions.AMQPError, OSError) as e:
-            print(f"Erro ao ouvir fila: {e!r}")
+            logger.error("Erro ao ouvir fila: %r", e)
             time.sleep(5)
             
         finally:

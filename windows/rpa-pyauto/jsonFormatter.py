@@ -2,6 +2,17 @@ import logging
 import json
 from datetime import datetime
 
+
+class RpaErrorRabbitHandler(logging.Handler):
+    def emit(self, record):
+        try:
+            from publisher import enviar_mensagem
+
+            enviar_mensagem({"mensagem": record.getMessage()}, "rpa_erros")
+        except Exception:
+            self.handleError(record)
+
+
 class JsonFormatter(logging.Formatter):
     def format(self, record):
         log_record = {
@@ -26,4 +37,6 @@ console_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(
 
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
+error_handler = RpaErrorRabbitHandler(level=logging.ERROR)
+logger.addHandler(error_handler)
 logging.getLogger("pika").setLevel(logging.WARNING)
