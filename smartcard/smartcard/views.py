@@ -15,7 +15,7 @@ from django_celery_results.models import TaskResult
 from django.http import StreamingHttpResponse
 from django.utils import timezone
 
-from .receber_resposta import REDIS_CANAL_RESPOSTA
+from .receber_resposta import REDIS_CANAL_RESPOSTA, REDIS_KEY_HEARTBEAT_RPA
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
 from .models import Emails, Usuario, Acesso, Processamento, NotificacaoUsuario, MrbsEntry
@@ -283,6 +283,16 @@ def ultima_resposta(request):
         return Response(json.loads(ultimo))
     except (TypeError, ValueError):
         return Response({"status": None, "quantidade": 0, "criado_em": None})
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def status_rpa(request):
+    heartbeat = redis_client.get(REDIS_KEY_HEARTBEAT_RPA)
+    dados = json.loads(heartbeat) if heartbeat else None
+    return Response({
+        "online": dados is not None,
+        "ultimo_sinal": dados.get("recebido_em") if dados else None,
+    }, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])

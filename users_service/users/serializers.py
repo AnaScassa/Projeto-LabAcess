@@ -52,8 +52,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "full_name",
             "first_name",
             "last_name",
+            "is_superuser",
             "userProfile",
         ]
+        read_only_fields = ["is_superuser"]
 
     def get_userProfile(self, obj):
         request = self.context.get("request")
@@ -64,6 +66,21 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return request.build_absolute_uri(
             f"/api/users/user-profile/{obj.id}/"
         )
+
+
+class AdminUserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "is_superuser",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "full_name",
+        ]
+        read_only_fields = ["id", "full_name"]
         
 class UserApiSerializer(serializers.ModelSerializer):
     class Meta:
