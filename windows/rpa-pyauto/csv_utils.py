@@ -18,7 +18,8 @@ def obter_ultimos_csvs(quantidade=3):
         ]
 
         if not csvs:
-            raise FileNotFoundError(f"Nenhum arquivo CSV encontrado em {static.PASTA}")
+            logger.warning("Nenhum arquivo CSV encontrado em %s", static.PASTA)
+            return [], 0
 
         csvs_ordenados = sorted(csvs, key=os.path.getmtime, reverse=True)
         ultimos = csvs_ordenados[:quantidade]

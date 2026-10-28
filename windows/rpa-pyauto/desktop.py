@@ -4,7 +4,6 @@ from publisher import enviar_mensagem
 
 import os
 import time
-import traceback 
 import pyautogui
 import static
 
@@ -29,9 +28,10 @@ def resolver_dados_busca(dados_busca=None):
     }
 
 
-def entrarSes(dados_busca=None):
-    enviar_mensagem({"status": "iniciando", "total_linhas": None}, "buscar_concluido")
-    logger.info("RPA iniciado")
+def entrarSes(dados_busca=None, _tentativa=1):
+    if _tentativa == 1:
+        enviar_mensagem({"status": "iniciando", "total_linhas": None}, "buscar_concluido")
+        logger.info("RPA iniciado")
     time.sleep(5)
     
     try:
@@ -47,10 +47,10 @@ def entrarSes(dados_busca=None):
             usuario = pyautogui.locateCenterOnScreen('./img/usuarioSes.PNG', confidence=0.5)
         except pyautogui.ImageNotFoundException:
             usuario = None
-            logger.error("Imagem não encontrada")
+            logger.warning("Imagem não encontrada")
         except Exception as erro:
             usuario = None
-            logger.error(erro)
+            logger.warning(erro)
 
         time.sleep(1)
 
@@ -69,13 +69,15 @@ def entrarSes(dados_busca=None):
         pyautogui.typewrite(str(static.USUARIO), interval=0.05)
 
         pyautogui.press("tab")
-
+        time.sleep(1)
         pyautogui.write(static.SENHA, interval=0.1)
-
+        time.sleep(1)
         pyautogui.press("tab")
+        time.sleep(1)
         pyautogui.press("tab")
+        time.sleep(1)
         pyautogui.press("tab")
-
+        time.sleep(1)
         pyautogui.press("enter")
 
         logger.info("Login realizado com sucesso")
@@ -83,10 +85,12 @@ def entrarSes(dados_busca=None):
         pegar_arquivo(dados_busca)
 
     except Exception:
-        logger.error(traceback.format_exc())
-
-    except Exception:
-        logger.error(traceback.format_exc())
+        if _tentativa < 2:
+            logger.warning("Não foi possível entrar no SESClient; tentando novamente.", exc_info=True)
+            entrarSes(dados_busca, _tentativa + 1)
+        else:
+            logger.exception("Não foi possível entrar no SESClient após 2 tentativas.")
+            return
 
 def pegar_arquivo(dados_busca=None):
     dados = resolver_dados_busca(dados_busca)
@@ -143,7 +147,7 @@ def pegar_arquivo(dados_busca=None):
                 consultar = pyautogui.locateCenterOnScreen('./img/consultarMarcacao.PNG',confidence=0.8)
             except pyautogui.ImageNotFoundException:
                 consultar = None
-                logger.error("Imagem não encontrada")
+                logger.warning("Imagem não encontrada")
                 enviar_mensagem({"status": "ERRO!", "total_linhas": None}, "buscar_concluido")
             except Exception as erro:
                 consultar = None
@@ -256,5 +260,5 @@ def verificar_ses():
             logger.info("SESClient não está aberto.")
             return True
     except Exception as e:
-        logger.error(f"Erro ao verificar SESClient: {e}")
+        logger.warning(f"Erro ao verificar SESClient: {e}")
         return False
