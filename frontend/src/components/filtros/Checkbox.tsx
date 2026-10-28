@@ -41,7 +41,7 @@ export default function FiltroPortasCheckbox({
   }
 
   return (
-    <div className="w-100">
+    <div className="w-100 d-flex flex-column justify-content-center">
       <label className="form-label mb-1 fw-semibold text-secondary">Portas:</label>
 
       <div className="d-flex align-items-center flex-nowrap w-100" style={{gap: "8px", whiteSpace: "nowrap", overflowX: "auto"}}>

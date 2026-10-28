@@ -111,7 +111,7 @@ export default function ContagemTreinamento({ treinamentos, loading = false }: P
               </div>
             </div>
 
-            <Link to="/relatorio-treinamento-nao-expirados" className="training-card-footer">
+            <Link to="/relatorio-nao-expirados" className="training-card-footer">
               <span>Ver relatório</span>
               <i className="fas fa-arrow-right"></i>
             </Link>
