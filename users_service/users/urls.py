@@ -1,7 +1,7 @@
 from django.urls import include
 
 from rest_framework.routers import DefaultRouter, path
-from .views import CustomTokenObtainPairView, UserViewSet, UserProfileViewSet, UsersSafetyTraining, usuarios_privilegiados, atualizar_superusuario
+from .views import (CustomTokenObtainPairView, UserViewSet, UserProfileViewSet, UsersSafetyTraining, usuarios_privilegiados, atualizar_superusuario, conferir_staff)
 from .api_internal import internal_users_list, internal_profiles_list, internal_all_data
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -14,6 +14,7 @@ urlpatterns = [
     path("", include(router.urls)),
     path("admin-users/", usuarios_privilegiados, name="usuarios_privilegiados"),
     path("admin-users/<int:user_id>/", atualizar_superusuario, name="atualizar_superusuario"),
+    path("conferir-staff/<int:user_id>/", conferir_staff, name="conferir_staff"),
     path("api/token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("internal/users/", internal_users_list, name="internal_users"),

@@ -100,5 +100,12 @@ def atualizar_superusuario(request, user_id):
     serializer.save()
     return Response(serializer.data)
 
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def conferir_staff(request, user_id):
+    is_staff = User.objects.filter(id=user_id, is_staff=True).exists()
+    return Response(is_staff)
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
