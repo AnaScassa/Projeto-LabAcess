@@ -9,6 +9,8 @@ from celery import shared_task
 from .cruzamento import cruzamento_api
 
 from django.core.cache import cache
+from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from django.core.mail import get_connection, send_mail
 from django.conf import settings
@@ -47,6 +49,22 @@ def criar_notificacoes_administradores(users: list[dict[str, Any]], acesso: Aces
                 f"notificacoes_usuario:{usuario_id}",
                 json.dumps({"tipo": "nova_notificacao", "id": notificacao.id}),
             )
+
+@shared_task(name="smartcard.tasks.verificar_limpeza_processamento")
+def verificar_limpeza_processamento(user: str) -> int:
+    with transaction.atomic():
+        processamentos_usuario = Processamento.objects.select_for_update().filter(Q(user=user) | Q(user__isnull=True))
+        tasks_ativas = processamentos_usuario.filter(status__in=["PENDING", "PROCESSANDO"])
+
+        if tasks_ativas.exists():
+            return 0
+
+        apagados, _ = processamentos_usuario.filter(status="SUCCESS").delete()
+
+    if apagados:
+        redis_client.publish(f"task_completed:{user}", '{"status": "COMPLETED"}')
+
+    return apagados
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
@@ -531,13 +549,14 @@ def callback_csv(ch, method, properties, body):
         dados = json.loads(body)
         nome = dados["nome"]
         conteudo = base64.b64decode(dados["conteudo"])
+        user = dados["user"]
 
         with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as arquivo_temp:
             arquivo_temp.write(conteudo)
             caminho_arquivo = arquivo_temp.name
 
         task_id = shortuuid.uuid()
-        Processamento.objects.create(task_id=task_id, status="PENDING")
+        Processamento.objects.create(task_id=task_id, status="PENDING", user=user)
         processar_csv.apply_async(args=[caminho_arquivo, task_id], task_id=task_id)
         
         ch.basic_ack(delivery_tag=method.delivery_tag)

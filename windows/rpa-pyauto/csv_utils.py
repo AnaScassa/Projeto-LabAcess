@@ -66,6 +66,7 @@ def enviar_arquivo_rabbit(arquivo):
     mensagem = {
         "nome": os.path.basename(arquivo),
         "conteudo": conteudo,
+        "user": 0,
     }
     
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
