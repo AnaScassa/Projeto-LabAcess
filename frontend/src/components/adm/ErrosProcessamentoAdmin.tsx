@@ -42,18 +42,13 @@ export default function ErrosProcessamentoAdmin() {
         {!carregando && !mensagemErro && (
           <span className="badge badge-danger mr-3">{erros.length} erro(s)</span>
         )}
-        <button
-          type="button"
-          className="btn btn-outline-secondary btn-sm ml-auto"
-          onClick={() => void carregarErros()}
-          disabled={atualizando}
-          aria-label="Atualizar erros de processamento"
-          title="Atualizar"
+        <button type="button" className="btn btn-outline-secondary btn-sm ml-auto" onClick={() => void carregarErros()} disabled={atualizando}
+          aria-label="Atualizar erros de processamento" title="Atualizar"
         >
           <i className={`fas fa-sync-alt mr-0 ${atualizando ? "fa-spin" : ""}`} aria-hidden="true"></i>
         </button>
       </div>
-      <div className="card-body p-0" style={{ maxHeight: "420px", overflowY: "auto" }}>
+      <div className="card-body p-0" style={{ maxHeight: "430px", overflowY: "auto", minHeight: "430px" }}>
         {mensagemErro ? (
           <div className="alert alert-danger m-4" role="alert">{mensagemErro}</div>
         ) : carregando ? (
