@@ -14,7 +14,7 @@ urlpatterns = [
     path("", include(router.urls)),
     path("admin-users/", usuarios_privilegiados, name="usuarios_privilegiados"),
     path("admin-users/<int:user_id>/", atualizar_superusuario, name="atualizar_superusuario"),
-    path("conferir-staff/<int:user_id>/", conferir_staff, name="conferir_staff"),
+    path("conferir-staff/", conferir_staff, name="conferir_staff"),
     path("api/token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("internal/users/", internal_users_list, name="internal_users"),

@@ -100,12 +100,18 @@ def atualizar_superusuario(request, user_id):
     serializer.save()
     return Response(serializer.data)
 
-@api_view(["GET"])
+@api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def conferir_staff(request, user_id):
-    is_staff = User.objects.filter(id=user_id, is_staff=True).exists()
-    return Response(is_staff)
+def conferir_staff(request):
+    password = request.data.get("password")
+    if not isinstance(password, str) or not password:
+        return Response({"detail": "Informe a senha."}, status=400)
+
+    if not request.user.check_password(password):
+        return Response({"detail": "Senha inválida."}, status=401)
+
+    return Response(request.user.is_staff)
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
