@@ -1,4 +1,4 @@
-from smartcard.views import buscar_registro, carregar_acesso, lista_usuarios, mudar_apontamento, receber_resposta, ultima_resposta, status_rpa, usuarios_ativos, emails, lista_emails, desativar_email, cadastrar_email, registrar_email, verificar_id, cruzamentos_api, notificacoes_usuario, notificacoes_usuario_stream, agendamentos_nao_utilizados, acessos_agendados, registro_emails, listar_erros_rpa
+from smartcard.views import buscar_registro, carregar_acesso, lista_usuarios, mudar_apontamento, receber_resposta, ultima_resposta, status_rpa, usuarios_ativos, emails, lista_emails, desativar_email, cadastrar_email, registrar_email, verificar_id, cruzamentos_api, notificacoes_usuario, notificacoes_usuario_stream, agendamentos_nao_utilizados, acessos_agendados, registro_emails, listar_erros_rpa, erro_processamento
 from smartcard.api import AcessoViewSet, GroupViewSet, UsuarioViewSet, TaskCompleted, ApontamentoViewSet
 
 from django.urls import include, path
@@ -31,6 +31,7 @@ urlpatterns = [
     path("ultima-resposta/", ultima_resposta),
     path("status-rpa/", status_rpa, name="status_rpa"),
     path("erros-rpa/", listar_erros_rpa, name="erros_rpa"),
+    path("erro-processamento/", erro_processamento, name="erro_processamento"),
     path("cruzamentos/", cruzamentos_api, name="cruzamentos_api"),
     path("notificacoes/", notificacoes_usuario, name="notificacoes_usuario"),
     path("notificacoes/stream/", notificacoes_usuario_stream, name="notificacoes_usuario_stream"),

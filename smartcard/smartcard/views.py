@@ -311,7 +311,10 @@ def listar_erros_rpa(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def verificar_id(request, id):
-    processamentos = Processamento.objects.filter(user=str(id))
+    if str(request.user.id) != str(id):
+        return Response({"detail": "O ID informado não corresponde ao usuário autenticado."}, status=status.HTTP_403_FORBIDDEN)
+
+    processamentos = Processamento.objects.filter(user=str(request.user.id)).exclude(status="ERRO")
 
     if not processamentos.exists():
         return Response({"MENSAGEM": "Usuário sem processamento", "id_procurado": id}, status=201)
@@ -468,3 +471,9 @@ def agendamentos_nao_utilizados(request):
 def registro_emails(request):
     emails = Emails.objects.values()
     return Response(list(emails), status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def erro_processamento(request):
+    processamentos = Processamento.objects.filter(status="ERRO").values("id", "status", "user", "task_name", "atualizado_em")
+    return Response(list(processamentos), status=status.HTTP_200_OK)
