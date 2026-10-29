@@ -22,10 +22,16 @@ export async function buscarUsuariosPrivilegiados(): Promise<UsuarioPrivilegiado
     return response.json() as Promise<UsuarioPrivilegiado[]>;
 }
 
-export async function conferirStaff(id: string | number): Promise<boolean> {
-    const response = await authFetch(`http://${API_HOST}:8000/api/users/conferir-staff/${id}/`);
+export async function conferirStaff(password: string): Promise<boolean> {
+    const response = await authFetch(`http://${API_HOST}:8000/api/users/conferir-staff/`, {
+        method: "POST",
+        body: JSON.stringify({ password }),
+    });
 
     if (!response.ok) {
+        if (response.status === 401) {
+            throw new Error("Senha inválida ou sessão expirada.");
+        }
         throw new Error(`Erro ao verificar permissão staff: HTTP ${response.status}`);
     }
 
