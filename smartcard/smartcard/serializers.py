@@ -33,6 +33,7 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
             {
                 "id": acesso.id,
                 "data_acesso": localtime(acesso.data_acesso) if acesso.data_acesso else None,
+                "desc_evento": acesso.desc_evento,
                 "desc_area": acesso.desc_area,
                 "ent_sai": acesso.ent_sai,
                 "eh_agendado": acesso.eh_agendado,

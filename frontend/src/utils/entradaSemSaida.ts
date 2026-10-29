@@ -3,6 +3,7 @@ interface ParamsEntradaSemSaida {
   usuarios: any[];
   stack: Date;
   area: string;
+  desc_evento: string;
   getNomeUsuario: (matricula: string, usuarios: any[]) => string;
 }
 
@@ -11,6 +12,7 @@ export function entradaSemSaida({
   usuarios,
   stack,
   area,
+  desc_evento,
   getNomeUsuario
 }: ParamsEntradaSemSaida) {
   return {
@@ -20,6 +22,7 @@ export function entradaSemSaida({
     permanencia: "Indisponível",
     porta: area,
     entradaTimestamp: stack.getTime(),
-    saidaTimestamp: 0
+    saidaTimestamp: 0,
+    desc_evento,
   };
 }

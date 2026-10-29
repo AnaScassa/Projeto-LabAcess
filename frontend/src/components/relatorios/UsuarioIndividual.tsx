@@ -25,9 +25,14 @@ interface Resultado {
   porta: string;
   entradaTimestamp: number;
   saidaTimestamp: number;
+  desc_evento: string;
 }
 
 type SortField = "usuario" | "entrada" | "saida" | "porta" | "permanencia";
+
+function ehApontamentoNormal(descEvento: string) {
+  return descEvento.trim().toLocaleLowerCase("pt-BR") === "apontamento normal";
+}
 
 export default function CalculadorTempo({
   usuario,
@@ -142,7 +147,7 @@ export default function CalculadorTempo({
     }
 
     const ordenado = [...acessos].sort((a: any, b: any) => new Date(a.data_acesso).getTime() - new Date(b.data_acesso).getTime());
-    const stacks: Record<string, Date | null> = {};
+    const stacks: Record<string, { dataHora: Date; desc_evento: string } | null> = {};
     const out: Resultado[] = [];
 
     ordenado.forEach((acesso: any) => {
@@ -150,6 +155,7 @@ export default function CalculadorTempo({
       const dataHora = new Date(acesso.data_acesso);
       const dataHoraStr = dataHora.toLocaleString();
       const area = acesso.desc_area;
+      const descEvento = acesso.desc_evento || "";
 
       if (!(area in stacks)) stacks[area] = null;
 
@@ -158,27 +164,29 @@ export default function CalculadorTempo({
       if (tipo === "ENTRADA") {
         if (stack !== null) {
           contagemErro++;
-          out.push(entradaSemSaida({user, usuarios, stack, area, getNomeUsuario}));
+          out.push(entradaSemSaida({user, usuarios, stack: stack.dataHora, area, desc_evento: stack.desc_evento, getNomeUsuario,}));
         }
-        stacks[area] = dataHora;
+        stacks[area] = { dataHora, desc_evento: descEvento };
         return;
       }
 
       if (tipo === "SAIDA") {
         if (stack) {
-          if (mesmoDia(stack, dataHora)) {
-            const totalMinutos = calcularMinutos(stack, dataHora);
+          if (mesmoDia(stack.dataHora, dataHora)) {
+            const totalMinutos = calcularMinutos(stack.dataHora, dataHora);
             const { horas2, minutos2 } = minutosParaHoras(totalMinutos);
             contagemAcessos++;
             totalGeral += totalMinutos;
 
-            out.push({usuario: getNomeUsuario(user.matricula, usuarios), entrada: stack.toLocaleString(), saida: dataHoraStr,
-              permanencia: `${horas2}h ${minutos2}min`, porta: area, entradaTimestamp: stack.getTime(), saidaTimestamp: dataHora.getTime()
+            const descEventoResultado = ehApontamentoNormal(stack.desc_evento) ? descEvento : stack.desc_evento;
+            out.push({usuario: getNomeUsuario(user.matricula, usuarios), entrada: stack.dataHora.toLocaleString(), saida: dataHoraStr,
+              permanencia: `${horas2}h ${minutos2}min`, porta: area, entradaTimestamp: stack.dataHora.getTime(), saidaTimestamp: dataHora.getTime(),
+              desc_evento: descEventoResultado,
             });
 
           } else {
             contagemErro++;
-            out.push(entradaSemSaida({user, usuarios, stack, area, getNomeUsuario}));
+            out.push(entradaSemSaida({user, usuarios, stack: stack.dataHora, area, desc_evento: stack.desc_evento, getNomeUsuario}));
           }
 
           stacks[area] = null;
@@ -186,7 +194,8 @@ export default function CalculadorTempo({
         } else {
           contagemErro++;
           out.push({usuario: getNomeUsuario(user.matricula, usuarios), entrada: "Saída sem entrada", saida: dataHoraStr,
-            permanencia: "Indisponível", porta: area, entradaTimestamp: 0, saidaTimestamp: dataHora.getTime()
+            permanencia: "Indisponível", porta: area, entradaTimestamp: 0, saidaTimestamp: dataHora.getTime(),
+            desc_evento: descEvento,
           });
         }
       }
@@ -197,7 +206,7 @@ export default function CalculadorTempo({
 
       if (st) {
         contagemErro++;
-        out.push(entradaSemSaida({user, usuarios, stack: st, area, getNomeUsuario}));
+        out.push(entradaSemSaida({user, usuarios, stack: st.dataHora, area, desc_evento: st.desc_evento, getNomeUsuario}));
       }
     });
 
@@ -287,12 +296,18 @@ export default function CalculadorTempo({
 
             <TableBody data={paginaVisivel} colSpan={5}
               emptyMessage="Nenhum resultado encontrado." renderRow={(r, i) => (
-                  <tr key={i}>
+                  <tr key={i} className={ehApontamentoNormal(r.desc_evento) ? "" : "table-danger"}>
                     <td className="px-4 py-3 align-middle">{r.usuario}</td>
                     <td className="px-4 py-3 align-middle">{r.entrada}</td>
                     <td className="px-4 py-3 align-middle">{r.saida}</td>
                     <td className="px-4 py-3 align-middle">{r.porta}</td>
-                    <td className="px-4 py-3 align-middle fw-semibold">{r.permanencia}</td>
+                    <td className="px-4 py-3 align-middle fw-semibold">{r.permanencia}
+                      {!ehApontamentoNormal(r.desc_evento) && (
+                        <i className="fas fa-info-circle ms-2 text-danger ml-2 mr-0" title={r.desc_evento || "Ocorrência não informada"}
+                          aria-label={r.desc_evento || "Ocorrência não informada"} role="img" tabIndex={0}
+                        />
+                      )}
+                    </td>
                   </tr>
               )}
             />

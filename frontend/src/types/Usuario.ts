@@ -9,6 +9,7 @@ export type Usuario = {
   acessos: {
     id: number; 
     data_acesso: string | null;
+    desc_evento: string;
     desc_area: string;
     ent_sai: string;
     eh_agendado: boolean;
