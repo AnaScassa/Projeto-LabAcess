@@ -22,6 +22,21 @@ export async function buscarUsuariosPrivilegiados(): Promise<UsuarioPrivilegiado
     return response.json() as Promise<UsuarioPrivilegiado[]>;
 }
 
+export async function conferirStaff(id: string | number): Promise<boolean> {
+    const response = await authFetch(`http://${API_HOST}:8000/api/users/conferir-staff/${id}/`);
+
+    if (!response.ok) {
+        throw new Error(`Erro ao verificar permissão staff: HTTP ${response.status}`);
+    }
+
+    const isStaff: unknown = await response.json();
+    if (typeof isStaff !== "boolean") {
+        throw new Error("Resposta inválida ao verificar permissão staff");
+    }
+
+    return isStaff;
+}
+
 export async function atualizarPermissaoSuperusuario(
     id: string | number,
     isSuperuser: boolean,

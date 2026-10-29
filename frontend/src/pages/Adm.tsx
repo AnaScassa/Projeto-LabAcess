@@ -1,12 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Menu from "../components/style/Menu";
 import EmailsAdmin from "../components/adm/EmailsAdmin";
 import UsuariosAdmin from "../components/adm/UsuariosAdmin";
 import UsuariosUsersServiceAdmin from "../components/adm/UsuariosUsersServiceAdmin";
 import ConfiguracoesAdmin from "../components/adm/ConfiguracoesAdmin";
+import { conferirStaff } from "../services/users";
 
 export default function Adm() {
   const [secaoAtiva, setSecaoAtiva] = useState<"usuarios" | "users_service" | "emails" | "configuracoes" | null>(null);
+  const [statusStaff, setStatusStaff] = useState<"verificando" | "autorizado" | "negado" | "erro">(() => localStorage.getItem("id") ? "verificando" : "erro");
+  const [erroStaff, setErroStaff] = useState<string | null>(() => localStorage.getItem("id") ? null : "Não foi possível identificar o usuário autenticado.");
+
+  useEffect(() => {
+    let active = true;
+    const userId = localStorage.getItem("id");
+
+    if (!userId) {
+      return () => {
+        active = false;
+      };
+    }
+    const id = userId;
+
+    async function verificarPermissaoStaff() {
+      try {
+        const isStaff = await conferirStaff(id);
+        if (active) {
+          setStatusStaff(isStaff ? "autorizado" : "negado");
+        }
+      } catch (error) {
+        if (active) {
+          setErroStaff(error instanceof Error ? error.message : "Não foi possível verificar a permissão.");
+          setStatusStaff("erro");
+        }
+      }
+    }
+
+    void verificarPermissaoStaff();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (statusStaff !== "autorizado") {
+    const mensagem = statusStaff === "verificando" ? "Verificando permissão de acesso..." : statusStaff === "negado"
+      ? "Seu usuário não tem permissão de acesso à área administrativa." : erroStaff;
+
+    return (
+      <div className="wrapper">
+        <Menu />
+        <div className="content-wrapper">
+          <section className="content p-4">
+            <div className={`alert ${statusStaff === "verificando" ? "alert-info" : "alert-danger"}`} role="status">
+              {mensagem}
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="wrapper">
@@ -53,7 +106,8 @@ export default function Adm() {
             <div className="card border-0 rounded-lg shadow-sm h-100">
               <div className="card-body p-3">
                 <div className="d-flex align-items-center mb-2">
-                  <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", backgroundColor: "rgba(0, 123, 255, 0.12)", borderRadius: "10px" }}>
+                  <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", 
+                    backgroundColor: "rgba(0, 123, 255, 0.12)", borderRadius: "10px" }}>
                     <i className="fas fa-user-friends mr-0" style={{ color: "#007bff", fontSize: "18px" }}></i>
                   </div>
                   <div>
@@ -73,7 +127,8 @@ export default function Adm() {
             <div className="card border-0 rounded-lg shadow-sm h-100">
               <div className="card-body p-3">
                 <div className="d-flex align-items-center mb-2">
-                  <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", backgroundColor: "rgba(255, 193, 7, 0.15)", borderRadius: "10px" }}>
+                  <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", 
+                    backgroundColor: "rgba(255, 193, 7, 0.15)", borderRadius: "10px" }}>
                     <i className="fas fa-envelope mr-0" style={{ color: "#d39e00", fontSize: "18px" }}></i>
                   </div>
                   <div>
@@ -93,7 +148,8 @@ export default function Adm() {
             <div className="card border-0 rounded-lg shadow-sm h-100">
               <div className="card-body p-3">
                 <div className="d-flex align-items-center mb-2">
-                  <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", backgroundColor: "rgba(40, 167, 69, 0.12)", borderRadius: "10px" }}>
+                  <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", 
+                    backgroundColor: "rgba(40, 167, 69, 0.12)", borderRadius: "10px" }}>
                     <i className="fas fa-cogs mr-0" style={{ color: "#28a745", fontSize: "18px" }}></i>
                   </div>
                   <div>
@@ -120,7 +176,8 @@ export default function Adm() {
           <div className="card-body p-4">
             {secaoAtiva === null ? (
               <div className="d-flex flex-column align-items-center justify-content-center text-center py-5">
-                <div className="d-flex align-items-center justify-content-center mb-3" style={{ width: "64px", height: "64px", backgroundColor: "rgba(23, 162, 184, 0.10)", borderRadius: "50%" }}>
+                <div className="d-flex align-items-center justify-content-center mb-3" style={{ width: "64px", height: "64px", 
+                  backgroundColor: "rgba(23, 162, 184, 0.10)", borderRadius: "50%" }}>
                   <i className="fas fa-tools mr-0" style={{ color: "#17a2b8", fontSize: "27px" }}></i>
                 </div>
                 <h5 className="font-weight-bold text-dark mb-2">Área administrativa</h5>
