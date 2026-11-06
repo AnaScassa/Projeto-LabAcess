@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import TableBody from "../style/TableBody";
 import FiltroCategoriaCheckbox from "../filtros/CategoriaCheckbox";
-import { atualizarUsuarioSmartcard, carregarUsuariosSmartcard } from "../../services/usuarios";
+import { alterarStatusUsuarioSmartcard, atualizarUsuarioSmartcard, carregarUsuariosSmartcard } from "../../services/usuarios";
 import type { Usuario } from "../../types/Usuario";
 
 const categoriasPadrao = ["todas", "ALUNO", "FUNCIONARIO"];
@@ -61,11 +61,13 @@ export default function UsuariosAdmin() {
   const [salvando, setSalvando] = useState(false);
   const [erroEdicao, setErroEdicao] = useState<string | null>(null);
   const [paginaAcessos, setPaginaAcessos] = useState(0);
+  const [usuarioAtualizandoStatus, setUsuarioAtualizandoStatus] = useState<number | null>(null);
+  const [erroStatus, setErroStatus] = useState<string | null>(null);
 
   useEffect(() => {
     async function carregar() {
       try {
-        setUsuarios(await carregarUsuariosSmartcard());
+        setUsuarios(await carregarUsuariosSmartcard(true));
       } catch (error) {
         console.error("Erro ao carregar usuários do SmartCard:", error);
         setErro("Não foi possível carregar os usuários do SmartCard.");
@@ -165,6 +167,22 @@ export default function UsuariosAdmin() {
     }
   };
 
+  const alternarStatusUsuario = async (usuario: Usuario) => {
+    setUsuarioAtualizandoStatus(usuario.id);
+    setErroStatus(null);
+    try {
+      const estaAtivo = await alterarStatusUsuarioSmartcard(usuario.matricula, !usuario.esta_ativo);
+      setUsuarios((atuais) => atuais.map((atual) => (
+        atual.id === usuario.id ? { ...atual, esta_ativo: estaAtivo } : atual
+      )));
+    } catch (error) {
+      console.error("Erro ao alterar status do usuário:", error);
+      setErroStatus(`Não foi possível ${usuario.esta_ativo ? "desativar" : "reativar"} ${usuario.nome_usuario}.`);
+    } finally {
+      setUsuarioAtualizandoStatus(null);
+    }
+  };
+
   return (
     <>
       <div className="mb-3">
@@ -190,6 +208,7 @@ export default function UsuariosAdmin() {
       </div>
 
       {erro && <div className="alert alert-danger" role="alert">{erro}</div>}
+      {erroStatus && <div className="alert alert-danger" role="alert">{erroStatus}</div>}
 
       <div className="table-responsive">
         <table className="table table-hover mb-0">
@@ -201,12 +220,13 @@ export default function UsuariosAdmin() {
               <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">Categoria</th>
               <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">ID do usuário</th>
               <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">Usuário MRBS</th>
+              <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">Status</th>
               <th className="px-4 py-3 text-secondary small text-uppercase fw-semibold">Ações</th>
             </tr>
           </thead>
           <TableBody
             data={paginaVisivel}
-            colSpan={7}
+            colSpan={8}
             loading={carregando}
             emptyMessage={erro ? "Não foi possível carregar os usuários." : "Nenhum usuário encontrado para esse filtro."}
             renderRow={(usuario) => (
@@ -217,6 +237,11 @@ export default function UsuariosAdmin() {
                 <td className="px-4 py-3 align-middle">{usuario.categoriaUsuario || "Sem registro"}</td>
                 <td className="px-4 py-3 align-middle">{usuario.user_auth_id ?? "Sem registro"}</td>
                 <td className="px-4 py-3 align-middle">{usuario.username_mrbs || "Sem registro"}</td>
+                <td className="px-4 py-3 align-middle">
+                  <span className={`badge ${usuario.esta_ativo ? "badge-success" : "badge-secondary"}`}>
+                    {usuario.esta_ativo ? "Ativo" : "Desativado"}
+                  </span>
+                </td>
                 <td className="px-4 py-3 align-middle">
                   <div className="d-flex flex-wrap gap-2">
                     <button type="button" className="btn btn-outline-primary btn-sm text-nowrap mr-1" onClick={() => {
@@ -229,6 +254,12 @@ export default function UsuariosAdmin() {
                     </button>
                     <button type="button" className="btn btn-outline-secondary btn-sm text-nowrap" onClick={() => abrirEdicao(usuario)}>
                       <i className="fas fa-edit mr-1"></i> Editar
+                    </button>
+                    <button type="button" className={`btn btn-sm text-nowrap ml-1 ${usuario.esta_ativo ? "btn-outline-danger" : "btn-outline-success"}`}
+                      onClick={() => void alternarStatusUsuario(usuario)} disabled={usuarioAtualizandoStatus !== null}
+                    >
+                      <i className={`fas ${usuario.esta_ativo ? "fa-user-slash" : "fa-user-check"} mr-1`}></i>
+                      {usuarioAtualizandoStatus === usuario.id ? "Atualizando..." : usuario.esta_ativo ? "Desativar" : "Reativar"}
                     </button>
                   </div>
                 </td>
@@ -309,23 +340,28 @@ export default function UsuariosAdmin() {
                 {erroEdicao && <div className="alert alert-danger" role="alert">{erroEdicao}</div>}
                 <div className="form-group mb-3">
                   <label htmlFor="usuario-matricula">Matrícula</label>
-                  <input id="usuario-matricula" className="form-control" value={formulario.matricula} onChange={(event) => setFormulario({ ...formulario, matricula: event.target.value })} required />
+                  <input id="usuario-matricula" className="form-control" value={formulario.matricula} onChange={(event) => setFormulario({ ...formulario, 
+                    matricula: event.target.value })} required />
                 </div>
                 <div className="form-group mb-3">
                   <label htmlFor="usuario-nome">Nome</label>
-                  <input id="usuario-nome" className="form-control" value={formulario.nome_usuario} onChange={(event) => setFormulario({ ...formulario, nome_usuario: event.target.value })} required />
+                  <input id="usuario-nome" className="form-control" value={formulario.nome_usuario} onChange={(event) => setFormulario({ ...formulario, 
+                    nome_usuario: event.target.value })} required />
                 </div>
                 <div className="form-group mb-3">
                   <label htmlFor="usuario-categoria">Categoria</label>
-                  <input id="usuario-categoria" className="form-control" value={formulario.categoriaUsuario} onChange={(event) => setFormulario({ ...formulario, categoriaUsuario: event.target.value })} placeholder="FUNCIONARIO ou código de aluno" />
+                  <input id="usuario-categoria" className="form-control" value={formulario.categoriaUsuario} onChange={(event) => setFormulario({ ...formulario, 
+                    categoriaUsuario: event.target.value })} placeholder="FUNCIONARIO ou código de aluno" />
                 </div>
                 <div className="form-group mb-3">
                   <label htmlFor="usuario-auth-id">ID do usuário associado</label>
-                  <input id="usuario-auth-id" type="number" min="0" className="form-control" value={formulario.user_auth_id} onChange={(event) => setFormulario({ ...formulario, user_auth_id: event.target.value })} />
+                  <input id="usuario-auth-id" type="number" min="0" className="form-control" value={formulario.user_auth_id} onChange={(event) => setFormulario({ ...formulario, 
+                    user_auth_id: event.target.value })} />
                 </div>
                 <div className="form-group mb-0">
                   <label htmlFor="usuario-mrbs">Usuário MRBS</label>
-                  <input id="usuario-mrbs" className="form-control" value={formulario.username_mrbs} onChange={(event) => setFormulario({ ...formulario, username_mrbs: event.target.value })} />
+                  <input id="usuario-mrbs" className="form-control" value={formulario.username_mrbs} onChange={(event) => setFormulario({ ...formulario, 
+                    username_mrbs: event.target.value })} />
                 </div>
               </form>
             ) : (
