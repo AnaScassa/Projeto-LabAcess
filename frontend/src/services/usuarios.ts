@@ -2,8 +2,9 @@ import type { Usuario } from "../types/Usuario";
 import { authFetch } from "./auth";
 import { API_HOST } from "../utils/static";
 
-export async function carregarUsuariosSmartcard(): Promise<Usuario[]> {
-  const response = await authFetch(`http://${API_HOST}:8000/api/acesso/usuarios/`);
+export async function carregarUsuariosSmartcard(incluirDesativados = false): Promise<Usuario[]> {
+  const query = incluirDesativados ? "?incluir_desativados=true" : "";
+  const response = await authFetch(`http://${API_HOST}:8000/api/acesso/usuarios/${query}`);
 
   if (!response.ok) {
     throw new Error(`Erro ao carregar usuários do SmartCard: HTTP ${response.status}`);
@@ -34,6 +35,35 @@ export async function atualizarUsuarioSmartcard(
   }
 
   return response.json() as Promise<Usuario>;
+}
+
+export async function alterarStatusUsuarioSmartcard(
+  matricula: string,
+  estaAtivo: boolean,
+): Promise<boolean> {
+  const response = await authFetch(
+    `http://${API_HOST}:8000/api/acesso/alterar-status-usuario/${encodeURIComponent(matricula)}/`,
+    {
+      method: "POST",
+      body: JSON.stringify({ esta_ativo: estaAtivo }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Erro ao alterar status do usuário: HTTP ${response.status}`);
+  }
+
+  const resultado: unknown = await response.json();
+  if (
+    typeof resultado !== "object"
+    || resultado === null
+    || !("esta_ativo" in resultado)
+    || typeof resultado.esta_ativo !== "boolean"
+  ) {
+    throw new Error("Resposta inválida ao alterar status do usuário.");
+  }
+
+  return resultado.esta_ativo;
 }
 
 export async function carregarUsuarios(): Promise<Usuario[]> {

@@ -6,6 +6,7 @@ export type Usuario = {
   user_auth_id: number | string | null;
   categoriaUsuario: string | null;
   username_mrbs: string | null;
+  esta_ativo: boolean;
   acessos: {
     id: number; 
     data_acesso: string | null;
