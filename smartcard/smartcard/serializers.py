@@ -23,6 +23,7 @@ class UsuarioSerializer(serializers.HyperlinkedModelSerializer):
             'nome_usuario',
             'categoriaUsuario',
             'username_mrbs',
+            'esta_ativo',
             'acessos',
         ]
 

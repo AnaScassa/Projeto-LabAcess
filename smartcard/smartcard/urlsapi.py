@@ -1,4 +1,4 @@
-from smartcard.views import buscar_registro, carregar_acesso, lista_usuarios, mudar_apontamento, receber_resposta, ultima_resposta, status_rpa, usuarios_ativos, emails, lista_emails, desativar_email, cadastrar_email, registrar_email, verificar_id, cruzamentos_api, notificacoes_usuario, notificacoes_usuario_stream, agendamentos_nao_utilizados, acessos_agendados, registro_emails, listar_erros_rpa, erro_processamento
+from smartcard.views import buscar_registro, carregar_acesso, lista_usuarios, mudar_apontamento, receber_resposta, ultima_resposta, status_rpa, usuarios_ativos, emails, lista_emails, desativar_email, cadastrar_email, registrar_email, verificar_id, cruzamentos_api, notificacoes_usuario, notificacoes_usuario_stream, agendamentos_nao_utilizados, acessos_agendados, registro_emails, listar_erros_rpa, erro_processamento, desativar_usuario
 from smartcard.api import AcessoViewSet, GroupViewSet, UsuarioViewSet, TaskCompleted, ApontamentoViewSet
 
 from django.urls import include, path
@@ -17,6 +17,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path("upload-xls/", carregar_acesso, name="upload_xls"),
     path("lista-usuarios/", lista_usuarios, name="lista_usuarios"),
+    path("alterar-status-usuario/<str:matricula>/", desativar_usuario, name="alterar_status_usuario"),
     path("desativar-apontamento/<int:id>/", mudar_apontamento, name="desativar_apontamento"),
     path("buscar-registro/", buscar_registro, name="buscar_registro"),
     path("usuarios-ativos", usuarios_ativos, name="usuarios_ativos"),

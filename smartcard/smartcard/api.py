@@ -31,7 +31,7 @@ class AcessoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return super().get_queryset().select_related("usuario")
+        return super().get_queryset().filter(usuario__esta_ativo=True).select_related("usuario")
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -44,7 +44,13 @@ class UsuarioViewSet(ListModelMixin, RetrieveModelMixin, UpdateModelMixin, Gener
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return super().get_queryset()
+        queryset = super().get_queryset()
+        incluir_desativados = (self.request.query_params.get("incluir_desativados") == "true"
+            and (self.request.user.is_staff or self.request.user.is_superuser)
+        )
+        if incluir_desativados:
+            return queryset
+        return queryset.filter(esta_ativo=True)
 
     def get_permissions(self):
         if self.action in ("update", "partial_update"):
@@ -107,7 +113,7 @@ class ApontamentoViewSet(ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Acesso.objects.filter(apontamento__in=[1, 2])
+        return Acesso.objects.filter(apontamento__in=[1, 2], usuario__esta_ativo=True)
     
 class AuthorizationTokenSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=True)

@@ -97,6 +97,7 @@ As rotas abaixo sao expostas sob o prefixo `/api/acesso/` e exigem autenticacao 
 | --- | --- | --- |
 | `POST` | `/upload-xls/` | Receber arquivo XLS ou CSV |
 | `GET` | `/lista-usuarios/` | Listar usuarios |
+| `POST` | `/alterar-status-usuario/{matricula}/` | Ativar ou desativar usuario (`esta_ativo`: booleano) |
 | `PATCH` | `/desativar-apontamento/{id}/` | Alterar apontamento |
 | `POST` | `/buscar-registro/` | Solicitar busca de registros |
 | `GET` | `/usuarios-ativos` | Listar usuarios ativos |

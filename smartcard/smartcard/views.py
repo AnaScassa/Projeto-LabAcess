@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes,renderer_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.renderers import BaseRenderer
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -32,20 +32,20 @@ redis_client = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def lista_acessos(request):
-    acessos = Acesso.objects.values('id', 'usuario_id', 'data_acesso', 'desc_evento', 'desc_area', 'desc_leitor', 'ent_sai')
+    acessos = Acesso.objects.filter(usuario__esta_ativo=True).values('id', 'usuario_id', 'data_acesso', 'desc_evento', 'desc_area', 'desc_leitor', 'ent_sai')
     return Response(list(acessos), status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def lista_usuarios(request):
-    usuarios = Usuario.objects.values('id', 'nome_usuario')
+    usuarios = Usuario.objects.filter(esta_ativo=True).values('id', 'nome_usuario')
     return Response(list(usuarios), status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def usuarios_ativos(request):
     hoje = date.today()
-    acessos = (Acesso.objects.filter(data_acesso__date=hoje).order_by('usuario_id', '-data_acesso').values('id', 'usuario_id', 'data_acesso', 'desc_evento', 'desc_area', 'ent_sai'))
+    acessos = (Acesso.objects.filter(data_acesso__date=hoje, usuario__esta_ativo=True).order_by('usuario_id', '-data_acesso').values('id', 'usuario_id', 'data_acesso', 'desc_evento', 'desc_area', 'ent_sai'))
     ultimos_acessos = {}
 
     for acesso in acessos:
@@ -103,7 +103,7 @@ def cadastrar_email(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def acessos_erro(request):
-    acessos = Acesso.objects.filter(apontamento__in=[1, 2]).values('id', 'data_acesso', 'desc_evento', 'usuario_id', 'apontamento')
+    acessos = Acesso.objects.filter(apontamento__in=[1, 2], usuario__esta_ativo=True).values('id', 'data_acesso', 'desc_evento', 'usuario_id', 'apontamento')
     
     # 0 = acessos sem erro
     # 1 = acessos com desc_evento inconsistente
@@ -117,7 +117,7 @@ def acessos_erro(request):
 def mudar_apontamento(request, id):
 
     try:
-        ap = Acesso.objects.get(id=id)
+        ap = Acesso.objects.get(id=id, usuario__esta_ativo=True)
         ap.apontamento = 3
         ap.save()
         return Response({"msg": "Apontamento desativado com sucesso"})
@@ -329,7 +329,7 @@ def verificar_id(request, id):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def cruzamentos_api(request):
-    cruzamentos = Acesso.objects.select_related("usuario").filter(eh_agendado=False).order_by("-data_acesso")
+    cruzamentos = Acesso.objects.select_related("usuario").filter(eh_agendado=False, usuario__esta_ativo=True).order_by("-data_acesso")
 
     return Response([
         {
@@ -345,7 +345,7 @@ def cruzamentos_api(request):
 @permission_classes([IsAuthenticated])
 def acessos_agendados(request):
 
-    acessos = (Acesso.objects.filter(eh_agendado=True, ent_sai="1").exclude(usuario__categoriaUsuario="FUNCIONARIO") 
+    acessos = (Acesso.objects.filter(eh_agendado=True, ent_sai="1", usuario__esta_ativo=True).exclude(usuario__categoriaUsuario="FUNCIONARIO")
         .values("usuario__matricula", "usuario__nome_usuario").annotate( quantidade=Count("id")).order_by("-quantidade")
     )
 
@@ -427,11 +427,11 @@ def notificacoes_usuario_stream(request):
 def agendamentos_nao_utilizados(request):
     agendamentos = MrbsEntry.objects.using("mariadb").all()
 
-    usuarios = Usuario.objects.exclude(username_mrbs__isnull=True).exclude(username_mrbs="").exclude(categoriaUsuario="FUNCIONARIO")
+    usuarios = Usuario.objects.filter(esta_ativo=True).exclude(username_mrbs__isnull=True).exclude(username_mrbs="").exclude(categoriaUsuario="FUNCIONARIO")
 
     usuarios_por_username = {usuario.username_mrbs: usuario for usuario in usuarios}
 
-    acessos = Acesso.objects.select_related("usuario").filter(desc_area="CCS_LAB", ent_sai="1", data_acesso__isnull=False)
+    acessos = Acesso.objects.select_related("usuario").filter(desc_area="CCS_LAB", ent_sai="1", data_acesso__isnull=False, usuario__esta_ativo=True)
     acessos_por_usuario = defaultdict(list)
 
     for acesso in acessos:
@@ -477,3 +477,28 @@ def registro_emails(request):
 def erro_processamento(request):
     processamentos = Processamento.objects.filter(status="ERRO").values("id", "status", "user", "task_name", "atualizado_em")
     return Response(list(processamentos), status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def desativar_usuario(request, matricula):
+    esta_ativo = request.data.get("esta_ativo", False)
+    if not isinstance(esta_ativo, bool):
+        return Response(
+            {"erro": "O campo esta_ativo deve ser booleano."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        usuario = Usuario.objects.get(matricula=matricula)
+        usuario.esta_ativo = esta_ativo
+        usuario.save(update_fields=["esta_ativo"])
+        acao = "reativado" if esta_ativo else "desativado"
+        return Response(
+            {
+                "msg": f"Usuário {usuario.nome_usuario} {acao} com sucesso.",
+                "esta_ativo": usuario.esta_ativo,
+            },
+            status=status.HTTP_200_OK,
+        )
+    except Usuario.DoesNotExist:
+        return Response({"erro": "Usuário não encontrado"}, status=status.HTTP_404_NOT_FOUND)
