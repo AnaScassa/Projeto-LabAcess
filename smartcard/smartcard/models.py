@@ -6,6 +6,7 @@ class Usuario(models.Model):
     categoriaUsuario = models.CharField(max_length=50, blank=True, null=True)
     user_auth = models.BigIntegerField(null=True, blank=True)
     username_mrbs = models.CharField(max_length=100, blank=True, null=True)
+    esta_ativo = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.nome_usuario} ({self.matricula})"
@@ -25,7 +26,6 @@ class Acesso(models.Model):
 
     def __str__(self): 
         return f"Acesso de {self.usuario.nome_usuario} em {self.data_acesso}" 
-
 
 class Processamento(models.Model):
     STATUS_CHOICES = [("PENDING", "Pendente"), ("PROCESSANDO", "Processando"), ("SUCCESS", "Sucesso"), ("ERRO", "Erro"),]
