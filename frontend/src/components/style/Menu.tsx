@@ -13,6 +13,7 @@ type NotificacaoUsuario = {
         id: number;
         nome_usuario: string;
         matricula: string;
+        esta_ativo: boolean;
         data: string | null;
         hora: string;
         porta: string;
@@ -179,6 +180,11 @@ export default function BotaoVoltar() {
                                                     <p className="notification-row-detail">
                                                         {notificacao.acesso.nome_usuario} (matrícula {notificacao.acesso.matricula})
                                                     </p>
+                                                    {!notificacao.acesso.esta_ativo && (
+                                                        <p className="notification-row-detail">
+                                                            <span className="badge badge-warning">Usuário desativado</span>
+                                                        </p>
+                                                    )}
                                                     <p className="notification-row-detail">
                                                         {formatarData(notificacao.acesso.data)} às {notificacao.acesso.hora} · Porta {notificacao.acesso.porta}
                                                     </p>

@@ -7,7 +7,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
-from django.db.models import Count
+from django.db.models import Count, F
 from django.http import JsonResponse
 from django.core.cache import cache
 from django.db import transaction
@@ -367,7 +367,7 @@ def notificacoes_usuario(request):
         apagadas, _ = NotificacaoUsuario.objects.filter(usuario_id=usuario_id).delete()
         return Response({"apagadas": apagadas})
 
-    notificacoes = NotificacaoUsuario.objects.filter(usuario_id=usuario_id).select_related("acesso__usuario")
+    notificacoes = (NotificacaoUsuario.objects.filter(usuario_id=usuario_id).select_related("acesso__usuario").order_by(F("acesso__data_acesso").desc(nulls_last=True), "-id"))
     acesso_ids = [notificacao.acesso_id for notificacao in notificacoes if notificacao.acesso_id]
     mensagens_por_acesso = dict(Acesso.objects.filter(id__in=acesso_ids).values_list("id", "desc_evento"))
 
@@ -385,6 +385,7 @@ def notificacoes_usuario(request):
                 "id": acesso.id,
                 "nome_usuario": acesso.usuario.nome_usuario,
                 "matricula": acesso.usuario.matricula,
+                "esta_ativo": acesso.usuario.esta_ativo,
                 "data": data_hora.date() if data_hora else None,
                 "hora": data_hora.time() if data_hora else None,
                 "porta": acesso.desc_leitor,
