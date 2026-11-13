@@ -59,7 +59,7 @@ export default function Adm() {
                       />
                       <div className="input-group-append">
                         <span className="input-group-text bg-white text-muted">
-                          <i className="fas fa-lock" aria-hidden="true"></i>
+                          <i className="fas fa-lock mr-0" aria-hidden="true"></i>
                         </span>
                       </div>
                     </div>

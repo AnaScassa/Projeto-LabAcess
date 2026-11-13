@@ -10,6 +10,13 @@ import { useRpaStatus } from "../hooks/useRpaStatus";
 import { useUpload } from "../hooks/useUpload";
 import BuscaControls from "../components/upload/BuscaControls";
 
+const formatarDataLocal = (data: Date) => {
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
+  const dia = String(data.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+};
+
 export default function Upload() {
   const { statusBusca, mensagem, iniciarBusca } = useRpaStatus();
   const { mensagem: mensagemUpload, loading, estaBloqueado, fileInputRef, handleUpload } = useUpload();
@@ -20,6 +27,7 @@ export default function Upload() {
   const [anosAcessosDisponiveis, setAnosAcessosDisponiveis] = useState<number[]>([]);
   const [anoAcessosSelecionado, setAnoAcessosSelecionado] = useState<number | null>(null);
   const buscarBloqueado = statusBusca !== null && statusBusca !== "finalizado" && statusBusca !== "erro";
+  const dataHoje = formatarDataLocal(new Date());
 
   useMailhogNotifications();
 
@@ -56,9 +64,7 @@ export default function Upload() {
     const inicio = new Date(`${dataInicio}T${horaInicio}`);
     const fim = new Date(`${dataFim}T${horaFim}`);
 
-    const agora = new Date();
-
-    if (inicio > agora || fim > agora) {
+    if (dataInicio > dataHoje || dataFim > dataHoje) {
       alert("Não é possível buscar registros futuros.");
       return false;
     }
@@ -97,7 +103,7 @@ export default function Upload() {
               </div>
 
               <div className="col-12 pt-2 pb-4">
-                <BuscaControls buscarBloqueado={buscarBloqueado} mensagem={mensagem} dataInicio={dataInicio} dataFim={dataFim}
+                <BuscaControls buscarBloqueado={buscarBloqueado} mensagem={mensagem} dataInicio={dataInicio} dataFim={dataFim} dataMaxima={dataHoje}
                   horaInicio={horaInicio} horaFim={horaFim} onDataInicioChange={setDataInicio} onDataFimChange={setDataFim}
                   onHoraInicioChange={setHoraInicio} onHoraFimChange={setHoraFim}
                   onBuscaRapida={() => {

@@ -3,6 +3,7 @@ type BuscaControlsProps = {
   mensagem: string;
   dataInicio: string;
   dataFim: string;
+  dataMaxima: string;
   horaInicio: string;
   horaFim: string;
   onDataInicioChange: (value: string) => void;
@@ -18,6 +19,7 @@ export default function BuscaControls({
   mensagem,
   dataInicio,
   dataFim,
+  dataMaxima,
   horaInicio,
   horaFim,
   onDataInicioChange,
@@ -44,12 +46,12 @@ return (
       <div className="row g-3">
         <div className="col-md-6">
           <label className="form-label mb-1 fw-semibold text-secondary mb-1">Data inicial</label>
-          <input type="date" className="form-control busca-input" value={dataInicio} onChange={(event) => onDataInicioChange(event.target.value)} />
+          <input type="date" className="form-control busca-input" max={dataMaxima} value={dataInicio} onChange={(event) => onDataInicioChange(event.target.value)} />
         </div>
 
         <div className="col-md-6">
           <label className="form-label mb-1 fw-semibold text-secondary mb-1">Data final</label>
-          <input type="date" className="form-control busca-input input-busca" value={dataFim} onChange={(event) => onDataFimChange(event.target.value)} />
+          <input type="date" className="form-control busca-input input-busca" max={dataMaxima} value={dataFim} onChange={(event) => onDataFimChange(event.target.value)} />
         </div>
 
         <div className="col-md-6">
