@@ -59,7 +59,7 @@ export default function TempoPermanencia() {
 
                       <div className="input-group w-100 flex-nowrap">
                         <FiltroUsuario usuarios={usuariosUnicos} usuarioSelecionado={usuarioSelecionado} onChange={filtrarUsuario}/>
-                        <div className="input-group-text bg-white">
+                        <div className="input-group-text bg-white mr-0" style={{borderRadius: "0 0.375rem 0.375rem 0", borderLeft: "none"}}>
                           <i className="fas fa-user text-primary"></i>
                         </div>
                       </div>

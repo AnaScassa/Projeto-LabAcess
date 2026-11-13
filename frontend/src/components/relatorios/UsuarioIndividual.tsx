@@ -46,6 +46,7 @@ export default function CalculadorTempo({
   const [page, setPage] = useState(0);
   const rowsPerPage = 15;
   const [totalAcessos, setTotalAcessos] = useState(0);
+  const [totalDiasAcesso, setTotalDiasAcesso] = useState(0);
   const [totalAcessosErro, setTotalAcessosErro] = useState(0);
   const [mediaTempo, setMediaTempo] = useState("0h 0min");
   const [totalSistema, setTotalSistema] = useState("0h 0min");
@@ -128,6 +129,7 @@ export default function CalculadorTempo({
   useEffect(() => {
     if (!usuario) {
       setResultados([]);
+      setTotalDiasAcesso(0);
       return;
     }
     const usuarioUnificado = juntarUsuariosPorMatricula(usuario, usuarios);
@@ -145,6 +147,16 @@ export default function CalculadorTempo({
     if (portas.length > 0 && !portas.includes("todas")) {
       acessos = acessos.filter((a: any) => portas.includes(a.desc_area));
     }
+
+    const diasComAcesso = new Set<string>();
+    acessos.forEach((acesso: any) => {
+      if (!acesso.data_acesso) return;
+
+      const data = new Date(acesso.data_acesso);
+      if (Number.isNaN(data.getTime())) return;
+
+      diasComAcesso.add(`${data.getFullYear()}-${data.getMonth()}-${data.getDate()}`);
+    });
 
     const ordenado = [...acessos].sort((a: any, b: any) => new Date(a.data_acesso).getTime() - new Date(b.data_acesso).getTime());
     const stacks: Record<string, { dataHora: Date; desc_evento: string } | null> = {};
@@ -216,6 +228,7 @@ export default function CalculadorTempo({
     setMediaTempo(`${horas}h ${minutos}min`);
     setResultados(out);
     setTotalAcessos(contagemAcessos);
+    setTotalDiasAcesso(diasComAcesso.size);
     setTotalAcessosErro(contagemErro);
     setTotalSistema(`${horas2}h ${minutos2}min`);
   }
@@ -361,31 +374,38 @@ export default function CalculadorTempo({
         </div>
 
         <div className="row g-3 mt-3">
-          <div className="col-md-6 col-lg-3">
+          <div className="col-12 col-sm-6 col-xl">
             <div className="border rounded-3 p-3 h-100">
               <small className="text-secondary d-block mb-1">Acessos com entrada e saída</small>
               <span className="fs-5 fw-semibold text-dark">{totalAcessos}</span>
             </div>
           </div>
 
-          <div className="col-md-6 col-lg-3">
+          <div className="col-12 col-sm-6 col-xl">
             <div className="border rounded-3 p-3 h-100">
               <small className="text-secondary d-block mb-1">Acessos com erro</small>
               <span className="fs-5 fw-semibold text-dark">{totalAcessosErro}</span>
             </div>
           </div>
 
-          <div className="col-md-6 col-lg-3">
+          <div className="col-12 col-sm-6 col-xl">
             <div className="border rounded-3 p-3 h-100">
               <small className="text-secondary d-block mb-1">Tempo total de permanência</small>
               <span className="fs-5 fw-semibold text-dark">{totalSistema}</span>
             </div>
           </div>
 
-          <div className="col-md-6 col-lg-3">
+          <div className="col-12 col-sm-6 col-xl">
             <div className="border rounded-3 p-3 h-100">
               <small className="text-secondary d-block mb-1">Média de permanência</small>
               <span className="fs-5 fw-semibold text-dark">{mediaTempo}</span>
+            </div>
+          </div>
+
+          <div className="col-12 col-sm-6 col-xl">
+            <div className="border rounded-3 p-3 h-100">
+              <small className="text-secondary d-block mb-1">Dias com acesso</small>
+              <span className="fs-5 fw-semibold text-dark">{totalDiasAcesso}</span>
             </div>
           </div>
         </div>
