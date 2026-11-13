@@ -14,12 +14,14 @@ import TreinamentosPendentesNaoTreinados from "./pages/relatorios/TreinamentosPe
 import Emails from "./pages/Emails";
 import Agendamento from "./pages/Agendamento";
 import Adm from "./pages/Adm";
+import AnaliseUtilizacao from "./pages/AnaliseUtilizacao";
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<PrivateRoute><Upload/></PrivateRoute>} />
       <Route path="/dashboard" element={<PrivateRoute><Dashboard/></PrivateRoute>} />
+      <Route path="/analise-utilizacao" element={<PrivateRoute><AnaliseUtilizacao/></PrivateRoute>} />
       <Route path="/relatorio-tempo" element={<PrivateRoute><RelatorioTempo/></PrivateRoute>} />
       <Route path="/tempo-permanencia" element={<PrivateRoute><TempoPermanencia/></PrivateRoute>} />
       <Route path="/nao-acessantes" element={<PrivateRoute><NaoAcessantes/></PrivateRoute>}/>

@@ -234,6 +234,12 @@ export default function BotaoVoltar() {
                             </Link>
                         </li>
                         <li className="nav-item">
+                            <Link to="/analise-utilizacao" className={`nav-link ${isActive("/analise-utilizacao") ? "active bg-white text-dark" : ""}`}>
+                                <i className="fas fa-chart-bar mr-0 ml-1"></i>
+                                <p className="ml-1">Análise de Utilização</p>
+                            </Link>
+                        </li>
+                        <li className="nav-item">
                             <Link to="/email" className={`nav-link ${isActive("/email") ? "active bg-white text-dark" : ""}`}>
                                 <i className="fas fa-sharp fa-solid fa-envelope mr-0 ml-1"></i>
                                 <p className="ml-1">Controle de Emails</p>
