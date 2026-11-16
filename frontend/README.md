@@ -89,7 +89,7 @@ Principais rotas consumidas:
 - `/api/acesso/ultima-resposta/`: ultima resposta da busca.
 - `/api/acesso/receber-resposta/`: eventos SSE das respostas do RPA.
 - `/api/acesso/processamento/`: eventos SSE do processamento de arquivos.
-- `/api/acesso/usuarios/` e `/api/acesso/usuarios-ativos`: dados para relatorios.
+- `/api/acesso/usuarios/` e `/api/acesso/usuarios-ativos/`: dados para relatorios.
 
 Quando o projeto completo e executado com Docker Compose, a porta `8000` normalmente e fornecida pelo Kong, que encaminha as requisicoes para o backend correspondente.
 

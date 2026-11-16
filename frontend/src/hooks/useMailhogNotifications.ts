@@ -13,7 +13,7 @@ export function useMailhogNotifications() {
 
     const controller = new AbortController();
 
-    fetchEventSource(`http://${API_HOST}:8000/api/acesso/emails`, {
+    fetchEventSource(`http://${API_HOST}:8000/api/acesso/emails/`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

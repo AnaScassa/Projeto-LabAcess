@@ -2,7 +2,7 @@ import { authFetch } from "./auth";
 import { API_HOST } from "../utils/static";
 
 export const listaEmails = async () => {
-    return await authFetch(`http://${API_HOST}:8000/api/acesso/lista-emails`);
+    return await authFetch(`http://${API_HOST}:8000/api/acesso/lista-emails/`);
 };
 
 export const registroEmails = async () => {
