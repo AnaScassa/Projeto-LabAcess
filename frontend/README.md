@@ -2,7 +2,7 @@
 
 Frontend web do LabAcess, sistema de controle de acesso a laboratorio. A aplicacao oferece autenticacao, gerenciamento de usuarios e treinamentos, upload de arquivos, consultas de registros, relatorios e graficos para acompanhar o uso dos laboratorios.
 
-Este frontend e uma aplicacao React com TypeScript. Ele se comunica com os servicos Django do projeto por HTTP e Server-Sent Events (SSE), usando o Kong como entrada da API quando a aplicacao completa esta em execucao.
+Este frontend e uma aplicacao React com TypeScript. Ele se comunica diretamente com os servicos Django do projeto por HTTP e Server-Sent Events (SSE), sem API gateway.
 
 ## Funcionalidades
 
@@ -76,7 +76,7 @@ O host da API esta definido em `src/utils/static.ts` como `localhost`. Em desenv
 
 | Servico | URL base | Uso |
 | Users service | `http://localhost:8001` | Login, refresh de JWT, usuarios e treinamentos |
-| SmartCard backend | `http://localhost:8000` | Acessos, uploads, relatorios e processamento |
+| SmartCard backend | `http://localhost:8080` | Acessos, uploads, relatorios e processamento |
 
 Principais rotas consumidas:
 
@@ -91,7 +91,7 @@ Principais rotas consumidas:
 - `/api/acesso/processamento/`: eventos SSE do processamento de arquivos.
 - `/api/acesso/usuarios/` e `/api/acesso/usuarios-ativos/`: dados para relatorios.
 
-Quando o projeto completo e executado com Docker Compose, a porta `8000` normalmente e fornecida pelo Kong, que encaminha as requisicoes para o backend correspondente.
+Quando o projeto completo e executado com Docker Compose, o backend principal fica disponivel diretamente em `http://localhost:8080`.
 
 ## Requisitos
 
@@ -108,7 +108,7 @@ npm install
 npm run dev
 ```
 
-Por padrao, o Vite informa no terminal a URL do servidor de desenvolvimento. A aplicacao espera encontrar os servicos nas portas `8000` e `8001`.
+Por padrao, o Vite informa no terminal a URL do servidor de desenvolvimento. A aplicacao espera encontrar os servicos nas portas `8080` e `8001`.
 
 Scripts disponiveis:
 
@@ -160,5 +160,5 @@ As conexoes SSE sao encerradas quando os componentes que as utilizam sao desmont
 ## Observacoes
 
 - A configuracao atual usa `http://localhost` diretamente e nao define variaveis `VITE_API_*` no `vite.config.ts`.
-- Para acessar o frontend por outro computador ou dominio, ajuste `src/utils/static.ts` e a configuracao de CORS do backend/Kong.
+- Para acessar o frontend por outro computador ou dominio, ajuste `src/utils/static.ts` e a configuracao de CORS dos backends.
 - A porta `3000` e usada pelo container frontend no Docker Compose; o servidor Vite local pode usar outra porta se a `3000` estiver ocupada.

@@ -1,5 +1,5 @@
 import { authFetch } from "./auth";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export interface Acesso {
   id: number;
@@ -14,7 +14,7 @@ export interface Acesso {
 }
 
 export async function carregarAcessos(): Promise<Acesso[]> {
-  const response = await authFetch(`http://${API_HOST}:8000/api/acesso/acessos/`);
+  const response = await authFetch(`${SMARTCARD_API_BASE}/api/acesso/acessos/`);
 
   if (!response.ok) {
     throw new Error(`Erro ao carregar acessos: HTTP ${response.status}`);

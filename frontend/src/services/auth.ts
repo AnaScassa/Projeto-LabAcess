@@ -1,4 +1,4 @@
-import { API_HOST } from "../utils/static";
+import { USERS_API_BASE } from "../utils/static";
 
 type TokenPayload = {
   id?: unknown;
@@ -97,7 +97,7 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
       throw new Error("Sem refresh token");
     }
 
-    const refreshResponse = await fetch(`http://${API_HOST}:8000/api/users/api/token/refresh/`,{
+    const refreshResponse = await fetch(`${USERS_API_BASE}/api/users/api/token/refresh/`,{
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,10 +1,10 @@
 import type { Usuario } from "../types/Usuario";
 import { authFetch } from "./auth";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export async function carregarUsuariosSmartcard(incluirDesativados = false): Promise<Usuario[]> {
   const query = incluirDesativados ? "?incluir_desativados=true" : "";
-  const response = await authFetch(`http://${API_HOST}:8000/api/acesso/usuarios/${query}`);
+  const response = await authFetch(`${SMARTCARD_API_BASE}/api/acesso/usuarios/${query}`);
 
   if (!response.ok) {
     throw new Error(`Erro ao carregar usuários do SmartCard: HTTP ${response.status}`);
@@ -25,7 +25,7 @@ export async function atualizarUsuarioSmartcard(
   id: number,
   dados: AtualizacaoUsuario,
 ): Promise<Usuario> {
-  const response = await authFetch(`http://${API_HOST}:8000/api/acesso/usuarios/${id}/`, {
+  const response = await authFetch(`${SMARTCARD_API_BASE}/api/acesso/usuarios/${id}/`, {
     method: "PATCH",
     body: JSON.stringify(dados),
   });
@@ -42,7 +42,7 @@ export async function alterarStatusUsuarioSmartcard(
   estaAtivo: boolean,
 ): Promise<boolean> {
   const response = await authFetch(
-    `http://${API_HOST}:8000/api/acesso/alterar-status-usuario/${encodeURIComponent(matricula)}/`,
+    `${SMARTCARD_API_BASE}/api/acesso/alterar-status-usuario/${encodeURIComponent(matricula)}/`,
     {
       method: "POST",
       body: JSON.stringify({ esta_ativo: estaAtivo }),

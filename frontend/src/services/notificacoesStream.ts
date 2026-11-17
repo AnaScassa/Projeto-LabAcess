@@ -1,5 +1,5 @@
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 interface EventoNotificacao {
   tipo?: string;
@@ -22,7 +22,7 @@ export function escutarNotificacoesUsuario({
 
   const controller = new AbortController();
 
-  void fetchEventSource(`http://${API_HOST}:8000/api/acesso/notificacoes/stream/`, {
+  void fetchEventSource(`${SMARTCARD_API_BASE}/api/acesso/notificacoes/stream/`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

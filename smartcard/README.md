@@ -214,13 +214,13 @@ A partir da raiz do repositorio:
 docker compose up --build backend
 ```
 
-Para subir toda a plataforma, incluindo frontend, `users_service`, Kong e dependencias:
+Para subir toda a plataforma, incluindo frontend, `users_service` e dependencias:
 
 ```bash
 docker compose up --build
 ```
 
-O backend fica exposto diretamente em `http://localhost:8080` e, na arquitetura completa, a API publica normalmente entra pelo Kong em `http://localhost:8000`.
+O backend fica exposto diretamente em `http://localhost:8080`.
 
 ## Testes
 

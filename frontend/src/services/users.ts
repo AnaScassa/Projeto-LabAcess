@@ -1,9 +1,9 @@
 import { authFetch } from "./auth";
 import type { Users, UsuarioPrivilegiado } from "../types/Users";
-import { API_HOST } from "../utils/static";
+import { USERS_API_BASE } from "../utils/static";
 
 export async function buscarUsers(): Promise<Users[]> {
-    const res = await authFetch(`http://${API_HOST}:8000/api/users/user/`);
+    const res = await authFetch(`${USERS_API_BASE}/api/users/user/`);
 
     if (!res.ok) {
         throw new Error("Erro ao buscar usuários do users_service");
@@ -13,7 +13,7 @@ export async function buscarUsers(): Promise<Users[]> {
 }
 
 export async function buscarUsuariosPrivilegiados(): Promise<UsuarioPrivilegiado[]> {
-    const response = await authFetch(`http://${API_HOST}:8000/api/users/admin-users/`);
+    const response = await authFetch(`${USERS_API_BASE}/api/users/admin-users/`);
 
     if (!response.ok) {
         throw new Error(`Erro ao buscar usuários privilegiados: HTTP ${response.status}`);
@@ -23,7 +23,7 @@ export async function buscarUsuariosPrivilegiados(): Promise<UsuarioPrivilegiado
 }
 
 export async function conferirStaff(password: string): Promise<boolean> {
-    const response = await authFetch(`http://${API_HOST}:8000/api/users/conferir-staff/`, {
+    const response = await authFetch(`${USERS_API_BASE}/api/users/conferir-staff/`, {
         method: "POST",
         body: JSON.stringify({ password }),
     });
@@ -47,7 +47,7 @@ export async function atualizarPermissaoSuperusuario(
     id: string | number,
     isSuperuser: boolean,
 ): Promise<UsuarioPrivilegiado> {
-    const response = await authFetch(`http://${API_HOST}:8000/api/users/admin-users/${id}/`, {
+    const response = await authFetch(`${USERS_API_BASE}/api/users/admin-users/${id}/`, {
         method: "PATCH",
         body: JSON.stringify({ is_superuser: isSuperuser }),
     });
@@ -69,7 +69,7 @@ export async function atualizarUsuarioUsersService(
     id: string | number,
     dados: DadosEdicaoUsuario,
 ): Promise<Users> {
-    const response = await authFetch(`http://${API_HOST}:8000/api/users/admin-users/${id}/`, {
+    const response = await authFetch(`${USERS_API_BASE}/api/users/admin-users/${id}/`, {
         method: "PATCH",
         body: JSON.stringify(dados),
     });

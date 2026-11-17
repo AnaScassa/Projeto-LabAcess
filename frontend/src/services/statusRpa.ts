@@ -1,5 +1,5 @@
 import { authFetch } from "./auth";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export type StatusRpa = {
   online: boolean;
@@ -7,7 +7,7 @@ export type StatusRpa = {
 };
 
 export async function buscarStatusRpa(): Promise<StatusRpa> {
-  const response = await authFetch(`http://${API_HOST}:8000/api/acesso/status-rpa/`);
+  const response = await authFetch(`${SMARTCARD_API_BASE}/api/acesso/status-rpa/`);
 
   if (!response.ok) {
     throw new Error(`Erro ao consultar o RPA: HTTP ${response.status}`);

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { exibirNotificacao } from "../utils/notificacoes";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export function useMailhogNotifications() {
   useEffect(() => {
@@ -13,7 +13,7 @@ export function useMailhogNotifications() {
 
     const controller = new AbortController();
 
-    fetchEventSource(`http://${API_HOST}:8000/api/acesso/emails/`, {
+    fetchEventSource(`${SMARTCARD_API_BASE}/api/acesso/emails/`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

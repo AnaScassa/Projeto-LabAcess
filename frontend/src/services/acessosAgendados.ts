@@ -1,5 +1,5 @@
 import { authFetch } from "./auth";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export interface AcessoAgendado {
     matricula: string;
@@ -8,7 +8,7 @@ export interface AcessoAgendado {
 }
 
 export const buscarAcessosAgendados = async (): Promise<AcessoAgendado[]> => {
-    const response = await authFetch(`http://${API_HOST}:8000/api/acesso/acessos-agendados/`, {
+    const response = await authFetch(`${SMARTCARD_API_BASE}/api/acesso/acessos-agendados/`, {
         method: "GET",
     });
 

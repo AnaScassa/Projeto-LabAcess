@@ -1,5 +1,5 @@
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export type RespostaRpa = {
   status?: string;
@@ -16,7 +16,7 @@ export function receberRespostas(onMensagem: (dados: RespostaRpa) => void, onErr
 
     const controller = new AbortController();
 
-    fetchEventSource(`http://${API_HOST}:8000/api/acesso/receber-resposta/`, {
+    fetchEventSource(`${SMARTCARD_API_BASE}/api/acesso/receber-resposta/`, {
         method: "GET",
 
         headers: {

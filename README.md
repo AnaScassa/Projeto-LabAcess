@@ -9,13 +9,8 @@ flowchart LR
 	U[Usuario] --> F[Frontend React]
 
 	subgraph Docker[Docker-compose]
-	
-		F --> K[Kong API Gateway]
-
-		subgraph Servicos[Servicos de aplicacao]
-			K --> S[SmartCard Backend]
-			K --> US[Users Service]
-		end
+		F --> S[SmartCard Backend]
+		F --> US[Users Service]
 
 		subgraph Persistencia[Persistencia e mensageria]
 			DB[(PostgreSQL)]
@@ -104,14 +99,11 @@ flowchart LR
 ### Infraestrutura e integracao
 
 - **Docker** e **Docker Compose** para construir e executar os servicos.
-- **Kong 3.9** como API Gateway e proxy reverso.
-- Plugin customizado do Kong em **Lua** para restringir acesso administrativo.
 - **PostgreSQL 15** para os dados da aplicacao.
-- Um banco PostgreSQL separado para o Kong.
 - **Redis 7** para estado temporario, pub/sub e ultima resposta do RPA.
 - **RabbitMQ 3 Management** como broker de mensagens.
 - **MailHog** para captura e visualizacao de e-mails em desenvolvimento.
-- Rede Docker dedicada para a comunicacao do Kong.
+- Comunicacao direta entre frontend e servicos backend sem API gateway.
 
 ## Estrutura do repositorio
 
@@ -121,10 +113,8 @@ flowchart LR
 ├── smartCard/            # Backend principal Django: acessos e processamento
 ├── users_service/        # Servico Django de usuarios
 ├── windows/rpa-pyauto/   # RPA Windows que controla o SESClient
-├── kong/                 # Plugin customizado do Kong
 ├── secrets/              # Arquivos locais de secrets usados pelo Compose
 ├── docker-compose.yml    # Orquestracao dos servicos
-├── kong.yaml             # Rotas e plugins do API Gateway
 ├── init.sql              # Inicializacao do banco principal
 └── rpa.jsonl             # Logs estruturados do RPA
 ```
@@ -134,7 +124,6 @@ flowchart LR
 | Servico | Porta local | Finalidade |
 | --- | ---: | --- |
 | Frontend | `3000` | Interface web |
-| Kong proxy | `8000` | Entrada da API |
 | SmartCard backend | `8080` | Backend principal |
 | Users service | `8001` | Servico de usuarios |
 | PostgreSQL | `5432` | Banco principal |
@@ -143,12 +132,10 @@ flowchart LR
 | RabbitMQ Management | `15672` | Painel do RabbitMQ |
 | MailHog web | `8025` | Visualizacao de e-mails |
 | MailHog SMTP | `1025` | Servidor SMTP local |
-| Kong Admin API | `8081` | Administracao do Kong |
-| Kong Admin GUI | `8082` | Interface administrativa do Kong |
 
 ## Fluxo de comunicacao
 
-O frontend envia requisicoes para o Kong. O gateway encaminha as rotas `/api/acesso` para o SmartCard backend e as demais rotas configuradas para seus servicos correspondentes.
+O frontend se comunica diretamente com os servicos de aplicacao: o backend principal em `http://localhost:8080` e o servico de usuarios em `http://localhost:8001`.
 
 Para uma busca de registros, o backend publica uma mensagem na fila `buscar`. O RPA Windows consome essa fila, acessa o SESClient, exporta os arquivos CSV e publica os arquivos na fila `csvs`. Ao terminar, publica o status na fila `buscar_concluido`. O backend salva a ultima resposta no Redis e a disponibiliza ao frontend por consulta HTTP e SSE.
 
@@ -180,10 +167,10 @@ docker compose up --build
 Depois, acesse:
 
 - Frontend: `http://localhost:3000`
-- API pelo Kong: `http://localhost:8000`
+- SmartCard API: `http://localhost:8080`
+- Users Service: `http://localhost:8001`
 - RabbitMQ Management: `http://localhost:15672`
 - MailHog: `http://localhost:8025`
-- Kong Admin GUI: `http://localhost:8082`
 
 Para executar em segundo plano:
 
@@ -238,5 +225,5 @@ Aplicativos:
 ## Observacoes
 
 - O caminho `C:/Users/anacha/Desktop/pasta` presente no Compose e especifico do ambiente original e pode precisar ser alterado em outra maquina.
-- O frontend usa `http://localhost:8000` como entrada da API em desenvolvimento, conforme a configuracao local.
+- O frontend usa `http://localhost:8080` para o SmartCard e `http://localhost:8001` para o Users Service em desenvolvimento local.
 - O primeiro start pode demorar porque constroi as imagens e executa migrations/fixtures.

@@ -1,5 +1,5 @@
 import { authFetch } from "./auth";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export const buscarRegistro = async (
   dataInicio: string | null,
@@ -7,7 +7,7 @@ export const buscarRegistro = async (
   dataFim: string | null,
   horaFim: string | null
 ) => {
-  const response = await authFetch(`http://${API_HOST}:8000/api/acesso/buscar-registro/`,{
+  const response = await authFetch(`${SMARTCARD_API_BASE}/api/acesso/buscar-registro/`,{
     method: "POST",
     headers: {
       "Content-Type": "application/json",

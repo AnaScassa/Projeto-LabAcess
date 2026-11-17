@@ -1,9 +1,9 @@
 import { authFetch } from "./auth";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 
 export async function getUsuariosAtivos() {
-  const response = await authFetch(`http://${API_HOST}:8000/api/acesso/usuarios-ativos/`, {
+  const response = await authFetch(`${SMARTCARD_API_BASE}/api/acesso/usuarios-ativos/`, {
     method: "GET",
   });
               

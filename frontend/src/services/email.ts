@@ -1,16 +1,16 @@
 import { authFetch } from "./auth";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export const listaEmails = async () => {
-    return await authFetch(`http://${API_HOST}:8000/api/acesso/lista-emails/`);
+    return await authFetch(`${SMARTCARD_API_BASE}/api/acesso/lista-emails/`);
 };
 
 export const registroEmails = async () => {
-    return await authFetch(`http://${API_HOST}:8000/api/acesso/registro-emails/`);
+    return await authFetch(`${SMARTCARD_API_BASE}/api/acesso/registro-emails/`);
 };
 
 export const cadastrarEmail = async (email: string) => {
-    return await authFetch(`http://${API_HOST}:8000/api/acesso/cadastrar-email/`, {
+    return await authFetch(`${SMARTCARD_API_BASE}/api/acesso/cadastrar-email/`, {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export const cadastrarEmail = async (email: string) => {
 };
 
 export const desativarEmail = async (id: number) => {
-    return await authFetch(`http://${API_HOST}:8000/api/acesso/desativar-emails/${id}/`, {
+    return await authFetch(`${SMARTCARD_API_BASE}/api/acesso/desativar-emails/${id}/`, {
       method: "PATCH",
     });
 };
@@ -32,7 +32,7 @@ export async function registrarEmail() {
     throw new Error("Token não encontrado");
   }
 
-  return fetch(`http://${API_HOST}:8000/api/acesso/registrar-email/`, {
+  return fetch(`${SMARTCARD_API_BASE}/api/acesso/registrar-email/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

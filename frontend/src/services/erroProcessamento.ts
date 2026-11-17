@@ -1,5 +1,5 @@
 import { authFetch } from "./auth";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export type ErroProcessamento = {
   id: number;
@@ -10,7 +10,7 @@ export type ErroProcessamento = {
 };
 
 export async function buscarErrosProcessamento(): Promise<ErroProcessamento[]> {
-  const response = await authFetch(`http://${API_HOST}:8000/api/acesso/erro-processamento/`);
+  const response = await authFetch(`${SMARTCARD_API_BASE}/api/acesso/erro-processamento/`);
 
   if (!response.ok) {
     throw new Error(`Erro ao consultar os processamentos com erro: HTTP ${response.status}`);

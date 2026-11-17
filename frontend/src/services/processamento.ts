@@ -1,5 +1,5 @@
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export const verificarProcessamento = async (onConcluido: () => void) => {
     const token = localStorage.getItem("access");
@@ -8,7 +8,7 @@ export const verificarProcessamento = async (onConcluido: () => void) => {
         return;
     }
 
-    await fetchEventSource(`http://${API_HOST}:8000/api/acesso/processamento/`, {
+    await fetchEventSource(`${SMARTCARD_API_BASE}/api/acesso/processamento/`, {
             method: "GET",
 
             headers: {

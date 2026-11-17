@@ -1,9 +1,9 @@
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export async function buscarUltimaResposta() {
     const token = localStorage.getItem("access");
 
-    const response = await fetch(`http://${API_HOST}:8000/api/acesso/ultima-resposta/`, {
+    const response = await fetch(`${SMARTCARD_API_BASE}/api/acesso/ultima-resposta/`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -1,3 +1,3 @@
 window.RUNTIME_CONFIG = {
-  VITE_FRONTEND_URL: "http://localhost"
+  VITE_FRONTEND_URL: "localhost"
 };

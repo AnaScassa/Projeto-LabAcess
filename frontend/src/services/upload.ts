@@ -1,4 +1,4 @@
-import { API_HOST } from "../utils/static";
+import { SMARTCARD_API_BASE } from "../utils/static";
 
 export const fazerUpload = async (file: File) => {
   try {
@@ -7,7 +7,7 @@ export const fazerUpload = async (file: File) => {
 
     const token = localStorage.getItem("access");
 
-    const res = await fetch(`http://${API_HOST}:8000/api/acesso/upload-xls/`, {
+    const res = await fetch(`${SMARTCARD_API_BASE}/api/acesso/upload-xls/`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
