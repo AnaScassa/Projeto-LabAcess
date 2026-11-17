@@ -8,7 +8,7 @@ import pyautogui
 import static
 
 
-def resolver_dados_busca(dados_busca=None, intervalo_progressivo_minutos=None):
+def resolver_dados_busca(dados_busca=None, intervalo_progressivo_minutos=None, janela_busca_minutos=None):
     if dados_busca is not None:
         return {
             "data1": dados_busca["data_inicio"],
@@ -18,7 +18,10 @@ def resolver_dados_busca(dados_busca=None, intervalo_progressivo_minutos=None):
         }
 
     agora = datetime.now()
-    minutos_busca = 10 + (intervalo_progressivo_minutos or 0)
+    if janela_busca_minutos is None:
+        minutos_busca = 10 + (intervalo_progressivo_minutos or 0)
+    else:
+        minutos_busca = janela_busca_minutos
     inicio_busca = agora - timedelta(minutes=minutos_busca)
     logger.info("Buscando registros dos últimos %s minutos", minutos_busca)
 
@@ -30,7 +33,7 @@ def resolver_dados_busca(dados_busca=None, intervalo_progressivo_minutos=None):
     }
 
 
-def entrarSes(dados_busca=None, _tentativa=1, intervalo_progressivo_minutos=None):
+def entrarSes(dados_busca=None, _tentativa=1, intervalo_progressivo_minutos=None, janela_busca_minutos=None):
     if _tentativa == 1:
         enviar_mensagem({"status": "iniciando", "total_linhas": None}, "buscar_concluido")
         logger.info("RPA iniciado")
@@ -84,18 +87,19 @@ def entrarSes(dados_busca=None, _tentativa=1, intervalo_progressivo_minutos=None
 
         logger.info("Login realizado com sucesso")
 
-        pegar_arquivo(dados_busca, intervalo_progressivo_minutos=intervalo_progressivo_minutos)
+        pegar_arquivo(dados_busca, intervalo_progressivo_minutos=intervalo_progressivo_minutos, janela_busca_minutos=janela_busca_minutos)
+        return True
 
     except Exception:
         if _tentativa < 2:
             logger.warning("Não foi possível entrar no SESClient; tentando novamente.", exc_info=True)
-            entrarSes(dados_busca, _tentativa + 1, intervalo_progressivo_minutos=intervalo_progressivo_minutos)
+            return entrarSes(dados_busca, _tentativa + 1, intervalo_progressivo_minutos=intervalo_progressivo_minutos, janela_busca_minutos=janela_busca_minutos)
         else:
             logger.exception("Não foi possível entrar no SESClient após 2 tentativas.")
-            return
+            return False
 
-def pegar_arquivo(dados_busca=None, intervalo_progressivo_minutos=None):
-    dados = resolver_dados_busca(dados_busca, intervalo_progressivo_minutos)
+def pegar_arquivo(dados_busca=None, intervalo_progressivo_minutos=None, janela_busca_minutos=None):
+    dados = resolver_dados_busca(dados_busca, intervalo_progressivo_minutos, janela_busca_minutos)
 
     if dados_busca is None:
         logger.info("Nenhuma busca manual. Executando busca automática.")

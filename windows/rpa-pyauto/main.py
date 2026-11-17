@@ -1,6 +1,9 @@
 import json
+import os
+import subprocess
 import time
-from datetime import datetime, timezone
+from datetime import datetime, time as datetime_time, timezone
+from pathlib import Path
 import pyautogui
 from apscheduler.schedulers.background import BackgroundScheduler
 from threading import Thread, Lock
@@ -13,6 +16,69 @@ from buscar_registro import fila_busca, ouvir_fila
 INTERVALO_INICIAL_MINUTOS = 5
 INTERVALO_MAXIMO_MINUTOS = 20
 INTERVALO_INCREMENTO_MINUTOS = 5
+JANELA_REINICIO_INICIO = datetime_time(3, 0)
+JANELA_REINICIO_FIM = datetime_time(3, 30)
+JANELA_BUSCA_APOS_REINICIO_MINUTOS = 50
+ARQUIVO_ESTADO_RPA = Path(__file__).with_name(".rpa_state.json")
+
+
+def carregar_estado_rpa():
+    try:
+        with ARQUIVO_ESTADO_RPA.open("r", encoding="utf-8") as arquivo:
+            estado = json.load(arquivo)
+    except FileNotFoundError:
+        return {"ultimo_reinicio": None, "busca_50_min_pendente": False}
+
+    if not isinstance(estado, dict):
+        raise ValueError("O arquivo de estado do RPA deve conter um objeto JSON.")
+
+    return {
+        "ultimo_reinicio": estado.get("ultimo_reinicio"),
+        "busca_50_min_pendente": estado.get("busca_50_min_pendente", False),
+    }
+
+
+def salvar_estado_rpa():
+    arquivo_temporario = ARQUIVO_ESTADO_RPA.with_name(ARQUIVO_ESTADO_RPA.name + ".tmp")
+    with arquivo_temporario.open("w", encoding="utf-8") as arquivo:
+        json.dump(estado_rpa, arquivo)
+        arquivo.flush()
+        os.fsync(arquivo.fileno())
+    os.replace(arquivo_temporario, ARQUIVO_ESTADO_RPA)
+
+
+def reiniciar_se_necessario(agora):
+    logger.info("Checagem de reinício: horário local %s; último reinício registrado: %s", agora.strftime("%Y-%m-%d %H:%M:%S"), estado_rpa["ultimo_reinicio"])
+
+    if not JANELA_REINICIO_INICIO <= agora.time() < JANELA_REINICIO_FIM:
+        logger.info("Reinício ignorado: fora da janela 03:00-03:30.")
+        return False
+
+    hoje = agora.date().isoformat()
+    if estado_rpa["ultimo_reinicio"] == hoje:
+        logger.info("Reinício ignorado: já foi solicitado hoje.")
+        return False
+
+    estado_anterior = estado_rpa.copy()
+    estado_rpa["ultimo_reinicio"] = hoje
+    estado_rpa["busca_50_min_pendente"] = True
+    try:
+        salvar_estado_rpa()
+        shutdown_exe = Path(os.environ.get("SystemRoot", r"C:\Windows")) / "System32" / "shutdown.exe"
+        logger.warning("Solicitando reinício do Windows em %s.", shutdown_exe)
+        subprocess.run([str(shutdown_exe), "/r", "/t", "1"], check=True, timeout=10, capture_output=True, text=True)
+    except (OSError, subprocess.SubprocessError) as erro:
+        if isinstance(erro, subprocess.CalledProcessError):
+            logger.error("shutdown.exe falhou (código %s): %s", erro.returncode, erro.stderr or erro.stdout)
+        else:
+            logger.exception("Falha ao executar shutdown.exe.")
+        estado_rpa.clear()
+        estado_rpa.update(estado_anterior)
+        salvar_estado_rpa()
+        raise
+
+    logger.info("Reinício diário solicitado; a próxima busca automática usará 50 minutos.")
+    return True
 
 execucao_em_andamento = Lock()
 
@@ -21,6 +87,7 @@ scheduled_job = None
 primeira_execucao = True
 intervalo_progressivo_minutos = INTERVALO_INICIAL_MINUTOS
 execucoes_sem_csv = 0
+estado_rpa = carregar_estado_rpa()
 
 def atualizar_intervalo_agendamento(encontrou_csv):
     global intervalo_progressivo_minutos
@@ -43,13 +110,6 @@ def atualizar_intervalo_agendamento(encontrou_csv):
 def executar_rpa(motivo="agendamento", dados_busca=None):
     global primeira_execucao
 
-    if primeira_execucao:
-        pyautogui.click(1244, 178)
-        time.sleep(2)
-        pyautogui.click(1148, 123)
-        time.sleep(2)
-        primeira_execucao = False
-
     if not execucao_em_andamento.acquire(blocking=False):
         print("RPA já está em execução.")
         return
@@ -57,11 +117,31 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
     encontrou_csv = None
 
     try:
+        if motivo == "Agendamento" and reiniciar_se_necessario(datetime.now()):
+            return
+
+        if primeira_execucao:
+            pyautogui.click(1244, 178)
+            time.sleep(2)
+            pyautogui.click(1148, 123)
+            time.sleep(2)
+            primeira_execucao = False
+
         print(f"\n========== INICIANDO RPA ({motivo}) ==========")
 
         verificar_ses()
         time.sleep(2)
-        entrarSes(dados_busca, intervalo_progressivo_minutos=intervalo_progressivo_minutos)
+        busca_apos_reinicio = (motivo == "Agendamento" and dados_busca is None and estado_rpa["busca_50_min_pendente"])
+        janela_busca_minutos = (JANELA_BUSCA_APOS_REINICIO_MINUTOS if busca_apos_reinicio else None)
+        busca_iniciada = entrarSes(dados_busca, intervalo_progressivo_minutos=intervalo_progressivo_minutos, janela_busca_minutos=janela_busca_minutos)
+        if busca_apos_reinicio and busca_iniciada:
+            estado_rpa["busca_50_min_pendente"] = False
+            try:
+                salvar_estado_rpa()
+            except OSError:
+                estado_rpa["busca_50_min_pendente"] = True
+                raise
+
         time.sleep(3)
         arquivos, total_linhas = obter_ultimos_csvs(quantidade=3)
         encontrou_csv = bool(arquivos)
@@ -134,6 +214,13 @@ def agendar_execucoes():
 
 def main():
     print("Iniciando sistema...")
+    logger.info("Inicializando RPA: script=%s; arquivo de estado=%s", Path(__file__).resolve(), ARQUIVO_ESTADO_RPA.resolve())
+    try:
+        if reiniciar_se_necessario(datetime.now()):
+            logger.info("Inicialização interrompida para reiniciar o Windows.")
+            return
+    except (OSError, subprocess.SubprocessError) as erro:
+        logger.error("Falha na checagem de reinício durante a inicialização; o RPA continuará: %s", erro)
 
     agendar_execucoes()
 

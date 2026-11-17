@@ -1,6 +1,7 @@
 import logging
 import json
 from datetime import datetime
+from pathlib import Path
 
 
 class RpaErrorRabbitHandler(logging.Handler):
@@ -29,7 +30,7 @@ logger.setLevel(logging.INFO)
 if logger.hasHandlers():
     logger.handlers.clear()
 
-file_handler = logging.FileHandler("rpa.jsonl", encoding="utf-8")
+file_handler = logging.FileHandler(Path(__file__).with_name("rpa.jsonl"), encoding="utf-8")
 file_handler.setFormatter(JsonFormatter())
 
 console_handler = logging.StreamHandler()
