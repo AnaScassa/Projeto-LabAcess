@@ -59,6 +59,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8001",
     "http://127.0.0.1:8001",
     "http://localhost:3000",
+    "http://app.localhost",
 ]
 
 # USER MODEL
@@ -66,10 +67,9 @@ AUTH_USER_MODEL = 'users.User'
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
-    #"http://ana.ccs.unicamp.br:3000",
-    #"http://ccspc-041.ccs.unicamp.br:3000",
-    #"http://dev.ccs.unicamp.br:3000"
-    os.getenv("FRONTEND_HOST", "http://localhost:3000"),  # Use the environment variable or default to localhost
+    os.getenv("FRONTEND_HOST", "http://localhost:3000"),
+    "http://app.localhost",
+    "http://localhost:3000",
 ]
 
 # APPLICATIONS

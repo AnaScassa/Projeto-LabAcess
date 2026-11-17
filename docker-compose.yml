@@ -6,8 +6,8 @@ services:
 
     container_name: smartcard_backend
 
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
 
     restart: always
 
@@ -35,6 +35,12 @@ services:
 
     command: /app/init.sh
 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.localhost`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.services.backend.loadbalancer.server.port=8080"
+
     depends_on:
       - postgres
       - redis
@@ -51,8 +57,8 @@ services:
     env_file:
       - .env
 
-    ports:
-      - "8001:8000"
+    expose:
+      - "8000"
 
     restart: always
 
@@ -72,6 +78,12 @@ services:
 
     command: ./init.sh
 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.users.rule=Host(`users.localhost`)"
+      - "traefik.http.routers.users.entrypoints=web"
+      - "traefik.http.services.users.loadbalancer.server.port=8000"
+
     depends_on:
       - postgres
       - redis
@@ -85,12 +97,17 @@ services:
     container_name: frontend_react
 
     environment:
-      VITE_FRONTEND_URL: ${VITE_FRONTEND_URL:-localhost}
-
-    ports:
-      - "3000:80"
+      VITE_FRONTEND_URL: localhost
+      VITE_SMARTCARD_URL: http://api.localhost
+      VITE_USERS_URL: http://users.localhost
 
     restart: always
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`app.localhost`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
 
     depends_on:
       - backend
@@ -166,6 +183,28 @@ services:
       - "8025:8025"
       - "1025:1025"
     restart: always
+
+  traefik:
+    image: traefik:v3.7
+    container_name: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8081:8080"
+    volumes: 
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
 
 secrets:
   jwt_secret:

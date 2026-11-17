@@ -52,14 +52,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
-          
-            #"http://143.106.5.41:5173",
-            os.getenv("FRONTEND_HOST", "http://localhost:3000"),  # Use the environment variable or default to localhost
-            #"http://ana.ccs.unicamp.br:3000",
-            #"http://ccspc-041.ccs.unicamp.br:3000",
-            #"http://dev.ccs.unicamp.br:3000"
-            # Add any other allowed origins
-        ]
+    os.getenv("FRONTEND_HOST", "http://localhost:3000"),
+    "http://app.localhost",
+    "http://localhost:3000",
+]
 
 # Application definition
 
