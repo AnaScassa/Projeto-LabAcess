@@ -4,21 +4,43 @@ from datetime import datetime, timezone
 import pyautogui
 from apscheduler.schedulers.background import BackgroundScheduler
 from threading import Thread, Lock
-from datetime import datetime, timedelta
 from jsonFormatter import logger
 from publisher import enviar_mensagem
 from desktop import entrarSes, excluir_csvs, verificar_ses
 from csv_utils import obter_ultimos_csvs, enviar_arquivo_rabbit
 from buscar_registro import fila_busca, ouvir_fila
 
+INTERVALO_INICIAL_MINUTOS = 5
+INTERVALO_MAXIMO_MINUTOS = 20
+INTERVALO_INCREMENTO_MINUTOS = 5
+
 execucao_em_andamento = Lock()
 
 scheduler = None
 scheduled_job = None
 primeira_execucao = True
+intervalo_progressivo_minutos = INTERVALO_INICIAL_MINUTOS
+execucoes_sem_csv = 0
+
+def atualizar_intervalo_agendamento(encontrou_csv):
+    global intervalo_progressivo_minutos
+    global execucoes_sem_csv
+
+    if encontrou_csv is True:
+        proximo_intervalo = INTERVALO_INICIAL_MINUTOS
+        intervalo_progressivo_minutos = INTERVALO_INICIAL_MINUTOS
+        execucoes_sem_csv = 0
+    else:
+        if encontrou_csv is False:
+            execucoes_sem_csv = min(execucoes_sem_csv + 1, INTERVALO_MAXIMO_MINUTOS // INTERVALO_INCREMENTO_MINUTOS)
+            intervalo_progressivo_minutos = min(execucoes_sem_csv * INTERVALO_INCREMENTO_MINUTOS, INTERVALO_MAXIMO_MINUTOS)
+        proximo_intervalo = intervalo_progressivo_minutos
+
+    if scheduler is not None and scheduled_job is not None:
+        scheduler.reschedule_job(scheduled_job.id, trigger="interval", minutes=proximo_intervalo)
+        logger.info("Próxima execução do RPA agendada para daqui a %s minutos", proximo_intervalo)
 
 def executar_rpa(motivo="agendamento", dados_busca=None):
-    global scheduled_job
     global primeira_execucao
 
     if primeira_execucao:
@@ -32,14 +54,17 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
         print("RPA já está em execução.")
         return
 
+    encontrou_csv = None
+
     try:
         print(f"\n========== INICIANDO RPA ({motivo}) ==========")
 
         verificar_ses()
         time.sleep(2)
-        entrarSes(dados_busca)
+        entrarSes(dados_busca, intervalo_progressivo_minutos=intervalo_progressivo_minutos)
         time.sleep(3)
         arquivos, total_linhas = obter_ultimos_csvs(quantidade=3)
+        encontrou_csv = bool(arquivos)
 
         for arquivo in arquivos:
             enviar_arquivo_rabbit(arquivo)
@@ -58,10 +83,12 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
         logger.error("Erro durante execução: %s", e)
 
     finally:
-        execucao_em_andamento.release()
-
-        if scheduled_job:
-            scheduled_job.modify(next_run_time=datetime.now() + timedelta(minutes=5))
+        try:
+            atualizar_intervalo_agendamento(encontrou_csv)
+        except Exception as erro:
+            logger.error("Erro ao atualizar intervalo do agendamento: %s", erro)
+        finally:
+            execucao_em_andamento.release()
 
 
 def callback(ch, method, properties, body):

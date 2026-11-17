@@ -8,7 +8,7 @@ import pyautogui
 import static
 
 
-def resolver_dados_busca(dados_busca=None):
+def resolver_dados_busca(dados_busca=None, intervalo_progressivo_minutos=None):
     if dados_busca is not None:
         return {
             "data1": dados_busca["data_inicio"],
@@ -18,17 +18,19 @@ def resolver_dados_busca(dados_busca=None):
         }
 
     agora = datetime.now()
-    hora_calculada = agora - timedelta(minutes=10)
+    minutos_busca = 10 + (intervalo_progressivo_minutos or 0)
+    inicio_busca = agora - timedelta(minutes=minutos_busca)
+    logger.info("Buscando registros dos últimos %s minutos", minutos_busca)
 
     return {
-        "data1": agora.strftime("%d%m%Y"),
-        "hora_inicio": hora_calculada.strftime("%H%M"),
+        "data1": inicio_busca.strftime("%d%m%Y"),
+        "hora_inicio": inicio_busca.strftime("%H%M"),
         "data2": agora.strftime("%d%m%Y"),
         "hora_fim": agora.strftime("%H%M"),
     }
 
 
-def entrarSes(dados_busca=None, _tentativa=1):
+def entrarSes(dados_busca=None, _tentativa=1, intervalo_progressivo_minutos=None):
     if _tentativa == 1:
         enviar_mensagem({"status": "iniciando", "total_linhas": None}, "buscar_concluido")
         logger.info("RPA iniciado")
@@ -82,18 +84,18 @@ def entrarSes(dados_busca=None, _tentativa=1):
 
         logger.info("Login realizado com sucesso")
 
-        pegar_arquivo(dados_busca)
+        pegar_arquivo(dados_busca, intervalo_progressivo_minutos=intervalo_progressivo_minutos)
 
     except Exception:
         if _tentativa < 2:
             logger.warning("Não foi possível entrar no SESClient; tentando novamente.", exc_info=True)
-            entrarSes(dados_busca, _tentativa + 1)
+            entrarSes(dados_busca, _tentativa + 1, intervalo_progressivo_minutos=intervalo_progressivo_minutos)
         else:
             logger.exception("Não foi possível entrar no SESClient após 2 tentativas.")
             return
 
-def pegar_arquivo(dados_busca=None):
-    dados = resolver_dados_busca(dados_busca)
+def pegar_arquivo(dados_busca=None, intervalo_progressivo_minutos=None):
+    dados = resolver_dados_busca(dados_busca, intervalo_progressivo_minutos)
 
     if dados_busca is None:
         logger.info("Nenhuma busca manual. Executando busca automática.")
@@ -101,8 +103,8 @@ def pegar_arquivo(dados_busca=None):
         logger.info(f"Busca manual recebida: {dados_busca}")
 
     data1 = dados["data1"]
-    hora_inicio = dados["hora_inicio"]
     data2 = dados["data2"]
+    hora_inicio = dados["hora_inicio"]
     hora_fim = dados["hora_fim"]
 
     n = [60, 110, 80]

@@ -90,7 +90,7 @@ export default function GraficosAgendamentoAno() {
                   <i className="fas fa-calendar-check mr-0" style={{ color: "#28a745", fontSize: "18px" }}></i>
                 </div>
                 <div>
-                  <h6 className="font-weight-bold text-dark mb-2">Acessos agendados - {anoAgendados}</h6>
+                  <h6 className="font-weight-bold text-dark mb-0">Acessos agendados - {anoAgendados}</h6>
                   <small className="text-muted">Distribuição mensal</small>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export default function GraficosAgendamentoAno() {
                   <i className="fas fa-calendar-times mr-0" style={{ color: "#dc3545", fontSize: "18px" }}></i>
                 </div>
                 <div>
-                  <h6 className="font-weight-bold text-dark mb-2">Acessos não agendados - {anoNaoAgendados}</h6>
+                  <h6 className="font-weight-bold text-dark mb-0">Acessos não agendados - {anoNaoAgendados}</h6>
                   <small className="text-muted">Distribuição mensal</small>
                 </div>
               </div>
