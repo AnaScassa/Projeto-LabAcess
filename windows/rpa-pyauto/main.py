@@ -9,7 +9,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from threading import Thread, Lock
 from jsonFormatter import logger
 from publisher import enviar_mensagem
-from desktop import entrarSes, excluir_csvs, verificar_ses
+from desktop import entrarSes, verificar_ses
 from csv_utils import obter_ultimos_csvs, enviar_arquivo_rabbit
 from buscar_registro import fila_busca, ouvir_fila
 
@@ -143,19 +143,28 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
                 raise
 
         time.sleep(3)
-        arquivos, total_linhas = obter_ultimos_csvs(quantidade=3)
+        arquivos, total_linhas = obter_ultimos_csvs()
         encontrou_csv = bool(arquivos)
 
+        if not arquivos:
+            enviar_mensagem({"status": "nenhum arquivo foi enviado", "total_linhas": None}, "buscar_concluido")
+
         for arquivo in arquivos:
-            enviar_arquivo_rabbit(arquivo)
+            try:
+                enviar_arquivo_rabbit(arquivo)
+            except Exception as e:
+                logger.error("Erro ao enviar arquivo %s para o RabbitMQ: %s", arquivo, e)
+                continue
+
             time.sleep(2)
-            if arquivo is None:
-                enviar_mensagem({"status": "nenhum arquivo foi enviado", "total_linhas": None}, "buscar_concluido")
+            try:
+                os.remove(arquivo)
+                logger.info("Arquivo excluído após envio confirmado: %s", arquivo)
+            except OSError as e:
+                logger.error("Arquivo enviado, mas não foi possível excluí-lo (%s): %s", arquivo, e)
 
         enviar_mensagem({"status": "finalizado", "total_linhas": total_linhas}, "buscar_concluido")
         time.sleep(2)
-
-        excluir_csvs()
 
         print("========== RPA FINALIZADO ==========\n")
 

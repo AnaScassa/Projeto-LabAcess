@@ -8,7 +8,7 @@ import static
 from jsonFormatter import logger
 from config import RABBITMQ_HOST, RABBITMQ_PASSWORD, RABBITMQ_PORT, RABBITMQ_USER
 
-def obter_ultimos_csvs(quantidade=3):
+def obter_ultimos_csvs(quantidade=None):
 
     try:
         csvs = [
@@ -22,7 +22,7 @@ def obter_ultimos_csvs(quantidade=3):
             return [], 0
 
         csvs_ordenados = sorted(csvs, key=os.path.getmtime, reverse=True)
-        ultimos = csvs_ordenados[:quantidade]
+        ultimos = csvs_ordenados if quantidade is None else csvs_ordenados[:quantidade]
         logger.info(f"Encontrados {len(ultimos)} arquivos CSV mais recentes")
         total_linhas = contar_linhas_csv()
 
