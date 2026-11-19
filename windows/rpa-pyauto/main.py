@@ -215,13 +215,6 @@ def agendar_execucoes():
 def main():
     print("Iniciando sistema...")
     logger.info("Inicializando RPA: script=%s; arquivo de estado=%s", Path(__file__).resolve(), ARQUIVO_ESTADO_RPA.resolve())
-    try:
-        if reiniciar_se_necessario(datetime.now()):
-            logger.info("Inicialização interrompida para reiniciar o Windows.")
-            return
-    except (OSError, subprocess.SubprocessError) as erro:
-        logger.error("Falha na checagem de reinício durante a inicialização; o RPA continuará: %s", erro)
-
     agendar_execucoes()
 
     thread_fila = Thread(target=ouvir_fila, daemon=True)

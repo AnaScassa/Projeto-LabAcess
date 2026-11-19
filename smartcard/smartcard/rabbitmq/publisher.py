@@ -21,11 +21,7 @@ def enviar_mensagem(queue_name, mensagem):
 
     conectado = False
     try:
-        cliente.connect(
-            os.getenv("MQTT_HOST", os.getenv("RABBITMQ_HOST", "rabbitmq")),
-            int(os.getenv("MQTT_PORT", "1883")),
-            keepalive=60,
-        )
+        cliente.connect(os.getenv("MQTT_HOST", os.getenv("RABBITMQ_HOST", "rabbitmq")), int(os.getenv("MQTT_PORT", "1883")), keepalive=60)
         cliente.loop_start()
         conectado = True
 
@@ -35,12 +31,7 @@ def enviar_mensagem(queue_name, mensagem):
         if not cliente.is_connected():
             raise TimeoutError("O SmartCard não conseguiu conectar ao RabbitMQ MQTT.")
 
-        info = cliente.publish(
-            topico,
-            json.dumps(mensagem, ensure_ascii=False, default=str),
-            qos=1,
-            retain=False,
-        )
+        info = cliente.publish(topico, json.dumps(mensagem, ensure_ascii=False, default=str), qos=1, retain=False)
         if info.rc != mqtt.MQTT_ERR_SUCCESS:
             raise ConnectionError(f"Falha ao publicar no tópico MQTT {topico}: código {info.rc}")
 
