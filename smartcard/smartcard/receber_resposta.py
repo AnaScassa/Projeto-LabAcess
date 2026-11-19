@@ -49,9 +49,6 @@ def _ao_conectar(cliente, userdata, flags, reason_code, properties):
         logger.error("Não foi possível assinar os tópicos MQTT do RPA: código %s", resultado)
         return
 
-    logger.info("SmartCard conectado ao RabbitMQ MQTT para receber status, heartbeat e erros do RPA.")
-
-
 def _ao_receber_mensagem(cliente, userdata, mensagem):
     try:
         dados = json.loads(mensagem.payload)
@@ -64,18 +61,11 @@ def _ao_receber_mensagem(cliente, userdata, mensagem):
 
     try:
         if mensagem.topic == TOPICO_STATUS_RPA:
-            publicar_resposta_no_redis(
-                dados.get("status", "PENDING"),
-                dados.get("total_linhas", 0),
-            )
+            publicar_resposta_no_redis(dados.get("status", "PENDING"), dados.get("total_linhas", 0))
             executar_agora.set()
         elif mensagem.topic == TOPICO_HEARTBEAT_RPA:
             recebido_em = timezone.now().isoformat()
-            redis_client.set(
-                REDIS_KEY_HEARTBEAT_RPA,
-                json.dumps({"recebido_em": recebido_em, "enviado_em": dados.get("enviado_em")}),
-                ex=90,
-            )
+            redis_client.set(REDIS_KEY_HEARTBEAT_RPA, json.dumps({"recebido_em": recebido_em, "enviado_em": dados.get("enviado_em")}), ex=90)
         elif mensagem.topic == TOPICO_ERROS_RPA:
             texto_erro = dados.get("mensagem")
             if not isinstance(texto_erro, str) or not texto_erro.strip():
@@ -100,12 +90,7 @@ def ouvir_mqtt_rpa():
     client_id = os.getenv("MQTT_CLIENT_ID", "smartcard-rpa-consumer")
 
     while True:
-        cliente = mqtt.Client(
-            callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
-            client_id=client_id,
-            clean_session=False,
-            manual_ack=True,
-        )
+        cliente = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2, client_id=client_id, clean_session=False, manual_ack=True)
         cliente.username_pw_set(username, password)
         cliente.on_connect = _ao_conectar
         cliente.on_message = _ao_receber_mensagem
@@ -122,6 +107,5 @@ def ouvir_mqtt_rpa():
                 logger.info("Desconectado do RabbitMQ MQTT do RPA. Tentando reconectar em 5 segundos...")
         time.sleep(5)
         
-
 consumer_thread = threading.Thread(target=ouvir_mqtt_rpa, daemon=True)
 consumer_thread.start()
