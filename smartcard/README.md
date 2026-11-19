@@ -27,7 +27,7 @@ O SmartCard tambem coordena tarefas assincronas com Celery, consulta dados do `u
 | Banco de dados | PostgreSQL, `psycopg2-binary` |
 | Cache e eventos | Redis, `django-redis` e Redis Pub/Sub |
 | Tarefas assincronas | Celery, django-celery-beat e django-celery-results |
-| Mensageria | RabbitMQ via Pika e Kombu |
+| Mensageria | RabbitMQ via Pika/Kombu (AMQP) e Paho MQTT |
 | Planilhas | Pandas, OpenPyXL e xlrd |
 | Comparacao de texto | FuzzyWuzzy, TheFuzz, RapidFuzz e python-Levenshtein |
 | Configuracao | python-dotenv e python-decouple |
@@ -135,7 +135,9 @@ A comunicacao usa RabbitMQ com correlation ID e reply queue temporaria:
 
 ## Integracao com o RPA
 
-O endpoint `/buscar-registro/` solicita uma busca no RPA Windows. O RPA acessa o SESClient, exporta os registros e publica o resultado no RabbitMQ. O modulo `receber_resposta.py` registra a ultima resposta no Redis com status, quantidade e data de criacao.
+O endpoint `/buscar-registro/` publica uma solicitação no tópico MQTT `smartcard/rpa/buscar`. O RPA acessa o SESClient e envia os arquivos CSV pela fila AMQP `csvs` com Pika. Status, heartbeat e erros retornam pelos tópicos MQTT `smartcard/rpa/status`, `smartcard/rpa/heartbeat` e `smartcard/rpa/errors`; o módulo `receber_resposta.py` registra o status no Redis e persiste os erros recebidos.
+
+No Compose, o backend conecta ao broker pelo serviço `rabbitmq` na porta MQTT `1883`. Configure `MQTT_USER` e `MQTT_PASSWORD` no `.env` da raiz para usar uma conta MQTT existente; se não forem definidos, o backend usa `RABBITMQ_USER` e `RABBITMQ_PASSWORD`. O `.env` do RPA Windows deve usar as mesmas credenciais MQTT e conectar ao host Docker pela porta `1883`. Crie uma conta com permissões nos tópicos MQTT necessários: o usuário padrão `guest` do RabbitMQ não pode ser usado por clientes remotos. O envio dos CSVs continua usando AMQP na porta `5672`.
 
 A resposta final normalmente possui este formato:
 

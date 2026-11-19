@@ -1,5 +1,6 @@
 import logging
 import json
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -30,14 +31,29 @@ logger.setLevel(logging.INFO)
 if logger.hasHandlers():
     logger.handlers.clear()
 
-file_handler = logging.FileHandler(Path(__file__).with_name("rpa.jsonl"), encoding="utf-8")
-file_handler.setFormatter(JsonFormatter())
-
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-
-logger.addHandler(file_handler)
 logger.addHandler(console_handler)
+
+caminhos_log = (
+    Path(__file__).resolve().with_name("Logs") / "rpa.jsonl",
+    Path(tempfile.gettempdir()) / "rpa-pyauto" / "rpa.jsonl",
+)
+
+file_handler = None
+for caminho_log in caminhos_log:
+    try:
+        caminho_log.parent.mkdir(parents=True, exist_ok=True)
+        file_handler = logging.FileHandler(caminho_log, encoding="utf-8")
+        file_handler.setFormatter(JsonFormatter())
+        logger.addHandler(file_handler)
+        break
+    except (OSError, ValueError) as erro:
+        logger.warning("Não foi possível criar o log em %s: %s", caminho_log, erro)
+
+if file_handler is None:
+    logger.warning("Os logs serão gravados apenas no console.")
+
 error_handler = RpaErrorRabbitHandler(level=logging.ERROR)
 logger.addHandler(error_handler)
 logging.getLogger("pika").setLevel(logging.CRITICAL)

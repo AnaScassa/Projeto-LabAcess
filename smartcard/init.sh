@@ -12,6 +12,10 @@ until python -c 'import socket; s=socket.socket(); s.connect(("postgres",5432))'
         echo 'Esperando rabbitmq...';
         sleep 2;
     done;
+    until python -c 'import socket; s=socket.socket(); s.connect(("rabbitmq",1883))'; do
+        echo 'Esperando rabbitmq MQTT...';
+        sleep 2;
+    done;
     python manage.py makemigrations;
     python manage.py migrate;
     python manage.py runserver 0.0.0.0:8080 &

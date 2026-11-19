@@ -25,7 +25,8 @@ flowchart LR
 		US -->|cache e pub/sub| R
 		S -->|tarefas e respostas| Q
 		US -->|consultas internas| Q
-		RPA[RPA Windows SESClient] -->|buscas e CSVs| Q
+		RPA[RPA Windows SESClient] -->|comandos, status e heartbeat MQTT| Q
+		RPA -->|arquivos CSV AMQP| Q
 	end
 
 	classDef docker fill:#e8f5e9,stroke:#43a047,stroke-width:2px,color:#1b5e20
@@ -78,7 +79,7 @@ flowchart LR
 - **Celery** para tarefas assincronas.
 - **django-celery-beat** para tarefas agendadas.
 - **django-celery-results** para armazenamento de resultados de tarefas.
-- **Pika** para comunicacao AMQP com RabbitMQ.
+- **Pika** e **Paho MQTT** para integracao com RabbitMQ via AMQP e MQTT.
 - **Pandas**, **OpenPyXL** e **xlrd** para leitura e processamento de planilhas.
 - **FuzzyWuzzy**, **TheFuzz**, **RapidFuzz** e **python-Levenshtein** para comparacoes aproximadas de texto.
 - **Faker** e **factory_boy** para dados e testes.
@@ -91,7 +92,8 @@ flowchart LR
 - **PyGetWindow**, **PyScreeze**, **PyMsgBox**, **MouseInfo**, **PyRect** e **PyTweening** como bibliotecas auxiliares de automacao desktop.
 - **OpenCV** e **Pillow** para reconhecimento e localizacao de elementos na tela.
 - **APScheduler** para execucoes agendadas a cada cinco minutos.
-- **Pika** para receber solicitacoes e publicar resultados no RabbitMQ.
+- **Paho MQTT** para receber buscas e publicar status, heartbeat e erros no RabbitMQ.
+- **Pika** para enviar os arquivos CSV ao SmartCard via AMQP.
 - **Requests** para comunicacoes HTTP.
 - **Infisical** e `python-dotenv` para configuracoes e secrets.
 - Logs estruturados no formato **JSONL**, armazenados em `rpa.jsonl`.
@@ -129,6 +131,7 @@ flowchart LR
 | PostgreSQL | `5432` | Banco principal |
 | Redis | `6379` | Cache e pub/sub |
 | RabbitMQ | `5672` | Broker AMQP |
+| RabbitMQ MQTT | `1883` | Comandos e status do RPA |
 | RabbitMQ Management | `15672` | Painel do RabbitMQ |
 | MailHog web | `8025` | Visualizacao de e-mails |
 | MailHog SMTP | `1025` | Servidor SMTP local |
@@ -137,13 +140,15 @@ flowchart LR
 
 O frontend se comunica diretamente com os servicos de aplicacao: o backend principal em `http://localhost:8080` e o servico de usuarios em `http://localhost:8001`.
 
-Para uma busca de registros, o backend publica uma mensagem na fila `buscar`. O RPA Windows consome essa fila, acessa o SESClient, exporta os arquivos CSV e publica os arquivos na fila `csvs`. Ao terminar, publica o status na fila `buscar_concluido`. O backend salva a ultima resposta no Redis e a disponibiliza ao frontend por consulta HTTP e SSE.
+Para uma busca de registros, o backend publica no tópico MQTT `smartcard/rpa/buscar`, consumido pelo RPA Windows. O RPA acessa o SESClient e envia os arquivos CSV pela fila AMQP `csvs` (Pika), sem alterar o transporte dos arquivos. Status, heartbeat e erros do RPA são publicados por MQTT nos tópicos `smartcard/rpa/status`, `smartcard/rpa/heartbeat` e `smartcard/rpa/errors`. O backend salva o status no Redis e o disponibiliza ao frontend por consulta HTTP e SSE.
 
-Filas utilizadas pelo RPA:
+Mensageria utilizada pelo RPA:
 
-- `buscar`: recebe os parametros de uma busca.
-- `csvs`: transporta arquivos CSV codificados em Base64.
-- `buscar_concluido`: informa o status e a quantidade de registros encontrados.
+- MQTT `smartcard/rpa/buscar`: recebe os parametros de uma busca.
+- AMQP `csvs`: transporta arquivos CSV codificados em Base64.
+- MQTT `smartcard/rpa/status`: informa o status e a quantidade de registros encontrados.
+- MQTT `smartcard/rpa/heartbeat`: sinaliza que o RPA está ativo.
+- MQTT `smartcard/rpa/errors`: envia erros do RPA ao backend.
 
 ## Como executar com Docker
 

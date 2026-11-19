@@ -12,7 +12,7 @@ O robô funciona de forma independente do Docker Compose. Ele precisa executar e
 - Localizar os CSVs gerados pelo SESClient.
 - Contar os registros encontrados.
 - Codificar os arquivos em Base64.
-- Publicar os arquivos e o status no RabbitMQ.
+- Publicar arquivos CSV via AMQP e status, heartbeat e erros via MQTT no RabbitMQ.
 - Remover os CSVs temporários após o envio.
 - Registrar a execução em `rpa.jsonl`.
 
@@ -23,7 +23,7 @@ O robô funciona de forma independente do Docker Compose. Ele precisa executar e
 | Linguagem | Python |
 | Automação desktop | PyAutoGUI, PyGetWindow, PyScreeze, PyMsgBox, MouseInfo, PyRect e PyTweening |
 | Visao computacional | OpenCV e Pillow |
-| Mensageria | RabbitMQ via Pika |
+| Mensageria | RabbitMQ via Paho MQTT e Pika/AMQP |
 | Agendamento | APScheduler |
 | HTTP | Requests |
 | Configuracao | python-dotenv e Infisical Python |
@@ -36,7 +36,7 @@ O robô funciona de forma independente do Docker Compose. Ele precisa executar e
 ```text
 rpa-pyauto/
 ├── img/                  # Imagens usadas para localizar elementos na tela
-├── buscar_registro.py    # Consumer da fila de buscas
+├── buscar_registro.py    # Consumer MQTT das solicitacoes de busca
 ├── config.py             # Variaveis de configuracao e ambiente
 ├── csv_utils.py          # Localizacao, contagem e envio dos CSVs
 ├── desktop.py            # Automacao do SESClient
@@ -54,30 +54,32 @@ rpa-pyauto/
 O processo principal em `main.py` inicia duas atividades em paralelo:
 
 1. **Agendamento**: `APScheduler` executa `executar_rpa` a cada cinco minutos.
-2. **Busca sob demanda**: uma thread consome a fila `buscar`, coloca a mensagem em uma fila local e executa a busca solicitada.
+2. **Busca sob demanda**: uma thread consome o tópico MQTT `smartcard/rpa/buscar`, coloca a mensagem em uma fila local e executa a busca solicitada.
 
 Um `Lock` impede que duas execucoes do RPA ocorram simultaneamente. Ao iniciar uma execução, o robô:
 
 1. Entra no SESClient e realiza a consulta.
 2. Procura os três CSVs mais recentes na pasta configurada.
 3. Soma as linhas dos CSVs, ignorando o cabecalho.
-4. Publica cada arquivo na fila `csvs` em Base64.
-5. Publica o status `finalizado` na fila `buscar_concluido`.
+4. Publica cada arquivo na fila AMQP `csvs` em Base64.
+5. Publica o status `finalizado` no tópico MQTT `smartcard/rpa/status`.
 6. Exclui os arquivos temporarios.
 
 Falhas sao registradas no console e a execucao libera o lock para permitir uma nova tentativa.
 
-## Filas RabbitMQ
+## Tópicos MQTT e fila AMQP
 
-| Fila | Direcao | Conteudo |
-| --- | --- | --- |
-| `buscar` | Entrada | Parametros de uma busca sob demanda |
-| `csvs` | Saida | Arquivos CSV codificados em Base64 |
-| `buscar_concluido` | Saida | Status e quantidade total de registros |
+| Transporte | Nome | Direcao | Conteudo |
+| --- | --- | --- | --- |
+| MQTT | `smartcard/rpa/buscar` | Entrada | Parametros de uma busca sob demanda |
+| AMQP | `csvs` | Saida | Arquivos CSV codificados em Base64 |
+| MQTT | `smartcard/rpa/status` | Saida | Status e quantidade total de registros |
+| MQTT | `smartcard/rpa/heartbeat` | Saida | Sinal de atividade do RPA |
+| MQTT | `smartcard/rpa/errors` | Saida | Mensagens de erro do RPA |
 
-### Mensagem de entrada
+### Mensagem MQTT de entrada
 
-A fila `buscar` recebe um JSON com as datas e horarios da consulta:
+O tópico `smartcard/rpa/buscar` recebe um JSON com as datas e horarios da consulta:
 
 ```json
 {
@@ -88,9 +90,9 @@ A fila `buscar` recebe um JSON com as datas e horarios da consulta:
 }
 ```
 
-### Mensagem de arquivo
+### Mensagem AMQP de arquivo
 
-Para cada CSV, o RPA publica:
+Para cada CSV, o RPA mantém a publicação AMQP na fila `csvs`:
 
 ```json
 {
@@ -99,9 +101,9 @@ Para cada CSV, o RPA publica:
 }
 ```
 
-### Mensagem de encerramento
+### Mensagem MQTT de encerramento
 
-Ao concluir a busca, publica:
+Ao concluir a busca, publica no tópico `smartcard/rpa/status`:
 
 ```json
 {
@@ -119,14 +121,18 @@ RABBITMQ_HOST=localhost
 RABBITMQ_PORT=5672
 RABBITMQ_USER=guest
 RABBITMQ_PASSWORD=guest
-RABBITMQ_QUEUE=rpa_executar
+MQTT_HOST=localhost
+MQTT_PORT=1883
+MQTT_USER=guest
+MQTT_PASSWORD=guest
+MQTT_CLIENT_ID=rpa-sesclient
 FLASK_HOST=0.0.0.0
 FLASK_PORT=8006
 LOG_LEVEL=INFO
 TASKS_FILE=tasks_status.json
 ```
 
-A fila consumida atualmente por `buscar_registro.py` usa a conexao configurada diretamente no codigo para `143.106.5.41:5672`. Confirme o host do RabbitMQ antes de executar em outro ambiente.
+O RPA usa MQTT (`MQTT_HOST`/`MQTT_PORT`/`MQTT_USER`/`MQTT_PASSWORD`) para comandos e status e AMQP (`RABBITMQ_HOST`/`RABBITMQ_PORT`/`RABBITMQ_USER`/`RABBITMQ_PASSWORD`) apenas para enviar arquivos CSV. Configure o host e as credenciais para apontar ao mesmo RabbitMQ usado pelo SmartCard.
 
 O caminho dos CSVs e outras constantes da automacao ficam em `static.py`. A pasta precisa conter os arquivos gerados pelo SESClient e as imagens de referencia usadas pelo PyAutoGUI.
 
@@ -137,7 +143,7 @@ Nao versione credenciais ou secrets reais. Use o arquivo `.env` local, que ja es
 - Windows 10 ou superior.
 - Python instalado e disponivel no PATH.
 - SESClient instalado e configurado.
-- RabbitMQ acessivel pelo host e porta configurados.
+- RabbitMQ acessivel nas portas MQTT `1883` e AMQP `5672`.
 - Sessao Windows desbloqueada durante a automacao.
 - Resolucao e escala de tela compatíveis com as imagens em `img/`.
 - Permissao para ler e remover os CSVs gerados.

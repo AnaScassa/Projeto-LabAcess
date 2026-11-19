@@ -180,15 +180,6 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
             execucao_em_andamento.release()
 
 
-def callback(ch, method, properties, body):
-    mensagem = json.loads(body.decode())
-
-    print("Mensagem recebida:", mensagem)
-
-    fila_busca.put(mensagem)
-
-    ch.basic_ack(method.delivery_tag)
-
 def process_queue():
     print("Thread process_queue iniciada.")
 
@@ -200,7 +191,7 @@ def process_queue():
         print("Mensagem retirada da fila:", mensagem)
 
         try:
-            executar_rpa("RabbitMQ", mensagem)
+            executar_rpa("MQTT", mensagem)
         finally:
             fila_busca.task_done()
 
@@ -238,7 +229,7 @@ def main():
     thread_heartbeat = Thread(target=publicar_heartbeat, daemon=True)
 
     thread_fila.start()
-    print("Thread Rabbit iniciada.")
+    print("Thread MQTT iniciada.")
 
     thread_processamento.start()
     print("Thread process_queue iniciada.")
