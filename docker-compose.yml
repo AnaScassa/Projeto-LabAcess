@@ -22,6 +22,9 @@ services:
       DB_PORT: 5432
       DB_NAME: postgres
       DB_USER: postgres
+      MQTT_HOST: rabbitmq
+      MQTT_PORT: 1883
+      MQTT_CLIENT_ID: smartcard-rpa-consumer
 
     secrets:
       - jwt_secret
@@ -163,16 +166,15 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   rabbitmq:
-    image: rabbitmq:3-management
-
+    build: ./rabbitmq
     container_name: rabbitmq
 
     ports:
-      - "5672:5672"
-      - "15672:15672"
-
+      - "5672:5672"    
+      - "15672:15672" 
+      - "1883:1883"    
+      - "15675:15675"  
     restart: always
-
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
