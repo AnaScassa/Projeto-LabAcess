@@ -2,8 +2,6 @@ import { useEffect, useState, type FormEvent } from "react";
 import { buscarStatusRpa, type StatusRpa } from "../../services/statusRpa";
 import { atualizarPermissaoSuperusuario, buscarUsuariosPrivilegiados } from "../../services/users";
 import type { UsuarioPrivilegiado } from "../../types/Users";
-import ErrosRpaAdmin from "./ErrosRpaAdmin";
-import ErrosProcessamentoAdmin from "./ErrosProcessamentoAdmin";
 
 const INTERVALO_STATUS_MS = 15_000;
 
@@ -118,51 +116,85 @@ export default function ConfiguracoesAdmin() {
         <p className="text-muted mb-0">Acompanhe os serviços e as permissões administrativas.</p>
       </div>
 
-      <div className="row">
-        <div className="col-12 col-xl-5 mb-4">
-          <section className="card border-0 border-top border-success rounded-lg shadow-sm" style={{ height: "360px" }}>
-            <div className="card-header bg-white border-bottom px-4 py-3 flex-shrink-0">
-              <div className="d-flex align-items-center">
-                <i className="fas fa-robot text-success mr-2"></i>
-                <h6 className="font-weight-bold text-dark mb-0">Status do RPA</h6>
+      <div className="row mb-2">
+        <div className="col-12 col-md-6 mb-4">
+          <section className="card border-0 rounded-lg shadow-sm h-100">
+            <header className="card-header bg-white border-bottom px-4 py-3 d-flex align-items-center">
+              <i className="fas fa-robot text-success mr-2" aria-hidden="true"></i>
+              <h6 className="font-weight-bold text-dark mb-0">Status do RPA</h6>
+            </header>
+            <div className="card-body p-4 d-flex flex-column">
+              <div className="d-flex align-items-center justify-content-between flex-wrap mb-3">
+                {erroRpa ? (
+                  <span className="badge badge-danger badge-pill p-2" role="alert">{erroRpa}</span>
+                ) : statusRpa === null ? (
+                  <span className="text-secondary d-flex align-items-center" role="status">
+                    <span className="spinner-border spinner-border-sm text-success mr-2" aria-hidden="true"></span>
+                    Consultando...
+                  </span>
+                ) : (
+                  <span className={`badge badge-pill p-2 ${statusRpa.online ? "badge-success" : "badge-danger"}`} aria-live="polite">
+                    <i className="fas fa-circle mr-2" aria-hidden="true"></i>
+                    {statusRpa.online ? "Online" : "Offline"}
+                  </span>
+                )}
+                <button type="button" className="btn btn-outline-success btn-sm mt-2 mt-sm-0" disabled
+                  title="Ação ilustrativa, ainda sem integração"
+                >
+                  <i className="fas fa-redo-alt mr-2" aria-hidden="true"></i>
+                  Reiniciar RPA
+                </button>
               </div>
-            </div>
-            <div className="card-body p-4 d-flex flex-column justify-content-center overflow-auto">
-              {erroRpa ? (
-                <div className="alert alert-danger mb-0" role="alert">{erroRpa}</div>
-              ) : statusRpa === null ? (
-                <div className="d-flex align-items-center text-secondary">
-                  <span className="spinner-border spinner-border-sm mr-2 h-100 d-flex align-items-center justify-content-center" role="status" aria-hidden="true"></span>
-                  Consultando o RPA...
-                </div>
-              ) : (
+              {statusRpa && !erroRpa && (
                 <>
-                  <div className="d-flex align-items-center mb-3">
-                    <span className={`d-inline-block rounded-circle mr-3 ${statusRpa.online ? "bg-success" : "bg-danger"}`}
-                      style={{ width: "14px", height: "14px", boxShadow: `0 0 0 5px ${statusRpa.online ? "rgba(40, 167, 69, 0.12)" : "rgba(220, 53, 69, 0.12)"}` }}
-                    ></span>
-                    <div>
-                      <div className={`h4 font-weight-bold mb-0 ${statusRpa.online ? "text-success" : "text-danger"}`}>
-                        {statusRpa.online ? "Online" : "Offline"}
-                      </div>
-                      <small className="text-muted">Atualização automática a cada 15 segundos</small>
-                    </div>
-                  </div>
-                  <div className="border rounded p-3 bg-light">
-                    <small className="text-secondary d-block mb-1">Último sinal recebido</small>
-                    <span className="font-weight-bold text-dark">
+                  <div className="border rounded p-3 bg-light d-flex flex-column">
+                    <small className="text-muted mb-1">Último sinal recebido</small>
+                    <strong className="text-dark">
                       {statusRpa.ultimo_sinal
                         ? new Date(statusRpa.ultimo_sinal).toLocaleString("pt-BR")
                         : "Nenhum sinal recebido"}
-                    </span>
+                    </strong>
                   </div>
+                  <small className="text-muted mt-3">
+                    <i className="fas fa-sync-alt mr-1" aria-hidden="true"></i>
+                    Atualizado a cada 15 segundos
+                  </small>
                 </>
               )}
             </div>
           </section>
         </div>
 
-        <div className="col-12 col-xl-7 mb-4">
+        <div className="col-12 col-md-6 mb-4">
+          <section className="card border-0 rounded-lg shadow-sm h-100">
+            <header className="card-header bg-white border-bottom px-4 py-3 d-flex align-items-center">
+              <i className="fab fa-windows text-primary mr-2" aria-hidden="true"></i>
+              <h6 className="font-weight-bold text-dark mb-0">Status do Windows</h6>
+            </header>
+            <div className="card-body p-4 d-flex flex-column">
+              <div className="d-flex align-items-center justify-content-between flex-wrap mb-3">
+                <span className="badge badge-warning badge-pill p-2 text-dark" aria-live="polite">
+                  <i className="fas fa-circle mr-2" aria-hidden="true"></i>
+                  Aguardando integração
+                </span>
+                <button type="button" className="btn btn-outline-primary btn-sm mt-2 mt-sm-0" disabled
+                  title="Ação ilustrativa, ainda sem integração"
+                >
+                  <i className="fas fa-redo-alt mr-2" aria-hidden="true"></i>
+                  Reiniciar Windows
+                </button>
+              </div>
+              <div className="border rounded p-3 bg-light d-flex flex-column">
+                <small className="text-muted mb-1">Último contato</small>
+                <strong className="text-dark">Aguardando dados do backend</strong>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-12 mb-4">
           <section className="card border-0 border-top border-primary rounded-lg shadow-sm" style={{ height: "360px" }}>
             <div className="card-header bg-white border-bottom px-4 py-3 d-flex align-items-center flex-shrink-0 w-100">
               <div className="d-flex align-items-center">
@@ -228,11 +260,6 @@ export default function ConfiguracoesAdmin() {
             </div>
           </section>
         </div>
-      </div>
-
-      <ErrosRpaAdmin />
-      <div className="mt-4">
-        <ErrosProcessamentoAdmin />
       </div>
 
       {usuarioEditando && (

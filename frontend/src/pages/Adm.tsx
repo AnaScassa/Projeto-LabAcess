@@ -4,10 +4,12 @@ import EmailsAdmin from "../components/adm/EmailsAdmin";
 import UsuariosAdmin from "../components/adm/UsuariosAdmin";
 import UsuariosUsersServiceAdmin from "../components/adm/UsuariosUsersServiceAdmin";
 import ConfiguracoesAdmin from "../components/adm/ConfiguracoesAdmin";
+import ErrosRpaAdmin from "../components/adm/ErrosRpaAdmin";
+import ErrosProcessamentoAdmin from "../components/adm/ErrosProcessamentoAdmin";
 import { conferirStaff } from "../services/users";
 
 export default function Adm() {
-  const [secaoAtiva, setSecaoAtiva] = useState<"usuarios" | "users_service" | "emails" | "configuracoes" | null>(null);
+  const [secaoAtiva, setSecaoAtiva] = useState<"usuarios" | "users_service" | "emails" | "configuracoes" | "logs" | null>(null);
   const [password, setPassword] = useState("");
   const [statusStaff, setStatusStaff] = useState<"formulario" | "verificando" | "autorizado" | "negado" | "erro">("formulario");
   const [erroStaff, setErroStaff] = useState<string | null>(null);
@@ -116,7 +118,7 @@ export default function Adm() {
 
       <section className="content px-3 px-md-4 pt-3 pb-4">
         <div className="row">
-          <div className="col-12 col-sm-6 col-xl-3 mb-3">
+          <div className="col-12 col-sm-6 col-xl mb-3">
             <div className="card border-0 rounded-lg shadow-sm h-100">
               <div className="card-body p-3">
                 <div className="d-flex align-items-center mb-2">
@@ -136,7 +138,7 @@ export default function Adm() {
             </div>
           </div>
 
-          <div className="col-12 col-sm-6 col-xl-3 mb-3">
+          <div className="col-12 col-sm-6 col-xl mb-3">
             <div className="card border-0 rounded-lg shadow-sm h-100">
               <div className="card-body p-3">
                 <div className="d-flex align-items-center mb-2">
@@ -157,7 +159,7 @@ export default function Adm() {
             </div>
           </div>
 
-          <div className="col-12 col-sm-6 col-xl-3 mb-3">
+          <div className="col-12 col-sm-6 col-xl mb-3">
             <div className="card border-0 rounded-lg shadow-sm h-100">
               <div className="card-body p-3">
                 <div className="d-flex align-items-center mb-2">
@@ -178,7 +180,7 @@ export default function Adm() {
             </div>
           </div>
 
-          <div className="col-12 col-sm-6 col-xl-3 mb-3">
+          <div className="col-12 col-sm-6 col-xl mb-3">
             <div className="card border-0 rounded-lg shadow-sm h-100">
               <div className="card-body p-3">
                 <div className="d-flex align-items-center mb-2">
@@ -194,6 +196,28 @@ export default function Adm() {
                 <p className="text-muted small mb-2">Consulte as opções de configuração e administração.</p>
                 <button type="button" className="btn btn-outline-success btn-sm" onClick={() => setSecaoAtiva("configuracoes")}>
                   <i className="fas fa-arrow-right mr-0"></i> Acessar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-12 col-sm-6 col-xl mb-3">
+            <div className="card border-0 rounded-lg shadow-sm h-100">
+              <div className="card-body p-3">
+                <div className="d-flex align-items-center mb-2">
+                  <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0"
+                    style={{ width: "40px", height: "40px", backgroundColor: "rgba(220, 53, 69, 0.12)", borderRadius: "10px" }}
+                  >
+                    <i className="fas fa-clipboard-list mr-0" style={{ color: "#dc3545", fontSize: "18px" }} aria-hidden="true"></i>
+                  </div>
+                  <div>
+                    <h6 className="font-weight-bold text-dark mb-1">Logs do sistema</h6>
+                    <small className="text-muted">Erros e eventos recentes</small>
+                  </div>
+                </div>
+                <p className="text-muted small mb-2">Consulte os Logs de erros do RPA e do processamento.</p>
+                <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => setSecaoAtiva("logs")}>
+                  <i className="fas fa-arrow-right mr-0" aria-hidden="true"></i> Acessar
                 </button>
               </div>
             </div>
@@ -225,8 +249,19 @@ export default function Adm() {
               <UsuariosAdmin />
             ) : secaoAtiva === "users_service" ? (
               <UsuariosUsersServiceAdmin />
-            ) : (
+            ) : secaoAtiva === "configuracoes" ? (
               <ConfiguracoesAdmin />
+            ) : (
+              <>
+                <div className="mb-4">
+                  <h5 className="font-weight-bold text-dark mb-1">Logs do sistema</h5>
+                  <p className="text-muted mb-0">Erros recentes do RPA e do processamento.</p>
+                </div>
+                <div className="mb-4">
+                  <ErrosRpaAdmin />
+                </div>
+                <ErrosProcessamentoAdmin />
+              </>
             )}
           </div>
         </div>
