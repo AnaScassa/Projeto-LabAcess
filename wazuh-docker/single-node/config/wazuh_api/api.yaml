@@ -1,0 +1,4 @@
+https:
+  enabled: yes
+  key: wazuh.manager-key.pem
+  cert: wazuh.manager.pem

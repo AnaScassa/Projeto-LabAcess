@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework.decorators import api_view, permission_classes,renderer_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -19,6 +21,7 @@ from .receber_resposta import REDIS_CANAL_RESPOSTA, REDIS_KEY_HEARTBEAT_RPA
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
 from .models import Emails, Usuario, Acesso, Processamento, NotificacaoUsuario, MrbsEntry, LoggerErro
+from .wazuh_api import ( WazuhAgentNotFound, WazuhApiConfigurationError, WazuhApiError, buscar_status_agente_windows)
 from smartcard.rabbitmq.publisher import enviar_mensagem
 
 import shortuuid
@@ -27,6 +30,7 @@ import redis, json
 from datetime import datetime, timedelta, date
 from collections import defaultdict
 
+logger = logging.getLogger(__name__)
 redis_client = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
 @api_view(['GET'])
@@ -293,6 +297,28 @@ def status_rpa(request):
         "online": dados is not None,
         "ultimo_sinal": dados.get("recebido_em") if dados else None,
     }, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@permission_classes([IsAdminUser])
+def status_windows(request):
+    try:
+        dados = buscar_status_agente_windows()
+    except WazuhAgentNotFound as error:
+        return Response({"detail": str(error)}, status=status.HTTP_404_NOT_FOUND)
+    except WazuhApiConfigurationError as error:
+        logger.error("Wazuh API configuration error: %s", error)
+        return Response(
+            {"detail": "Wazuh API is not configured."},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+    except WazuhApiError:
+        logger.exception("Could not retrieve Windows agent status from Wazuh.")
+        return Response(
+            {"detail": "Could not retrieve Windows agent status from Wazuh."},
+            status=status.HTTP_502_BAD_GATEWAY,
+        )
+
+    return Response(dados, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
