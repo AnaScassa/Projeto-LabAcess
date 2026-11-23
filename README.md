@@ -176,6 +176,11 @@ Depois, acesse:
 - Users Service: `http://localhost:8001`
 - RabbitMQ Management: `http://localhost:15672`
 - MailHog: `http://localhost:8025`
+- Wazuh Dashboard: `https://localhost`
+- Wazuh Indexer: `https://localhost:9200`
+- Wazuh API: `https://localhost:56000`
+
+O Compose principal inicia o stack Wazuh single-node (Manager, Indexer e Dashboard), usando as configuracoes e certificados de `wazuh-docker/single-node`. O host Docker precisa ter `vm.max_map_count` configurado para pelo menos `262144`, conforme os requisitos do Wazuh.
 
 Para executar em segundo plano:
 
