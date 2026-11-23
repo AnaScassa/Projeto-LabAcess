@@ -182,6 +182,16 @@ Depois, acesse:
 
 O Compose principal inicia o stack Wazuh single-node (Manager, Indexer e Dashboard), usando as configuracoes e certificados de `wazuh-docker/single-node`. O host Docker precisa ter `vm.max_map_count` configurado para pelo menos `262144`, conforme os requisitos do Wazuh.
 
+O Compose usa as credenciais padrao de desenvolvimento do Wazuh se as variaveis abaixo nao estiverem no `.env`; voce pode sobrescreve-las:
+
+```env
+WAZUH_API_USERNAME=wazuh-wui
+WAZUH_API_PASSWORD=MyS3cr37P450r.*-
+WAZUH_WINDOWS_AGENT_ID=001
+```
+
+O usuario e a senha sao compartilhados pelo Manager, Dashboard e backend. Essas credenciais padrao sao apenas para desenvolvimento local; use credenciais proprias e nao versione o `.env` em outros ambientes. O backend consulta o agente no Manager pela rede interna do Compose e valida o certificado TLS usando `root-ca.pem`. O endpoint do SmartCard e `GET /api/acesso/status-windows/`, acessivel a usuarios administrativos.
+
 Para executar em segundo plano:
 
 ```bash

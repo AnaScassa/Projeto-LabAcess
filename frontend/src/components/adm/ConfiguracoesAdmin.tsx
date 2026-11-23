@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { buscarStatusRpa, type StatusRpa } from "../../services/statusRpa";
+import { buscarStatusWindows, type StatusWindows } from "../../services/statusWindows";
 import { atualizarPermissaoSuperusuario, buscarUsuariosPrivilegiados } from "../../services/users";
 import type { UsuarioPrivilegiado } from "../../types/Users";
 
@@ -12,6 +13,8 @@ function nomeCompleto(usuario: UsuarioPrivilegiado) {
 export default function ConfiguracoesAdmin() {
   const [statusRpa, setStatusRpa] = useState<StatusRpa | null>(null);
   const [erroRpa, setErroRpa] = useState<string | null>(null);
+  const [statusWindows, setStatusWindows] = useState<StatusWindows | null>(null);
+  const [erroWindows, setErroWindows] = useState<string | null>(null);
   const [usuarios, setUsuarios] = useState<UsuarioPrivilegiado[]>([]);
   const [carregandoUsuarios, setCarregandoUsuarios] = useState(true);
   const [erroUsuarios, setErroUsuarios] = useState<string | null>(null);
@@ -39,6 +42,31 @@ export default function ConfiguracoesAdmin() {
 
     void atualizarStatusRpa();
     const intervalo = window.setInterval(() => void atualizarStatusRpa(), INTERVALO_STATUS_MS);
+
+    return () => {
+      ativo = false;
+      window.clearInterval(intervalo);
+    };
+  }, []);
+
+  useEffect(() => {
+    let ativo = true;
+
+    const atualizarStatusWindows = async () => {
+      try {
+        const status = await buscarStatusWindows();
+        if (ativo) {
+          setStatusWindows(status);
+          setErroWindows(null);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar status do Windows:", error);
+        if (ativo) setErroWindows("Não foi possível consultar o status do Windows.");
+      }
+    };
+
+    void atualizarStatusWindows();
+    const intervalo = window.setInterval(() => void atualizarStatusWindows(), INTERVALO_STATUS_MS);
 
     return () => {
       ativo = false;
@@ -173,21 +201,44 @@ export default function ConfiguracoesAdmin() {
             </header>
             <div className="card-body p-4 d-flex flex-column">
               <div className="d-flex align-items-center justify-content-between flex-wrap mb-3">
-                <span className="badge badge-warning badge-pill p-2 text-dark" aria-live="polite">
-                  <i className="fas fa-circle mr-2" aria-hidden="true"></i>
-                  Aguardando integração
-                </span>
-                <button type="button" className="btn btn-outline-primary btn-sm mt-2 mt-sm-0" disabled
-                  title="Ação ilustrativa, ainda sem integração"
-                >
+                {erroWindows ? (
+                  <span className="badge badge-danger badge-pill p-2" role="alert">{erroWindows}</span>
+                ) : statusWindows === null ? (
+                  <span className="text-secondary d-flex align-items-center" role="status">
+                    <span className="spinner-border spinner-border-sm text-primary mr-2" aria-hidden="true"></span>
+                    Consultando...
+                  </span>
+                ) : (
+                  <span className={`badge badge-pill p-2 ${statusWindows.status.toLowerCase() === "active" ? "badge-success" : "badge-danger"}`} aria-live="polite">
+                    <i className="fas fa-circle mr-2" aria-hidden="true"></i>
+                    {statusWindows.status.toLowerCase() === "active" ? "Online" : "Offline"}
+                  </span>
+                )}
+                <button type="button" className="btn btn-outline-primary btn-sm mt-2 mt-sm-0" disabled title="Ação ilustrativa, ainda sem integração">
                   <i className="fas fa-redo-alt mr-2" aria-hidden="true"></i>
                   Reiniciar Windows
                 </button>
               </div>
-              <div className="border rounded p-3 bg-light d-flex flex-column">
-                <small className="text-muted mb-1">Último contato</small>
-                <strong className="text-dark">Aguardando dados do backend</strong>
-              </div>
+              {statusWindows && !erroWindows && (
+                <>
+                  <div className="border rounded p-3 bg-light d-flex flex-column">
+                    <small className="text-muted mb-1">
+                      Agente {statusWindows.agent_id}{statusWindows.name ? ` · ${statusWindows.name}` : ""}
+                    </small>
+                    <strong className="text-dark">{statusWindows.os || "Sistema operacional não informado"}</strong>
+                    <small className="text-muted mt-3 mb-1">Último contato</small>
+                    <strong className="text-dark">
+                      {statusWindows.last_keepalive
+                        ? new Date(statusWindows.last_keepalive).toLocaleString("pt-BR")
+                        : "Sem contato registrado"}
+                    </strong>
+                  </div>
+                  <small className="text-muted mt-3">
+                    <i className="fas fa-sync-alt mr-1" aria-hidden="true"></i>
+                    Atualizado a cada 15 segundos
+                  </small>
+                </>
+              )}
             </div>
           </section>
         </div>
