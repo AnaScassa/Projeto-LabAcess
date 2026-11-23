@@ -120,18 +120,18 @@ export default function Adm() {
         <div className="row">
           <div className="col-12 col-sm-6 col-xl mb-3">
             <div className="card border-0 rounded-lg shadow-sm h-100">
-              <div className="card-body p-3">
+              <div className="card-body p-3 d-flex flex-column">
                 <div className="d-flex align-items-center mb-2">
-                  <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", backgroundColor: "rgba(23, 162, 184, 0.12)", borderRadius: "10px" }}>
+                  <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", 
+                    backgroundColor: "rgba(23, 162, 184, 0.12)", borderRadius: "10px" }}>
                     <i className="fas fa-users mr-0" style={{ color: "#17a2b8", fontSize: "18px" }}></i>
                   </div>
                   <div>
                     <h6 className="font-weight-bold text-dark mb-1">Usuários SmartCard</h6>
-                    <small className="text-muted">Gerenciamento de usuários</small>
                   </div>
                 </div>
                 <p className="text-muted small mb-2">Consulte e gerencie os usuários cadastrados no sistema.</p>
-                <button type="button" className="btn btn-outline-info btn-sm" style={{ borderColor: "#17a2b8" }} onClick={() => setSecaoAtiva("usuarios")}>
+                <button type="button" className="btn btn-outline-info btn-sm mt-auto" style={{ borderColor: "#17a2b8" }} onClick={() => setSecaoAtiva("usuarios")}>
                   <i className="fas fa-arrow-right mr-0"></i> Acessar
                 </button>
               </div>
@@ -140,7 +140,7 @@ export default function Adm() {
 
           <div className="col-12 col-sm-6 col-xl mb-3">
             <div className="card border-0 rounded-lg shadow-sm h-100">
-              <div className="card-body p-3">
+              <div className="card-body p-3 d-flex flex-column">
                 <div className="d-flex align-items-center mb-2">
                   <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", 
                     backgroundColor: "rgba(0, 123, 255, 0.12)", borderRadius: "10px" }}>
@@ -148,11 +148,10 @@ export default function Adm() {
                   </div>
                   <div>
                     <h6 className="font-weight-bold text-dark mb-1">Usuarios Users_Service</h6>
-                    <small className="text-muted">Contas do serviço de usuários</small>
                   </div>
                 </div>
                 <p className="text-muted small mb-2">Consulte a lista de usuários cadastrados no Users_Service.</p>
-                <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => setSecaoAtiva("users_service")}>
+                <button type="button" className="btn btn-outline-primary btn-sm mt-auto" onClick={() => setSecaoAtiva("users_service")}>
                   <i className="fas fa-arrow-right mr-0"></i> Acessar
                 </button>
               </div>
@@ -161,7 +160,7 @@ export default function Adm() {
 
           <div className="col-12 col-sm-6 col-xl mb-3">
             <div className="card border-0 rounded-lg shadow-sm h-100">
-              <div className="card-body p-3">
+              <div className="card-body p-3 d-flex flex-column">
                 <div className="d-flex align-items-center mb-2">
                   <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", 
                     backgroundColor: "rgba(255, 193, 7, 0.15)", borderRadius: "10px" }}>
@@ -169,11 +168,10 @@ export default function Adm() {
                   </div>
                   <div>
                     <h6 className="font-weight-bold text-dark mb-1">E-mails</h6>
-                    <small className="text-muted">Configuração de destinatários</small>
                   </div>
                 </div>
                 <p className="text-muted small mb-2">Gerencie os e-mails que recebem notificações do sistema.</p>
-                <button type="button" className="btn btn-outline-warning btn-sm" onClick={() => setSecaoAtiva("emails")}>
+                <button type="button" className="btn btn-outline-warning btn-sm mt-auto" onClick={() => setSecaoAtiva("emails")}>
                   <i className="fas fa-arrow-right mr-0"></i> Acessar
                 </button>
               </div>
@@ -182,7 +180,7 @@ export default function Adm() {
 
           <div className="col-12 col-sm-6 col-xl mb-3">
             <div className="card border-0 rounded-lg shadow-sm h-100">
-              <div className="card-body p-3">
+              <div className="card-body p-3 d-flex flex-column">
                 <div className="d-flex align-items-center mb-2">
                   <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0" style={{ width: "40px", height: "40px", 
                     backgroundColor: "rgba(40, 167, 69, 0.12)", borderRadius: "10px" }}>
@@ -190,11 +188,10 @@ export default function Adm() {
                   </div>
                   <div>
                     <h6 className="font-weight-bold text-dark mb-1">Configurações</h6>
-                    <small className="text-muted">Parâmetros do sistema</small>
                   </div>
                 </div>
                 <p className="text-muted small mb-2">Consulte as opções de configuração e administração.</p>
-                <button type="button" className="btn btn-outline-success btn-sm" onClick={() => setSecaoAtiva("configuracoes")}>
+                <button type="button" className="btn btn-outline-success btn-sm mt-auto" onClick={() => setSecaoAtiva("configuracoes")}>
                   <i className="fas fa-arrow-right mr-0"></i> Acessar
                 </button>
               </div>
@@ -203,7 +200,7 @@ export default function Adm() {
 
           <div className="col-12 col-sm-6 col-xl mb-3">
             <div className="card border-0 rounded-lg shadow-sm h-100">
-              <div className="card-body p-3">
+              <div className="card-body p-3 d-flex flex-column">
                 <div className="d-flex align-items-center mb-2">
                   <div className="d-flex align-items-center justify-content-center mr-2 flex-shrink-0"
                     style={{ width: "40px", height: "40px", backgroundColor: "rgba(220, 53, 69, 0.12)", borderRadius: "10px" }}
@@ -212,11 +209,10 @@ export default function Adm() {
                   </div>
                   <div>
                     <h6 className="font-weight-bold text-dark mb-1">Logs do sistema</h6>
-                    <small className="text-muted">Erros e eventos recentes</small>
                   </div>
                 </div>
                 <p className="text-muted small mb-2">Consulte os Logs de erros do RPA e do processamento.</p>
-                <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => setSecaoAtiva("logs")}>
+                <button type="button" className="btn btn-outline-danger btn-sm mt-auto" onClick={() => setSecaoAtiva("logs")}>
                   <i className="fas fa-arrow-right mr-0" aria-hidden="true"></i> Acessar
                 </button>
               </div>
