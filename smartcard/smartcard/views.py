@@ -529,3 +529,13 @@ def desativar_usuario(request, matricula):
         )
     except Usuario.DoesNotExist:
         return Response({"erro": "Usuário não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])   
+def reiniciar_rpa(request):
+    if not request.user.is_superuser:
+        return Response({"detail": "Apenas superusuários podem reiniciar o RPA."}, status=status.HTTP_403_FORBIDDEN)
+
+    enviar_mensagem("reiniciar_rpa", {"user_id": request.user.id})
+
+    return Response({"msg": "Solicitação de reinício do RPA enviada com sucesso."}, status=status.HTTP_200_OK)
