@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { buscarStatusRpa, type StatusRpa } from "../../services/statusRpa";
+import Swal from "sweetalert2";
+import { buscarStatusRpa, reiniciarRpa, type StatusRpa } from "../../services/statusRpa";
 import { buscarStatusWindows, type StatusWindows } from "../../services/statusWindows";
 import { atualizarPermissaoSuperusuario, buscarUsuariosPrivilegiados } from "../../services/users";
 import type { UsuarioPrivilegiado } from "../../types/Users";
@@ -13,6 +14,7 @@ function nomeCompleto(usuario: UsuarioPrivilegiado) {
 export default function ConfiguracoesAdmin() {
   const [statusRpa, setStatusRpa] = useState<StatusRpa | null>(null);
   const [erroRpa, setErroRpa] = useState<string | null>(null);
+  const [reiniciandoRpa, setReiniciandoRpa] = useState(false);
   const [statusWindows, setStatusWindows] = useState<StatusWindows | null>(null);
   const [erroWindows, setErroWindows] = useState<string | null>(null);
   const [usuarios, setUsuarios] = useState<UsuarioPrivilegiado[]>([]);
@@ -113,6 +115,27 @@ export default function ConfiguracoesAdmin() {
     setErroPermissao(null);
   };
 
+  const solicitarReinicioRpa = async () => {
+    if (!podeEditarPermissoes || reiniciandoRpa) return;
+
+    const confirmacao = await Swal.fire({ icon: "warning", title: "Reiniciar o RPA?", text: "Uma solicitação de reinício será enviada ao RPA.", 
+      showCancelButton: true, confirmButtonColor: "#198754", cancelButtonColor: "#6c757d", confirmButtonText: "Sim, reiniciar", cancelButtonText: "Cancelar",
+    });
+
+    if (!confirmacao.isConfirmed) return;
+
+    setReiniciandoRpa(true);
+    try {
+      const resultado = await reiniciarRpa();
+      await Swal.fire({ icon: "success", title: "Solicitação enviada", text: resultado.msg});
+    } catch (error) {
+      console.error("Erro ao solicitar reinício do RPA:", error);
+      await Swal.fire({ icon: "error", title: "Falha ao reiniciar o RPA", text: error instanceof Error ? error.message : "Não foi possível enviar a solicitação."});
+    } finally {
+      setReiniciandoRpa(false);
+    }
+  };
+
   const salvarPermissao = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!usuarioEditando) return;
@@ -166,11 +189,11 @@ export default function ConfiguracoesAdmin() {
                     {statusRpa.online ? "Online" : "Offline"}
                   </span>
                 )}
-                <button type="button" className="btn btn-outline-success btn-sm mt-2 mt-sm-0" disabled
-                  title="Ação ilustrativa, ainda sem integração"
-                >
-                  <i className="fas fa-redo-alt mr-2" aria-hidden="true"></i>
-                  Reiniciar RPA
+                <button type="button" className="btn btn-outline-success btn-sm mt-2 mt-sm-0" disabled={!podeEditarPermissoes || reiniciandoRpa} 
+                  title={podeEditarPermissoes ? "Enviar solicitação de reinício do RPA" : "Apenas superusuários podem reiniciar o RPA"} 
+                  onClick={() => void solicitarReinicioRpa()}>
+                  <i className={`fas ${reiniciandoRpa ? "fa-spinner fa-spin" : "fa-redo-alt"} mr-2`} aria-hidden="true"></i>
+                  {reiniciandoRpa ? "Enviando..." : "Reiniciar RPA"}
                 </button>
               </div>
               {statusRpa && !erroRpa && (

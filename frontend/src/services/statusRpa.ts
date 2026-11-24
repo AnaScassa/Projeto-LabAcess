@@ -15,3 +15,15 @@ export async function buscarStatusRpa(): Promise<StatusRpa> {
 
   return response.json() as Promise<StatusRpa>;
 }
+
+export async function reiniciarRpa(): Promise<{ msg: string }> {
+  const response = await authFetch(`${SMARTCARD_API_BASE}/api/acesso/reiniciar-rpa/`, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erro ao solicitar reinício do RPA: HTTP ${response.status}`);
+  }
+
+  return response.json() as Promise<{ msg: string }>;
+}
