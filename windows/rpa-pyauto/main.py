@@ -1,6 +1,7 @@
 import json
 import os
 import subprocess
+import sys
 import time
 from datetime import datetime, time as datetime_time, timezone
 from pathlib import Path
@@ -117,6 +118,7 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
     encontrou_csv = None
 
     try:
+        logger.info(sys.executable)
         if motivo == "Agendamento" and reiniciar_se_necessario(datetime.now()):
             return
 
@@ -191,9 +193,26 @@ def process_queue():
         print("Mensagem retirada da fila:", mensagem)
 
         try:
-            executar_rpa("MQTT", mensagem)
+            if mensagem.get("_comando") == "reiniciar_rpa":
+                logger.warning("Processando solicitação de reinício do RPA (user_id=%s).", mensagem.get("user_id"))
+                execucao_em_andamento.acquire()
+                try:
+                    reiniciar()
+                except OSError:
+                    logger.exception("Não foi possível reiniciar o processo do RPA.")
+                finally:
+                    execucao_em_andamento.release()
+            else:
+                executar_rpa("MQTT", mensagem)
         finally:
             fila_busca.task_done()
+
+def reiniciar():
+    logger.warning("Reiniciando o processo Python do RPA.")
+    logger.info(sys.executable)
+    subprocess.Popen([sys.executable, str(Path(__file__).resolve())], cwd=Path(__file__).resolve().parent)
+    os._exit(0)
+    
 
 def publicar_heartbeat():
     while True:

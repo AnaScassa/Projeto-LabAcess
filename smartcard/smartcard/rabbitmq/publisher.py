@@ -7,6 +7,7 @@ import paho.mqtt.client as mqtt
 
 _TOPICOS = {
     "buscar": "smartcard/rpa/buscar",
+    "reiniciar_rpa": "smartcard/rpa/reiniciar",
 }
 
 
