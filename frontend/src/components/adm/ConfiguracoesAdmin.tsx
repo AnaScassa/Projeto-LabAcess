@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import Swal from "sweetalert2";
 import { buscarStatusRpa, reiniciarRpa, type StatusRpa } from "../../services/statusRpa";
-import { buscarStatusWindows, type StatusWindows } from "../../services/statusWindows";
+import { buscarStatusWindows, reiniciarWindows, type StatusWindows } from "../../services/statusWindows";
 import { atualizarPermissaoSuperusuario, buscarUsuariosPrivilegiados } from "../../services/users";
 import type { UsuarioPrivilegiado } from "../../types/Users";
 
@@ -17,6 +17,7 @@ export default function ConfiguracoesAdmin() {
   const [reiniciandoRpa, setReiniciandoRpa] = useState(false);
   const [statusWindows, setStatusWindows] = useState<StatusWindows | null>(null);
   const [erroWindows, setErroWindows] = useState<string | null>(null);
+  const [reiniciandoWindows, setReiniciandoWindows] = useState(false);
   const [usuarios, setUsuarios] = useState<UsuarioPrivilegiado[]>([]);
   const [carregandoUsuarios, setCarregandoUsuarios] = useState(true);
   const [erroUsuarios, setErroUsuarios] = useState<string | null>(null);
@@ -25,6 +26,7 @@ export default function ConfiguracoesAdmin() {
   const [salvandoPermissao, setSalvandoPermissao] = useState(false);
   const [erroPermissao, setErroPermissao] = useState<string | null>(null);
   const podeEditarPermissoes = localStorage.getItem("is_superuser") === "true";
+  const rpaOffline = !erroRpa && statusRpa?.online === false;
 
   useEffect(() => {
     let ativo = true;
@@ -116,7 +118,7 @@ export default function ConfiguracoesAdmin() {
   };
 
   const solicitarReinicioRpa = async () => {
-    if (!podeEditarPermissoes || reiniciandoRpa) return;
+    if (!podeEditarPermissoes || reiniciandoRpa || erroRpa || !statusRpa?.online) return;
 
     const confirmacao = await Swal.fire({ icon: "warning", title: "Reiniciar o RPA?", text: "Uma solicitação de reinício será enviada ao RPA.", 
       showCancelButton: true, confirmButtonColor: "#198754", cancelButtonColor: "#6c757d", confirmButtonText: "Sim, reiniciar", cancelButtonText: "Cancelar",
@@ -133,6 +135,42 @@ export default function ConfiguracoesAdmin() {
       await Swal.fire({ icon: "error", title: "Falha ao reiniciar o RPA", text: error instanceof Error ? error.message : "Não foi possível enviar a solicitação."});
     } finally {
       setReiniciandoRpa(false);
+    }
+  };
+
+  const solicitarReinicioWindows = async () => {
+    if (!podeEditarPermissoes || reiniciandoWindows) return;
+
+    const confirmacao = await Swal.fire({
+      icon: "warning",
+      title: "Reiniciar o Windows?",
+      text: "Será enviada ao Dockhand uma solicitação para reiniciar o stack RPA do Windows. O reinício pode levar até 2 minutos.",
+      showCancelButton: true,
+      confirmButtonColor: "#0d6efd",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Sim, reiniciar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!confirmacao.isConfirmed) return;
+
+    setReiniciandoWindows(true);
+    try {
+      await reiniciarWindows();
+      await Swal.fire({
+        icon: "success",
+        title: "Solicitação enviada",
+        text: "O Dockhand recebeu a solicitação para reiniciar o Windows.",
+      });
+    } catch (error) {
+      console.error("Erro ao solicitar reinício do Windows:", error);
+      await Swal.fire({
+        icon: "error",
+        title: "Falha ao reiniciar o Windows",
+        text: error instanceof Error ? error.message : "Não foi possível enviar a solicitação ao Dockhand.",
+      });
+    } finally {
+      setReiniciandoWindows(false);
     }
   };
 
@@ -189,13 +227,20 @@ export default function ConfiguracoesAdmin() {
                     {statusRpa.online ? "Online" : "Offline"}
                   </span>
                 )}
-                <button type="button" className="btn btn-outline-success btn-sm mt-2 mt-sm-0" disabled={!podeEditarPermissoes || reiniciandoRpa} 
-                  title={podeEditarPermissoes ? "Enviar solicitação de reinício do RPA" : "Apenas superusuários podem reiniciar o RPA"} 
-                  onClick={() => void solicitarReinicioRpa()}>
+                <button type="button" className="btn btn-outline-success btn-sm mt-2 mt-sm-0"
+                  disabled={!podeEditarPermissoes || reiniciandoRpa || erroRpa !== null || statusRpa?.online !== true}
+                  title={!podeEditarPermissoes ? "Apenas superusuários podem reiniciar o RPA" : rpaOffline ? "Para iniciar o RPA, reinicie o Windows."
+                  : erroRpa || statusRpa?.online !== true ? "Aguardando confirmação de que o RPA está online" 
+                  : "Enviar solicitação de reinício do RPA"} onClick={() => void solicitarReinicioRpa()}>
                   <i className={`fas ${reiniciandoRpa ? "fa-spinner fa-spin" : "fa-redo-alt"} mr-2`} aria-hidden="true"></i>
                   {reiniciandoRpa ? "Enviando..." : "Reiniciar RPA"}
                 </button>
               </div>
+              {rpaOffline && (
+                <div className="alert alert-warning py-2 mb-3" role="status">
+                  Para iniciar o RPA, reinicie o Windows.
+                </div>
+              )}
               {statusRpa && !erroRpa && (
                 <>
                   <div className="border rounded p-3 bg-light d-flex flex-column">
@@ -237,9 +282,11 @@ export default function ConfiguracoesAdmin() {
                     {statusWindows.status.toLowerCase() === "active" ? "Online" : "Offline"}
                   </span>
                 )}
-                <button type="button" className="btn btn-outline-primary btn-sm mt-2 mt-sm-0" disabled title="Ação ilustrativa, ainda sem integração">
-                  <i className="fas fa-redo-alt mr-2" aria-hidden="true"></i>
-                  Reiniciar Windows
+                <button type="button" className="btn btn-outline-primary btn-sm mt-2 mt-sm-0" disabled={!podeEditarPermissoes || reiniciandoWindows}
+                  title={podeEditarPermissoes ? "Solicitar reinício do stack RPA no Dockhand" : "Apenas superusuários podem reiniciar o Windows"}
+                  onClick={() => void solicitarReinicioWindows()}>
+                  <i className={`fas ${reiniciandoWindows ? "fa-spinner fa-spin" : "fa-redo-alt"} mr-2`} aria-hidden="true"></i>
+                  {reiniciandoWindows ? "Reiniciando..." : "Reiniciar Windows"}
                 </button>
               </div>
               {statusWindows && !erroWindows && (

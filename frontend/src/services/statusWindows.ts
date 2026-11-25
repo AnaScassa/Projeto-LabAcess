@@ -18,3 +18,14 @@ export async function buscarStatusWindows(): Promise<StatusWindows> {
 
   return response.json() as Promise<StatusWindows>;
 }
+
+export async function reiniciarWindows(): Promise<void> {
+  const response = await authFetch(`${SMARTCARD_API_BASE}/api/acesso/reiniciar-windows/`, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    const detalhe = (await response.text()).trim().slice(0, 300);
+    throw new Error(`Erro ao solicitar reinício do Windows: HTTP ${response.status}${detalhe ? ` - ${detalhe}` : ""}`);
+  }
+}
