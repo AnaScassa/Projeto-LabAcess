@@ -38,6 +38,8 @@ services:
       - postgres_password
       - secret_authorization
       - secret_api_key
+      - dockhand_api_token
+      - dockhand_api_url
 
     env_file:
       - .env
@@ -325,6 +327,10 @@ secrets:
     file: ./secrets/secret_api_key.txt
   postgres_password:
     file: ./secrets/postgres_password.txt
+  dockhand_api_token:
+    file: ./secrets/dockhand_api_token.txt
+  dockhand_api_url:
+    file: ./secrets/dockhand_api_url.txt
 
 volumes:
   rabbitmq_data:
