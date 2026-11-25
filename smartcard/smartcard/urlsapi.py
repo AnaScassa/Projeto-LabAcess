@@ -2,6 +2,7 @@ from smartcard.views import ( buscar_registro, carregar_acesso, lista_usuarios, 
     status_rpa, status_windows, usuarios_ativos, emails, lista_emails, desativar_email, cadastrar_email, registrar_email, verificar_id, 
     cruzamentos_api, notificacoes_usuario, notificacoes_usuario_stream, agendamentos_nao_utilizados, acessos_agendados, registro_emails,
     listar_erros_rpa, erro_processamento, desativar_usuario, reiniciar_rpa,
+    reiniciar_windows,
 )
 from smartcard.api import AcessoViewSet, GroupViewSet, UsuarioViewSet, TaskCompleted, ApontamentoViewSet
 
@@ -37,6 +38,7 @@ urlpatterns = [
     path("status-rpa/", status_rpa, name="status_rpa"),
     path("reiniciar-rpa/", reiniciar_rpa, name="reiniciar_rpa"),
     path("status-windows/", status_windows, name="status_windows"),
+    path("reiniciar-windows/", reiniciar_windows, name="reiniciar_windows"),
     path("erros-rpa/", listar_erros_rpa, name="erros_rpa"),
     path("erro-processamento/", erro_processamento, name="erro_processamento"),
     path("cruzamentos/", cruzamentos_api, name="cruzamentos_api"),

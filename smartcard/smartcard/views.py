@@ -21,6 +21,7 @@ from .receber_resposta import REDIS_CANAL_RESPOSTA, REDIS_KEY_HEARTBEAT_RPA
 from .tasks import processar_xls, processar_csv
 from .services import salvar_arquivo_temporario
 from .models import Emails, Usuario, Acesso, Processamento, NotificacaoUsuario, MrbsEntry, LoggerErro
+from .dockhand_api import DockhandApiConfigurationError, DockhandApiError, reiniciar_stack_rpa
 from .wazuh_api import ( WazuhAgentNotFound, WazuhApiConfigurationError, WazuhApiError, buscar_status_agente_windows)
 from smartcard.rabbitmq.publisher import enviar_mensagem
 
@@ -539,3 +540,20 @@ def reiniciar_rpa(request):
     enviar_mensagem("reiniciar_rpa", {"user_id": request.user.id})
 
     return Response({"msg": "Solicitação de reinício do RPA enviada com sucesso."}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def reiniciar_windows(request):
+    if not request.user.is_superuser:
+        return Response({"detail": "Apenas superusuários podem reiniciar o Windows."}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        reiniciar_stack_rpa()
+    except DockhandApiConfigurationError as error:
+        logger.error("Dockhand restart request is not configured: %s", error)
+        return Response({"detail": str(error)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except DockhandApiError as error:
+        logger.error("Dockhand restart request failed: %s", error)
+        return Response({"detail": str(error)}, status=status.HTTP_502_BAD_GATEWAY)
+
+    return Response({"msg": "Solicitação de reinício do stack RPA enviada ao Dockhand."}, status=status.HTTP_200_OK)
