@@ -229,3 +229,5 @@ MEDIA_URL = "/media/"
 
 SECRET_API_KEY = read_secret('secret_api_key')
 SECRET_AUTHORIZATION = read_secret('secret_authorization')
+DOCKHAND_API_TOKEN = read_secret('dockhand_api_token')
+DOCKHAND_API_URL = read_secret('dockhand_api_url')
