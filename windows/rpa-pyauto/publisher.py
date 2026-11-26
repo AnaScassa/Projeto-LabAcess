@@ -10,6 +10,7 @@ from config import (
     MQTT_PORT,
     MQTT_USER,
 )
+from jsonFormatter import logger
 
 _TOPICOS = {
     "buscar_concluido": "smartcard/rpa/status",
@@ -46,7 +47,7 @@ def _obter_cliente():
             cliente.username_pw_set(MQTT_USER, MQTT_PASSWORD)
             cliente.on_connect = _ao_conectar
             cliente.on_disconnect = _ao_desconectar
-            cliente.connect(MQTT_HOST, MQTT_PORT, keepalive=60)
+            cliente.connect_async(MQTT_HOST, MQTT_PORT, keepalive=60)
             cliente.loop_start()
             _cliente = cliente
 
@@ -60,8 +61,9 @@ def enviar_mensagem(mensagem, queue_name) -> bool:
         raise ValueError(f"Canal MQTT do RPA desconhecido: {queue_name}") from erro
 
     cliente = _obter_cliente()
-    if not _conectado.wait(timeout=10):
-        raise TimeoutError("O RPA não conseguiu conectar ao RabbitMQ MQTT.")
+    if not _conectado.is_set():
+        logger.warning("RabbitMQ MQTT indisponível; mensagem do tópico %s não foi enviada.", topico)
+        return False
 
     info = cliente.publish(
         topico,
@@ -70,10 +72,7 @@ def enviar_mensagem(mensagem, queue_name) -> bool:
         retain=False,
     )
     if info.rc != mqtt.MQTT_ERR_SUCCESS:
-        raise ConnectionError(f"Falha ao publicar no tópico MQTT {topico}: código {info.rc}")
-
-    info.wait_for_publish(timeout=10)
-    if not info.is_published():
-        raise TimeoutError(f"RabbitMQ não confirmou a publicação no tópico {topico}.")
+        logger.warning("Não foi possível enfileirar mensagem no tópico MQTT %s: código %s", topico, info.rc)
+        return False
 
     return True
