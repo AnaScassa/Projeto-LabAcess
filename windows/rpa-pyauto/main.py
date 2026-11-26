@@ -123,7 +123,7 @@ def executar_rpa(motivo="agendamento", dados_busca=None):
             return
 
         if primeira_execucao:
-            pyautogui.press("f11")
+            pyautogui.hotkey("win", "up")
             primeira_execucao = False
 
         print(f"\n========== INICIANDO RPA ({motivo}) ==========")
