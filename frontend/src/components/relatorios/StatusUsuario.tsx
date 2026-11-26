@@ -39,7 +39,10 @@ export default function StatusAluno() {
 
         const ordenarPorData = (lista: UsuarioComNome[]) => [...lista].sort((a, b) => new Date(b.data_acesso).getTime() - new Date(a.data_acesso).getTime());
 
-        setUsuariosCCS(ordenarPorData(usuariosComNome.filter((u) => u.ent_sai === "1" && u.desc_area?.toUpperCase() === "CCS")));
+        setUsuariosCCS(ordenarPorData(usuariosComNome.filter((u) => 
+          (u.ent_sai === "1" && u.desc_area?.toUpperCase() === "CCS") ||
+          (u.ent_sai === "0" && u.desc_area?.toUpperCase() === "CCS_LAB")
+        )));
         setUsuariosLab(ordenarPorData(usuariosComNome.filter((u) => u.ent_sai === "1" && (u.desc_area?.toUpperCase() === "LAB" || u.desc_area?.toUpperCase() === "CCS_LAB"))));
 
       } catch (error) {
