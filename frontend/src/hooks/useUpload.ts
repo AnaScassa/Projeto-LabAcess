@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { verificarId } from "../services/conferirid";
 import { fazerUpload } from "../services/upload";
 import { verificarProcessamento } from "../services/processamento";
+import { APP_BASE_PATH } from "../utils/static";
 
 type UseUploadResult = {
   mensagem: string;
@@ -32,7 +33,7 @@ export function useUpload(): UseUploadResult {
 
     if (!usuarioId || usuarioId === "undefined" || usuarioId === "null") {
       localStorage.removeItem("id");
-      window.location.replace("/login");
+      window.location.replace(`${APP_BASE_PATH}/login`);
       return;
     }
 
@@ -50,7 +51,7 @@ export function useUpload(): UseUploadResult {
         setMensagem("Erro ao verificar processamento.");
         localStorage.removeItem("access");
         localStorage.removeItem("id");
-        window.location.replace("/login");
+        window.location.replace(`${APP_BASE_PATH}/login`);
         return;
       }
     } catch (error) {
@@ -60,14 +61,14 @@ export function useUpload(): UseUploadResult {
       if (response && response.status === 401) {
         localStorage.removeItem("access");
         localStorage.removeItem("id");
-        window.location.replace("/login");
+        window.location.replace(`${APP_BASE_PATH}/login`);
       }
       return;
     }
 
     if (!token) {
       setMensagem("Sessão expirada. Faça login novamente.");
-      window.location.replace("/login");
+      window.location.replace(`${APP_BASE_PATH}/login`);
       return;
     }
 
@@ -90,7 +91,7 @@ export function useUpload(): UseUploadResult {
         if (resposta && resposta.status === 401) {
           localStorage.removeItem("access");
           localStorage.removeItem("id");
-          window.location.replace("/login");
+          window.location.replace(`${APP_BASE_PATH}/login`);
         }
         return;
       }

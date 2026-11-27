@@ -1,4 +1,4 @@
-import { USERS_API_BASE } from "../utils/static";
+import { APP_BASE_PATH, USERS_API_BASE } from "../utils/static";
 
 type TokenPayload = {
   id?: unknown;
@@ -70,7 +70,7 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
 
   if (!token) {
     localStorage.clear();
-    window.location.href = "/login";
+    window.location.href = `${APP_BASE_PATH}/login`;
     throw new Error("Sem token");
   }
 
@@ -93,7 +93,7 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
 
     if (!refresh) {
       localStorage.clear();
-      window.location.href = "/login";
+      window.location.href = `${APP_BASE_PATH}/login`;
       throw new Error("Sem refresh token");
     }
 
@@ -109,7 +109,7 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
 
     if (!refreshResponse.ok) {
       localStorage.clear();
-      window.location.href = "/login";
+      window.location.href = `${APP_BASE_PATH}/login`;
       throw new Error("Refresh inválido");
     }
 

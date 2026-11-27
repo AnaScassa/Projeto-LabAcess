@@ -48,8 +48,13 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`api.localhost`)"
-      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.backend.rule=Host(`dev.ccs.unicamp.br`) && PathPrefix(`/smartcard`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.tls.certresolver=leresolver"
+      - "traefik.http.routers.backend.middlewares=backend-strip-prefix"
+      - "traefik.http.middlewares.backend-strip-prefix.stripprefix.prefixes=/smartcard"
       - "traefik.http.services.backend.loadbalancer.server.port=8080"
 
     depends_on:
@@ -59,6 +64,9 @@ services:
       - users_service
       - mailhog
       - wazuh.manager
+    networks:
+      - default
+      - traefik-public
 
   users_service:
     build:
@@ -92,8 +100,13 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.users.rule=Host(`users.localhost`)"
-      - "traefik.http.routers.users.entrypoints=web"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.users.rule=Host(`dev.ccs.unicamp.br`) && PathPrefix(`/users`)"
+      - "traefik.http.routers.users.entrypoints=websecure"
+      - "traefik.http.routers.users.tls=true"
+      - "traefik.http.routers.users.tls.certresolver=leresolver"
+      - "traefik.http.routers.users.middlewares=users-strip-prefix"
+      - "traefik.http.middlewares.users-strip-prefix.stripprefix.prefixes=/users"
       - "traefik.http.services.users.loadbalancer.server.port=8000"
 
     depends_on:
@@ -101,6 +114,9 @@ services:
       - redis
       - rabbitmq
       - mailhog
+    networks:
+      - default
+      - traefik-public
 
   frontend:
     build:
@@ -109,29 +125,34 @@ services:
     container_name: frontend_react
 
     environment:
-      VITE_FRONTEND_URL: localhost
-      VITE_SMARTCARD_URL: http://api.localhost
-      VITE_USERS_URL: http://users.localhost
+      VITE_FRONTEND_URL: dev.ccs.unicamp.br
+      VITE_SMARTCARD_URL: https://dev.ccs.unicamp.br/smartcard
+      VITE_USERS_URL: https://dev.ccs.unicamp.br/users
 
     restart: always
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`app.localhost`)"
-      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.frontend.rule=Host(`dev.ccs.unicamp.br`) && PathPrefix(`/frontend`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.tls.certresolver=leresolver"
+      - "traefik.http.routers.frontend.middlewares=frontend-strip-prefix"
+      - "traefik.http.middlewares.frontend-strip-prefix.stripprefix.prefixes=/frontend"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
 
     depends_on:
       - backend
       - users_service
+    networks:
+      - default
+      - traefik-public
 
   redis:
     image: redis:7
 
     container_name: redis
-
-    ports:
-      - "6379:6379"
 
     restart: always
 
@@ -145,9 +166,6 @@ services:
       MYSQL_DATABASE: mrbs
       MYSQL_USER: mrbsuser
       MYSQL_PASSWORD: 123
-
-    ports:
-      - "3306:3306"
 
     restart: always
 
@@ -165,9 +183,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
 
-    ports:
-      - "5432:5432"
-
     restart: always
 
     volumes:
@@ -180,34 +195,27 @@ services:
 
     ports:
       - "5672:5672"    
-      - "15672:15672" 
       - "1883:1883"    
       - "15675:15675"  
     restart: always
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.rabbitmq.rule=Host(`dev.ccs.unicamp.br`) && PathPrefix(`/rabbitmq`)"
+      - "traefik.http.routers.rabbitmq.entrypoints=websecure"
+      - "traefik.http.routers.rabbitmq.tls=true"
+      - "traefik.http.routers.rabbitmq.tls.certresolver=leresolver"
+      - "traefik.http.services.rabbitmq.loadbalancer.server.port=15672"
+    networks:
+      - default
+      - traefik-public
 
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
-    ports:
-      - "8025:8025"
-      - "1025:1025"
     restart: always
-
-  traefik:
-    image: traefik:v3.7
-    container_name: traefik
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-    ports:
-      - "80:80"
-      - "8081:8080"
-    volumes: 
-      - /var/run/docker.sock:/var/run/docker.sock
 
   wazuh.manager:
     image: wazuh/wazuh-manager:4.14.10
@@ -259,8 +267,6 @@ services:
     image: wazuh/wazuh-indexer:4.14.10
     hostname: wazuh.indexer
     restart: always
-    ports:
-      - "9200:9200"
     environment:
       OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
     ulimits:
@@ -284,8 +290,6 @@ services:
     image: wazuh/wazuh-dashboard:4.14.10
     hostname: wazuh.dashboard
     restart: always
-    ports:
-      - "443:5601"
     environment:
       INDEXER_USERNAME: admin
       INDEXER_PASSWORD: SecretPassword
@@ -298,7 +302,7 @@ services:
       - ./wazuh-docker/single-node/config/wazuh_indexer_ssl_certs/wazuh.dashboard.pem:/usr/share/wazuh-dashboard/certs/wazuh-dashboard.pem
       - ./wazuh-docker/single-node/config/wazuh_indexer_ssl_certs/wazuh.dashboard-key.pem:/usr/share/wazuh-dashboard/certs/wazuh-dashboard-key.pem
       - ./wazuh-docker/single-node/config/wazuh_indexer_ssl_certs/root-ca.pem:/usr/share/wazuh-dashboard/certs/root-ca.pem
-      - ./wazuh-docker/single-node/config/wazuh_dashboard/opensearch_dashboards.yml:/usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
+      - ./wazuh-docker/single-node/config/wazuh_dashboard/opensearch_dashboards-traefik.yml:/usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
       - ./wazuh-docker/single-node/config/wazuh_dashboard/wazuh.yml:/usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml
       - wazuh-dashboard-config:/usr/share/wazuh-dashboard/data/wazuh/config
       - wazuh-dashboard-custom:/usr/share/wazuh-dashboard/plugins/wazuh/public/assets/custom
@@ -307,14 +311,17 @@ services:
     links:
       - wazuh.indexer:wazuh.indexer
       - wazuh.manager:wazuh.manager
-
-  whoami:
-    image: traefik/whoami
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
-      - "traefik.http.services.whoami.loadbalancer.server.port=80"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.wazuh.rule=Host(`dev.ccs.unicamp.br`) && PathPrefix(`/wazuh`)"
+      - "traefik.http.routers.wazuh.entrypoints=websecure"
+      - "traefik.http.routers.wazuh.tls=true"
+      - "traefik.http.routers.wazuh.tls.certresolver=leresolver"
+      - "traefik.http.services.wazuh.loadbalancer.server.port=5601"
+    networks:
+      - default
+      - traefik-public
 
 secrets:
   jwt_secret:
@@ -351,3 +358,7 @@ volumes:
   wazuh-indexer-data:
   wazuh-dashboard-config:
   wazuh-dashboard-custom:
+
+networks:
+  traefik-public:
+    external: true

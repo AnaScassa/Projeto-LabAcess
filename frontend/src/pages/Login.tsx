@@ -1,6 +1,7 @@
 import { fazerLogin } from "../services/login";
 import { registrarEmail } from "../services/email";
 import { getTokenUserData, storeUserPermissions } from "../services/auth";
+import { APP_BASE_PATH } from "../utils/static";
 import { useState } from "react";
 
 export default function Login() {
@@ -81,7 +82,7 @@ export default function Login() {
       }
 
       await handleEmail();
-      window.location.replace("/");
+      window.location.replace(`${APP_BASE_PATH}/`);
     } finally {
       setIsEntrando(false);
     }

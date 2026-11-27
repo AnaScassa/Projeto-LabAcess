@@ -1,3 +1,5 @@
+import { APP_BASE_PATH } from "./static";
+
 export async function solicitarPermissaoNotificacao() {
 
   if (!("Notification" in window)) {
@@ -24,6 +26,6 @@ export function exibirNotificacao(titulo: string, mensagem: string) {
 
   new Notification(titulo, {
     body: mensagem,
-    icon: "/logo.png",
+    icon: `${APP_BASE_PATH}/logo.png`,
   });
 }

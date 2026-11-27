@@ -5,6 +5,7 @@ import GraficosUsuariosAtivos from "../components/graficos/UsuariosAtivos";
 import Menu from "../components/style/Menu";
 import UploadControls from "../components/upload/UploadControls";
 import { solicitarPermissaoNotificacao } from "../utils/notificacoes";
+import { APP_BASE_PATH } from "../utils/static";
 import { useMailhogNotifications } from "../hooks/useMailhogNotifications";
 import { useRpaStatus } from "../hooks/useRpaStatus";
 import { useUpload } from "../hooks/useUpload";
@@ -49,7 +50,7 @@ export default function Upload() {
     solicitarPermissaoNotificacao();
 
     if (!storedToken) {
-      window.location.replace("/login");
+      window.location.replace(`${APP_BASE_PATH}/login`);
       return;
     }
 

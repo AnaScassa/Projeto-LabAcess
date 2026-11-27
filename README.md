@@ -121,20 +121,16 @@ flowchart LR
 └── rpa.jsonl             # Logs estruturados do RPA
 ```
 
-## Portas principais
+## Portas publicadas no host
 
-| Servico | Porta local | Finalidade |
+| Servico | Porta | Finalidade |
 | --- | ---: | --- |
-| Frontend | `3000` | Interface web |
-| SmartCard backend | `8080` | Backend principal |
-| Users service | `8001` | Servico de usuarios |
-| PostgreSQL | `5432` | Banco principal |
-| Redis | `6379` | Cache e pub/sub |
-| RabbitMQ | `5672` | Broker AMQP |
+| RabbitMQ AMQP | `5672` | Comunicacao com o RPA |
 | RabbitMQ MQTT | `1883` | Comandos e status do RPA |
-| RabbitMQ Management | `15672` | Painel do RabbitMQ |
-| MailHog web | `8025` | Visualizacao de e-mails |
-| MailHog SMTP | `1025` | Servidor SMTP local |
+| RabbitMQ Web MQTT | `15675` | Comunicacao MQTT via WebSocket |
+| Wazuh Manager | `1514`, `1515`, `514/udp` | Comunicacao com agentes |
+
+Frontend, APIs e paineis web sao acessados pelas rotas HTTPS do Traefik. Bancos, Redis e MailHog nao publicam portas no host.
 
 ## Fluxo de comunicacao
 
@@ -151,6 +147,22 @@ Mensageria utilizada pelo RPA:
 - MQTT `smartcard/rpa/errors`: envia erros do RPA ao backend.
 
 ## Como executar com Docker
+
+### Publicacao pelo Traefik existente
+
+O `docker-compose.yml` deste projeto nao inicia outro Traefik. Ele espera que o Traefik externo e os servicos compartilhem a rede Docker externa `traefik-public`, e que o Traefik tenha o entrypoint `websecure` e o resolver Let's Encrypt `leresolver`.
+
+As rotas HTTPS configuradas sao:
+
+| Servico | URL |
+| --- | --- |
+| Frontend | `https://dev.ana.ccs.unicamp.br/frontend/` |
+| API SmartCard | `https://dev.ana.ccs.unicamp.br/smartcard/` |
+| API de usuarios | `https://dev.ana.ccs.unicamp.br/users/` |
+| Painel Wazuh | `https://dev.ana.ccs.unicamp.br/wazuh/` |
+| Administracao RabbitMQ | `https://dev.ana.ccs.unicamp.br/rabbitmq/` |
+
+O MailHog nao e publicado pelo Traefik. Bancos e Redis permanecem apenas na rede Docker; as portas AMQP/MQTT do RabbitMQ continuam publicadas para clientes externos, como o RPA. Antes de iniciar a stack, crie a rede externa caso ainda nao exista: `docker network create traefik-public`.
 
 ### Pre-requisitos
 
