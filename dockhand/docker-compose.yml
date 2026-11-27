@@ -1,0 +1,29 @@
+services:
+  dockhand:
+    image: fnsys/dockhand:latest
+    container_name: dockhand
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - dockhand_data:/app/data
+      - /home/marco-dev:/home/marco-dev
+      
+    labels:
+      - 'traefik.enable=true'
+      - "traefik.http.routers.dockhand.rule=Host(`dockhand.ccs.unicamp.br`)"
+      - 'traefik.http.services.dockhand.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.dockhand.entrypoints=web, websecure'
+      - 'traefik.http.routers.dockhand-router.service=dockhand'
+      - 'traefik.http.routers.dockhand.tls=true'
+      - 'traefik.http.routers.dockhand.tls.certresolver=leresolver'
+      - "traefik.http.middlewares.dockhand-ipallowlist.ipwhitelist.sourcerange=143.106.5.1/24, 10.10.0.1/16"
+      - "traefik.http.routers.dockhand.middlewares=dockhand-ipallowlist"
+
+volumes:
+  dockhand_data:
+
+networks:
+  traefik-public:
+    external: true
