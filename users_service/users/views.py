@@ -15,9 +15,9 @@ from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
-from .serializers import (AdminUserUpdateSerializer, CustomTokenObtainPairSerializer, UserApiSerializer, UserProfileSerializer, UserSerializer, SafetyTrainingSerializer)
+from .serializers import (AdminUserUpdateSerializer, CustomTokenObtainPairSerializer, UserApiSerializer, UserProfileSerializer, UserSerializer)
 
-from .models import UserProfile, SafetyTraining
+from .models import UserProfile
 
 User = get_user_model()
 
@@ -39,9 +39,6 @@ class UserViewSet(ModelViewSet):
 
 
 class UsersSafetyTraining(ModelViewSet):
-    queryset = SafetyTraining.objects.all()
-    serializer_class = SafetyTrainingSerializer
-
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 

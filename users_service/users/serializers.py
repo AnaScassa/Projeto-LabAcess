@@ -4,21 +4,9 @@ from django.core.cache import cache
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import UserProfile, DegreeArea, User, SafetyTraining
+from .models import UserProfile, DegreeArea, User
 
 logger = logging.getLogger(__name__)
-
-class SafetyTrainingSerializer(serializers.ModelSerializer):
-    class Meta:
-        user_id = serializers.PrimaryKeyRelatedField(
-            many=True,
-            queryset=DegreeArea.objects.all()
-        )
-        model = SafetyTraining
-        fields = [
-            "user_id",
-            "expiration_date"
-        ]
 
 class UserProfileSerializer(serializers.ModelSerializer):
     degree_area = serializers.PrimaryKeyRelatedField(

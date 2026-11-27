@@ -13,4 +13,3 @@ class Command(BaseCommand):
         call_command('loaddata', "./fixtures/04_userdata.json")
         call_command('loaddata', "./fixtures/05_userprofile.json")
         call_command('loaddata', "./fixtures/06_account.json")
-        call_command('loaddata', "./fixtures/07_safetytraining.json")

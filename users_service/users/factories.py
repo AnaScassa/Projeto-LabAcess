@@ -4,14 +4,7 @@ from faker import Faker
 from django.utils import timezone
 from datetime import timedelta
 
-from .models import (
-    User,
-    UserProfile,
-    DegreeArea,
-    Position,
-    SafetyTraining,
-    SafetyTrainingGroup
-)
+from .models import (User, UserProfile, DegreeArea, Position)
 
 fake = Faker("pt_BR")
 
@@ -75,35 +68,6 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
             areas = DegreeAreaFactory.create_batch(random.randint(1, 3))
             for area in areas:
                 self.degree_area.add(area)
-
-
-class SafetyTrainingFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = SafetyTraining
-        django_get_or_create = ("user",) 
-
-    user = factory.SubFactory(UserFactory)
-
-    completion_date = factory.LazyFunction(
-        lambda: timezone.now() - timedelta(days=random.randint(1, 100))
-    )
-
-    expiration_date = factory.LazyFunction(
-        lambda: timezone.now() + timedelta(days=random.randint(-50, 100))
-    )
-
-    notes = factory.LazyAttribute(lambda _: fake.text(max_nb_chars=100))
-
-
-class SafetyTrainingGroupFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = SafetyTrainingGroup
-
-    training_date = factory.LazyFunction(
-        lambda: timezone.now() + timedelta(days=random.randint(-10, 10))
-    )
-
-    completed = factory.LazyAttribute(lambda _: random.choice([True, False]))
 
     @factory.post_generation
     def users(self, create, extracted, **kwargs):

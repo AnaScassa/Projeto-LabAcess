@@ -7,6 +7,7 @@ class Usuario(models.Model):
     user_auth = models.BigIntegerField(null=True, blank=True)
     username_mrbs = models.CharField(max_length=100, blank=True, null=True)
     esta_ativo = models.BooleanField(default=True)
+    esta_treinado = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.nome_usuario} ({self.matricula})"
